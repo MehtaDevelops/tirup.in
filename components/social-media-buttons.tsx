@@ -1,0 +1,119 @@
+"use client"
+
+import type React from "react"
+
+import { useState } from "react"
+import { Github, Instagram, Linkedin, Twitter, Youtube, Globe, BookOpen, Cloud, Code } from "lucide-react"
+
+interface SocialLink {
+  name: string
+  url: string
+  icon: React.ReactNode
+  color: string
+}
+
+export default function SocialMediaButtons() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+
+  const socialLinks: SocialLink[] = [
+    {
+      name: "GitHub",
+      url: "https://github.com/TirupMehta",
+      icon: <Github size={16} />,
+      color: "#333",
+    },
+    {
+      name: "LinkedIn",
+      url: "https://www.linkedin.com/in/TirupMehta",
+      icon: <Linkedin size={16} />,
+      color: "#0077B5",
+    },
+    {
+      name: "Instagram",
+      url: "https://instagram.com/TirupMehta",
+      icon: <Instagram size={16} />,
+      color: "#E1306C",
+    },
+    {
+      name: "X (Twitter)",
+      url: "https://x.com/TirupMehta",
+      icon: <Twitter size={16} />,
+      color: "#1DA1F2",
+    },
+    {
+      name: "YouTube",
+      url: "https://YouTube.com/@TirupMehta",
+      icon: <Youtube size={16} />,
+      color: "#FF0000",
+    },
+    {
+      name: "Website",
+      url: "https://begins.site/",
+      icon: <Globe size={16} />,
+      color: "#4285F4",
+    },
+    {
+      name: "Medium",
+      url: "https://medium.com/@TirupMehta",
+      icon: <BookOpen size={16} />,
+      color: "#000000",
+    },
+    {
+      name: "Google Developer",
+      url: "https://g.dev/TirupMehta",
+      icon: <Code size={16} />,
+      color: "#EA4335",
+    },
+    {
+      name: "Google Cloud",
+      url: "https://www.cloudskillsboost.google/public_profiles/5de29c1c-84d0-46a5-a4eb-5fa999499184",
+      icon: <Cloud size={16} />,
+      color: "#4285F4",
+    },
+  ]
+
+  return (
+    <div className="flex flex-wrap justify-center gap-3 mt-6">
+      {socialLinks.map((link, index) => (
+        <a
+          key={index}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-button relative"
+          onMouseEnter={() => setHoveredIndex(index)}
+          onMouseLeave={() => setHoveredIndex(null)}
+          aria-label={link.name}
+        >
+          <div className="flex items-center justify-center w-8 h-8 rounded-full border border-black/10 bg-white transition-all duration-300 hover:scale-110">
+            <span className="text-black/70">{link.icon}</span>
+          </div>
+          {hoveredIndex === index && (
+            <div
+              className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-white border border-black/10 rounded-sm text-xs whitespace-nowrap"
+              style={{
+                animation: "fadeIn 0.2s ease-in-out",
+              }}
+            >
+              {link.name}
+            </div>
+          )}
+        </a>
+      ))}
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translate(-50%, 5px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        
+        .social-button:hover {
+          transform: translateY(-2px);
+        }
+        
+        .social-button {
+          transition: transform 0.3s ease;
+        }
+      `}</style>
+    </div>
+  )
+}

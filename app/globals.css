@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #8a9dff;
+  --black: #000000;
+  --white: #ffffff;
+  --transition-slow: 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-medium: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  height: 100%;
+}
+
+/* Remove section animations - all sections visible by default */
+.section {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.image-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.image-parallax {
+  transition: transform var(--transition-medium);
+}
+
+/* Remove hover animations that lift elements */
+.text-interactive {
+  transition: filter var(--transition-medium);
+}
+
+.image-zoom {
+  transition: transform var(--transition-medium);
+}
+
+.image-zoom:hover {
+  transform: scale(1.05);
+}
+
+/* Lazy loading animation */
+.lazy-image {
+  opacity: 0;
+  transition: opacity var(--transition-medium);
+}
+
+.lazy-image.loaded {
+  opacity: 1;
+}
+
+/* Subtle shadow */
+.subtle-shadow {
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.05);
+}
+
+/* Square animation for text */
+@keyframes square-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+}
+
+/* Link hover effect */
+.link-hover {
+  position: relative;
+}
+
+.link-hover::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: var(--accent);
+  transition: width var(--transition-medium);
+}
+
+.link-hover:hover::after {
+  width: 100%;
+}
+
+/* Remove card hover lift effect */
+.card-hover {
+  transition: box-shadow var(--transition-medium);
+}
+
+.card-hover:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Social media button animations */
+@keyframes pulse-subtle {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.social-button:hover {
+  animation: pulse-subtle 1s infinite;
+}
