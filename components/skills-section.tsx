@@ -38,7 +38,7 @@ export default function SkillsSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
         <div>
-          <h3 className="text-xl font-light mb-6 text-accent">Development</h3>
+          <h3 className="text-xl font-light mb-6 text-gray-900 dark:text-gray-100">Development</h3>
           <ul className="space-y-4">
             {developmentSkills.map((skill) => (
               <li key={skill.name} className="group">
@@ -61,7 +61,7 @@ export default function SkillsSection() {
         </div>
 
         <div>
-          <h3 className="text-xl font-light mb-6 text-accent">Design</h3>
+          <h3 className="text-xl font-light mb-6 text-gray-900 dark:text-gray-100">Design</h3>
           <ul className="space-y-4">
             {designSkills.map((skill) => (
               <li key={skill.name} className="group">
@@ -84,7 +84,7 @@ export default function SkillsSection() {
         </div>
 
         <div>
-          <h3 className="text-xl font-light mb-6 text-accent">Security</h3>
+          <h3 className="text-xl font-light mb-6 text-gray-900 dark:text-gray-100">Security</h3>
           <ul className="space-y-4">
             {securitySkills.map((skill) => (
               <li key={skill.name} className="group">
