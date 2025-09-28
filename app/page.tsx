@@ -193,7 +193,7 @@ export default function Home() {
             href="mailto:mehta@begins.site"
             className="text-lg font-light border-b border-accent text-black/80 pb-1 hover:text-accent transition-colors"
           >
-            mehta@begins.site
+            contact@tirup.in
           </a>
         </TextWithBlur>
       </section>
