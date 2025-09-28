@@ -190,7 +190,7 @@ export default function Home() {
         </TextWithBlur>
         <TextWithBlur>
           <a
-            href="mailto:mehta@begins.site"
+            href="mailto:contact@tirup.in"
             className="text-lg font-light border-b border-accent text-black/80 pb-1 hover:text-accent transition-colors"
           >
             contact@tirup.in
