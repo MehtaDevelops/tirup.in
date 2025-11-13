@@ -122,8 +122,11 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section className="section py-20 px-6 md:px-20">
-        <InteractiveText className="text-5xl md:text-6xl font-light mb-20 text-center">Selected Work “Temporarily unavailable — not moved to the new domain yet.”</InteractiveText>
+<section className="section py-20 px-6 md:px-20">
+  <InteractiveText className="text-2xl md:text-3xl font-light mb-20 text-center">
+    Selected Work “Temporarily unavailable — not moved to the new domain yet.”
+  </InteractiveText>
+</section>
 
         <div className="space-y-32">
           {projects.map((project, index) => (
