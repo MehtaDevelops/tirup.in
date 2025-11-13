@@ -176,7 +176,7 @@ export default function Home() {
       {/* AI Project Recommender Section
       <section className="section py-20 px-6 md:px-20">
         <AIProjectRecommender />
-      </section>*}
+      </section>*/}
 
       {/* Contact Section */}
       <section className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 py-20">
