@@ -47,12 +47,6 @@ export default function SocialMediaButtons() {
       color: "#FF0000",
     },
     {
-      name: "Website",
-      url: "https://begins.site/",
-      icon: <Globe size={16} />,
-      color: "#4285F4",
-    },
-    {
       name: "Medium",
       url: "https://medium.com/@TirupMehta",
       icon: <BookOpen size={16} />,
