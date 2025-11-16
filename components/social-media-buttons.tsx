@@ -3,8 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Github, Instagram, Linkedin, Twitter, Youtube, Globe, BookOpen, Cloud, Code } from "lucide-react"
-import { FaKaggle } from 'react-icons/fa'
+import { Github, Instagram, Linkedin, Twitter, Youtube, Globe, BookOpen, Cloud, Code, GraduationCap } from "lucide-react"
 
 interface SocialLink {
   name: string
@@ -32,7 +31,7 @@ export default function SocialMediaButtons() {
     {
       name: "Kaggle",
       url: "https://www.kaggle.com/TirupMehta",
-      icon: <FaKaggle size={16} />,
+      icon: <GraduationCap size={16} />,
       color: "#E1306C",
     },
     {
