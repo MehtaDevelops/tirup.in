@@ -29,6 +29,12 @@ export default function SocialMediaButtons() {
       color: "#0077B5",
     },
     {
+      name: "Kaggle",
+      url: "https://www.kaggle.com/TirupMehta",
+      icon: <Kaggle size={16} />,
+      color: "#E1306C",
+    },
+    {
       name: "Instagram",
       url: "https://instagram.com/TirupMehta",
       icon: <Instagram size={16} />,
