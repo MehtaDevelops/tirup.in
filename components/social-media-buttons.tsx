@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Github, Instagram, Linkedin, Twitter, Youtube, Globe, BookOpen, Cloud, Code } from "lucide-react"
+import { Github, Instagram, Linkedin, Twitter, Youtube, Globe, BookOpen, Cloud, Code, Kaggle } from "lucide-react"
 
 interface SocialLink {
   name: string
