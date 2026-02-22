@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import TextWithBlur from "./text-with-blur"
+import { getProjectRecommendations } from "@/lib/actions"
 
 // Tirup Mehta facts for random display
 const tirupFacts = [
@@ -52,61 +53,12 @@ export default function AIProjectRecommender() {
     setRecommendations([])
 
     try {
-      // Create the prompt for the AI
-      const prompt = `Based on these skills: ${skills}, suggest 3-5 underrated but highly useful project ideas that would be valuable to build. These skills can be any combination of front-end, back-end, design, or other technical skills. Format your response as a list of project ideas only, with a brief one-sentence description for each. Be specific and practical.`
-
-      // Updated to use the correct API endpoint for AI Studio's free tier
-      // Using gemini-1.0-pro model which is the current version
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-goog-api-key": "AIzaSyBOlyCtUqdkEPsP5yZlYt9oFzQ4PekJwCM",
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: prompt,
-                  },
-                ],
-              },
-            ],
-            generationConfig: {
-              temperature: 0.7,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 1024,
-            },
-          }),
-        },
-      )
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        console.error("API Error:", errorData)
-        throw new Error(`API error: ${response.status}`)
+      const result = await getProjectRecommendations(skills)
+      if (result.success && result.recommendations) {
+        setRecommendations(result.recommendations)
+      } else {
+        throw new Error(result.error || "Failed to get recommendations")
       }
-
-      const data = await response.json()
-
-      if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts) {
-        throw new Error("Invalid response format from API")
-      }
-
-      // Parse the response text to extract project recommendations
-      const text = data.candidates[0].content.parts[0].text
-
-      // Split by numbered list items or bullet points
-      const projectList = text
-        .split(/\d+\.\s|\n-\s|\n•\s/)
-        .filter(Boolean)
-        .map((item) => item.trim())
-
-      setRecommendations(projectList)
     } catch (err) {
       console.error("Error details:", err)
       setError("Failed to get recommendations. Please try again.")
