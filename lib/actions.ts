@@ -1,14 +1,28 @@
 "use server"
 
+import { z } from "zod"
+
+const skillsSchema = z
+  .string()
+  .trim()
+  .min(1, "Skills are required")
+  .max(500, "Skills input is too long (maximum 500 characters)")
+
 export async function getProjectRecommendations(skills: string) {
-  if (!skills?.trim()) throw new Error("Skills are required")
+  const validation = skillsSchema.safeParse(skills)
+
+  if (!validation.success) {
+    throw new Error(validation.error.errors[0].message)
+  }
+
+  const sanitizedSkills = validation.data
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     console.error("GEMINI_API_KEY is not set")
     throw new Error("AI Service is currently unavailable")
   }
 
-  const prompt = `Based on these skills: ${skills}, suggest 3-5 underrated but highly useful project ideas that would be valuable to build. Format your response as a list of project ideas only, with a brief one-sentence description for each.`
+  const prompt = `Based on these skills: ${sanitizedSkills}, suggest 3-5 underrated but highly useful project ideas that would be valuable to build. Format your response as a list of project ideas only, with a brief one-sentence description for each.`
 
   try {
     const response = await fetch(
