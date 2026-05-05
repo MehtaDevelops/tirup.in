@@ -22,27 +22,60 @@ export default function Home() {
   // Update the projects array with correct GitHub links
   const projects = [
     {
-      title: "Begins AI API",
+      title: "Trace Guard",
+      description: "An advanced, bot-resistant behavioral security engine and NPM package.",
+      slug: "trace-guard",
+      liveUrl: "https://www.npmjs.com/package/trace-guard",
+    },
+    {
+      title: "Peace",
+      description: "An AI-powered therapist offering compassionate mental health support in English and Gujarati.",
+      slug: "peace",
+      liveUrl: "https://peace.tirup.in",
+      isPrivate: true,
+    },
+    {
+      title: "Vectorize AI API",
       description:
         "Free AI API service for small companies to integrate powerful AI capabilities into their websites with zero setup.",
-      slug: "begins-ai-api",
-      liveUrl: "https://api.begins.site",
+      slug: "vectorize-ai-api",
+      liveUrl: "https://vectorize.in",
       isPrivate: true,
     },
     {
-      title: "Begins Insights",
+      title: "QUOTT",
       description:
-        "Real-time website analytics platform providing detailed traffic insights with a simple script integration.",
-      slug: "begins-insights",
-      liveUrl: "https://insights.begins.site",
+        "Daily inspiration Android app with hand-picked quotes on life, success, and love—beautifully presented and shareable.",
+      slug: "quott",
+      github: "github.com/TirupMehta/QUOTT",
+      liveUrl: "https://quott.tirup.in",
+    },
+    {
+      title: "Typing Challenge",
+      description: "A fast-paced typing challenge web application inspired by MonkeyType to test and improve typing speed.",
+      slug: "typing-challenge",
+      liveUrl: "https://typing-challenge.tirup.in/",
       isPrivate: true,
     },
     {
-      title: "Philosophy to Python",
-      description:
-        "AI-powered tool that transforms philosophical quotes into beautifully formatted Python code syntax.",
-      slug: "philosophy-to-python",
-      liveUrl: "https://philosophy-to-python.begins.site",
+      title: "Discuss",
+      description: "An AI-moderated group discussion platform where users can engage in debates on any given topic.",
+      slug: "discuss",
+      liveUrl: "https://discuss.tirup.in",
+      isPrivate: true,
+    },
+    {
+      title: "DevGathering",
+      description: "A community platform for developers focusing on AI, Cybersecurity, and programming event updates.",
+      slug: "devgathering",
+      liveUrl: "https://devgathering.in",
+      isPrivate: true,
+    },
+    {
+      title: "Aperture",
+      description: "A fun cryptographic challenge featuring custom encryption methods. Decrypt the message to prove your expertise.",
+      slug: "aperture",
+      liveUrl: "https://aperture.tirup.in",
       isPrivate: true,
     },
     {
@@ -62,7 +95,6 @@ export default function Home() {
       description: "Secure, browser-based file storage solution that prioritizes privacy with local IndexedDB storage.",
       slug: "localvault",
       github: "github.com/TirupMehta/LocalVault",
-      liveUrl: "https://vault.begins.site",
     },
     {
       title: "Portal",
@@ -70,13 +102,6 @@ export default function Home() {
         "Lightweight Electron app displaying real-time system, browser, and network details with built-in speed test.",
       slug: "portal",
       github: "github.com/TirupMehta/Portal",
-    },
-    {
-      title: "QUOTT",
-      description:
-        "Daily inspiration platform with hand-picked quotes on life, success, and love—beautifully presented and shareable.",
-      slug: "quott",
-      github: "github.com/TirupMehta/QUOTT",
     },
     {
       title: "VisitorIP",
@@ -123,7 +148,7 @@ export default function Home() {
 
       {/* Projects Section */}
       <section className="section py-20 px-6 md:px-20">
-        <InteractiveText className="text-2xl md:text-3xl font-light mb-20 text-center">Selected Work “Temporarily unavailable — not moved to the new domain yet.”</InteractiveText>
+        <InteractiveText className="text-2xl md:text-3xl font-light mb-20 text-center">Selected Work</InteractiveText>
 
         <div className="space-y-32">
           {projects.map((project, index) => (
@@ -173,7 +198,7 @@ export default function Home() {
         </div>
       </section>
 
-      
+
 
       {/* Contact Section */}
       <section className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 py-20">
