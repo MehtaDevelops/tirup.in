@@ -348,9 +348,11 @@ export default function ProjectPage() {
   const [project, setProject] = useState<any>(null)
   const [nextProject, setNextProject] = useState<any>(null)
   const [nextSlug, setNextSlug] = useState<string>("")
+  const [mounted, setMounted] = useState(false)
 
   // Improve scroll smoothness
   useEffect(() => {
+    setMounted(true)
     // Add smooth scrolling with higher quality
     document.documentElement.style.scrollBehavior = "smooth"
 
@@ -482,7 +484,7 @@ export default function ProjectPage() {
 
       {/* Footer */}
       <footer className="py-10 px-6 text-center border-t border-black/10">
-        <p className="text-black/50">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
+        <p className="text-black/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )

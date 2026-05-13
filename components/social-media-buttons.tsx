@@ -85,14 +85,19 @@ export default function SocialMediaButtons() {
           onMouseLeave={() => setHoveredIndex(null)}
           aria-label={link.name}
         >
-          <div className="flex items-center justify-center w-8 h-8 rounded-full border border-black/10 bg-white transition-all duration-300 hover:scale-110">
-            <span className="text-black/70">{link.icon}</span>
+          <div className="flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-300 hover:scale-110"
+            style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg)' }}
+          >
+            <span style={{ color: 'var(--text-secondary)' }}>{link.icon}</span>
           </div>
           {hoveredIndex === index && (
             <div
-              className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-white border border-black/10 rounded-sm text-xs whitespace-nowrap"
+              className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded-sm text-xs whitespace-nowrap"
               style={{
                 animation: "fadeIn 0.2s ease-in-out",
+                backgroundColor: 'var(--bg)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-secondary)',
               }}
             >
               {link.name}

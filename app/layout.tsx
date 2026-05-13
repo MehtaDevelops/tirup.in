@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import Script from "next/script"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,8 +24,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        {/* Theme init — prevents flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+
         {/* Google Tag Manager */}
         <Script id="google-tag-manager" strategy="afterInteractive">
           {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -35,8 +43,6 @@ export default function RootLayout({
         </Script>
         {/* End Google Tag Manager */}
 
-
-        
         {/* Google Analytics (gtag.js) */}
         <Script
           async
@@ -52,7 +58,7 @@ export default function RootLayout({
         {/* End Google Analytics */}
       </head>
 
-      <body className={`${inter.variable} font-sans bg-white text-black antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased`} style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)' }}>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -64,8 +70,14 @@ export default function RootLayout({
         </noscript>
         {/* End Google Tag Manager (noscript) */}
 
+        {/* Theme Toggle — fixed top-right */}
+        <div className="fixed top-6 right-6 z-50">
+          <AnimatedThemeToggler className="theme-toggle-btn" variant="circle" />
+        </div>
+
         <PageTransition>{children}</PageTransition>
       </body>
     </html>
   )
 }
+

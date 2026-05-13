@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import InteractiveText from "@/components/interactive-text"
 import SkillsSection from "@/components/skills-section"
@@ -9,8 +9,11 @@ import AIProjectRecommender from "@/components/ai-project-recommender"
 import SocialMediaButtons from "@/components/social-media-buttons"
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false)
+
   // Improve scroll smoothness
   useEffect(() => {
+    setMounted(true)
     // Add smooth scrolling with higher quality
     document.documentElement.style.scrollBehavior = "smooth"
 
@@ -166,6 +169,7 @@ export default function Home() {
                       <Link
                         href={`/projects/${project.slug}`}
                         className="inline-block text-sm font-light text-black/80 pb-1 link-hover"
+                        suppressHydrationWarning
                       >
                         View Project
                       </Link>
@@ -175,6 +179,7 @@ export default function Home() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-block text-sm font-light text-black/80 pb-1 link-hover"
+                          suppressHydrationWarning
                         >
                           View Live Demo
                         </a>
@@ -185,6 +190,7 @@ export default function Home() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-block text-sm font-light text-black/80 pb-1 link-hover"
+                          suppressHydrationWarning
                         >
                           View Source on GitHub
                         </a>
@@ -222,7 +228,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-10 px-6 text-center border-t border-black/10">
-        <p className="text-black/50">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
+        <p className="text-black/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )
