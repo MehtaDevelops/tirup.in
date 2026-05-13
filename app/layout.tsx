@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import Script from "next/script"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
+import Dock from "@/components/ui/dock"
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 const inter = Inter({
@@ -58,7 +59,7 @@ export default function RootLayout({
         {/* End Google Analytics */}
       </head>
 
-      <body className={`${inter.variable} font-sans antialiased`} style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)' }}>
+      <body className={`${inter.variable} font-sans antialiased`} style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)' }} suppressHydrationWarning>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
@@ -70,10 +71,8 @@ export default function RootLayout({
         </noscript>
         {/* End Google Tag Manager (noscript) */}
 
-        {/* Theme Toggle — fixed top-right */}
-        <div className="fixed top-6 right-6 z-50">
-          <AnimatedThemeToggler className="theme-toggle-btn" variant="circle" />
-        </div>
+        {/* Navigation Dock */}
+        <Dock />
 
         <PageTransition>{children}</PageTransition>
       </body>

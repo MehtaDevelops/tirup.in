@@ -19,9 +19,11 @@ export default function InteractiveText({ children, className = "" }: Interactiv
     if (!textRef.current) return
 
     const rect = textRef.current.getBoundingClientRect()
-    setMousePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    window.requestAnimationFrame(() => {
+      setMousePosition({ x, y })
     })
   }
 

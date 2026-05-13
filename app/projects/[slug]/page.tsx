@@ -6,30 +6,38 @@ import { useParams } from "next/navigation"
 import InteractiveText from "@/components/interactive-text"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowLeft } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 // Project data with updated GitHub links
 const projectsData = {
   "trace-guard": {
     title: "Trace Guard",
-    description: "An advanced, bot-resistant behavioral security engine and NPM package.",
-    fullDescription: "Trace Guard is a production-grade behavioral security system designed to detect and block sophisticated AI agents and bots. It operates with zero false positives for human users by analyzing multi-dimensional interaction signals.",
+    description: "Production-grade behavioral security engine to block sophisticated AI agents and Vision-Language Model (VLM) bots.",
+    fullDescription: "Trace Guard silently intercepts HTTP requests to inject behavioral telemetry and block bots—including agentic browsers driven by VLMs (Claude Computer Use, Playwright, Puppeteer). It relies on physical truths that cannot be spoofed, such as Acceleration Asymmetry and Jerk Entropy.",
     liveUrl: "https://www.npmjs.com/package/trace-guard",
+    techStack: ["Node.js", "TypeScript", "Edge Runtime", "CDP Detection"],
+    engine: "Hardware Truth Engine (v3.7.0)",
+    stats: {
+      detectionRate: "99.9%",
+      falsePositives: "0.00%",
+      compatibility: "100% Edge",
+    },
     details: [
       {
         title: "The Challenge",
-        content: "Modern bots and AI scraping agents have become incredibly sophisticated, easily bypassing traditional CAPTCHAs and IP blocks by mimicking human behavior.",
+        content: "Modern AI agents (VLMs) take screenshots and calculate pixel coordinates to click directly, bypassing traditional behavioral math because they don't physically move mice.",
       },
       {
         title: "The Solution",
-        content: "Developed a behavioral analysis engine that tracks advanced non-kinematic detection vectors like Event-Loop Clumping and WebGL footprints, successfully separating true human interactions from synthetic bot patterns.",
+        content: "Implemented 'Pre-Flight Teleport Traps' and physiological analysis like Acceleration Asymmetry—detecting the biomechanical difference in how humans push upward vs. downward.",
       },
       {
-        title: "Key Features",
-        content: "Zero false-positive human tracking, multi-dimensional bot detection, kinematic symmetry analysis, and a perfect supply chain security score.",
+        title: "Key Innovations",
+        content: "VLM Honey-Prompts, Ghost Mouse Payload detection, and Native Prototype Integrity checks to neutralize stealth plugins hiding navigator.webdriver.",
       },
       {
-        title: "How to Try",
-        content: "You can install the package using: npm i trace-guard. Note: This project is currently in the active development phase.",
+        title: "Deployment",
+        content: "A zero-configuration 'setupHook' that globally patches http.createServer or integrates natively as Next.js Edge Middleware.",
       },
     ],
   },
@@ -444,17 +452,54 @@ export default function ProjectPage() {
         </div>
       </section>
 
-      {/* Project Details */}
-      <section className="section px-6 md:px-20 py-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-            {project.details.map((detail: any, index: number) => (
-              <TextWithBlur key={index} delay={index * 100}>
-                <div className="space-y-4 card-hover p-8 border border-black/5 rounded-sm">
-                  <InteractiveText className="text-2xl font-light">{detail.title}</InteractiveText>
-                  <p className="text-lg font-light text-black/70 leading-relaxed">{detail.content}</p>
+      {/* Project Details Bento Grid */}
+      <section className="section px-6 md:px-20 py-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4 auto-rows-fr">
+            
+            {/* Tech Stack Module */}
+            {project.techStack && (
+              <div className="md:col-span-2 bg-black/5 dark:bg-white/5 p-8 rounded-sm border border-black/5 dark:border-white/5 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-6">Technical Stack</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {project.techStack.map((tech: string) => (
+                      <span key={tech} className="px-3 py-1 bg-black/5 dark:bg-white/10 text-xs font-light rounded-sm border border-black/5 dark:border-white/5">{tech}</span>
+                    ))}
+                  </div>
                 </div>
-              </TextWithBlur>
+                {project.engine && (
+                  <div className="mt-8">
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-2">Core Engine</h3>
+                    <p className="text-xl font-light tracking-tight">{project.engine}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Stats Module */}
+            {project.stats && (
+              <div className="md:col-span-2 bg-black/5 dark:bg-white/5 p-8 rounded-sm border border-black/5 dark:border-white/5 grid grid-cols-2 gap-8 items-center">
+                {Object.entries(project.stats).map(([key, value]: [string, any]) => (
+                  <div key={key}>
+                    <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1">
+                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                    </h3>
+                    <p className="text-3xl font-light text-accent tracking-tighter">{value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Standard Project Details */}
+            {project.details.map((detail: any, index: number) => (
+              <div key={index} className={cn(
+                "p-8 rounded-sm border border-black/5 dark:border-white/5 bg-white dark:bg-black",
+                index === 0 ? "md:col-span-2" : index === 1 ? "md:col-span-2" : "md:col-span-4"
+              )}>
+                <h3 className="text-[10px] uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4">{detail.title}</h3>
+                <p className="text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-4xl">{detail.content}</p>
+              </div>
             ))}
           </div>
         </div>

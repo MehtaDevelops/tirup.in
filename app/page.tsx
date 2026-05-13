@@ -150,7 +150,7 @@ export default function Home() {
       </section>
 
       {/* Projects Section */}
-      <section className="section py-20 px-6 md:px-20">
+      <section id="work" className="section py-20 px-6 md:px-20">
         <InteractiveText className="text-2xl md:text-3xl font-light mb-20 text-center">Selected Work</InteractiveText>
 
         <div className="space-y-32">
@@ -161,6 +161,7 @@ export default function Home() {
                   <InteractiveText className="text-4xl md:text-5xl font-light tracking-tight mb-6">
                     {project.title}
                   </InteractiveText>
+
                   <TextWithBlur>
                     <p className="text-xl font-light text-black/70 mb-8">{project.description}</p>
                   </TextWithBlur>
@@ -207,7 +208,7 @@ export default function Home() {
 
 
       {/* Contact Section */}
-      <section className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 py-20">
+      <section id="contact" className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 py-20">
         <InteractiveText className="text-5xl md:text-6xl font-light tracking-tight mb-6 text-center">
           Let's Connect
         </InteractiveText>
