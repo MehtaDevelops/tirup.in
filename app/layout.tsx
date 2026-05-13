@@ -59,7 +59,7 @@ export default function RootLayout({
         {/* End Google Analytics */}
       </head>
 
-      <body className={`${inter.variable} font-sans antialiased`} style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)' }} suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
         {/* Google Tag Manager (noscript) */}
         <noscript
           dangerouslySetInnerHTML={{
