@@ -1,5 +1,5 @@
 {
-  "name": "TirupMehta",
+  "name": "tirup-mehta",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -70,7 +70,7 @@
     "typescript": "^5"
   },
   "pnpm": {
-    "allowedBuildScripts": [
+    "onlyBuiltDependencies": [
       "sharp"
     ]
   }
