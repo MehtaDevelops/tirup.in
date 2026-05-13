@@ -61,14 +61,11 @@ export default function RootLayout({
 
       <body className={`${inter.variable} font-sans antialiased`} style={{ backgroundColor: 'var(--bg)', color: 'var(--fg)' }} suppressHydrationWarning>
         {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-N37XXZ2B"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript>
+        <noscript
+          dangerouslySetInnerHTML={{
+            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N37XXZ2B" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
+          }}
+        />
         {/* End Google Tag Manager (noscript) */}
 
         {/* Navigation Dock */}
