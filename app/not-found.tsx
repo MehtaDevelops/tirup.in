@@ -53,42 +53,42 @@ export default function NotFound() {
           </div>
           
           {/* Terminal Content */}
-          <div className="p-8 md:p-12">
-            <div className="flex items-start gap-6 mb-12">
-              <div className="p-4 rounded-sm bg-accent/10 border border-accent/20 text-accent">
-                <ShieldAlert size={32} />
+          <div className="p-5 md:p-12">
+            <div className="flex items-start gap-4 md:gap-6 mb-8 md:mb-12">
+              <div className="p-3 md:p-4 rounded-sm bg-accent/10 border border-accent/20 text-accent flex-shrink-0">
+                <ShieldAlert size={24} className="md:w-8 md:h-8" />
               </div>
               <div>
-                <h1 className="text-4xl font-light text-black dark:text-white mb-2 tracking-tighter uppercase">ERROR_404</h1>
-                <p className="text-sm text-black/40 dark:text-white/40">RESOURCE_NOT_FOUND_EXCEPTION</p>
+                <h1 className="text-3xl md:text-4xl font-light text-black dark:text-white mb-1 md:mb-2 tracking-tighter uppercase">ERROR_404</h1>
+                <p className="text-[10px] md:text-sm text-black/40 dark:text-white/40 uppercase tracking-wider">RESOURCE_NOT_FOUND_EXCEPTION</p>
               </div>
             </div>
             
-            <div className="space-y-2 mb-12">
+            <div className="space-y-1.5 md:y-2 mb-10 md:mb-12 overflow-hidden">
               {logs.map((log, i) => (
-                <div key={i} className="flex gap-3 text-xs md:text-sm animate-in fade-in slide-in-from-left-2 duration-500">
-                  <span className="text-black/20 dark:text-white/20">[{new Date().toLocaleTimeString([], { hour12: false })}]</span>
-                  <span className={log?.includes("Warning") || log?.includes("COMPROMISED") ? "text-accent" : "text-black/60 dark:text-white/60"}>
+                <div key={i} className="flex gap-2 md:gap-3 text-[10px] md:text-sm animate-in fade-in slide-in-from-left-2 duration-500">
+                  <span className="text-black/20 dark:text-white/20 whitespace-nowrap">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                  <span className={`${log?.includes("Warning") || log?.includes("COMPROMISED") ? "text-accent" : "text-black/60 dark:text-white/60"} break-all`}>
                     {log}
                   </span>
                 </div>
               ))}
-              <div className="w-2 h-4 bg-accent animate-pulse inline-block align-middle ml-1" />
+              <div className="w-1.5 h-3 md:w-2 md:h-4 bg-accent animate-pulse inline-block align-middle ml-1" />
             </div>
             
             <Link 
               href="/" 
-              className="inline-flex items-center gap-4 text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 hover:text-accent dark:hover:text-accent transition-colors group"
+              className="inline-flex items-center gap-3 md:gap-4 text-[10px] md:text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 hover:text-accent dark:hover:text-accent transition-colors group"
             >
               <span>Execute Home_Return</span>
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={12} className="md:w-3.5 md:h-3.5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
         
-        <div className="mt-6 flex justify-between items-center text-[10px] text-black/20 dark:text-white/20 uppercase tracking-widest px-2">
-          <span>Target: {pathname}</span>
-          <span>Status: Lost</span>
+        <div className="mt-4 md:mt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0 text-[8px] md:text-[10px] text-black/20 dark:text-white/20 uppercase tracking-widest px-2 overflow-hidden">
+          <span className="truncate max-w-full">Target: {pathname}</span>
+          <span className="whitespace-nowrap">Status: Lost</span>
         </div>
       </div>
     </main>
