@@ -60,7 +60,7 @@ export default function SocialMediaButtons() {
     },
     {
       name: "Google Developer",
-      url: "https://g.dev/TirupMehta",
+      url: "https://g.dev/MehtaTirup",
       icon: <Code size={16} />,
       color: "#EA4335",
     },
