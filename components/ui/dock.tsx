@@ -76,6 +76,7 @@ export default function Dock() {
             href={item.id ? `#${item.id}` : item.href}
             onClick={(e) => handleNav(e, item.href, item.id)}
             className="flex items-center justify-center w-10 h-10 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 group relative"
+            aria-label={item.name}
           >
             {item.icon}
             <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-black dark:bg-white text-white dark:text-black text-[10px] font-medium opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">

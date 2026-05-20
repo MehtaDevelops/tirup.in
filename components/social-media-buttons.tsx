@@ -73,7 +73,7 @@ export default function SocialMediaButtons() {
   ]
 
   return (
-    <div className="flex flex-wrap justify-center gap-3 mt-6">
+    <div className="flex flex-wrap justify-center gap-3 mt-6 max-w-[240px] md:max-w-none mx-auto">
       {socialLinks.map((link, index) => (
         <a
           key={index}

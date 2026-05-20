@@ -5,7 +5,6 @@ import Link from "next/link"
 import InteractiveText from "@/components/interactive-text"
 import SkillsSection from "@/components/skills-section"
 import TextWithBlur from "@/components/text-with-blur"
-import AIProjectRecommender from "@/components/ai-project-recommender"
 import SocialMediaButtons from "@/components/social-media-buttons"
 
 export default function Home() {
@@ -123,12 +122,12 @@ export default function Home() {
   return (
     <main className="relative min-h-screen">
       {/* Intro Section */}
-      <section className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 py-20">
+      <section className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 pt-8 pb-48 md:py-20">
         <InteractiveText className="text-6xl md:text-8xl font-light tracking-tight mb-6 text-center">
           Tirup Mehta
         </InteractiveText>
         <TextWithBlur>
-          <p className="text-xl md:text-2xl font-light text-center max-w-2xl text-black/70">
+          <p className="text-xl md:text-2xl font-light text-center max-w-2xl text-black/70 dark:text-white/70">
             Front-end developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.
           </p>
         </TextWithBlur>
@@ -136,7 +135,7 @@ export default function Home() {
           <SocialMediaButtons />
         </TextWithBlur>
         <TextWithBlur delay={200}>
-          <div className="mt-12 text-sm text-black/50">
+          <div className="mt-12 text-sm md:text-base text-black/50 dark:text-white/50">
             <p>Scroll to explore</p>
           </div>
         </TextWithBlur>
@@ -144,64 +143,79 @@ export default function Home() {
 
       {/* Skills Section */}
       <section className="section min-h-screen flex flex-col justify-center px-6 md:px-20 py-20">
-        <TextWithBlur>
-          <SkillsSection />
-        </TextWithBlur>
+        <SkillsSection />
       </section>
 
       {/* Projects Section */}
-      <section id="work" className="section py-20 px-6 md:px-20">
-        <InteractiveText className="text-2xl md:text-3xl font-light mb-20 text-center">Selected Work</InteractiveText>
+      <section id="work" className="section flex flex-col justify-center px-6 md:px-20 py-20">
+        <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
+          <TextWithBlur>
+            <h2 className="text-3xl font-light mb-16 tracking-tight text-black dark:text-white">
+              Selected Work
+            </h2>
+          </TextWithBlur>
 
-        <div className="space-y-32">
-          {projects.map((project, index) => (
-            <TextWithBlur key={index} delay={index * 100}>
-              <div className="card-hover p-10 border border-black/5 rounded-sm">
-                <div className="max-w-3xl mx-auto">
-                  <InteractiveText className="text-4xl md:text-5xl font-light tracking-tight mb-6">
-                    {project.title}
-                  </InteractiveText>
-
-                  <TextWithBlur>
-                    <p className="text-xl font-light text-black/70 mb-8">{project.description}</p>
-                  </TextWithBlur>
-                  <TextWithBlur>
-                    <div className="flex flex-wrap gap-4">
-                      <Link
-                        href={`/projects/${project.slug}`}
-                        className="inline-block text-sm font-light text-black/80 pb-1 link-hover"
-                        suppressHydrationWarning
-                      >
-                        View Project
-                      </Link>
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block text-sm font-light text-black/80 pb-1 link-hover"
-                          suppressHydrationWarning
-                        >
-                          View Live Demo
-                        </a>
-                      )}
-                      {project.github && !project.isPrivate && (
-                        <a
-                          href={`https://${project.github}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block text-sm font-light text-black/80 pb-1 link-hover"
-                          suppressHydrationWarning
-                        >
-                          View Source on GitHub
-                        </a>
-                      )}
+          <div className="flex flex-col">
+            {projects.map((project, index) => {
+              return (
+                <TextWithBlur key={index} delay={index * 100}>
+                  <div
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-14"
+                  >
+                    {/* Project Info */}
+                    <div className="col-span-1 flex items-baseline gap-2">
+                      <span className="font-mono text-xs md:text-sm text-black/40 dark:text-white/40 select-none">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <h3 className="text-lg md:text-xl font-light tracking-tight text-black dark:text-white">
+                        {project.title}
+                      </h3>
                     </div>
-                  </TextWithBlur>
-                </div>
-              </div>
-            </TextWithBlur>
-          ))}
+
+                    {/* Project Details */}
+                    <div className="col-span-1 md:col-span-2 space-y-6">
+                      <p className="text-sm md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed">
+                        {project.description}
+                      </p>
+                      <div className="flex flex-wrap gap-6 text-sm md:text-base font-light">
+                        <Link
+                          href={`/projects/${project.slug}`}
+                          className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
+                          suppressHydrationWarning
+                        >
+                          View Details
+                        </Link>
+                        {project.liveUrl && (
+                          <a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
+                            suppressHydrationWarning
+                          >
+                            Live Demo
+                          </a>
+                        )}
+                        {project.github && !project.isPrivate && (
+                          <a
+                            href={`https://${project.github}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
+                            suppressHydrationWarning
+                          >
+                            Source Code
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </TextWithBlur>
+              )
+            })}
+            {/* End of list bottom border */}
+            <div className="border-t border-black/10 dark:border-white/10" />
+          </div>
         </div>
       </section>
 
@@ -213,14 +227,14 @@ export default function Home() {
           Let's Connect
         </InteractiveText>
         <TextWithBlur>
-          <p className="text-xl font-light text-center max-w-2xl text-black/70 mb-12">
+          <p className="text-xl font-light text-center max-w-2xl text-black/70 dark:text-white/70 mb-12">
             Interested in working together? Feel free to reach out.
           </p>
         </TextWithBlur>
         <TextWithBlur>
           <a
             href="mailto:contact@tirup.in"
-            className="text-lg font-light border-b border-accent text-black/80 pb-1 hover:text-accent transition-colors"
+            className="text-lg font-light border-b border-accent text-black/80 dark:text-white/80 pb-1 hover:text-accent dark:hover:text-accent transition-colors"
           >
             contact@tirup.in
           </a>
@@ -229,7 +243,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-10 px-6 text-center border-t border-black/10">
-        <p className="text-black/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
+        <p className="text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )
