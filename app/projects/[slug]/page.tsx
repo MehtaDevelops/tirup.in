@@ -8,11 +8,25 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+interface Project {
+  title: string
+  description: string
+  fullDescription: string
+  liveUrl?: string
+  github?: string
+  isPrivate?: boolean
+  documentationUrl?: string
+  techStack?: string[]
+  engine?: string
+  stats: Record<string, string>
+  details?: { title: string; content: string }[]
+}
+
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const normalizedSlug = slug?.toLowerCase()
-  const project = projectsData[normalizedSlug as keyof typeof projectsData]
+  const project = projectsData[normalizedSlug as keyof typeof projectsData] as Project | undefined
   
   if (project) {
     return {
@@ -28,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ProjectPage({ params }: PageProps) {
   const { slug } = await params
   const normalizedSlug = slug?.toLowerCase()
-  const project = projectsData[normalizedSlug as keyof typeof projectsData]
+  const project = projectsData[normalizedSlug as keyof typeof projectsData] as Project | undefined
 
   if (!project) {
     return (
@@ -48,7 +62,7 @@ export default async function ProjectPage({ params }: PageProps) {
   const currentIndex = projectKeys.indexOf(normalizedSlug)
   const nextIndex = (currentIndex + 1) % projectKeys.length
   const nextSlug = projectKeys[nextIndex]
-  const nextProject = projectsData[nextSlug as keyof typeof projectsData]
+  const nextProject = projectsData[nextSlug as keyof typeof projectsData] as Project | undefined
 
   const currentYear = new Date().getFullYear()
 
