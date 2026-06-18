@@ -83,7 +83,7 @@ export default function Header() {
         {/* Navigation Tabs */}
         <div className="flex justify-between items-center mb-8 border-b border-black/5 dark:border-white/5 pb-4">
           <TextWithBlur delay={100}>
-            <div className="flex gap-6 text-sm md:text-base font-light">
+            <div className="flex gap-4 sm:gap-6 text-sm md:text-base font-light">
               <Link 
                 href="/" 
                 className={`transition-colors ${isActive("/") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
@@ -114,7 +114,7 @@ export default function Header() {
           {/* Theme Switcher on the far right */}
           <AnimatedThemeToggler 
             variant="circle"
-            className="flex items-center justify-center w-10 h-10 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer"
+            className="flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer"
           />
         </div>
       </div>
