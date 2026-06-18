@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import InteractiveText from "@/components/interactive-text"
 import SkillsSection from "@/components/skills-section"
 import TextWithBlur from "@/components/text-with-blur"
@@ -25,83 +26,80 @@ export default function Home() {
   const projects = [
     {
       title: "Trace Guard",
-      description: "An advanced, bot-resistant behavioral security engine and NPM package.",
+      description: "Bot-resistant behavioral security engine and NPM package.",
       slug: "trace-guard",
       liveUrl: "https://www.npmjs.com/package/trace-guard",
     },
     {
       title: "Peace",
-      description: "An AI-powered therapist offering compassionate mental health support in English and Gujarati.",
+      description: "AI therapist with mental health support in English and Gujarati.",
       slug: "peace",
       liveUrl: "https://peace.tirup.in",
       isPrivate: true,
     },
     {
       title: "Vectorize AI API",
-      description:
-        "Free AI API service for small companies to integrate powerful AI capabilities into their websites with zero setup.",
+      description: "Free AI API for small companies — powerful capabilities, zero setup.",
       slug: "vectorize-ai-api",
       liveUrl: "https://vectorize.in",
       isPrivate: true,
     },
     {
       title: "QUOTT",
-      description:
-        "Daily inspiration Android app with hand-picked quotes on life, success, and love—beautifully presented and shareable.",
+      description: "Daily inspiration Android app with hand-picked shareable quotes.",
       slug: "quott",
       github: "github.com/TirupMehta/QUOTT",
       liveUrl: "https://quott.tirup.in",
     },
     {
       title: "Typing Challenge",
-      description: "A fast-paced typing challenge web application inspired by MonkeyType to test and improve typing speed.",
+      description: "Fast-paced typing challenge app to test and improve typing speed.",
       slug: "typing-challenge",
       liveUrl: "https://typing-challenge.tirup.in/",
       isPrivate: true,
     },
     {
       title: "Discuss",
-      description: "An AI-moderated group discussion platform where users can engage in debates on any given topic.",
+      description: "AI-moderated group debate platform on any topic.",
       slug: "discuss",
       liveUrl: "https://discuss.tirup.in",
       isPrivate: true,
     },
     {
       title: "DevGathering",
-      description: "A community platform for developers focusing on AI, Cybersecurity, and programming event updates.",
+      description: "Developer community for AI, Cybersecurity, and programming events.",
       slug: "devgathering",
       liveUrl: "https://devgathering.in",
       isPrivate: true,
     },
     {
       title: "Aperture",
-      description: "A fun cryptographic challenge featuring custom encryption methods. Decrypt the message to prove your expertise.",
+      description: "Cryptographic challenge — decrypt the message to prove your skills.",
       slug: "aperture",
       liveUrl: "https://aperture.tirup.in",
       isPrivate: true,
     },
     {
       title: "StartCrypt",
-      description: "A cybersecurity tool for encrypting startup data with military-grade protection.",
+      description: "Encrypts startup data with military-grade protection.",
       slug: "startcrypt",
       github: "github.com/TirupMehta/startcrypt",
     },
     {
       title: "Jarvis",
-      description: "Advanced AI-powered personal assistant with desktop system integration for intelligent automation.",
+      description: "AI personal assistant with desktop system integration.",
       slug: "jarvis",
       github: "github.com/TirupMehta/jarvis",
     },
     {
       title: "LocalVault",
-      description: "Secure, browser-based file storage solution that prioritizes privacy with local IndexedDB storage.",
+      description: "Private browser-based file storage using local IndexedDB.",
       slug: "localvault",
       github: "github.com/TirupMehta/LocalVault",
     },
     {
       title: "Portal",
-      description:
-        "Lightweight Electron app displaying real-time system, browser, and network details with built-in speed test.",
+      description: "Electron app showing real-time system, network info, and speed test.",
       slug: "portal",
       github: "github.com/TirupMehta/Portal",
     },
@@ -121,124 +119,134 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen">
-      {/* Intro Section */}
-      <section className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 pt-8 pb-48 md:py-20">
-        <InteractiveText className="text-6xl md:text-8xl font-light tracking-tight mb-6 text-center">
-          Tirup Mehta
-        </InteractiveText>
+      {/* Intro/Hero Section */}
+      <section className="section px-6 md:px-20 pt-28 pb-20 max-w-4xl mx-auto w-full">
+        {/* Avatar + Title inline */}
         <TextWithBlur>
-          <p className="text-xl md:text-2xl font-light text-center max-w-2xl text-black/70 dark:text-white/70">
-            Front-end developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.
-          </p>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+              <Image
+                src="/profile.png"
+                alt="Tirup Mehta avatar"
+                width={112}
+                height={112}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white">
+              Tirup Mehta <span className="text-black/40 dark:text-white/30 text-2xl md:text-3xl ml-1"><span className="italic" style={{ fontFamily: "var(--font-playfair)" }}>aka</span> @TirupMehta</span>
+            </h1>
+          </div>
         </TextWithBlur>
+
+
+        {/* Nav Links */}
         <TextWithBlur delay={100}>
-          <SocialMediaButtons />
+          <div className="flex gap-6 text-sm md:text-base font-light text-black/40 dark:text-white/40 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
+            <a href="#work" className="hover:text-black dark:hover:text-white transition-colors">Work</a>
+            <a href="#skills" className="hover:text-black dark:hover:text-white transition-colors">Skills</a>
+            <a href="#contact" className="hover:text-black dark:hover:text-white transition-colors">Contact</a>
+          </div>
         </TextWithBlur>
-        <TextWithBlur delay={200}>
-          <div className="mt-12 text-sm md:text-base text-black/50 dark:text-white/50">
-            <p>Scroll to explore</p>
+
+        {/* Story Description Paragraphs */}
+        <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
+          <TextWithBlur delay={150}>
+            <p>
+              I'm a front-end developer and UI/UX designer building clean, functional interfaces. I focus on creating high-performance web applications that are both intuitive and secure.
+            </p>
+          </TextWithBlur>
+
+          <TextWithBlur delay={200}>
+            <p>
+              Deeply interested in cybersecurity, network security, and cryptography, I enjoy building tools that bridge the gap between design and system safety, ensuring data integrity without sacrificing user experience.
+            </p>
+          </TextWithBlur>
+
+          <TextWithBlur delay={250}>
+            <p>
+              Always open to interesting conversations about development, security, and design. Feel free to <a href="mailto:contact@tirup.in" className="underline underline-offset-4 decoration-accent hover:text-accent transition-colors">say hello</a> or find me on <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-accent hover:text-accent transition-colors">GitHub</a>.
+            </p>
+          </TextWithBlur>
+        </div>
+
+        {/* Dynamic Indicator Dots at the bottom of hero */}
+        <TextWithBlur delay={300}>
+          <div className="flex gap-2 mt-12 select-none">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ff6b6b]/60" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#feca57]/60" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1dd1a1]/60" />
           </div>
         </TextWithBlur>
       </section>
 
       {/* Skills Section */}
-      <section className="section min-h-screen flex flex-col justify-center px-6 md:px-20 py-20">
+      <section id="skills" className="section py-20 max-w-4xl mx-auto w-full px-6 md:px-20">
         <SkillsSection />
       </section>
 
       {/* Projects Section */}
-      <section id="work" className="section flex flex-col justify-center px-6 md:px-20 py-20">
-        <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
-          <TextWithBlur>
-            <h2 className="text-3xl font-light mb-16 tracking-tight text-black dark:text-white">
-              Selected Work
-            </h2>
-          </TextWithBlur>
+      <section id="work" className="section py-20 max-w-4xl mx-auto w-full px-6 md:px-20">
+        <TextWithBlur>
+          <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
+            Work
+          </h3>
+        </TextWithBlur>
 
-          <div className="flex flex-col">
-            {projects.map((project, index) => {
-              return (
-                <TextWithBlur key={index} delay={index * 100}>
-                  <div
-                    className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-14"
-                  >
-                    {/* Project Info */}
-                    <div className="col-span-1 flex items-baseline gap-2">
-                      <span className="font-mono text-xs md:text-sm text-black/40 dark:text-white/40 select-none">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <h3 className="text-lg md:text-xl font-light tracking-tight text-black dark:text-white">
+        <div className="flex flex-col">
+          {projects.map((project, index) => {
+            return (
+              <TextWithBlur key={index} delay={index * 50}>
+                <Link
+                  href={`/projects/${project.slug}`}
+                  className="group block py-5 border-t border-black/10 dark:border-white/10"
+                  suppressHydrationWarning
+                >
+                  <div className="flex items-baseline gap-4 md:gap-6">
+                    {/* Index Number */}
+                    <span className="font-mono text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {/* Content Row */}
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
+                      <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300">
                         {project.title}
-                      </h3>
-                    </div>
-
-                    {/* Project Details */}
-                    <div className="col-span-1 md:col-span-2 space-y-6">
-                      <p className="text-sm md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed">
+                      </span>
+                      <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
+                      <span className="text-black/40 dark:text-white/40 font-light group-hover:text-black/70 dark:group-hover:text-white/70 transition-colors duration-300 text-sm">
                         {project.description}
-                      </p>
-                      <div className="flex flex-wrap gap-6 text-sm md:text-base font-light">
-                        <Link
-                          href={`/projects/${project.slug}`}
-                          className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
-                          suppressHydrationWarning
-                        >
-                          View Details
-                        </Link>
-                        {project.liveUrl && (
-                          <a
-                            href={project.liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
-                            suppressHydrationWarning
-                          >
-                            Live Demo
-                          </a>
-                        )}
-                        {project.github && !project.isPrivate && (
-                          <a
-                            href={`https://${project.github}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
-                            suppressHydrationWarning
-                          >
-                            Source Code
-                          </a>
-                        )}
-                      </div>
+                      </span>
                     </div>
                   </div>
-                </TextWithBlur>
-              )
-            })}
-            {/* End of list bottom border */}
-            <div className="border-t border-black/10 dark:border-white/10" />
-          </div>
+                </Link>
+              </TextWithBlur>
+            )
+          })}
+          {/* End of list bottom border */}
+          <div className="border-t border-black/10 dark:border-white/10" />
         </div>
       </section>
 
-
-
       {/* Contact Section */}
-      <section id="contact" className="section min-h-screen flex flex-col justify-center items-center px-6 md:px-20 py-20">
-        <InteractiveText className="text-5xl md:text-6xl font-light tracking-tight mb-6 text-center">
-          Let's Connect
-        </InteractiveText>
+      <section id="contact" className="section py-20 max-w-4xl mx-auto w-full px-6 md:px-20">
         <TextWithBlur>
-          <p className="text-xl font-light text-center max-w-2xl text-black/70 dark:text-white/70 mb-12">
-            Interested in working together? Feel free to reach out.
-          </p>
+          <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
+            Contact
+          </h3>
         </TextWithBlur>
-        <TextWithBlur>
-          <a
-            href="mailto:contact@tirup.in"
-            className="text-lg font-light border-b border-accent text-black/80 dark:text-white/80 pb-1 hover:text-accent dark:hover:text-accent transition-colors"
-          >
-            contact@tirup.in
-          </a>
-        </TextWithBlur>
+        <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
+          <TextWithBlur delay={50}>
+            <p>
+              I'm always open to new opportunities, collaborations, or simply discussing web development, cryptography, and UI/UX design.
+            </p>
+          </TextWithBlur>
+          <TextWithBlur delay={100}>
+            <p>
+              Reach out via email at <a href="mailto:contact@tirup.in" className="underline underline-offset-4 decoration-accent hover:text-accent transition-colors duration-300">contact@tirup.in</a>.
+            </p>
+          </TextWithBlur>
+        </div>
       </section>
 
       {/* Footer */}

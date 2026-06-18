@@ -3,10 +3,8 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import InteractiveText from "@/components/interactive-text"
 import TextWithBlur from "@/components/text-with-blur"
-import { ArrowLeft, ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { ArrowLeft, ArrowUpRight } from "lucide-react"
 
 import { projectsData } from "@/lib/projects-data"
 
@@ -19,7 +17,6 @@ export default function ProjectPage() {
   const [mounted, setMounted] = useState(false)
   const [notFound, setNotFound] = useState(false)
 
-  // Improve scroll smoothness
   useEffect(() => {
     setMounted(true)
     document.documentElement.style.scrollBehavior = "smooth"
@@ -28,19 +25,16 @@ export default function ProjectPage() {
     }
   }, [])
 
-  // Get project data based on slug
   useEffect(() => {
     if (slug) {
-      // Normalize slug to lowercase for matching
       const normalizedSlug = slug.toLowerCase()
       const foundProject = projectsData[normalizedSlug as keyof typeof projectsData]
-      
+
       if (foundProject) {
         setProject(foundProject)
         setNotFound(false)
         document.title = `${foundProject.title} | Tirup Mehta`
 
-        // Determine next project
         const projectKeys = Object.keys(projectsData)
         const currentIndex = projectKeys.indexOf(normalizedSlug)
         const nextIndex = (currentIndex + 1) % projectKeys.length
@@ -52,14 +46,13 @@ export default function ProjectPage() {
     }
   }, [slug])
 
-  // Loading state
   if (notFound) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <h1 className="text-4xl font-light mb-4">Project Not Found</h1>
         <p className="text-black/50 dark:text-white/50 mb-8">The project you're looking for doesn't exist or has been moved.</p>
-        <Link href="/" className="text-accent hover:underline flex items-center">
-          <ArrowLeft size={16} className="mr-2" />
+        <Link href="/" className="text-accent hover:underline flex items-center gap-2 text-sm">
+          <ArrowLeft size={14} />
           Back to Home
         </Link>
       </div>
@@ -69,43 +62,47 @@ export default function ProjectPage() {
   if (!project) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-xl text-black/50 dark:text-white/50">Loading...</p>
+        <p className="text-black/50 dark:text-white/50">Loading...</p>
       </div>
     )
   }
 
   return (
-    <main className="relative min-h-screen px-6 md:px-20 pt-40 md:pt-64 pb-8 md:pb-2">
-      {/* Back button */}
-      <div className="absolute top-8 md:top-24 left-6 md:left-20">
+    <main className="relative min-h-screen">
+      <div className="section px-6 md:px-20 pt-28 pb-20 max-w-4xl mx-auto w-full">
+
+        {/* Back link */}
         <TextWithBlur>
-          <Link href="/" className="inline-flex items-center text-sm md:text-base text-black/50 dark:text-white/50 hover:text-accent dark:hover:text-accent transition-colors">
-            <ArrowLeft size={16} className="mr-2" />
-            Back to Overview
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mb-10"
+          >
+            <ArrowLeft size={13} />
+            Overview
           </Link>
         </TextWithBlur>
-      </div>
 
-      <div className="w-full max-w-4xl mx-auto px-4 md:px-0">
-
-      {/* Hero Section */}
-      <section className="section mb-10 md:mb-20">
-        <InteractiveText className="text-4xl md:text-5xl font-light tracking-tight mb-8">
-          {project.title}
-        </InteractiveText>
-        <TextWithBlur>
-          <p className="text-lg md:text-xl font-light text-black/70 dark:text-white/70 leading-relaxed mb-8">{project.fullDescription}</p>
+        {/* Project label + title */}
+        <TextWithBlur delay={50}>
+          <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4">
+            Project
+          </p>
+          <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white mb-6">
+            {project.title}
+          </h1>
         </TextWithBlur>
-        <TextWithBlur>
-          <div className="flex flex-wrap gap-6 text-sm md:text-base font-light">
+
+        {/* Links row */}
+        <TextWithBlur delay={80}>
+          <div className="flex gap-6 text-sm md:text-base font-light text-black/40 dark:text-white/40 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
             {project.liveUrl && (
               <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
+                className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
               >
-                Live Demo
+                Live Demo <ArrowUpRight size={12} />
               </a>
             )}
             {project.github && !project.isPrivate && (
@@ -113,9 +110,9 @@ export default function ProjectPage() {
                 href={`https://${project.github}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
+                className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
               >
-                Source Code
+                Source Code <ArrowUpRight size={12} />
               </a>
             )}
             {project.documentationUrl && (
@@ -123,31 +120,35 @@ export default function ProjectPage() {
                 href={project.documentationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block text-black/80 dark:text-white/80 pb-1 link-hover"
+                className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
               >
-                Documentation
+                Docs <ArrowUpRight size={12} />
               </a>
             )}
           </div>
         </TextWithBlur>
-      </section>
 
-      {/* Project Details List */}
-      <section className="section py-16">
+        {/* Description */}
+        <TextWithBlur delay={100}>
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-16">
+            <p>{project.fullDescription}</p>
+          </div>
+        </TextWithBlur>
+
+        {/* Details */}
         <div className="flex flex-col">
-          {/* Row 1: Technical Stack */}
           {project.techStack && (
             <TextWithBlur>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-14">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono text-xs md:text-sm text-black/40 dark:text-white/40 select-none">01</span>
-                  <h3 className="text-lg md:text-xl font-light tracking-tight text-black dark:text-white">Tech Stack</h3>
+                  <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">01</span>
+                  <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Tech Stack</h3>
                 </div>
                 <div className="col-span-1 md:col-span-2 flex flex-wrap gap-2">
                   {project.techStack.map((tech: string) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 bg-black/5 dark:bg-white/10 text-xs md:text-sm font-light rounded-sm border border-black/5 dark:border-white/5 text-black dark:text-white"
+                      className="px-3 py-1 bg-black/5 dark:bg-white/5 text-xs font-light border border-black/5 dark:border-white/5 text-black/70 dark:text-white/70"
                     >
                       {tech}
                     </span>
@@ -157,55 +158,52 @@ export default function ProjectPage() {
             </TextWithBlur>
           )}
 
-          {/* Row 2: Core Engine */}
           {project.engine && (
             <TextWithBlur>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-14">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono text-xs md:text-sm text-black/40 dark:text-white/40 select-none">02</span>
-                  <h3 className="text-lg md:text-xl font-light tracking-tight text-black dark:text-white">Core Engine</h3>
+                  <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">02</span>
+                  <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Core Engine</h3>
                 </div>
                 <div className="col-span-1 md:col-span-2">
-                  <p className="text-sm md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed">{project.engine}</p>
+                  <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">{project.engine}</p>
                 </div>
               </div>
             </TextWithBlur>
           )}
 
-          {/* Details Rows */}
           {project.details.map((detail: any, index: number) => {
             const baseIndex = (project.techStack ? 1 : 0) + (project.engine ? 1 : 0)
             const displayIndex = String(baseIndex + index + 1).padStart(2, "0")
 
             return (
-              <TextWithBlur key={index}>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-14">
+              <TextWithBlur key={index} delay={index * 40}>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                   <div className="col-span-1 flex items-baseline gap-2">
-                    <span className="font-mono text-xs md:text-sm text-black/40 dark:text-white/40 select-none">{displayIndex}</span>
-                    <h3 className="text-lg md:text-xl font-light tracking-tight text-black dark:text-white">{detail.title}</h3>
+                    <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">{displayIndex}</span>
+                    <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">{detail.title}</h3>
                   </div>
                   <div className="col-span-1 md:col-span-2">
-                    <p className="text-sm md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed">{detail.content}</p>
+                    <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">{detail.content}</p>
                   </div>
                 </div>
               </TextWithBlur>
             )
           })}
 
-          {/* Stats Row */}
           {project.stats && (
             <TextWithBlur>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-14">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono text-xs md:text-sm text-black/40 dark:text-white/40 select-none">
+                  <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">
                     {String((project.techStack ? 1 : 0) + (project.engine ? 1 : 0) + project.details.length + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="text-lg md:text-xl font-light tracking-tight text-black dark:text-white">Metrics</h3>
+                  <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h3>
                 </div>
-                <div className="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+                <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 md:gap-8">
                   {Object.entries(project.stats).map(([key, value]: [string, any]) => (
                     <div key={key}>
-                      <h4 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1">
+                      <h4 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1">
                         {key.replace(/([A-Z])/g, " $1").trim()}
                       </h4>
                       <p className="text-2xl md:text-3xl font-light text-accent tracking-tighter">{value}</p>
@@ -216,38 +214,44 @@ export default function ProjectPage() {
             </TextWithBlur>
           )}
 
-          {/* End of list bottom border */}
+          {/* End border */}
           <div className="border-t border-black/10 dark:border-white/10" />
         </div>
-      </section>
 
-      {/* Next Project */}
-      <section className="section py-8 md:py-10 text-center border-t border-black/10 dark:border-white/10 mt-6 md:mt-8">
-        <h2 className="text-3xl font-light mb-8 tracking-tight text-black dark:text-white">
-          Next Project
-        </h2>
+        {/* Next Project */}
         {nextProject && (
           <TextWithBlur>
-            <Link
-              href={`/projects/${nextSlug}`}
-              className="group inline-block"
-            >
-              <span className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white group-hover:text-accent transition-colors inline-flex items-center gap-3">
-                <span>{nextProject.title}</span>
-                <ArrowRight className="w-6 h-6 md:w-8 md:h-8 transform group-hover:translate-x-2 transition-transform text-black/40 dark:text-white/40 group-hover:text-accent" />
-              </span>
-              <p className="text-sm md:text-lg font-light text-black/50 dark:text-white/50 mt-4 max-w-xl mx-auto">
-                {nextProject.description}
+            <div className="pt-16 pb-4">
+              <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
+                Next
               </p>
-            </Link>
+              <Link
+                href={`/projects/${nextSlug}`}
+                className="group block py-5 border-t border-black/10 dark:border-white/10"
+              >
+                <div className="flex items-baseline gap-4 md:gap-6">
+                  <span className="font-mono text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0">→</span>
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
+                    <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300">
+                      {nextProject.title}
+                    </span>
+                    <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
+                    <span className="text-black/40 dark:text-white/40 font-light group-hover:text-black/70 dark:group-hover:text-white/70 transition-colors duration-300 text-sm">
+                      {nextProject.description}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+              <div className="border-t border-black/10 dark:border-white/10" />
+            </div>
           </TextWithBlur>
         )}
-      </section>
 
-      {/* Footer */}
-      <footer className="py-4 text-center border-t border-black/10 dark:border-white/10">
-        <p className="text-sm md:text-base text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
-      </footer>
+        {/* Footer */}
+        <footer className="py-10 text-center border-t border-black/10 dark:border-white/10 mt-4">
+          <p className="text-sm text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
+        </footer>
+
       </div>
     </main>
   )
