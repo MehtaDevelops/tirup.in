@@ -59,7 +59,7 @@ export default async function BlogsPage() {
       <Header />
 
       {/* Blogs list Section */}
-      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20 pt-8">
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20 pt-0">
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>
@@ -75,7 +75,7 @@ export default async function BlogsPage() {
                 <TextWithBlur key={post.slug} delay={index * 40}>
                   <Link
                     href={`/blogs/${post.slug}`}
-                    className="group block py-5 border-t border-black/10 dark:border-white/10"
+                    className={`group block py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
                   >
                     <div className="flex justify-between items-baseline gap-4">
                       {/* Left: Title only */}
