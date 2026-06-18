@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
-import { ArrowUpRight } from "lucide-react"
+import { ArrowUpRight, Download, X } from "lucide-react"
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 export default function Header() {
@@ -40,10 +40,10 @@ export default function Header() {
             </div>
             <button 
               onClick={handleDismissPopup}
-              className="text-black/30 dark:text-white/30 hover:text-black dark:hover:text-white transition-colors text-[11px] font-mono shrink-0"
+              className="p-1 rounded-full text-black/35 dark:text-white/35 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 shrink-0 cursor-pointer"
               aria-label="Dismiss banner"
             >
-              [dismiss]
+              <X size={13} />
             </button>
           </div>
         </div>
@@ -71,9 +71,10 @@ export default function Header() {
               <a 
                 href="/Resume_Tirup_Mehta.pdf" 
                 download
-                className="inline-flex items-center px-2.5 py-0.5 text-xs font-mono border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 select-none cursor-pointer"
+                className="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-300 select-none cursor-pointer transform hover:-translate-y-[1px]"
               >
-                [resume] ⬇
+                <Download size={10} />
+                <span>Resume</span>
               </a>
             </div>
           </div>
