@@ -64,9 +64,18 @@ export default function Header() {
                 priority
               />
             </div>
-            <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white">
-              Tirup Mehta <span className="text-black/40 dark:text-white/30 text-2xl md:text-3xl ml-1"><span className="italic" style={{ fontFamily: "var(--font-playfair)" }}>aka</span> @TirupMehta</span>
-            </h1>
+            <div className="flex items-baseline gap-3 flex-wrap">
+              <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white">
+                Tirup Mehta
+              </h1>
+              <a 
+                href="/Resume_Tirup_Mehta.pdf" 
+                download
+                className="inline-flex items-center px-2.5 py-0.5 text-xs font-mono border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 select-none cursor-pointer"
+              >
+                [resume] ⬇
+              </a>
+            </div>
           </div>
         </TextWithBlur>
 

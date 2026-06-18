@@ -25,7 +25,7 @@ export default function SkillsPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-10 px-6 text-center border-t border-black/10">
+      <footer className="py-6 px-6 text-center border-t border-black/10">
         <p className="text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>

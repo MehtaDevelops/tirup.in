@@ -186,7 +186,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </TextWithBlur>
 
         {/* Footer */}
-        <footer className="py-10 text-center border-t border-black/10 dark:border-white/10 mt-8">
+        <footer className="py-6 text-center border-t border-black/10 dark:border-white/10 mt-8">
           <p className="text-sm text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
         </footer>
       </div>

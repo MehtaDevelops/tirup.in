@@ -233,7 +233,7 @@ export default async function ProjectPage({ params }: PageProps) {
         )}
 
         {/* Footer */}
-        <footer className="py-10 text-center border-t border-black/10 dark:border-white/10 mt-4">
+        <footer className="py-6 text-center border-t border-black/10 dark:border-white/10 mt-4">
           <p className="text-sm text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
         </footer>
 
