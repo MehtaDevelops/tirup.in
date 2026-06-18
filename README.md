@@ -97,7 +97,7 @@ This project is private. All rights reserved.
 
 **Tirup Mehta**
 
-- GitHub: [@hiddenfrequency](https://github.com/hiddenfrequency)
+- GitHub: [@TirupMehta](https://github.com/TirupMehta)
 - Website: [tirup.in](https://tirup.in)
 
 ---
