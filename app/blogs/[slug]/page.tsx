@@ -55,6 +55,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       return {
         title: `${data.title} | Tirup Mehta`,
         description: data.tldr,
+        openGraph: {
+          title: `${data.title} | Tirup Mehta`,
+          description: data.tldr,
+          type: "article",
+          images: ["/profile.png"]
+        }
       }
     }
   } catch (e) {

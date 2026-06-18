@@ -32,6 +32,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: `${project.title} | Tirup Mehta`,
       description: project.description,
+      openGraph: {
+        title: `${project.title} | Tirup Mehta`,
+        description: project.description,
+        type: "website",
+        images: ["/profile.png"]
+      }
     }
   }
   return {

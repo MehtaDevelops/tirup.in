@@ -19,9 +19,57 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: "Tirup Mehta | Designer & Developer",
+  metadataBase: new URL("https://tirup.in"),
+  title: {
+    default: "Tirup Mehta | Designer & Developer",
+    template: "%s | Tirup Mehta"
+  },
   description:
     "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+  keywords: [
+    "Tirup Mehta",
+    "Tirup",
+    "Mehta",
+    "Frontend Developer",
+    "UI/UX Designer",
+    "Cybersecurity Specialist",
+    "Gujarat India",
+    "React Developer",
+    "Next.js Portfolio",
+    "Web Security"
+  ],
+  authors: [{ name: "Tirup Mehta", url: "https://tirup.in" }],
+  creator: "Tirup Mehta",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://tirup.in",
+    title: "Tirup Mehta | Designer & Developer",
+    description: "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+    siteName: "Tirup Mehta Portfolio",
+    images: [
+      {
+        url: "/profile.png",
+        width: 512,
+        height: 512,
+        alt: "Tirup Mehta"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tirup Mehta | Designer & Developer",
+    description: "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+    creator: "@TirupMehta",
+    images: ["/profile.png"]
+  },
+  alternates: {
+    canonical: "https://tirup.in"
+  }
 }
 
 export default function RootLayout({
