@@ -142,12 +142,15 @@ export default async function BlogPostPage({ params }: PageProps) {
             {post.title}
           </h1>
 
-          {/* Render TL;DR with custom markdown parser */}
-          {post.tldr && (
-            <div 
-              className="text-base md:text-lg text-black/60 dark:text-white/65 font-light leading-relaxed mb-8 max-w-3xl border-l-2 border-black/10 dark:border-white/10 pl-4 py-1 italic"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(post.tldr) }}
-            />
+          {/* Render TL;DR with custom markdown parser in a styled box if it's not already inline in the contentHtml */}
+          {post.tldr && !post.contentHtml?.includes("tldr-box") && (
+            <div className="tldr-box max-w-3xl mb-8">
+              <span className="tldr-label">TL;DR</span>
+              <div 
+                className="text-base md:text-lg font-light leading-relaxed text-black/75 dark:text-white/75"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(post.tldr) }}
+              />
+            </div>
           )}
         </TextWithBlur>
 
@@ -164,7 +167,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
             )}
             <a
-              href={`https://blogs.tirup.in/post/${slug}`}
+              href={`https://blogs.tirup.in/${slug}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-0.5"

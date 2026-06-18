@@ -175,9 +175,14 @@ export const AnimatedThemeToggler = ({
     )
 
     const applyTheme = () => {
-      const newTheme = !isDark
+      const isCurrentlyDark = document.documentElement.classList.contains("dark")
+      const newTheme = !isCurrentlyDark
       setIsDark(newTheme)
-      document.documentElement.classList.toggle("dark")
+      if (newTheme) {
+        document.documentElement.classList.add("dark")
+      } else {
+        document.documentElement.classList.remove("dark")
+      }
       localStorage.setItem("theme", newTheme ? "dark" : "light")
     }
 
@@ -208,30 +213,40 @@ export const AnimatedThemeToggler = ({
       root.style.removeProperty("--magicui-theme-vt-clip-from")
     }
 
-    const transition = document.startViewTransition(() => {
-      flushSync(applyTheme)
-    })
-    if (typeof transition?.finished?.finally === "function") {
-      transition.finished.finally(cleanup)
-    } else {
-      cleanup()
-    }
-
-    const ready = transition?.ready
-    if (ready && typeof ready.then === "function") {
-      ready.then(() => {
-        document.documentElement.animate(
-          { clipPath },
-          {
-            duration,
-            easing: shape === "star" ? "linear" : "ease-in-out",
-            fill: "forwards",
-            pseudoElement: "::view-transition-new(root)",
-          }
-        )
+    try {
+      const transition = document.startViewTransition(() => {
+        try {
+          flushSync(applyTheme)
+        } catch (e) {
+          applyTheme()
+        }
       })
+      if (typeof transition?.finished?.finally === "function") {
+        transition.finished.finally(cleanup)
+      } else {
+        cleanup()
+      }
+
+      const ready = transition?.ready
+      if (ready && typeof ready.then === "function") {
+        ready.then(() => {
+          document.documentElement.animate(
+            { clipPath },
+            {
+              duration,
+              easing: shape === "star" ? "linear" : "ease-in-out",
+              fill: "forwards",
+              pseudoElement: "::view-transition-new(root)",
+            }
+          )
+        })
+      }
+    } catch (err) {
+      console.warn("View transition failed, falling back to direct theme application:", err)
+      cleanup()
+      applyTheme()
     }
-  }, [shape, fromCenter, duration, isDark])
+  }, [shape, fromCenter, duration])
 
   return (
     <button

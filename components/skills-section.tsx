@@ -82,13 +82,7 @@ export default function SkillsSection() {
   ]
 
   return (
-    <div className="w-full">
-      {/* Section Title & Subtitle */}
-      <TextWithBlur>
-        <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
-          Skills
-        </h3>
-      </TextWithBlur>
+    <div className="w-full pt-0">
 
       <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-14">
         <TextWithBlur delay={50}>

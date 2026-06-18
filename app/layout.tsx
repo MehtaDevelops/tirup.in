@@ -4,8 +4,6 @@ import { Inter, Playfair_Display } from "next/font/google"
 import Script from "next/script"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
-import Dock from "@/components/ui/dock"
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -74,9 +72,6 @@ export default function RootLayout({
           }}
         />
         {/* End Google Tag Manager (noscript) */}
-
-        {/* Navigation Dock */}
-        <Dock />
 
         <PageTransition>{children}</PageTransition>
       </body>

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 export default function Header() {
   const pathname = usePathname()
@@ -49,7 +50,7 @@ export default function Header() {
       )}
 
       {/* Intro/Hero Header Area */}
-      <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-28 pb-4">
+      <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-28 pb-0">
         {/* Avatar + Title inline */}
         <TextWithBlur>
           <div className="flex items-center gap-4 mb-6">
@@ -70,34 +71,42 @@ export default function Header() {
         </TextWithBlur>
 
         {/* Navigation Tabs */}
-        <TextWithBlur delay={100}>
-          <div className="flex gap-6 text-sm md:text-base font-light mb-8 border-b border-black/5 dark:border-white/5 pb-4">
-            <Link 
-              href="/" 
-              className={`transition-colors ${isActive("/") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
-            >
-              Home
-            </Link>
-            <Link 
-              href="/work" 
-              className={`transition-colors ${isActive("/work") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
-            >
-              Work
-            </Link>
-            <Link 
-              href="/skills" 
-              className={`transition-colors ${isActive("/skills") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
-            >
-              Skills
-            </Link>
-            <Link 
-              href="/blogs" 
-              className={`transition-colors ${isActive("/blogs") || pathname?.startsWith("/blogs") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
-            >
-              Writing
-            </Link>
-          </div>
-        </TextWithBlur>
+        <div className="flex justify-between items-center mb-8 border-b border-black/5 dark:border-white/5 pb-4">
+          <TextWithBlur delay={100}>
+            <div className="flex gap-6 text-sm md:text-base font-light">
+              <Link 
+                href="/" 
+                className={`transition-colors ${isActive("/") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+              >
+                Home
+              </Link>
+              <Link 
+                href="/work" 
+                className={`transition-colors ${isActive("/work") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+              >
+                Work
+              </Link>
+              <Link 
+                href="/skills" 
+                className={`transition-colors ${isActive("/skills") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+              >
+                Skills
+              </Link>
+              <Link 
+                href="/blogs" 
+                className={`transition-colors ${isActive("/blogs") || pathname?.startsWith("/blogs") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+              >
+                Writing
+              </Link>
+            </div>
+          </TextWithBlur>
+          
+          {/* Theme Switcher on the far right */}
+          <AnimatedThemeToggler 
+            variant="circle"
+            className="flex items-center justify-center w-10 h-10 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer"
+          />
+        </div>
       </div>
     </>
   )

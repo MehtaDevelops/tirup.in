@@ -1,71 +1,56 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import type { Metadata } from "next"
 import Link from "next/link"
-import { useParams } from "next/navigation"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
-
 import { projectsData } from "@/lib/projects-data"
 
-export default function ProjectPage() {
-  const params = useParams()
-  const slug = params?.slug as string
-  const [project, setProject] = useState<any>(null)
-  const [nextProject, setNextProject] = useState<any>(null)
-  const [nextSlug, setNextSlug] = useState<string>("")
-  const [mounted, setMounted] = useState(false)
-  const [notFound, setNotFound] = useState(false)
+interface PageProps {
+  params: Promise<{ slug: string }>
+}
 
-  useEffect(() => {
-    setMounted(true)
-    document.documentElement.style.scrollBehavior = "smooth"
-    return () => {
-      document.documentElement.style.scrollBehavior = ""
+// Generate dynamic SEO metadata
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const normalizedSlug = slug?.toLowerCase()
+  const project = projectsData[normalizedSlug as keyof typeof projectsData]
+  
+  if (project) {
+    return {
+      title: `${project.title} | Tirup Mehta`,
+      description: project.description,
     }
-  }, [])
+  }
+  return {
+    title: "Project Not Found | Tirup Mehta",
+  }
+}
 
-  useEffect(() => {
-    if (slug) {
-      const normalizedSlug = slug.toLowerCase()
-      const foundProject = projectsData[normalizedSlug as keyof typeof projectsData]
+export default async function ProjectPage({ params }: PageProps) {
+  const { slug } = await params
+  const normalizedSlug = slug?.toLowerCase()
+  const project = projectsData[normalizedSlug as keyof typeof projectsData]
 
-      if (foundProject) {
-        setProject(foundProject)
-        setNotFound(false)
-        document.title = `${foundProject.title} | Tirup Mehta`
-
-        const projectKeys = Object.keys(projectsData)
-        const currentIndex = projectKeys.indexOf(normalizedSlug)
-        const nextIndex = (currentIndex + 1) % projectKeys.length
-        setNextSlug(projectKeys[nextIndex])
-        setNextProject(projectsData[projectKeys[nextIndex] as keyof typeof projectsData])
-      } else {
-        setNotFound(true)
-      }
-    }
-  }, [slug])
-
-  if (notFound) {
+  if (!project) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <h1 className="text-4xl font-light mb-4">Project Not Found</h1>
         <p className="text-black/50 dark:text-white/50 mb-8">The project you're looking for doesn't exist or has been moved.</p>
-        <Link href="/" className="text-accent hover:underline flex items-center gap-2 text-sm">
+        <Link href="/work" className="text-accent hover:underline flex items-center gap-2 text-sm">
           <ArrowLeft size={14} />
-          Back to Home
+          Back to Work
         </Link>
       </div>
     )
   }
 
-  if (!project) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-black/50 dark:text-white/50">Loading...</p>
-      </div>
-    )
-  }
+  // Calculate next project slug
+  const projectKeys = Object.keys(projectsData)
+  const currentIndex = projectKeys.indexOf(normalizedSlug)
+  const nextIndex = (currentIndex + 1) % projectKeys.length
+  const nextSlug = projectKeys[nextIndex]
+  const nextProject = projectsData[nextSlug as keyof typeof projectsData]
+
+  const currentYear = new Date().getFullYear()
 
   return (
     <main className="relative min-h-screen">
@@ -74,11 +59,11 @@ export default function ProjectPage() {
         {/* Back link */}
         <TextWithBlur>
           <Link
-            href="/"
+            href="/work"
             className="inline-flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mb-10"
           >
             <ArrowLeft size={13} />
-            Overview
+            Work
           </Link>
         </TextWithBlur>
 
@@ -172,7 +157,7 @@ export default function ProjectPage() {
             </TextWithBlur>
           )}
 
-          {project.details.map((detail: any, index: number) => {
+          {project.details && project.details.map((detail: any, index: number) => {
             const baseIndex = (project.techStack ? 1 : 0) + (project.engine ? 1 : 0)
             const displayIndex = String(baseIndex + index + 1).padStart(2, "0")
 
@@ -196,7 +181,7 @@ export default function ProjectPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
                   <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">
-                    {String((project.techStack ? 1 : 0) + (project.engine ? 1 : 0) + project.details.length + 1).padStart(2, "0")}
+                    {String((project.techStack ? 1 : 0) + (project.engine ? 1 : 0) + (project.details ? project.details.length : 0) + 1).padStart(2, "0")}
                   </span>
                   <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h3>
                 </div>
@@ -249,7 +234,7 @@ export default function ProjectPage() {
 
         {/* Footer */}
         <footer className="py-10 text-center border-t border-black/10 dark:border-white/10 mt-4">
-          <p className="text-sm text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
+          <p className="text-sm text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
         </footer>
 
       </div>

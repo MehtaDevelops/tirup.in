@@ -315,3 +315,33 @@ body {
   color: rgba(255, 255, 255, 0.55);
 }
 
+/* TL;DR Box styling matching the blogs application but adapted to the portfolio typography */
+.tldr-box {
+  background: rgba(138, 157, 255, 0.04);
+  border: 1px solid rgba(138, 157, 255, 0.12);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+html.dark .tldr-box {
+  background: rgba(165, 180, 252, 0.03);
+  border: 1px solid rgba(165, 180, 252, 0.1);
+}
+
+.tldr-box .tldr-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.tldr-box p {
+  margin: 0;
+}
+
+

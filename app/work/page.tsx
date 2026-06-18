@@ -116,19 +116,13 @@ export default function WorkPage() {
 
       {/* Projects Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <TextWithBlur>
-          <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
-            Work
-          </h3>
-        </TextWithBlur>
-
         <div className="flex flex-col">
           {projects.map((project, index) => {
             return (
               <TextWithBlur key={index} delay={index * 50}>
                 <Link
                   href={`/projects/${project.slug}`}
-                  className="group block py-5 border-t border-black/10 dark:border-white/10"
+                  className={`group block py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
                   suppressHydrationWarning
                 >
                   <div className="flex items-baseline gap-4 md:gap-6">
