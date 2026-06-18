@@ -209,3 +209,109 @@ body {
   clip-path: var(--magicui-theme-vt-clip-from);
 }
 
+/* Slide up and fade in animation for notifications */
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Blog post typography styles */
+.blog-content {
+  font-weight: 300;
+  line-height: 1.8;
+  font-size: 16px;
+}
+@media (min-width: 768px) {
+  .blog-content {
+    font-size: 17px;
+  }
+}
+.blog-content h1, .blog-content h2, .blog-content h3 {
+  font-weight: 500;
+  color: var(--fg);
+  margin-top: 2.25rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+.blog-content h1 { font-size: 1.65rem; }
+.blog-content h2 { font-size: 1.35rem; }
+.blog-content h3 { font-size: 1.15rem; }
+.blog-content p {
+  margin-bottom: 1.5rem;
+  color: rgba(0, 0, 0, 0.75);
+}
+.dark .blog-content p {
+  color: rgba(255, 255, 255, 0.75);
+}
+.blog-content a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--accent);
+  transition: color 0.3s;
+}
+.blog-content a:hover {
+  color: var(--accent);
+}
+.blog-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.blog-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.blog-content li {
+  margin-bottom: 0.5rem;
+}
+.blog-content pre {
+  background-color: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1.25rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  font-family: monospace;
+}
+.dark .blog-content pre {
+  background-color: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.blog-content code {
+  font-family: monospace;
+  font-size: 0.875em;
+  background-color: rgba(0, 0, 0, 0.04);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+}
+.dark .blog-content code {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.blog-content pre code {
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+}
+.blog-content blockquote {
+  border-left: 2px solid var(--accent);
+  padding-left: 1.25rem;
+  margin-left: 0;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.55);
+}
+.dark .blog-content blockquote {
+  color: rgba(255, 255, 255, 0.55);
+}
+

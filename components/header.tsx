@@ -1,0 +1,104 @@
+"use client"
+
+import Image from "next/image"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import TextWithBlur from "@/components/text-with-blur"
+import { ArrowUpRight } from "lucide-react"
+
+export default function Header() {
+  const pathname = usePathname()
+  const [showPopup, setShowPopup] = useState(false)
+
+  useEffect(() => {
+    // Check localStorage for popup dismissal
+    const hasDismissed = localStorage.getItem("dismissedBlogPopup")
+    if (!hasDismissed) {
+      setShowPopup(true)
+    }
+  }, [])
+
+  const handleDismissPopup = () => {
+    setShowPopup(false)
+    localStorage.setItem("dismissedBlogPopup", "true")
+  }
+
+  const isActive = (path: string) => pathname === path
+
+  return (
+    <>
+      {/* Top Notice Banner */}
+      {showPopup && (
+        <div className="reveal-in w-full bg-black/[0.015] dark:bg-white/[0.01] border-b border-black/5 dark:border-white/5 py-2.5 text-xs font-light text-black/50 dark:text-white/50">
+          <div className="max-w-4xl mx-auto w-full px-6 md:px-20 flex items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="text-accent font-medium uppercase tracking-[0.15em] text-[10px]">blogs</span>
+              <span className="text-black/20 dark:text-white/20 select-none">/</span>
+              <span>Thoughts on development, design, and security. Read at <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-accent hover:text-accent dark:hover:text-white transition-colors font-medium">blogs.tirup.in</a> ↗</span>
+            </div>
+            <button 
+              onClick={handleDismissPopup}
+              className="text-black/30 dark:text-white/30 hover:text-black dark:hover:text-white transition-colors text-[11px] font-mono shrink-0"
+              aria-label="Dismiss banner"
+            >
+              [dismiss]
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Intro/Hero Header Area */}
+      <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-28 pb-4">
+        {/* Avatar + Title inline */}
+        <TextWithBlur>
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+              <Image
+                src="/profile.png"
+                alt="Tirup Mehta avatar"
+                width={112}
+                height={112}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white">
+              Tirup Mehta <span className="text-black/40 dark:text-white/30 text-2xl md:text-3xl ml-1"><span className="italic" style={{ fontFamily: "var(--font-playfair)" }}>aka</span> @TirupMehta</span>
+            </h1>
+          </div>
+        </TextWithBlur>
+
+        {/* Navigation Tabs */}
+        <TextWithBlur delay={100}>
+          <div className="flex gap-6 text-sm md:text-base font-light mb-8 border-b border-black/5 dark:border-white/5 pb-4">
+            <Link 
+              href="/" 
+              className={`transition-colors ${isActive("/") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+            >
+              Home
+            </Link>
+            <Link 
+              href="/work" 
+              className={`transition-colors ${isActive("/work") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+            >
+              Work
+            </Link>
+            <Link 
+              href="/skills" 
+              className={`transition-colors ${isActive("/skills") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+            >
+              Skills
+            </Link>
+            <Link 
+              href="/blogs" 
+              className={`transition-colors ${isActive("/blogs") || pathname?.startsWith("/blogs") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+            >
+              Writing
+            </Link>
+          </div>
+        </TextWithBlur>
+      </div>
+    </>
+  )
+}
