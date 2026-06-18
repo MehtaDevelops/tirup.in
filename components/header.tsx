@@ -66,6 +66,7 @@ export default function Header() {
                 height={112}
                 className="w-full h-full object-cover"
                 priority
+                unoptimized
               />
             </div>
             <div className="flex items-baseline gap-3 flex-wrap">
