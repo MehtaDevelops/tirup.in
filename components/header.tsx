@@ -105,37 +105,51 @@ export default function Header() {
               </a>
             </div>
           </div>
-        </TextWithBlur>
-
-        {/* Navigation Tabs */}
-        <div className="flex justify-between items-center gap-4 mb-8 border-b border-black/5 dark:border-white/5 pb-4 flex-nowrap">
+        </TextWithBlur>        {/* Navigation Tabs */}
+        <div className="flex justify-between items-center gap-4 mb-8 flex-nowrap">
           <TextWithBlur delay={100} className="min-w-0">
-            <div className="flex gap-3 sm:gap-6 text-[13px] sm:text-sm md:text-base font-light whitespace-nowrap">
+            <nav className="flex items-center gap-4 sm:gap-6 flex-wrap">
               <Link 
                 href="/" 
-                className={`transition-colors ${isActive("/") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                  isActive("/") 
+                    ? "text-black dark:text-white font-medium" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                }`}
               >
                 Home
               </Link>
               <Link 
                 href="/work" 
-                className={`transition-colors ${isActive("/work") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                  isActive("/work") 
+                    ? "text-black dark:text-white font-medium" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                }`}
               >
                 Work
               </Link>
               <Link 
                 href="/skills" 
-                className={`transition-colors ${isActive("/skills") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                  isActive("/skills") 
+                    ? "text-black dark:text-white font-medium" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                }`}
               >
                 Skills
               </Link>
               <Link 
                 href="/blogs" 
-                className={`transition-colors ${isActive("/blogs") || pathname?.startsWith("/blogs") ? "text-black dark:text-white font-normal" : "text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"}`}
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                  isActive("/blogs") || pathname?.startsWith("/blogs")
+                    ? "text-black dark:text-white font-medium" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                }`}
               >
                 Writing
               </Link>
-            </div>
+            </nav>
           </TextWithBlur>
           
           {/* Theme Switcher on the far right */}
