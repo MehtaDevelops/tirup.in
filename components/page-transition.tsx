@@ -17,5 +17,13 @@ export default function PageTransition({ children }: { children: React.ReactNode
     } catch (e) {}
   }, [pathname])
 
+  useEffect(() => {
+    // Enable transitions after page load
+    const timeout = setTimeout(() => {
+      document.documentElement.classList.remove("no-transitions")
+    }, 100)
+    return () => clearTimeout(timeout)
+  }, [])
+
   return <>{children}</>
 }

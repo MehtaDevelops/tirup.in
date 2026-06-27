@@ -78,41 +78,38 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <head>
+    <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
+      {/* Google Tag Manager */}
+      <Script id="google-tag-manager" strategy="afterInteractive">
+        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-N37XXZ2B');`}
+      </Script>
+      {/* End Google Tag Manager */}
+
+      {/* Google Analytics (gtag.js) */}
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-BKS7VBCPH5"
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BKS7VBCPH5');`}
+      </Script>
+      {/* End Google Analytics */}
+
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
         {/* Theme init — prevents flash of wrong theme */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})()`,
           }}
         />
-
-        {/* Google Tag Manager */}
-        <Script id="google-tag-manager" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-N37XXZ2B');`}
-        </Script>
-        {/* End Google Tag Manager */}
-
-        {/* Google Analytics (gtag.js) */}
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-BKS7VBCPH5"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-BKS7VBCPH5');`}
-        </Script>
-        {/* End Google Analytics */}
-      </head>
-
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
         {/* Google Tag Manager (noscript) */}
         <noscript
           dangerouslySetInnerHTML={{

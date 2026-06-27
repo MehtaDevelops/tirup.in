@@ -27,6 +27,12 @@ html.dark {
   --accent: #a5b4fc;
 }
 
+/* Disable transitions on page load to prevent theme flash */
+.no-transitions,
+.no-transitions * {
+  transition: none !important;
+}
+
 html {
   scroll-behavior: smooth;
   height: 100%;
