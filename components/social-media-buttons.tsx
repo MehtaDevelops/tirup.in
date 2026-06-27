@@ -59,7 +59,7 @@ export default function SocialMediaButtons() {
       color: "#000000",
     },
     {
-      name: "g.dev/Tirup",
+      name: "Google Dev",
       url: "https://g.dev/Tirup",
       icon: <Code size={16} />,
       color: "#EA4335",
