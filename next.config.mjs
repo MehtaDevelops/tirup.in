@@ -97,8 +97,8 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Scripts: self + GTM + GA + Vercel Speed Insights + Script hashes
-              `script-src 'self' 'sha256-O2lh+6ke8O9D5iLJMhLaeqDtYz9aD/Bxt91b6GnUyRI=' 'sha256-H5EedBJkfcuZPMtascwWeCeXiGkU56Pbdwu/eoODICk=' 'sha256-y+yaWivdklwOuAKsCmFK71yeX2wj1T7IMH1mmsMuWTs='${process.env.NODE_ENV === 'development' ? " 'unsafe-inline' 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://vercel.live`,
+              // Scripts: self + GTM + GA + Vercel Speed Insights + Script hashes (plus 'unsafe-inline' temporarily for Rocket Loader compatibility)
+              `script-src 'self' 'unsafe-inline' 'sha256-O2lh+6ke8O9D5iLJMhLaeqDtYz9aD/Bxt91b6GnUyRI=' 'sha256-H5EedBJkfcuZPMtascwWeCeXiGkU56Pbdwu/eoODICk=' 'sha256-y+yaWivdklwOuAKsCmFK71yeX2wj1T7IMH1mmsMuWTs='${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://vercel.live`,
               // Styles: self + Google Fonts + inline (required by Tailwind)
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Fonts: Google Fonts CDN
