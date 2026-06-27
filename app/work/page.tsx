@@ -112,6 +112,7 @@ export default function WorkPage() {
 
   return (
     <main className="relative min-h-screen">
+      <title>Work | Tirup Mehta</title>
       <Header />
 
       {/* Projects Section */}

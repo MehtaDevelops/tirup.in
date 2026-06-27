@@ -6,24 +6,25 @@ import {
   SiTypescript,
   SiNextdotjs,
   SiTailwindcss,
-  SiFramer,
   SiReact,
   SiJavascript,
-  SiNodedotjs,
-  SiBun,
-  SiPostgresql,
   SiMongodb,
   SiRedis,
   SiGit,
   SiDocker,
   SiFigma,
+  SiSupabase,
 } from "react-icons/si"
 
 const techIcons: Record<string, React.ReactNode> = {
   "TypeScript": <SiTypescript className="w-[18px] h-[18px] text-[#3178c6]" />,
   "Next.js": <SiNextdotjs className="w-[16px] h-[16px] text-zinc-900 dark:text-zinc-100" />,
   "Tailwind CSS": <SiTailwindcss className="w-[18px] h-[18px] text-[#38bdf8]" />,
-  "Motion": <SiFramer className="w-[16px] h-[16px] text-zinc-900 dark:text-zinc-100" />,
+  "Motion": (
+    <svg viewBox="0 0 25.364 9" className="w-[22px] h-auto fill-current text-zinc-900 dark:text-zinc-100" aria-hidden="true">
+      <path d="M 9.587 0 L 4.57 9 L 0 9 L 3.917 1.972 C 4.524 0.883 6.039 0 7.301 0 Z M 20.794 2.25 C 20.794 1.007 21.817 0 23.079 0 C 24.341 0 25.364 1.007 25.364 2.25 C 25.364 3.493 24.341 4.5 23.079 4.5 C 21.817 4.5 20.794 3.493 20.794 2.25 Z M 10.443 0 L 15.013 0 L 9.997 9 L 5.427 9 Z M 15.841 0 L 20.411 0 L 16.494 7.028 C 15.887 8.117 14.372 9 13.11 9 L 10.825 9 Z" />
+    </svg>
+  ),
   "React": <SiReact className="w-[18px] h-[18px] text-[#61dafb]" />,
   "JavaScript": <SiJavascript className="w-[18px] h-[18px] text-[#f7df1e] bg-black rounded-[2px]" />,
   "shadcn/ui": (
@@ -39,9 +40,12 @@ const techIcons: Record<string, React.ReactNode> = {
       <path d="M18 21.6V48C9.16344 48 2 40.1202 2 30.4V4C10.8366 4 18 11.8798 18 21.6Z" fill="var(--bg)"/>
     </svg>
   ),
-  "Node.js": <SiNodedotjs className="w-[18px] h-[18px] text-[#339933]" />,
-  "Bun": <SiBun className="w-[18px] h-[18px] text-[#eec787] dark:text-[#fbf0df]" />,
-  "PostgreSQL": <SiPostgresql className="w-[18px] h-[18px] text-[#336791]" />,
+  "Convex": (
+    <svg role="img" viewBox="0 0 24 24" className="w-[18px] h-[18px] fill-[#EE342F]">
+      <path d="M15.09 18.916c3.488-.387 6.776-2.246 8.586-5.348-.857 7.673-9.247 12.522-16.095 9.545a3.47 3.47 0 0 1-1.547-1.314c-1.539-2.417-2.044-5.492-1.318-8.282 2.077 3.584 6.3 5.78 10.374 5.399m-10.501-7.65c-1.414 3.266-1.475 7.092.258 10.24-6.1-4.59-6.033-14.41-.074-18.953a3.44 3.44 0 0 1 1.893-.707c2.825-.15 5.695.942 7.708 2.977-4.09.04-8.073 2.66-9.785 6.442m11.757-5.437C14.283 2.951 11.053.992 7.515.933c6.84-3.105 15.253 1.929 16.17 9.37a3.6 3.6 0 0 1-.334 2.02c-1.278 2.594-3.647 4.607-6.416 5.352 2.029-3.763 1.778-8.36-.589-11.847" />
+    </svg>
+  ),
+  "Supabase": <SiSupabase className="w-[18px] h-[18px] text-[#3ecf8e]" />,
   "MongoDB": <SiMongodb className="w-[18px] h-[18px] text-[#47a248]" />,
   "Redis": <SiRedis className="w-[18px] h-[18px] text-[#dc382d]" />,
   "Git": <SiGit className="w-[18px] h-[18px] text-[#f05032]" />,
@@ -73,7 +77,7 @@ export default function SkillsSection() {
     },
     {
       title: "Backend & Database",
-      skills: ["Node.js", "Bun", "PostgreSQL", "MongoDB", "Redis"],
+      skills: ["Convex", "Supabase", "MongoDB", "Redis"],
     },
     {
       title: "Dev & Design Tools",

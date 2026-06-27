@@ -58,16 +58,38 @@ export default function Header() {
         {/* Avatar + Title inline */}
         <TextWithBlur>
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
-              <Image
-                src="/profile.png"
-                alt="Tirup Mehta avatar"
-                width={112}
-                height={112}
-                className="w-full h-full object-cover"
-                priority
-                unoptimized
-              />
+            <div className="relative shrink-0 select-none group">
+              <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900">
+                <Image
+                  src="/profile.png"
+                  alt="Tirup Mehta avatar"
+                  width={112}
+                  height={112}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+              {/* Apple waving hand "Hii" emoji - Hover-triggered & bottom-left */}
+              <div className="absolute -bottom-1 -left-1.5 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-waving-hand origin-[70%_75%] pointer-events-none">
+                {/* Light theme: Yellow hand emoji */}
+                <Image
+                  src="/waving-hand.png"
+                  alt="Waving Hand Emoji (Yellow)"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain dark:hidden"
+                  priority
+                />
+                {/* Dark theme: White hand emoji */}
+                <Image
+                  src="/waving-hand-white.png"
+                  alt="Waving Hand Emoji (White)"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain hidden dark:block"
+                  priority
+                />
+              </div>
             </div>
             <div className="flex items-baseline gap-3 flex-wrap">
               <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white">

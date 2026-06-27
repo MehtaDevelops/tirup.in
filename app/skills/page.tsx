@@ -17,6 +17,7 @@ export default function SkillsPage() {
 
   return (
     <main className="relative min-h-screen">
+      <title>Skills | Tirup Mehta</title>
       <Header />
 
       {/* Skills Section */}

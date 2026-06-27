@@ -59,8 +59,13 @@ export default function NotFound() {
                 <ShieldAlert size={24} className="md:w-8 md:h-8" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-light text-black dark:text-white mb-1 md:mb-2 tracking-tighter uppercase">ERROR_404</h1>
-                <p className="text-[10px] md:text-sm text-black/40 dark:text-white/40 uppercase tracking-wider">RESOURCE_NOT_FOUND_EXCEPTION</p>
+                <h1 
+                  className="text-2xl md:text-3xl font-light text-black dark:text-white mb-2 tracking-tight"
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  404: We can't find the link, but we're glad we caught your attention.
+                </h1>
+                <p className="text-[10px] md:text-xs text-black/40 dark:text-white/40 uppercase tracking-wider">RESOURCE_NOT_FOUND_EXCEPTION</p>
               </div>
             </div>
             
