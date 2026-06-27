@@ -3,5 +3,6 @@ Allow: /
 Disallow: /api/
 Disallow: /_next/
 Disallow: /node_modules/
+Disallow: /cdn-cgi/
 
 Sitemap: https://tirup.in/sitemap.xml
