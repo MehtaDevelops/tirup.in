@@ -68,8 +68,8 @@ export default function Home() {
               <a href="https://www.kaggle.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
                 Kaggle <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
               </a>
-              <a href="https://g.dev/MehtaTirup" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Google Dev <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+              <a href="https://g.dev/Tirup" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
+                g.dev/Tirup <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
               </a>
               <a href="https://www.cloudskillsboost.google/public_profiles/5de29c1c-84d0-46a5-a4eb-5fa999499184" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
                 Google Cloud <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
