@@ -8,6 +8,24 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
+// Only allow slugs matching keys in projectsData (alphanumeric, hyphens)
+const SAFE_SLUG_RE = /^[a-zA-Z0-9_-]{1,100}$/
+
+function isValidSlug(slug: string): boolean {
+  return SAFE_SLUG_RE.test(slug)
+}
+
+/** Validate that a URL uses https or http only — blocks javascript: and data: */
+function isSafeUrl(url: string | undefined): boolean {
+  if (!url) return false
+  try {
+    const u = new URL(url.startsWith("//") ? `https:${url}` : url)
+    return u.protocol === "https:" || u.protocol === "http:"
+  } catch {
+    return false
+  }
+}
+
 interface Project {
   title: string
   description: string
@@ -25,9 +43,12 @@ interface Project {
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
-  const normalizedSlug = slug?.toLowerCase()
+  // Validate slug before lookup
+  if (!isValidSlug(slug)) return { title: "Project Not Found | Tirup Mehta" }
+
+  const normalizedSlug = slug.toLowerCase()
   const project = projectsData[normalizedSlug as keyof typeof projectsData] as Project | undefined
-  
+
   if (project) {
     return {
       title: `${project.title} | Tirup Mehta`,
@@ -36,8 +57,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: `${project.title} | Tirup Mehta`,
         description: project.description,
         type: "website",
-        images: ["/profile.png"]
-      }
+        images: ["/profile.png"],
+      },
     }
   }
   return {
@@ -47,7 +68,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectPage({ params }: PageProps) {
   const { slug } = await params
-  const normalizedSlug = slug?.toLowerCase()
+
+  // Validate slug strictly — prevents path traversal and injection via URL params
+  if (!isValidSlug(slug)) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="text-4xl font-light mb-4">Project Not Found</h1>
+        <p className="text-black/50 dark:text-white/50 mb-8">The project you&apos;re looking for doesn&apos;t exist or has been moved.</p>
+        <Link href="/work" className="text-accent hover:underline flex items-center gap-2 text-sm">
+          <ArrowLeft size={14} />
+          Back to Work
+        </Link>
+      </div>
+    )
+  }
+
+  const normalizedSlug = slug.toLowerCase()
   const project = projectsData[normalizedSlug as keyof typeof projectsData] as Project | undefined
 
   if (!project) {
@@ -100,7 +136,7 @@ export default async function ProjectPage({ params }: PageProps) {
         {/* Links row */}
         <TextWithBlur delay={80}>
           <div className="flex gap-6 text-sm md:text-base font-light text-black/40 dark:text-white/40 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
-            {project.liveUrl && (
+            {project.liveUrl && isSafeUrl(project.liveUrl) && (
               <a
                 href={project.liveUrl}
                 target="_blank"
@@ -110,17 +146,23 @@ export default async function ProjectPage({ params }: PageProps) {
                 Live Demo <ArrowUpRight size={12} />
               </a>
             )}
-            {project.github && !project.isPrivate && (
-              <a
-                href={`https://${project.github}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
-              >
-                Source Code <ArrowUpRight size={12} />
-              </a>
-            )}
-            {project.documentationUrl && (
+            {project.github && !project.isPrivate && (() => {
+              // Build the full URL and validate it before rendering
+              const ghUrl = project.github.startsWith("http")
+                ? project.github
+                : `https://${project.github}`
+              return isSafeUrl(ghUrl) ? (
+                <a
+                  href={ghUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
+                >
+                  Source Code <ArrowUpRight size={12} />
+                </a>
+              ) : null
+            })()}
+            {project.documentationUrl && isSafeUrl(project.documentationUrl) && (
               <a
                 href={project.documentationUrl}
                 target="_blank"
