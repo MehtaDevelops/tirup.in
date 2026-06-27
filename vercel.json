@@ -4,6 +4,10 @@
       "source": "/(.*)",
       "headers": [
         {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'sha256-O2lh+6ke8O9D5iLJMhLaeqDtYz9aD/Bxt91b6GnUyRI=' 'sha256-H5EedBJkfcuZPMtascwWeCeXiGkU56Pbdwu/eoODICk=' 'sha256-y+yaWivdklwOuAKsCmFK71yeX2wj1T7IMH1mmsMuWTs=' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://accomplished-condor-793.convex.site https://www.google-analytics.com https://www.googletagmanager.com; connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://vitals.vercel-insights.com https://va.vercel-scripts.com; media-src 'self'; worker-src 'self' blob:; frame-src https://www.googletagmanager.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+        },
+        {
           "key": "Strict-Transport-Security",
           "value": "max-age=63072000; includeSubDomains; preload"
         },
