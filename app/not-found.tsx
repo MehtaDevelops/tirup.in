@@ -33,21 +33,21 @@ export default function NotFound() {
   }, [pathname])
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-[#050505] text-black dark:text-[#d4d4d4] font-mono p-6 relative overflow-hidden transition-colors duration-500">
+    <main className="min-h-screen flex flex-col items-center justify-center bg-[#050505] text-[#d4d4d4] font-mono p-6 relative overflow-hidden">
       {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
       
       <div className="max-w-2xl w-full relative z-10">
-        <div className="border border-black/10 dark:border-white/10 rounded-sm bg-white/40 dark:bg-black/40 backdrop-blur-sm overflow-hidden shadow-2xl">
+        <div className="border border-white/10 rounded-sm bg-black/40 backdrop-blur-sm overflow-hidden shadow-2xl">
           {/* Terminal Header */}
-          <div className="flex items-center justify-between px-4 py-2 border-b border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5">
+          <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 bg-white/5">
             <div className="flex items-center gap-2">
-              <Terminal size={14} className="text-black/40 dark:text-white/40" />
-              <span className="text-[10px] uppercase tracking-widest text-black/40 dark:text-white/40">system_error.log</span>
+              <Terminal size={14} className="text-white/40" />
+              <span className="text-[10px] uppercase tracking-widest text-white/40">system_error.log</span>
             </div>
             <div className="flex gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-black/10 dark:bg-white/10" />
-              <div className="w-2 h-2 rounded-full bg-black/10 dark:bg-white/10" />
+              <div className="w-2 h-2 rounded-full bg-white/10" />
+              <div className="w-2 h-2 rounded-full bg-white/10" />
               <div className="w-2 h-2 rounded-full bg-accent/40" />
             </div>
           </div>
@@ -60,20 +60,20 @@ export default function NotFound() {
               </div>
               <div>
                 <h1 
-                  className="text-2xl md:text-3xl font-light text-black dark:text-white mb-2 tracking-tight"
+                  className="text-2xl md:text-3xl font-light text-white mb-2 tracking-tight"
                   style={{ fontFamily: "var(--font-inter)" }}
                 >
                   404: We can't find the link, but we're glad we caught your attention.
                 </h1>
-                <p className="text-[10px] md:text-xs text-black/40 dark:text-white/40 uppercase tracking-wider">RESOURCE_NOT_FOUND_EXCEPTION</p>
+                <p className="text-[10px] md:text-xs text-white/40 uppercase tracking-wider">RESOURCE_NOT_FOUND_EXCEPTION</p>
               </div>
             </div>
             
             <div className="space-y-1.5 md:y-2 mb-10 md:mb-12 overflow-hidden">
               {logs.map((log, i) => (
                 <div key={i} className="flex gap-2 md:gap-3 text-[10px] md:text-sm animate-in fade-in slide-in-from-left-2 duration-500">
-                  <span className="text-black/20 dark:text-white/20 whitespace-nowrap">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
-                  <span className={`${log?.includes("Warning") || log?.includes("COMPROMISED") ? "text-accent" : "text-black/60 dark:text-white/60"} break-all`}>
+                  <span className="text-white/20 whitespace-nowrap">[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                  <span className={`${log?.includes("Warning") || log?.includes("COMPROMISED") ? "text-accent" : "text-white/60"} break-all`}>
                     {log}
                   </span>
                 </div>
@@ -83,7 +83,7 @@ export default function NotFound() {
             
             <Link 
               href="/" 
-              className="inline-flex items-center gap-3 md:gap-4 text-[10px] md:text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 hover:text-accent dark:hover:text-accent transition-colors group"
+              className="inline-flex items-center gap-3 md:gap-4 text-[10px] md:text-xs uppercase tracking-[0.2em] text-white/40 hover:text-accent transition-colors group"
             >
               <span>Execute Home_Return</span>
               <ArrowRight size={12} className="md:w-3.5 md:h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -91,7 +91,7 @@ export default function NotFound() {
           </div>
         </div>
         
-        <div className="mt-4 md:mt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0 text-[8px] md:text-[10px] text-black/20 dark:text-white/20 uppercase tracking-widest px-2 overflow-hidden">
+        <div className="mt-4 md:mt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2 md:gap-0 text-[8px] md:text-[10px] text-white/20 uppercase tracking-widest px-2 overflow-hidden">
           <span className="truncate max-w-full">Target: {pathname}</span>
           <span className="whitespace-nowrap">Status: Lost</span>
         </div>
