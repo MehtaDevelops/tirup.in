@@ -106,7 +106,7 @@ export default function Header() {
             </div>
           </div>
         </TextWithBlur>        {/* Navigation Tabs */}
-        <div className="flex justify-between items-center gap-4 mb-8 flex-nowrap">
+        <div className="flex justify-between items-center gap-4 mb-8 border-b border-black/5 dark:border-white/5 pb-4 flex-nowrap">
           <TextWithBlur delay={100} className="min-w-0">
             <nav className="flex items-center gap-4 sm:gap-6 flex-wrap">
               <Link 
