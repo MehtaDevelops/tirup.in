@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Playfair_Display } from "next/font/google"
 import Script from "next/script"
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
 
@@ -119,6 +120,7 @@ export default function RootLayout({
         {/* End Google Tag Manager (noscript) */}
 
         <PageTransition>{children}</PageTransition>
+        <Analytics />
       </body>
     </html>
   )
