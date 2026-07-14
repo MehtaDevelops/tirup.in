@@ -392,7 +392,9 @@ html.dark .tldr-box {
 }
 
 /* Editorial drop cap style for the first paragraph of blog articles */
-.blog-content p:first-of-type::first-letter {
+.blog-content p:first-of-type::first-letter,
+.blog-content .tldr-box + p::first-letter,
+.blog-content .tldr-box + div p:first-of-type::first-letter {
   float: left;
   font-family: Georgia, serif;
   font-size: 3.5em;
@@ -401,6 +403,18 @@ html.dark .tldr-box {
   margin-right: 0.1em;
   font-weight: 500;
   color: var(--fg);
+}
+
+/* Reset drop-cap for any paragraph inside TL;DR boxes */
+.tldr-box p::first-letter,
+.blog-content .tldr-box p::first-letter {
+  float: none !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  line-height: inherit !important;
+  margin: 0 !important;
+  font-weight: inherit !important;
+  color: inherit !important;
 }
 
 /* Clean and professional slide up and down animations for TL;DR card entrance/exit */

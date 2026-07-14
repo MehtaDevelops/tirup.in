@@ -54,10 +54,10 @@ export default function Header() {
       )}
 
       {/* Intro/Hero Header Area */}
-      <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-10 md:pt-28 pb-0">
+      <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-6 md:pt-28 pb-0">
         {/* Avatar + Title inline */}
         <TextWithBlur>
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-4 mb-4 md:mb-6">
             <div className="relative shrink-0 select-none group">
               <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900">
                 <Image
@@ -106,7 +106,7 @@ export default function Header() {
             </div>
           </div>
         </TextWithBlur>        {/* Navigation Tabs */}
-        <div className="flex justify-between items-center gap-4 mb-8 border-b border-black/5 dark:border-white/5 pb-4 flex-nowrap">
+        <div className="flex justify-between items-center gap-4 mb-5 md:mb-8 border-b border-black/5 dark:border-white/5 pb-3 md:pb-4 flex-nowrap">
           <TextWithBlur delay={100} className="min-w-0">
             <nav className="flex items-center gap-4 sm:gap-6 flex-wrap">
               <Link 

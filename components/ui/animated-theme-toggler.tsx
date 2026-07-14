@@ -259,7 +259,7 @@ export const AnimatedThemeToggler = ({
       {isDark ? (
         <Sun size={16} className="transition-transform duration-300 group-hover:rotate-90" />
       ) : (
-        <Moon size={16} className="transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" />
+        <Moon size={16} className="transition-transform duration-300 group-hover:-rotate-6" />
       )}
       <span className="sr-only">Toggle theme</span>
     </button>

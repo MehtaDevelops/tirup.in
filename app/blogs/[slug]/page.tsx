@@ -149,7 +149,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <main className="relative min-h-screen">
-      <div className="section px-6 md:px-20 pt-20 pb-20 max-w-4xl mx-auto w-full">
+      <div className="section px-6 md:px-20 pt-10 md:pt-20 pb-20 max-w-4xl mx-auto w-full">
         
         {/* Breadcrumb Header */}
         <TextWithBlur>
