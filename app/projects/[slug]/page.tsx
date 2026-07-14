@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import { projectsData } from "@/lib/projects-data"
@@ -116,15 +117,28 @@ export default async function ProjectPage({ params }: PageProps) {
     <main className="relative min-h-screen">
       <div className="section px-6 md:px-20 pt-28 pb-20 max-w-4xl mx-auto w-full">
 
-        {/* Back link */}
+        {/* Breadcrumb Header */}
         <TextWithBlur>
-          <Link
-            href="/work"
-            className="group inline-flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mb-10"
-          >
-            <ArrowLeft size={13} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
-            <span className="link-hover pb-0.5">Work</span>
-          </Link>
+          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-10 select-none flex-wrap">
+            <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+                <Image
+                  src="/profile.png"
+                  alt="Tirup Mehta"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="font-light">Tirup Mehta</span>
+            </Link>
+            <span className="text-black/20 dark:text-white/20 select-none">›</span>
+            <Link href="/work" className="hover:text-black dark:hover:text-white transition-colors font-light">
+              Work
+            </Link>
+            <span className="text-black/20 dark:text-white/20 select-none">›</span>
+            <span className="truncate max-w-[200px] sm:max-w-xs font-light text-black/30 dark:text-white/30">{project.title}</span>
+          </div>
         </TextWithBlur>
 
         {/* Project label + title */}
