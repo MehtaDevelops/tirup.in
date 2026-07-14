@@ -111,10 +111,10 @@ export default function SkillsSection() {
       </TextWithBlur>
 
       {/* Category Columns */}
-      <TextWithBlur delay={150}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-8 md:gap-x-12">
-          {categories.map((category) => (
-            <div key={category.title} className="flex flex-col">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-8 md:gap-x-12">
+        {categories.map((category, index) => (
+          <TextWithBlur key={category.title} delay={150 + index * 100}>
+            <div className="flex flex-col">
               <h4 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-5">
                 {category.title}
               </h4>
@@ -124,9 +124,9 @@ export default function SkillsSection() {
                 ))}
               </div>
             </div>
-          ))}
-        </div>
-      </TextWithBlur>
+          </TextWithBlur>
+        ))}
+      </div>
     </div>
   )
 }

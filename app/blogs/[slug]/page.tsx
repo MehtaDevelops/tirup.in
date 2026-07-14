@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
+import TldrPopup from "@/components/tldr-popup"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
 
 interface BlogPost {
@@ -148,15 +150,36 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <main className="relative min-h-screen">
       <div className="section px-6 md:px-20 pt-20 pb-20 max-w-4xl mx-auto w-full">
-        {/* Back Link */}
+        
+        {/* Breadcrumb Header */}
         <TextWithBlur>
-          <Link
-            href="/blogs"
-            className="inline-flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mb-10"
-          >
-            <ArrowLeft size={13} />
-            Writing
-          </Link>
+          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-10 select-none flex-wrap">
+            <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+                <Image
+                  src="/profile.png"
+                  alt="Tirup Mehta"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="font-light">Tirup Mehta</span>
+            </Link>
+            <span className="text-black/20 dark:text-white/20 select-none">›</span>
+            <Link href="/blogs" className="hover:text-black dark:hover:text-white transition-colors font-light">
+              Writing
+            </Link>
+            <span className="text-black/20 dark:text-white/20 select-none">›</span>
+            <span className="truncate max-w-[200px] sm:max-w-xs font-light text-black/30 dark:text-white/30">{safeTitle}</span>
+          </div>
+        </TextWithBlur>
+
+        {/* Title */}
+        <TextWithBlur delay={50}>
+          <h1 className="text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-6 leading-tight max-w-3xl font-medium">
+            {safeTitle}
+          </h1>
         </TextWithBlur>
 
         {/* Article Header info */}
@@ -164,31 +187,15 @@ export default async function BlogPostPage({ params }: PageProps) {
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">
             <span>Essay</span>
             <span className="select-none text-black/20 dark:text-white/20">/</span>
-            <span>{formatDate(post.createdAt)}</span>
+            <span className="font-mono tabular-nums">{formatDate(post.createdAt)}</span>
             <span className="select-none text-black/20 dark:text-white/20">/</span>
-            {safeReadingTime > 0 && <span>{safeReadingTime} min read</span>}
+            {safeReadingTime > 0 && <span className="font-mono tabular-nums">{safeReadingTime} min read</span>}
           </div>
-
-          {/* React auto-escapes string interpolation — safeTitle is belt-and-suspenders */}
-          <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white mb-6 leading-tight max-w-3xl">
-            {safeTitle}
-          </h1>
-
-          {/* TL;DR — rendered through our safe markdown renderer + sanitizer */}
-          {safeTldrHtml && !safeContentHtml.includes("tldr-box") && (
-            <div className="tldr-box max-w-3xl mb-8">
-              <span className="tldr-label">TL;DR</span>
-              <div
-                className="text-base md:text-lg font-light leading-relaxed text-black/75 dark:text-white/75"
-                dangerouslySetInnerHTML={{ __html: safeTldrHtml }}
-              />
-            </div>
-          )}
         </TextWithBlur>
 
         {/* Separator line */}
         <TextWithBlur delay={80}>
-          <div className="border-b border-black/5 dark:border-white/5 mb-10 pb-2 flex justify-between items-center">
+          <div className="border-b border-black/5 dark:border-white/5 mb-10 pb-2 flex justify-between items-center max-w-3xl">
             {safeTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {safeTags.map((tag) => (
@@ -203,19 +210,31 @@ export default async function BlogPostPage({ params }: PageProps) {
               href={`https://blogs.tirup.in/${encodeURIComponent(slug)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-0.5"
+              className="group text-xs text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-0.5"
             >
-              View on original site <ArrowUpRight size={11} />
+              <span className="link-hover pb-0.5">View on original site</span> <ArrowUpRight size={11} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
             </a>
           </div>
         </TextWithBlur>
 
+        {/* TL;DR inline on mobile only — hidden on desktop */}
+        {safeTldrHtml && !safeContentHtml.includes("tldr-box") && (
+          <TextWithBlur delay={90}>
+            <div className="tldr-box max-w-3xl mb-8 block md:hidden">
+              <span className="tldr-label">TL;DR</span>
+              <div
+                className="text-base md:text-lg font-light leading-relaxed text-black/75 dark:text-white/75"
+                dangerouslySetInnerHTML={{ __html: safeTldrHtml }}
+              />
+            </div>
+          </TextWithBlur>
+        )}
+
         {/* Article Content — sanitized HTML from external API */}
         <TextWithBlur delay={120}>
-          <div
-            className="blog-content text-black/80 dark:text-white/85 max-w-3xl mb-16"
-            dangerouslySetInnerHTML={{ __html: safeContentHtml }}
-          />
+          <div className="blog-content text-black/80 dark:text-white/85 max-w-3xl mb-16">
+            <div dangerouslySetInnerHTML={{ __html: safeContentHtml }} />
+          </div>
         </TextWithBlur>
 
         {/* Footer */}
@@ -223,6 +242,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           <p className="text-sm text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
         </footer>
       </div>
+
+      {/* TL;DR Animated Summary Popup — rendered as direct child of main to align on viewport edge on desktop */}
+      <TldrPopup safeTldrHtml={safeTldrHtml} />
     </main>
   )
 }

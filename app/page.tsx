@@ -51,37 +51,37 @@ export default function Home() {
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-8 gap-y-4 text-xs md:text-sm font-light text-black/55 dark:text-white/55">
               <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                GitHub <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                GitHub <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://www.linkedin.com/in/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                LinkedIn <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                LinkedIn <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://peerlist.io/tirupmehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Peerlist <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Peerlist <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://happenstance.ai/u/tirupmehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Happenstance <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Happenstance <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://x.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                X (Twitter) <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                X (Twitter) <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://www.kaggle.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Kaggle <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Kaggle <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://g.dev/Tirup" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Google Dev <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Google Dev <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://www.cloudskillsboost.google/public_profiles/5de29c1c-84d0-46a5-a4eb-5fa999499184" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Google Cloud <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Google Cloud <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://medium.com/@TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Medium <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Medium <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://instagram.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                Instagram <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                Instagram <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
               <a href="https://youtube.com/@TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                YouTube <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 transition-opacity" />
+                YouTube <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
             </div>
           </div>
@@ -90,9 +90,9 @@ export default function Home() {
         {/* Dynamic Indicator Dots at the bottom of hero */}
         <TextWithBlur delay={350}>
           <div className="flex gap-2 mt-8 select-none">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff6b6b]/60" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#feca57]/60" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1dd1a1]/60" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ff6b6b]/60 transition-all duration-300 hover:scale-125 hover:shadow-[0_0_8px_#ff6b6b] hover:opacity-100 cursor-pointer" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#feca57]/60 transition-all duration-300 hover:scale-125 hover:shadow-[0_0_8px_#feca57] hover:opacity-100 cursor-pointer" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1dd1a1]/60 transition-all duration-300 hover:scale-125 hover:shadow-[0_0_8px_#1dd1a1] hover:opacity-100 cursor-pointer" />
           </div>
         </TextWithBlur>
       </section>

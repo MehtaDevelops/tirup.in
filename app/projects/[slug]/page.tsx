@@ -116,10 +116,10 @@ export default async function ProjectPage({ params }: PageProps) {
         <TextWithBlur>
           <Link
             href="/work"
-            className="inline-flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mb-10"
+            className="group inline-flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mb-10"
           >
-            <ArrowLeft size={13} />
-            Work
+            <ArrowLeft size={13} className="transition-transform duration-300 group-hover:-translate-x-0.5" />
+            <span className="link-hover pb-0.5">Work</span>
           </Link>
         </TextWithBlur>
 
@@ -141,9 +141,9 @@ export default async function ProjectPage({ params }: PageProps) {
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
+                className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
               >
-                Live Demo <ArrowUpRight size={12} />
+                <span className="link-hover pb-0.5">Live Demo</span> <ArrowUpRight size={12} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
             )}
             {project.github && !project.isPrivate && (() => {
@@ -156,9 +156,9 @@ export default async function ProjectPage({ params }: PageProps) {
                   href={ghUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
+                  className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
                 >
-                  Source Code <ArrowUpRight size={12} />
+                  <span className="link-hover pb-0.5">Source Code</span> <ArrowUpRight size={12} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
                 </a>
               ) : null
             })()}
@@ -167,9 +167,9 @@ export default async function ProjectPage({ params }: PageProps) {
                 href={project.documentationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
+                className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1"
               >
-                Docs <ArrowUpRight size={12} />
+                <span className="link-hover pb-0.5">Docs</span> <ArrowUpRight size={12} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
               </a>
             )}
           </div>
@@ -188,7 +188,7 @@ export default async function ProjectPage({ params }: PageProps) {
             <TextWithBlur>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">01</span>
+                  <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">01</span>
                   <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Tech Stack</h3>
                 </div>
                 <div className="col-span-1 md:col-span-2 flex flex-wrap gap-2">
@@ -209,7 +209,7 @@ export default async function ProjectPage({ params }: PageProps) {
             <TextWithBlur>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">02</span>
+                  <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">02</span>
                   <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Core Engine</h3>
                 </div>
                 <div className="col-span-1 md:col-span-2">
@@ -227,7 +227,7 @@ export default async function ProjectPage({ params }: PageProps) {
               <TextWithBlur key={index} delay={index * 40}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                   <div className="col-span-1 flex items-baseline gap-2">
-                    <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">{displayIndex}</span>
+                    <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">{displayIndex}</span>
                     <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">{detail.title}</h3>
                   </div>
                   <div className="col-span-1 md:col-span-2">
@@ -242,7 +242,7 @@ export default async function ProjectPage({ params }: PageProps) {
             <TextWithBlur>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono text-xs text-black/30 dark:text-white/30 select-none">
+                  <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">
                     {String((project.techStack ? 1 : 0) + (project.engine ? 1 : 0) + (project.details ? project.details.length : 0) + 1).padStart(2, "0")}
                   </span>
                   <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h3>
@@ -253,7 +253,7 @@ export default async function ProjectPage({ params }: PageProps) {
                       <h4 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1">
                         {key.replace(/([A-Z])/g, " $1").trim()}
                       </h4>
-                      <p className="text-2xl md:text-3xl font-light text-accent tracking-tighter">{value}</p>
+                      <p className="text-2xl md:text-3xl font-light text-accent font-mono tabular-nums">{value}</p>
                     </div>
                   ))}
                 </div>
@@ -277,8 +277,8 @@ export default async function ProjectPage({ params }: PageProps) {
                 className="group block py-5 border-t border-black/10 dark:border-white/10"
               >
                 <div className="flex items-baseline gap-4 md:gap-6">
-                  <span className="font-mono text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0">→</span>
-                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
+                  <span className="font-mono text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0 group-hover:translate-x-0.5 transition-transform duration-300 ease-out">→</span>
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
                     <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300">
                       {nextProject.title}
                     </span>

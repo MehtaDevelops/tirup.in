@@ -39,15 +39,15 @@ export default function Header() {
               <span>
                 <span className="hidden sm:inline">Thoughts on development, design, and security. Read at </span>
                 <span className="sm:hidden">Read thoughts at </span>
-                <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-accent hover:text-accent dark:hover:text-white transition-colors font-medium">blogs.tirup.in</a> ↗
+                <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent dark:hover:text-white transition-colors font-medium">blogs.tirup.in</a> ↗
               </span>
             </div>
             <button 
               onClick={handleDismissPopup}
-              className="p-1 rounded-full text-black/35 dark:text-white/35 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 shrink-0 cursor-pointer"
+              className="group p-1 rounded-full text-black/35 dark:text-white/35 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 shrink-0 cursor-pointer active:scale-90"
               aria-label="Dismiss banner"
             >
-              <X size={13} />
+              <X size={13} className="transition-transform duration-300 group-hover:rotate-90" />
             </button>
           </div>
         </div>
@@ -98,9 +98,9 @@ export default function Header() {
               <a 
                 href="/Resume_Tirup_Mehta.pdf" 
                 download
-                className="inline-flex items-center gap-1 px-3 py-1 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-300 select-none cursor-pointer transform hover:-translate-y-[1px]"
+                className="group inline-flex items-center gap-1 pl-2.5 pr-3 py-1 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-300 select-none cursor-pointer transform hover:-translate-y-[1px] active:scale-95"
               >
-                <Download size={10} />
+                <Download size={10} className="transition-transform duration-300 group-hover:translate-y-0.5" />
                 <span>Resume</span>
               </a>
             </div>
@@ -111,40 +111,40 @@ export default function Header() {
             <nav className="flex items-center gap-4 sm:gap-6 flex-wrap">
               <Link 
                 href="/" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
                   isActive("/") 
-                    ? "text-black dark:text-white font-medium" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                    ? "text-black dark:text-white" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
                 }`}
               >
                 Home
               </Link>
               <Link 
                 href="/work" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
                   isActive("/work") 
-                    ? "text-black dark:text-white font-medium" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                    ? "text-black dark:text-white" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
                 }`}
               >
                 Work
               </Link>
               <Link 
                 href="/skills" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
                   isActive("/skills") 
-                    ? "text-black dark:text-white font-medium" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                    ? "text-black dark:text-white" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
                 }`}
               >
                 Skills
               </Link>
               <Link 
                 href="/blogs" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none ${
+                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
                   isActive("/blogs") || pathname?.startsWith("/blogs")
-                    ? "text-black dark:text-white font-medium" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white font-light"
+                    ? "text-black dark:text-white" 
+                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
                 }`}
               >
                 Writing
@@ -155,7 +155,7 @@ export default function Header() {
           {/* Theme Switcher on the far right */}
           <AnimatedThemeToggler 
             variant="circle"
-            className="flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer shrink-0"
+            className="flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer shrink-0 active:scale-90"
           />
         </div>
       </div>

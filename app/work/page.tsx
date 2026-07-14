@@ -132,7 +132,7 @@ export default function WorkPage() {
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     {/* Content Row */}
-                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
                       <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300">
                         {project.title}
                       </span>

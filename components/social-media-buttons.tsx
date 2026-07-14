@@ -85,7 +85,7 @@ export default function SocialMediaButtons() {
           onMouseLeave={() => setHoveredIndex(null)}
           aria-label={link.name}
         >
-          <div className="flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-300 hover:scale-110"
+          <div className="flex items-center justify-center w-8 h-8 rounded-full border transition-all duration-300 hover:scale-110 active:scale-90"
             style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--bg)' }}
           >
             <span style={{ color: 'var(--text-secondary)' }}>{link.icon}</span>

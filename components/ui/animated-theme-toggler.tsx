@@ -253,10 +253,14 @@ export const AnimatedThemeToggler = ({
       type="button"
       ref={buttonRef}
       onClick={toggleTheme}
-      className={cn(className)}
+      className={cn("group active:scale-90 transition-all", className)}
       {...props}
     >
-      {isDark ? <Sun size={16} /> : <Moon size={16} />}
+      {isDark ? (
+        <Sun size={16} className="transition-transform duration-300 group-hover:rotate-90" />
+      ) : (
+        <Moon size={16} className="transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" />
+      )}
       <span className="sr-only">Toggle theme</span>
     </button>
   )

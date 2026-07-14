@@ -79,14 +79,14 @@ export default async function BlogsPage() {
                   >
                     <div className="flex justify-between items-baseline gap-4">
                       {/* Left: Title only */}
-                      <div className="flex items-baseline gap-x-2 leading-relaxed">
+                      <div className="flex items-baseline gap-x-2 leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
                         <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300 text-sm md:text-base">
                           {post.title}
                         </span>
                       </div>
                       
                       {/* Right: Date */}
-                      <span className="font-mono tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0">
+                      <span className="font-mono tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0 group-hover:-translate-x-1.5 transition-transform duration-300 ease-out">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>

@@ -139,7 +139,7 @@ p {
 @keyframes revealIn {
   from {
     filter: blur(7px);
-    opacity: 0.6;
+    opacity: 0;
     transform: translate(-5px, -4px);
   }
   to {
@@ -152,6 +152,16 @@ p {
 .reveal-in {
   animation: revealIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Contextual ArrowUpRight micro-interaction class */
+.icon-arrow-hover {
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) !important;
+}
+
+.group:hover .icon-arrow-hover {
+  transform: translate(1px, -1px) scale(1.1);
+  opacity: 1 !important;
 }
 
 /* Link hover effect */
@@ -372,6 +382,56 @@ html.dark .tldr-box {
 
 .tldr-box p {
   margin: 0;
+}
+
+/* Hide embedded TL;DR cards inside blog HTML on desktop so only the popup displays it */
+@media (min-width: 768px) {
+  .blog-content .tldr-box {
+    display: none !important;
+  }
+}
+
+/* Editorial drop cap style for the first paragraph of blog articles */
+.blog-content p:first-of-type::first-letter {
+  float: left;
+  font-family: Georgia, serif;
+  font-size: 3.5em;
+  line-height: 0.85;
+  margin-top: 0.05em;
+  margin-right: 0.1em;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+/* Clean and professional slide up and down animations for TL;DR card entrance/exit */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+.animate-spring-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-spring-slide-down {
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 
