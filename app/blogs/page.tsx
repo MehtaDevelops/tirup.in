@@ -86,7 +86,7 @@ export default async function BlogsPage() {
                       </div>
                       
                       {/* Right: Date */}
-                      <span className="font-mono text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0">
+                      <span className="font-mono tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>

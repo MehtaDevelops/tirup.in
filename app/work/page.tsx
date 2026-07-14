@@ -128,7 +128,7 @@ export default function WorkPage() {
                 >
                   <div className="flex items-baseline gap-4 md:gap-6">
                     {/* Index Number */}
-                    <span className="font-mono text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0">
+                    <span className="font-mono tabular-nums text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     {/* Content Row */}

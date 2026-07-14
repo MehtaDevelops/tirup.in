@@ -92,11 +92,10 @@ export default function SocialMediaButtons() {
           </div>
           {hoveredIndex === index && (
             <div
-              className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded-sm text-xs whitespace-nowrap"
+              className="absolute -top-8 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded-md text-xs whitespace-nowrap border-shadow"
               style={{
                 animation: "fadeIn 0.2s ease-in-out",
                 backgroundColor: 'var(--bg)',
-                border: '1px solid var(--border-color)',
                 color: 'var(--text-secondary)',
               }}
             >

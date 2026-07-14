@@ -38,7 +38,7 @@ export default function Home() {
 
           <TextWithBlur delay={250}>
             <p>
-              I write about interface design and web security on my <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-accent hover:text-accent transition-colors">blogs</a>, share active experiments on <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 decoration-accent hover:text-accent transition-colors">GitHub</a>, and am always open to fresh ideas. Let's connect.
+              I write about interface design and web security on my <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">blogs</a>, share active experiments on <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">GitHub</a>, and am always open to fresh ideas. Let's connect.
             </p>
           </TextWithBlur>
         </div>

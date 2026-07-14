@@ -29,6 +29,8 @@ export default function LazyImage({ src, alt, priority = false }: LazyImageProps
         priority={priority}
         sizes="(max-width: 768px) 100vw, 50vw"
       />
+      {/* 1px inset boundary outline to define bounds on bright/white backgrounds */}
+      <div className="absolute inset-0 pointer-events-none rounded-[inherit] border border-black/[0.04] dark:border-white/[0.04]" />
     </div>
   )
 }
