@@ -26,6 +26,10 @@ function isSafeUrl(url: string | undefined): boolean {
   }
 }
 
+function isNumericMetric(val: string): boolean {
+  return val.length <= 8 && /^[0-9%k+v.s/ -]+$/i.test(val);
+}
+
 interface Project {
   title: string
   description: string
@@ -248,14 +252,25 @@ export default async function ProjectPage({ params }: PageProps) {
                   <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h3>
                 </div>
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 md:gap-8">
-                  {Object.entries(project.stats).map(([key, value]: [string, any]) => (
-                    <div key={key}>
-                      <h4 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1">
-                        {key.replace(/([A-Z])/g, " $1").trim()}
-                      </h4>
-                      <p className="text-2xl md:text-3xl font-light text-accent font-mono tabular-nums">{value}</p>
-                    </div>
-                  ))}
+                  {Object.entries(project.stats).map(([key, value]: [string, any]) => {
+                    const isNum = isNumericMetric(String(value))
+                    return (
+                      <div key={key}>
+                        <h4 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1 select-none">
+                          {key.replace(/([A-Z])/g, " $1").trim()}
+                        </h4>
+                        <p
+                          className={`font-light text-accent leading-snug text-wrap pretty ${
+                            isNum
+                              ? "text-2xl md:text-3xl font-mono tabular-nums"
+                              : "text-base md:text-lg font-sans tracking-wide"
+                          }`}
+                        >
+                          {value}
+                        </p>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </TextWithBlur>
