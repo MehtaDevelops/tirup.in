@@ -4,6 +4,7 @@ import Image from "next/image"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import { projectsData } from "@/lib/projects-data"
+import { notFound } from "next/navigation"
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -52,7 +53,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isValidSlug(slug)) return { title: "Project Not Found | Tirup Mehta" }
 
   const normalizedSlug = slug.toLowerCase()
-  const project = projectsData[normalizedSlug as keyof typeof projectsData] as Project | undefined
+  const project = Object.prototype.hasOwnProperty.call(projectsData, normalizedSlug)
+    ? (projectsData[normalizedSlug as keyof typeof projectsData] as Project)
+    : undefined
 
   if (project) {
     return {
@@ -76,32 +79,16 @@ export default async function ProjectPage({ params }: PageProps) {
 
   // Validate slug strictly — prevents path traversal and injection via URL params
   if (!isValidSlug(slug)) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="text-4xl font-light mb-4">Project Not Found</h1>
-        <p className="text-black/50 dark:text-white/50 mb-8">The project you&apos;re looking for doesn&apos;t exist or has been moved.</p>
-        <Link href="/work" className="text-accent hover:underline flex items-center gap-2 text-sm">
-          <ArrowLeft size={14} />
-          Back to Work
-        </Link>
-      </div>
-    )
+    notFound()
   }
 
   const normalizedSlug = slug.toLowerCase()
-  const project = projectsData[normalizedSlug as keyof typeof projectsData] as Project | undefined
+  const project = Object.prototype.hasOwnProperty.call(projectsData, normalizedSlug)
+    ? (projectsData[normalizedSlug as keyof typeof projectsData] as Project)
+    : undefined
 
   if (!project) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="text-4xl font-light mb-4">Project Not Found</h1>
-        <p className="text-black/50 dark:text-white/50 mb-8">The project you're looking for doesn't exist or has been moved.</p>
-        <Link href="/work" className="text-accent hover:underline flex items-center gap-2 text-sm">
-          <ArrowLeft size={14} />
-          Back to Work
-        </Link>
-      </div>
-    )
+    notFound()
   }
 
   // Calculate next project slug
@@ -109,7 +96,9 @@ export default async function ProjectPage({ params }: PageProps) {
   const currentIndex = projectKeys.indexOf(normalizedSlug)
   const nextIndex = (currentIndex + 1) % projectKeys.length
   const nextSlug = projectKeys[nextIndex]
-  const nextProject = projectsData[nextSlug as keyof typeof projectsData] as Project | undefined
+  const nextProject = Object.prototype.hasOwnProperty.call(projectsData, nextSlug)
+    ? (projectsData[nextSlug as keyof typeof projectsData] as Project)
+    : undefined
 
   const currentYear = new Date().getFullYear()
 

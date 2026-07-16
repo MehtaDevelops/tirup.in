@@ -6,6 +6,7 @@ import TextWithBlur from "@/components/text-with-blur"
 import TldrPopup from "@/components/tldr-popup"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
 import { CONVEX_API_URL } from "@/lib/utils"
+import { notFound } from "next/navigation"
 
 interface BlogPost {
   title: string
@@ -75,29 +76,29 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   // ── Validate slug strictly before touching the network ─────────────────────
   if (!isValidSlug(slug)) {
-    error = true
-  } else {
-    try {
-      const res = await fetch(`${API_BASE}/api/post?slug=${encodeURIComponent(slug)}`, {
-        next: { revalidate: 60 },
-      })
+    notFound()
+  }
 
-      if (!res.ok) {
-        error = true
-      } else {
-        const data = await res.json()
-        if (data && !data.error) {
-          post = data
-        } else {
-          error = true
-        }
-      }
-    } catch (err) {
-      // Do NOT log the full error or the slug to the console — it could contain
-      // injection payloads that pollute server logs.
-      console.error("[blog/page] Failed to fetch post")
+  try {
+    const res = await fetch(`${API_BASE}/api/post?slug=${encodeURIComponent(slug)}`, {
+      next: { revalidate: 60 },
+    })
+
+    if (!res.ok) {
       error = true
+    } else {
+      const data = await res.json()
+      if (data && !data.error) {
+        post = data
+      } else {
+        error = true
+      }
     }
+  } catch (err) {
+    // Do NOT log the full error or the slug to the console — it could contain
+    // injection payloads that pollute server logs.
+    console.error("[blog/page] Failed to fetch post")
+    error = true
   }
 
   const formatDate = (dateStr: string) => {
@@ -117,16 +118,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const currentYear = new Date().getFullYear()
 
   if (error || !post) {
-    return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="text-3xl font-light mb-4">Article Not Found</h1>
-        <p className="text-black/50 dark:text-white/50 mb-8">This article doesn&apos;t exist or has been removed.</p>
-        <Link href="/blogs" className="text-accent hover:underline inline-flex items-center gap-2 text-sm">
-          <ArrowLeft size={14} />
-          Back to Writing
-        </Link>
-      </main>
-    )
+    notFound()
   }
 
   // ── Sanitize ALL content from the external API before rendering ─────────────
