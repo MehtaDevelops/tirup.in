@@ -1,20 +1,15 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
 
-export default function WorkPage() {
-  const [mounted, setMounted] = useState(false)
+export const metadata: Metadata = {
+  title: "Work | Tirup Mehta",
+  description: "Explore projects, developer tools, and security libraries built by Tirup Mehta.",
+}
 
-  useEffect(() => {
-    setMounted(true)
-    document.documentElement.style.scrollBehavior = "smooth"
-    return () => {
-      document.documentElement.style.scrollBehavior = ""
-    }
-  }, [])
+export default function WorkPage() {
+  const currentYear = new Date().getFullYear()
 
   const projects = [
     {
@@ -112,7 +107,6 @@ export default function WorkPage() {
 
   return (
     <main className="relative min-h-screen">
-      <title>Work | Tirup Mehta</title>
       <Header />
 
       {/* Projects Section */}
@@ -153,7 +147,7 @@ export default function WorkPage() {
 
       {/* Footer */}
       <footer className="py-6 px-6 text-center border-t border-black/10">
-        <p className="text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
+        <p className="text-black/50 dark:text-white/50" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )

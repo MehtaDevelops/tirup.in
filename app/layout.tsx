@@ -71,6 +71,44 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://tirup.in"
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || ""
+  }
+}
+
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Tirup Mehta",
+  "url": "https://tirup.in",
+  "image": "https://tirup.in/profile.png",
+  "description": "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+  "jobTitle": "Frontend Developer & UI/UX Designer",
+  "sameAs": [
+    "https://github.com/TirupMehta",
+    "https://www.linkedin.com/in/TirupMehta",
+    "https://peerlist.io/tirupmehta",
+    "https://happenstance.ai/u/tirupmehta",
+    "https://x.com/TirupMehta",
+    "https://www.kaggle.com/TirupMehta",
+    "https://g.dev/Tirup",
+    "https://www.cloudskillsboost.google/public_profiles/5de29c1c-84d0-46a5-a4eb-5fa999499184",
+    "https://medium.com/@TirupMehta",
+    "https://instagram.com/TirupMehta",
+    "https://youtube.com/@TirupMehta"
+  ]
+}
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Tirup Mehta Portfolio",
+  "url": "https://tirup.in",
+  "description": "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer.",
+  "author": {
+    "@type": "Person",
+    "name": "Tirup Mehta"
   }
 }
 
@@ -106,6 +144,16 @@ export default function RootLayout({
       {/* End Google Analytics */}
 
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
+        {/* JSON-LD Schemas for Search Engines */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+
         {/* Theme init — prevents flash of wrong theme */}
         <script
           dangerouslySetInnerHTML={{

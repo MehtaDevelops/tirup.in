@@ -1,20 +1,18 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import type { Metadata } from "next"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
 
-export default function Home() {
-  const [mounted, setMounted] = useState(false)
+export const metadata: Metadata = {
+  title: "Tirup Mehta — Designer & Frontend Developer",
+  description: "Official portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+  alternates: {
+    canonical: "https://tirup.in"
+  }
+}
 
-  useEffect(() => {
-    setMounted(true)
-    document.documentElement.style.scrollBehavior = "smooth"
-    return () => {
-      document.documentElement.style.scrollBehavior = ""
-    }
-  }, [])
+export default function Home() {
+  const currentYear = new Date().getFullYear()
 
   return (
     <main className="relative min-h-screen">
@@ -99,7 +97,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-6 px-6 text-center border-t border-black/10">
-        <p className="text-black/50 dark:text-white/50">© {mounted ? new Date().getFullYear() : "2025"} Tirup Mehta. All rights reserved.</p>
+        <p className="text-black/50 dark:text-white/50" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )
