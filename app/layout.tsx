@@ -1,11 +1,11 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Playfair_Display } from "next/font/google"
-import Script from "next/script"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
+import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -119,29 +119,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      {/* Google Tag Manager */}
-      <Script id="google-tag-manager" strategy="afterInteractive">
-        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-N37XXZ2B');`}
-      </Script>
-      {/* End Google Tag Manager */}
-
-      {/* Google Analytics (gtag.js) */}
-      <Script
-        async
-        src="https://www.googletagmanager.com/gtag/js?id=G-BKS7VBCPH5"
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-BKS7VBCPH5');`}
-      </Script>
-      {/* End Google Analytics */}
+      <GoogleAnalytics />
 
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
         {/* JSON-LD Schemas for Search Engines */}
@@ -160,13 +138,7 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})()`,
           }}
         />
-        {/* Google Tag Manager (noscript) */}
-        <noscript
-          dangerouslySetInnerHTML={{
-            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-N37XXZ2B" height="0" width="0" style="display:none;visibility:hidden"></iframe>`,
-          }}
-        />
-        {/* End Google Tag Manager (noscript) */}
+        <GoogleTagManagerNoscript />
 
         <PageTransition>{children}</PageTransition>
         <Analytics />

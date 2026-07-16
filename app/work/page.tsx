@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
+import { projectsList as projects } from "@/lib/projects-data"
 
 export const metadata: Metadata = {
   title: "Work | Tirup Mehta",
@@ -10,100 +11,6 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   const currentYear = new Date().getFullYear()
-
-  const projects = [
-    {
-      title: "Trace Guard",
-      description: "Bot-resistant behavioral security engine and NPM package.",
-      slug: "trace-guard",
-      liveUrl: "https://www.npmjs.com/package/trace-guard",
-    },
-    {
-      title: "Peace",
-      description: "AI therapist with mental health support in English and Gujarati.",
-      slug: "peace",
-      liveUrl: "https://peace.tirup.in",
-      isPrivate: true,
-    },
-    {
-      title: "Vectorize AI API",
-      description: "Free AI API for small companies — powerful capabilities, zero setup.",
-      slug: "vectorize-ai-api",
-      liveUrl: "https://vectorize.in",
-      isPrivate: true,
-    },
-    {
-      title: "QUOTT",
-      description: "Daily inspiration Android app with hand-picked shareable quotes.",
-      slug: "quott",
-      github: "github.com/TirupMehta/QUOTT",
-      liveUrl: "https://quott.tirup.in",
-    },
-    {
-      title: "Typing Challenge",
-      description: "Fast-paced typing challenge app to test and improve typing speed.",
-      slug: "typing-challenge",
-      liveUrl: "https://typing-challenge.tirup.in/",
-      isPrivate: true,
-    },
-    {
-      title: "Discuss",
-      description: "AI-moderated group debate platform on any topic.",
-      slug: "discuss",
-      liveUrl: "https://discuss.tirup.in",
-      isPrivate: true,
-    },
-    {
-      title: "DevGathering",
-      description: "Developer community for AI, Cybersecurity, and programming events.",
-      slug: "devgathering",
-      liveUrl: "https://devgathering.in",
-      isPrivate: true,
-    },
-    {
-      title: "Aperture",
-      description: "Cryptographic challenge — decrypt the message to prove your skills.",
-      slug: "aperture",
-      liveUrl: "https://aperture.tirup.in",
-      isPrivate: true,
-    },
-    {
-      title: "StartCrypt",
-      description: "Encrypts startup data with military-grade protection.",
-      slug: "startcrypt",
-      github: "github.com/TirupMehta/startcrypt",
-    },
-    {
-      title: "Jarvis",
-      description: "AI personal assistant with desktop system integration.",
-      slug: "jarvis",
-      github: "github.com/TirupMehta/jarvis",
-    },
-    {
-      title: "LocalVault",
-      description: "Private browser-based file storage using local IndexedDB.",
-      slug: "localvault",
-      github: "github.com/TirupMehta/LocalVault",
-    },
-    {
-      title: "Portal",
-      description: "Electron app showing real-time system, network info, and speed test.",
-      slug: "portal",
-      github: "github.com/TirupMehta/Portal",
-    },
-    {
-      title: "VisitorIP",
-      description: "Advanced IP tracking and analytics for enterprise security solutions.",
-      slug: "visitorip",
-      github: "github.com/TirupMehta/Begins/blob/main/visitorip.html",
-    },
-    {
-      title: "LinkHarvest",
-      description: "AI-powered web scraping tool for cybersecurity researchers.",
-      slug: "linkharvest",
-      github: "github.com/TirupMehta/linkharvest",
-    },
-  ]
 
   return (
     <main className="relative min-h-screen">

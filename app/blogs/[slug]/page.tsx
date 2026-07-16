@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
 import TldrPopup from "@/components/tldr-popup"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
+import { CONVEX_API_URL } from "@/lib/utils"
 
 interface BlogPost {
   title: string
@@ -29,7 +30,7 @@ function isValidSlug(slug: string): boolean {
 }
 
 // ─── API base URL ─────────────────────────────────────────────────────────────
-const API_BASE = "https://accomplished-condor-793.convex.site"
+const API_BASE = CONVEX_API_URL
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params

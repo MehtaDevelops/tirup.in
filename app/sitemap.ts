@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next"
 import { projectsData } from "@/lib/projects-data"
+import { CONVEX_API_URL } from "@/lib/utils"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://tirup.in"
@@ -25,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 3. Dynamic Blog Posts (fetched from Convex API)
   let blogPages: MetadataRoute.Sitemap = []
   try {
-    const res = await fetch("https://accomplished-condor-793.convex.site/api/posts", {
+    const res = await fetch(`${CONVEX_API_URL}/api/posts`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
     })
     const posts = await res.json()

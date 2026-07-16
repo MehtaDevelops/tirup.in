@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
+import { CONVEX_API_URL } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
 
@@ -23,7 +24,7 @@ export default async function BlogsPage() {
   let error = false
 
   try {
-    const res = await fetch("https://accomplished-condor-793.convex.site/api/posts", {
+    const res = await fetch(`${CONVEX_API_URL}/api/posts`, {
       next: { revalidate: 60 },
     })
     const data = await res.json()
