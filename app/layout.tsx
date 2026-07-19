@@ -23,22 +23,24 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL("https://tirup.in"),
   title: {
-    default: "Tirup Mehta | Designer & Developer",
+    default: "Tirup Mehta",
     template: "%s | Tirup Mehta"
   },
   description:
-    "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+    "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
   keywords: [
     "Tirup Mehta",
     "Tirup",
     "Mehta",
-    "Frontend Developer",
-    "UI/UX Designer",
+    "Software Engineer",
+    "Frontend Engineer",
     "Cybersecurity Specialist",
-    "Gujarat India",
+    "Cryptography",
     "React Developer",
     "Next.js Portfolio",
-    "Web Security"
+    "Web Security",
+    "Secure Frontend Architecture",
+    "Gujarat India"
   ],
   authors: [{ name: "Tirup Mehta", url: "https://tirup.in" }],
   creator: "Tirup Mehta",
@@ -50,8 +52,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://tirup.in",
-    title: "Tirup Mehta | Designer & Developer",
-    description: "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+    title: "Tirup Mehta",
+    description: "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
     siteName: "Tirup Mehta Portfolio",
     images: [
       {
@@ -64,8 +66,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tirup Mehta | Designer & Developer",
-    description: "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+    title: "Tirup Mehta",
+    description: "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
     creator: "@TirupMehta",
     images: ["/profile.png"]
   },
@@ -80,11 +82,34 @@ export const metadata: Metadata = {
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": "https://tirup.in/#person",
   "name": "Tirup Mehta",
   "url": "https://tirup.in",
   "image": "https://tirup.in/profile.png",
-  "description": "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
-  "jobTitle": "Frontend Developer & UI/UX Designer",
+  "description": "Software engineer specializing in frontend architectures, systems security, and cryptography.",
+  "jobTitle": "Software Engineer",
+  "knowsAbout": [
+    "Software Engineering",
+    "Computer Science",
+    "Frontend Development",
+    "Web Security",
+    "Cryptography",
+    "React (software)",
+    "Next.js",
+    "TypeScript",
+    "UI/UX Design",
+    "Information Security"
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Gujarat",
+    "addressCountry": "India"
+  },
+  "gender": "Male",
+  "nationality": {
+    "@type": "Country",
+    "name": "India"
+  },
   "sameAs": [
     "https://github.com/TirupMehta",
     "https://www.linkedin.com/in/TirupMehta",
@@ -103,12 +128,15 @@ const personSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": "https://tirup.in/#website",
   "name": "Tirup Mehta Portfolio",
   "url": "https://tirup.in",
-  "description": "Portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer.",
+  "description": "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
+  "publisher": {
+    "@id": "https://tirup.in/#person"
+  },
   "author": {
-    "@type": "Person",
-    "name": "Tirup Mehta"
+    "@id": "https://tirup.in/#person"
   }
 }
 

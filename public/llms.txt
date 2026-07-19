@@ -1,0 +1,54 @@
+# Tirup Mehta
+
+Official portfolio and professional resource for Tirup Mehta, a Software Engineer based in Gujarat, India, specializing in secure frontend architectures, systems security, and cryptography.
+
+## Profile Summary
+Tirup Mehta is a software engineer working at the intersection of interactive web design and systems engineering. Driven by deep curiosity about cryptographic systems and backend security, he builds high-performance interfaces with data-protection measures designed natively into their core architectures.
+
+- **URL**: [https://tirup.in](https://tirup.in)
+- **Blogs**: [https://blogs.tirup.in](https://blogs.tirup.in)
+- **Location**: Gujarat, India
+
+---
+
+## Technical Stack & Focus Areas
+
+### Core Specialities
+- **Secure Frontend Engineering**: Creating high-performance interactive interfaces using React and Next.js, implementing robust Content Security Policies (CSP), and establishing secure data pipelines.
+- **Cryptography & Systems Security**: Exploring secure key exchange, cryptographic protocols, data protection, and secure frontend integrations.
+
+### Technologies & Core Stack
+- **Languages**: TypeScript, JavaScript
+- **Frameworks**: React, Next.js
+- **Styling & UI**: Tailwind CSS, Motion, shadcn/ui, Base UI
+- **Backend & Databases**: Convex, Supabase, Redis, MongoDB
+- **Developer Tools**: Git, Docker, Figma
+
+---
+
+## Work & Projects
+
+### Key Work Page
+- Projects overview and production listings: [https://tirup.in/work](https://tirup.in/work)
+- Technical skills details: [https://tirup.in/skills](https://tirup.in/skills)
+
+---
+
+## Writing & Thoughts
+Tirup writes about frontend architectures, web performance optimizations, cryptographic interfaces, and web application security:
+- Blog home: [https://blogs.tirup.in](https://blogs.tirup.in)
+- Portfolio syndicated essays: [https://tirup.in/blogs](https://tirup.in/blogs)
+
+---
+
+## Verified Identity & Profiles
+- **LinkedIn**: [https://www.linkedin.com/in/TirupMehta](https://www.linkedin.com/in/TirupMehta)
+- **GitHub**: [https://github.com/TirupMehta](https://github.com/TirupMehta)
+- **Peerlist**: [https://peerlist.io/tirupmehta](https://peerlist.io/tirupmehta)
+- **Happenstance**: [https://happenstance.ai/u/tirupmehta](https://happenstance.ai/u/tirupmehta)
+- **X (Twitter)**: [https://x.com/TirupMehta](https://x.com/TirupMehta)
+- **Kaggle**: [https://www.kaggle.com/TirupMehta](https://www.kaggle.com/TirupMehta)
+- **Google Developers**: [https://g.dev/Tirup](https://g.dev/Tirup)
+- **Medium**: [https://medium.com/@TirupMehta](https://medium.com/@TirupMehta)
+- **YouTube**: [https://youtube.com/@TirupMehta](https://youtube.com/@TirupMehta)
+- **Instagram**: [https://instagram.com/TirupMehta](https://instagram.com/TirupMehta)

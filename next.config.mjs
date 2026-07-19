@@ -8,6 +8,12 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
 
+  // ─── Server Components External Dependencies ──────────────────────────────
+  // Prevent isomorphic-dompurify and jsdom from being bundled (jsdom has native
+  // dependencies like canvas which fail when bundled for serverless functions).
+  serverExternalPackages: ["isomorphic-dompurify", "jsdom"],
+
+
   // ─── Image Optimisation ───────────────────────────────────────────────────
   images: {
     // Let Next.js optimise images (reduces attack surface of serving arbitrary

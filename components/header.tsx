@@ -91,17 +91,17 @@ export default function Header() {
                 />
               </div>
             </div>
-            <div className="flex items-baseline gap-3 flex-wrap">
-              <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white">
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white leading-none">
                 Tirup Mehta
               </h1>
               <a 
                 href="/Resume_Tirup_Mehta.pdf" 
                 download
-                className="group inline-flex items-center gap-1 pl-2.5 pr-3 py-1 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-300 select-none cursor-pointer transform hover:-translate-y-[1px] active:scale-95"
+                className="group inline-flex items-center justify-center gap-1.5 h-[26px] px-3 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-300 select-none cursor-pointer"
               >
-                <Download size={10} className="transition-transform duration-300 group-hover:translate-y-0.5" />
-                <span>Resume</span>
+                <Download size={12} className="transition-transform duration-300 group-hover:translate-y-[1px] text-black/50 dark:text-white/50 group-hover:text-black dark:group-hover:text-white" />
+                <span className="leading-none select-none">Resume</span>
               </a>
             </div>
           </div>

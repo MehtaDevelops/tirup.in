@@ -4,8 +4,8 @@ import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Tirup Mehta — Designer & Frontend Developer",
-  description: "Official portfolio of Tirup Mehta, a front-end web developer, cybersecurity enthusiast, and UI/UX designer from Gujarat, India.",
+  title: "Tirup Mehta",
+  description: "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
   alternates: {
     canonical: "https://tirup.in"
   }

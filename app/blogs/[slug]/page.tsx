@@ -33,6 +33,25 @@ function isValidSlug(slug: string): boolean {
 // ─── API base URL ─────────────────────────────────────────────────────────────
 const API_BASE = CONVEX_API_URL
 
+export const revalidate = 3600 // Revalidate posts every hour
+
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(`${API_BASE}/api/posts`)
+    const posts = await res.json()
+    if (Array.isArray(posts)) {
+      return posts
+        .filter((post) => post.status === "published" || !post.status)
+        .map((post: { slug: string }) => ({
+          slug: post.slug,
+        }))
+    }
+  } catch (err) {
+    console.error("Failed to generate static params for blogs:", err)
+  }
+  return []
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
 

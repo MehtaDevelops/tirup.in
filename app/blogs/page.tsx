@@ -4,7 +4,7 @@ import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
 import { CONVEX_API_URL } from "@/lib/utils"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 900
 
 export const metadata: Metadata = {
   title: "Writing | Tirup Mehta",
