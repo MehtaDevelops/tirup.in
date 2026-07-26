@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight, Download, X } from "lucide-react"
@@ -10,6 +10,7 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 export default function Header() {
   const pathname = usePathname()
+  const router = useRouter()
   const [showPopup, setShowPopup] = useState(false)
 
   useEffect(() => {
@@ -18,7 +19,18 @@ export default function Header() {
     if (!hasDismissed) {
       setShowPopup(true)
     }
-  }, [])
+
+    // Auto-refresh site content silently when network reconnects
+    const handleOnline = () => {
+      try {
+        router.refresh()
+      } catch (err) {
+        console.error("Auto-refresh on reconnect failed:", err)
+      }
+    }
+    window.addEventListener("online", handleOnline)
+    return () => window.removeEventListener("online", handleOnline)
+  }, [router])
 
   const handleDismissPopup = () => {
     setShowPopup(false)
