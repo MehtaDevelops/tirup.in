@@ -79,6 +79,22 @@ export const metadata: Metadata = {
   }
 }
 
+const profilePageSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "@id": "https://tirup.in/#profilepage",
+  "url": "https://tirup.in",
+  "name": "Tirup Mehta - Profile & Portfolio",
+  "description": "Official profile and developer portfolio of Tirup Mehta, software engineer and security researcher.",
+  "mainEntity": {
+    "@id": "https://tirup.in/#person"
+  },
+  "hasPart": [
+    { "@id": "https://tirup.in/#trace-guard" },
+    { "@id": "https://tirup.in/#gleanbox" }
+  ]
+}
+
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -140,6 +156,68 @@ const websiteSchema = {
   }
 }
 
+const traceGuardSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://tirup.in/#trace-guard",
+  "name": "trace-guard",
+  "alternateName": "Trace Guard",
+  "description": "Production-grade behavioral security engine to block AI agents and Vision-Language Model (VLM) bots.",
+  "applicationCategory": "SecurityApplication",
+  "operatingSystem": "Node.js, Edge Runtime",
+  "downloadUrl": "https://www.npmjs.com/package/trace-guard",
+  "url": "https://www.npmjs.com/package/trace-guard",
+  "sameAs": "https://github.com/tirupmehta/trace-guard",
+  "softwareVersion": "3.7.0",
+  "programmingLanguage": ["TypeScript", "JavaScript"],
+  "author": {
+    "@id": "https://tirup.in/#person"
+  },
+  "creator": {
+    "@id": "https://tirup.in/#person"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0.00",
+    "priceCurrency": "USD"
+  }
+}
+
+const gleanBoxSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://tirup.in/#gleanbox",
+  "name": "GleanBox",
+  "description": "Open-source developer utility and data harvesting toolkit for structured intelligence.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Node.js, Cross-platform",
+  "url": "https://github.com/TirupMehta/GleanBox",
+  "sameAs": "https://github.com/TirupMehta/GleanBox",
+  "programmingLanguage": ["TypeScript", "JavaScript"],
+  "author": {
+    "@id": "https://tirup.in/#person"
+  },
+  "creator": {
+    "@id": "https://tirup.in/#person"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0.00",
+    "priceCurrency": "USD"
+  }
+}
+
+const jsonLdGraph = {
+  "@context": "https://schema.org",
+  "@graph": [
+    profilePageSchema,
+    personSchema,
+    websiteSchema,
+    traceGuardSchema,
+    gleanBoxSchema
+  ]
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -153,12 +231,9 @@ export default function RootLayout({
         {/* JSON-LD Schemas for Search Engines */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
+
 
         {/* Theme init — prevents flash of wrong theme */}
         <script

@@ -50,7 +50,7 @@ interface Project {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   // Validate slug before lookup
-  if (!isValidSlug(slug)) return { title: "Project Not Found | Tirup Mehta" }
+  if (!isValidSlug(slug)) return { title: "Project Not Found" }
 
   const normalizedSlug = slug.toLowerCase()
   const project = Object.prototype.hasOwnProperty.call(projectsData, normalizedSlug)
@@ -59,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (project) {
     return {
-      title: `${project.title} | Tirup Mehta`,
+      title: project.title,
       description: project.description,
       openGraph: {
         title: `${project.title} | Tirup Mehta`,
@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
   return {
-    title: "Project Not Found | Tirup Mehta",
+    title: "Project Not Found",
   }
 }
 
@@ -189,6 +189,29 @@ export default async function ProjectPage({ params }: PageProps) {
           </div>
         </TextWithBlur>
 
+        {/* JSON-LD Structured Data for Software Application */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": project.title,
+              "description": project.description,
+              "applicationCategory": "SoftwareApplication",
+              "operatingSystem": "Web, Cross-platform",
+              "url": `https://tirup.in/projects/${normalizedSlug}`,
+              ...(project.liveUrl ? { "downloadUrl": project.liveUrl } : {}),
+              ...(project.github ? { "codeRepository": project.github.startsWith("http") ? project.github : `https://${project.github}` } : {}),
+              "author": {
+                "@type": "Person",
+                "name": "Tirup Mehta",
+                "url": "https://tirup.in"
+              }
+            })
+          }}
+        />
+
         {/* Details */}
         <div className="flex flex-col">
           {project.techStack && (
@@ -196,7 +219,7 @@ export default async function ProjectPage({ params }: PageProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
                   <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">01</span>
-                  <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Tech Stack</h3>
+                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Tech Stack</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2 flex flex-wrap gap-2">
                   {project.techStack.map((tech: string) => (
@@ -217,7 +240,7 @@ export default async function ProjectPage({ params }: PageProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
                   <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">02</span>
-                  <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Core Engine</h3>
+                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Core Engine</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2">
                   <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">{project.engine}</p>
@@ -235,7 +258,7 @@ export default async function ProjectPage({ params }: PageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                   <div className="col-span-1 flex items-baseline gap-2">
                     <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">{displayIndex}</span>
-                    <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">{detail.title}</h3>
+                    <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">{detail.title}</h2>
                   </div>
                   <div className="col-span-1 md:col-span-2">
                     <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">{detail.content}</p>
@@ -252,16 +275,16 @@ export default async function ProjectPage({ params }: PageProps) {
                   <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">
                     {String((project.techStack ? 1 : 0) + (project.engine ? 1 : 0) + (project.details ? project.details.length : 0) + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h3>
+                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 md:gap-8">
                   {Object.entries(project.stats).map(([key, value]: [string, any]) => {
                     const isNum = isNumericMetric(String(value))
                     return (
                       <div key={key}>
-                        <h4 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1 select-none">
+                        <h3 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1 select-none">
                           {key.replace(/([A-Z])/g, " $1").trim()}
-                        </h4>
+                        </h3>
                         <p
                           className={`font-light text-accent leading-snug text-wrap pretty ${
                             isNum
@@ -287,9 +310,9 @@ export default async function ProjectPage({ params }: PageProps) {
         {nextProject && (
           <TextWithBlur>
             <div className="pt-16 pb-4">
-              <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
+              <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
                 Next
-              </p>
+              </h2>
               <Link
                 href={`/projects/${nextSlug}`}
                 className="group block py-5 border-t border-black/10 dark:border-white/10"

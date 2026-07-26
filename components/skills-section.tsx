@@ -99,9 +99,9 @@ export default function SkillsSection() {
       {/* Current Stack */}
       <TextWithBlur delay={100}>
         <div className="mb-14">
-          <h4 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-5">
+          <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-5">
             Current Stack
-          </h4>
+          </h2>
           <div className="flex flex-wrap gap-x-8 gap-y-5 md:gap-x-12">
             {currentStack.map((tech) => (
               <TechItem key={tech} name={tech} />
@@ -115,9 +115,9 @@ export default function SkillsSection() {
         {categories.map((category, index) => (
           <TextWithBlur key={category.title} delay={150 + index * 100}>
             <div className="flex flex-col">
-              <h4 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-5">
+              <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-5">
                 {category.title}
-              </h4>
+              </h2>
               <div className="flex flex-col gap-4">
                 {category.skills.map((tech) => (
                   <TechItem key={tech} name={tech} />

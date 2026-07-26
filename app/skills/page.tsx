@@ -3,7 +3,7 @@ import Header from "@/components/header"
 import SkillsSection from "@/components/skills-section"
 
 export const metadata: Metadata = {
-  title: "Skills | Tirup Mehta",
+  title: "Skills",
   description: "View the technical skills and core stack utilized by Tirup Mehta across frontend, backend, and security development.",
 }
 

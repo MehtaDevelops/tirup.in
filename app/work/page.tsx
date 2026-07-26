@@ -5,7 +5,7 @@ import TextWithBlur from "@/components/text-with-blur"
 import { projectsList as projects } from "@/lib/projects-data"
 
 export const metadata: Metadata = {
-  title: "Work | Tirup Mehta",
+  title: "Work",
   description: "Explore projects, developer tools, and security libraries built by Tirup Mehta.",
 }
 
@@ -18,6 +18,7 @@ export default function WorkPage() {
 
       {/* Projects Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
+        <h2 className="sr-only">Selected Work & Projects</h2>
         <div className="flex flex-col">
           {projects.map((project, index) => {
             return (

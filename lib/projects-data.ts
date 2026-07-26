@@ -342,6 +342,29 @@ export const projectsData = {
       },
     ],
   },
+  "gleanbox": {
+    title: "GleanBox",
+    description: "Open-source developer utility and data harvesting toolkit for structured intelligence.",
+    fullDescription: "GleanBox is an open-source developer utility and data harvesting toolkit designed for efficient web content extraction, structured data parsing, and local dataset compilation.",
+    github: "github.com/TirupMehta/GleanBox",
+    liveUrl: "https://github.com/TirupMehta/GleanBox",
+    techStack: ["TypeScript", "JavaScript", "Node.js"],
+    stats: {
+      stars: "5",
+      type: "Open Source",
+      license: "MIT",
+    },
+    details: [
+      {
+        title: "The Challenge",
+        content: "Developers and cybersecurity researchers need lightweight, dependable tooling to harvest and clean unstructured web data without heavy infrastructure overhead.",
+      },
+      {
+        title: "The Solution",
+        content: "GleanBox provides modular extraction patterns and data pipelines to structure raw web content into normalized schema objects.",
+      },
+    ],
+  },
 }
 
 export interface WorkProject {
@@ -359,6 +382,13 @@ export const projectsList: WorkProject[] = [
     description: "Bot-resistant behavioral security engine and NPM package.",
     slug: "trace-guard",
     liveUrl: "https://www.npmjs.com/package/trace-guard",
+  },
+  {
+    title: "GleanBox",
+    description: "Open-source developer utility and data harvesting toolkit.",
+    slug: "gleanbox",
+    github: "github.com/TirupMehta/GleanBox",
+    liveUrl: "https://github.com/TirupMehta/GleanBox",
   },
   {
     title: "Peace",
@@ -446,3 +476,4 @@ export const projectsList: WorkProject[] = [
     github: "github.com/TirupMehta/linkharvest",
   },
 ]
+

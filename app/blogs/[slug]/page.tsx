@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   // Validate slug before using in any external fetch
   if (!isValidSlug(slug)) {
-    return { title: "Article Not Found | Tirup Mehta" }
+    return { title: "Article Not Found" }
   }
 
   try {
@@ -65,12 +65,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       next: { revalidate: 60 },
     })
 
-    if (!res.ok) return { title: "Article Not Found | Tirup Mehta" }
+    if (!res.ok) return { title: "Article Not Found" }
 
     const data = await res.json()
     if (data && !data.error) {
       return {
-        title: `${String(data.title).slice(0, 200)} | Tirup Mehta`,
+        title: String(data.title).slice(0, 200),
         description: String(data.tldr ?? "").slice(0, 300),
         openGraph: {
           title: `${String(data.title).slice(0, 200)} | Tirup Mehta`,
@@ -84,7 +84,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     // Swallow — return default below
   }
   return {
-    title: "Article Not Found | Tirup Mehta",
+    title: "Article Not Found",
   }
 }
 

@@ -6,3 +6,5 @@ Disallow: /node_modules/
 Disallow: /cdn-cgi/
 
 Sitemap: https://tirup.in/sitemap.xml
+Sitemap: https://blogs.tirup.in/sitemap.xml
+

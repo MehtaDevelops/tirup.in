@@ -7,7 +7,7 @@ import { CONVEX_API_URL } from "@/lib/utils"
 export const revalidate = 900
 
 export const metadata: Metadata = {
-  title: "Writing | Tirup Mehta",
+  title: "Writing",
   description: "Thoughts on development, design, and security by Tirup Mehta.",
 }
 
@@ -61,6 +61,7 @@ export default async function BlogsPage() {
 
       {/* Blogs list Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20 pt-0">
+        <h2 className="sr-only">Articles & Writing</h2>
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>

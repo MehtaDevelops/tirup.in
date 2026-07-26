@@ -4,7 +4,9 @@ import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Tirup Mehta",
+  title: {
+    absolute: "Tirup Mehta",
+  },
   description: "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
   alternates: {
     canonical: "https://tirup.in"
@@ -44,9 +46,9 @@ export default function Home() {
         {/* Connect Links */}
         <TextWithBlur delay={300}>
           <div className="mt-8 border-t border-black/5 dark:border-white/5 pt-6">
-            <h3 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-6">
+            <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-6">
               Connect
-            </h3>
+            </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-8 gap-y-4 text-xs md:text-sm font-light text-black/55 dark:text-white/55">
               <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
                 GitHub <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
