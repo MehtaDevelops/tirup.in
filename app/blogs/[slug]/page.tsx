@@ -22,28 +22,33 @@ interface PageProps {
 }
 
 // ─── Slug validation ──────────────────────────────────────────────────────────
-// Only allow alphanumeric characters, hyphens, and underscores in slugs.
-// This prevents path traversal and injection attacks via the URL parameter.
-const SAFE_SLUG_RE = /^[a-zA-Z0-9_-]{1,200}$/
+// Allow alphanumeric characters, hyphens, underscores, and dots in slugs (up to 300 chars).
+// This prevents path traversal and injection attacks via the URL parameter while supporting modern slugs.
+const SAFE_SLUG_RE = /^[a-zA-Z0-9_.-]{1,300}$/
 
 function isValidSlug(slug: string): boolean {
+  if (!slug || typeof slug !== "string") return false
   return SAFE_SLUG_RE.test(slug)
 }
 
 // ─── API base URL ─────────────────────────────────────────────────────────────
-const API_BASE = CONVEX_API_URL
+const API_BASE = CONVEX_API_URL.replace(/\/+$/, "")
 
-export const revalidate = 3600 // Revalidate posts every hour
+export const dynamicParams = true
+export const revalidate = 60 // Revalidate posts every minute
 
 export async function generateStaticParams() {
   try {
-    const res = await fetch(`${API_BASE}/api/posts`)
+    const res = await fetch(`${API_BASE}/api/posts`, {
+      next: { revalidate: 60 },
+    })
+    if (!res.ok) return []
     const posts = await res.json()
     if (Array.isArray(posts)) {
       return posts
-        .filter((post) => post.status === "published" || !post.status)
+        .filter((post) => post && post.slug && (post.status === "published" || !post.status))
         .map((post: { slug: string }) => ({
-          slug: post.slug,
+          slug: String(post.slug),
         }))
     }
   } catch (err) {
@@ -53,7 +58,13 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params
+  let slug = ""
+  try {
+    const p = await params
+    slug = p.slug
+  } catch {
+    return { title: "Article Not Found" }
+  }
 
   // Validate slug before using in any external fetch
   if (!isValidSlug(slug)) {
@@ -68,9 +79,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!res.ok) return { title: "Article Not Found" }
 
     const data = await res.json()
-    if (data && !data.error) {
+    if (data && !data.error && data.title) {
       return {
-        title: String(data.title).slice(0, 200),
+        title: `${String(data.title).slice(0, 200)} | Tirup Mehta`,
         description: String(data.tldr ?? "").slice(0, 300),
         openGraph: {
           title: `${String(data.title).slice(0, 200)} | Tirup Mehta`,
@@ -89,7 +100,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params
+  let slug = ""
+  try {
+    const p = await params
+    slug = p.slug
+  } catch {
+    notFound()
+  }
+
   let post: BlogPost | null = null
   let error = false
 
@@ -107,16 +125,14 @@ export default async function BlogPostPage({ params }: PageProps) {
       error = true
     } else {
       const data = await res.json()
-      if (data && !data.error) {
+      if (data && !data.error && data.title) {
         post = data
       } else {
         error = true
       }
     }
   } catch (err) {
-    // Do NOT log the full error or the slug to the console — it could contain
-    // injection payloads that pollute server logs.
-    console.error("[blog/page] Failed to fetch post")
+    console.error("[blog/page] Failed to fetch post:", err)
     error = true
   }
 
@@ -141,12 +157,16 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   // ── Sanitize ALL content from the external API before rendering ─────────────
-  // post.contentHtml comes from the Convex API and must be sanitized to prevent
-  // stored XSS attacks (e.g., if a blog post's HTML was manipulated on the server).
-  const safeContentHtml = sanitizeHtml(post.contentHtml ?? "")
-
-  // post.tldr goes through our safe markdown renderer, which also sanitizes output
-  const safeTldrHtml = renderMarkdownSafe(post.tldr ?? "")
+  let safeContentHtml = ""
+  let safeTldrHtml = ""
+  try {
+    safeContentHtml = sanitizeHtml(post.contentHtml ?? "")
+    safeTldrHtml = renderMarkdownSafe(post.tldr ?? "")
+  } catch (e) {
+    console.error("[blog/page] Error sanitizing post content:", e)
+    safeContentHtml = post.contentHtml ?? ""
+    safeTldrHtml = post.tldr ?? ""
+  }
 
   // Sanitize scalar fields that render into JSX (React auto-escapes these, but
   // be explicit for clarity and defence-in-depth)
