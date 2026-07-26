@@ -265,7 +265,7 @@ p {
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Blog post typography styles */
+/* Blog post typography & table styles matching blogs.tirup.in quality */
 .blog-content {
   font-weight: 300;
   line-height: 1.8;
@@ -276,28 +276,32 @@ p {
     font-size: 17px;
   }
 }
-.blog-content h1, .blog-content h2, .blog-content h3 {
-  font-weight: 500;
+.blog-content h1, .blog-content h2, .blog-content h3, .blog-content h4 {
+  font-weight: 600;
   color: var(--fg);
-  margin-top: 2.25rem;
-  margin-bottom: 1rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
   letter-spacing: -0.02em;
+  line-height: 1.3;
 }
-.blog-content h1 { font-size: 1.65rem; }
-.blog-content h2 { font-size: 1.35rem; }
-.blog-content h3 { font-size: 1.15rem; }
+.blog-content h1 { font-size: 1.75rem; }
+.blog-content h2 { font-size: 1.45rem; }
+.blog-content h3 { font-size: 1.2rem; }
+.blog-content h4 { font-size: 1.05rem; }
+
 .blog-content p {
   margin-bottom: 1.5rem;
-  color: rgba(0, 0, 0, 0.75);
+  color: rgba(0, 0, 0, 0.8);
 }
 .dark .blog-content p {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.82);
 }
 .blog-content a {
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-color: var(--accent);
-  transition: color 0.3s;
+  color: var(--fg);
+  transition: color 0.2s, text-decoration-color 0.2s;
 }
 .blog-content a:hover {
   color: var(--accent);
@@ -314,48 +318,115 @@ p {
 }
 .blog-content li {
   margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
 }
 .blog-content pre {
-  background-color: rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 1.25rem;
-  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
   overflow-x: auto;
-  margin-bottom: 1.5rem;
-  font-family: monospace;
+  margin-top: 1.5rem;
+  margin-bottom: 1.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
 }
 .dark .blog-content pre {
-  background-color: rgba(255, 255, 255, 0.015);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .blog-content code {
-  font-family: monospace;
-  font-size: 0.875em;
-  background-color: rgba(0, 0, 0, 0.04);
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85em;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  color: var(--fg);
 }
 .dark .blog-content code {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 .blog-content pre code {
   padding: 0;
   background-color: transparent;
   border-radius: 0;
-}
-.blog-content blockquote {
-  border-left: 2px solid var(--accent);
-  padding-left: 1.25rem;
-  margin-left: 0;
-  margin-bottom: 1.5rem;
-  font-style: italic;
-  color: rgba(0, 0, 0, 0.55);
-}
-.dark .blog-content blockquote {
-  color: rgba(255, 255, 255, 0.55);
+  color: inherit;
 }
 
-/* TL;DR Box styling matching the blogs application but adapted to the portfolio typography */
+/* Blockquotes & Callout Annotations */
+.blog-content blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.25rem;
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
+  background: rgba(138, 157, 255, 0.04);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.85);
+}
+.dark .blog-content blockquote {
+  background: rgba(165, 180, 252, 0.03);
+  color: rgba(255, 255, 255, 0.85);
+}
+.blog-content blockquote p {
+  margin: 0;
+  color: inherit;
+}
+.blog-content blockquote strong {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Tables — Clean, Spaced, Professional Layout */
+.blog-content table {
+  width: 100%;
+  margin-top: 1.75rem;
+  margin-bottom: 2rem;
+  border-collapse: collapse;
+  font-size: 0.925rem;
+  text-align: left;
+}
+.blog-content thead {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+.dark .blog-content thead {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+.blog-content th {
+  padding: 0.75rem 1rem 0.75rem 0;
+  font-weight: 600;
+  color: var(--fg);
+  text-align: left;
+  letter-spacing: -0.01em;
+}
+.blog-content th:last-child,
+.blog-content td:last-child {
+  padding-right: 0;
+}
+.blog-content td {
+  padding: 0.85rem 1rem 0.85rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  color: rgba(0, 0, 0, 0.8);
+}
+.dark .blog-content td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.8);
+}
+.blog-content tr:hover td {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+.dark .blog-content tr:hover td {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+.blog-content td strong,
+.blog-content th strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* TL;DR Box styling */
 .tldr-box {
   background: rgba(138, 157, 255, 0.04);
   border: 1px solid rgba(138, 157, 255, 0.12);
@@ -392,15 +463,15 @@ html.dark .tldr-box {
 }
 
 /* Editorial drop cap style for the first paragraph of blog articles */
-.blog-content p:first-of-type::first-letter,
-.blog-content .tldr-box + p::first-letter,
-.blog-content .tldr-box + div p:first-of-type::first-letter {
+.blog-content > p:first-of-type::first-letter,
+.blog-content > div > p:first-of-type::first-letter,
+.blog-content .tldr-box + p::first-letter {
   float: left;
   font-family: Georgia, serif;
   font-size: 3.5em;
   line-height: 0.85;
   margin-top: 0.05em;
-  margin-right: 0.1em;
+  margin-right: 0.12em;
   font-weight: 500;
   color: var(--fg);
 }
