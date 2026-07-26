@@ -105,8 +105,8 @@ const nextConfig = {
               "default-src 'self'",
               // Scripts: self + GTM + GA + Vercel Speed Insights (plus 'unsafe-eval' in dev for hot-reloading)
               `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com https://vercel.live`,
-              // Styles: self + Google Fonts + inline (required by Tailwind)
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              // Styles: self + Google Fonts + inline (required by Tailwind & Vercel)
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://va.vercel-scripts.com https://vercel.live",
               // Fonts: Google Fonts CDN
               "font-src 'self' https://fonts.gstatic.com data:",
               // Images: self + data URIs + our Convex API
