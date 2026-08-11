@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
+import UtmTracker from "@/components/utm-tracker"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -225,9 +226,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <GoogleAnalytics />
-
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
+        <GoogleAnalytics />
+        <UtmTracker />
         {/* JSON-LD Schemas for Search Engines */}
         <script
           type="application/ld+json"

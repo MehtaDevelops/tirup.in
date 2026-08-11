@@ -60,7 +60,7 @@ export default async function BlogsPage() {
       <Header />
 
       {/* Blogs list Section */}
-      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20 pt-0">
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         <h2 className="sr-only">Articles & Writing</h2>
         {error ? (
           <div className="py-8">
