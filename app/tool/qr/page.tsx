@@ -386,26 +386,39 @@ export default function QrStudioPage() {
 
           ctx.save()
           if (eyeShape === "circle") {
+            // 1. Outer circle (7x7)
             ctx.beginPath()
             ctx.arc(eyeX + eyeDimension / 2, eyeY + eyeDimension / 2, eyeDimension / 2, 0, Math.PI * 2)
             ctx.fillStyle = fillStyle
             ctx.fill()
 
+            // 2. Middle cutout (5x5) - clears or draws background color
             ctx.beginPath()
             ctx.arc(eyeX + eyeDimension / 2, eyeY + eyeDimension / 2, (5 * moduleSize) / 2, 0, Math.PI * 2)
-            ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
-            ctx.fill()
+            if (bgColor === "transparent") {
+              ctx.save()
+              ctx.globalCompositeOperation = "destination-out"
+              ctx.fillStyle = "#000000"
+              ctx.fill()
+              ctx.restore()
+            } else {
+              ctx.fillStyle = bgColor
+              ctx.fill()
+            }
 
+            // 3. Core center circle (3x3)
             ctx.beginPath()
             ctx.arc(eyeX + eyeDimension / 2, eyeY + eyeDimension / 2, (3 * moduleSize) / 2, 0, Math.PI * 2)
             ctx.fillStyle = fillStyle
             ctx.fill()
           } else if (eyeShape === "rounded") {
+            // 1. Outer squircle (7x7)
             ctx.beginPath()
             ctx.roundRect(eyeX, eyeY, eyeDimension, eyeDimension, eyeDimension * 0.28)
             ctx.fillStyle = fillStyle
             ctx.fill()
 
+            // 2. Middle cutout (5x5) - clears or draws background color
             const innerOffset = moduleSize
             const innerDimension = 5 * moduleSize
             ctx.beginPath()
@@ -416,9 +429,18 @@ export default function QrStudioPage() {
               innerDimension,
               innerDimension * 0.24
             )
-            ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
-            ctx.fill()
+            if (bgColor === "transparent") {
+              ctx.save()
+              ctx.globalCompositeOperation = "destination-out"
+              ctx.fillStyle = "#000000"
+              ctx.fill()
+              ctx.restore()
+            } else {
+              ctx.fillStyle = bgColor
+              ctx.fill()
+            }
 
+            // 3. Core center squircle (3x3)
             const coreOffset = 2 * moduleSize
             const coreDimension = 3 * moduleSize
             ctx.beginPath()
@@ -442,14 +464,26 @@ export default function QrStudioPage() {
         ctx.imageSmoothingEnabled = true
         ctx.imageSmoothingQuality = "high"
 
+        const getContrastingColor = (hex: string) => {
+          if (!hex || hex === "transparent") return "#000000"
+          const clean = hex.replace("#", "")
+          const fullHex = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean
+          const r = parseInt(fullHex.substring(0, 2) || "0", 16)
+          const g = parseInt(fullHex.substring(2, 4) || "0", 16)
+          const b = parseInt(fullHex.substring(4, 6) || "0", 16)
+          const yiq = (r * 299 + g * 587 + b * 114) / 1000
+          return yiq >= 140 ? "#09090B" : "#FFFFFF"
+        }
+
         const badgeRadius = Math.round(badgeDim * 0.22)
-        ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
+        const badgeBg = bgColor === "transparent" ? (fillStyle.toLowerCase() === "#ffffff" ? "#09090B" : "#FFFFFF") : bgColor
+        ctx.fillStyle = badgeBg
         ctx.beginPath()
         ctx.roundRect(centerX - badgeDim / 2, centerY - badgeDim / 2, badgeDim, badgeDim, badgeRadius)
         ctx.fill()
 
         ctx.lineWidth = Math.max(3, Math.round(baseQrResolution * 0.004))
-        ctx.strokeStyle = fgColor === "transparent" ? "#000000" : fgColor
+        ctx.strokeStyle = getContrastingColor(badgeBg) === "#FFFFFF" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.15)"
         ctx.stroke()
 
         const img = new Image()
@@ -1466,7 +1500,25 @@ export default function QrStudioPage() {
                 </div>
 
                 {/* Rendered Canvas Preview - Generous, Bold, High QR Area Ratio */}
-                <div className="p-3 sm:p-4 bg-zinc-50 dark:bg-zinc-900/50 border border-black/10 dark:border-zinc-800 flex items-center justify-center">
+                <div
+                  className={`p-3 sm:p-4 border border-black/10 dark:border-zinc-800 flex items-center justify-center transition-colors ${
+                    bgColor === "transparent"
+                      ? fgColor.toLowerCase() === "#ffffff"
+                        ? "bg-zinc-900" // If white QR on clear, dark backdrop so white QR pops
+                        : "bg-zinc-100" // If dark QR on clear, light backdrop so dark QR pops
+                      : "bg-zinc-50 dark:bg-zinc-900/50"
+                  }`}
+                  style={
+                    bgColor === "transparent"
+                      ? {
+                          backgroundImage:
+                            "linear-gradient(45deg, rgba(128,128,128,0.2) 25%, transparent 25%), linear-gradient(-45deg, rgba(128,128,128,0.2) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(128,128,128,0.2) 75%), linear-gradient(-45deg, transparent 75%, rgba(128,128,128,0.2) 75%)",
+                          backgroundSize: "16px 16px",
+                          backgroundPosition: "0 0, 0 8px, 8px -8px, -8px 0px",
+                        }
+                      : {}
+                  }
+                >
                   {previewDataUrl ? (
                     <img
                       src={previewDataUrl}
