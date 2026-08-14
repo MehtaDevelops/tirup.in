@@ -387,6 +387,28 @@ export const projectsData = {
       },
     ],
   },
+  "qr-studio": {
+    title: "QR Studio",
+    description: "Pro vector QR code and Wi-Fi credential generator.",
+    fullDescription: "QR Studio is a developer-grade vector QR code generator and styling engine. Supports URLs, Wi-Fi credentials, vCards, crypto payments, custom color schemes, center logos, SVG vectors, and 4K PNG downloads with 100% offline privacy.",
+    liveUrl: "https://tirup.in/tool/qr",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Canvas API", "SVG Engine"],
+    stats: {
+      formats: "SVG / PNG",
+      privacy: "100% Local",
+      resolution: "Up to 4K",
+    },
+    details: [
+      {
+        title: "The Challenge",
+        content: "Most online QR generators inject tracking redirects, show spammy ads, or send sensitive credentials like Wi-Fi passwords to remote servers.",
+      },
+      {
+        title: "The Solution",
+        content: "Built a zero-tracking, 100% client-side QR studio that outputs print-ready vector SVGs, 4K PNGs, and digital business cards with instant clipboard export.",
+      },
+    ],
+  },
 }
 
 export interface WorkProject {
@@ -445,6 +467,12 @@ export const projectsList: WorkProject[] = [
     description: "GA4 campaign URL generator and attribution studio.",
     slug: "utm-builder",
     liveUrl: "https://tirup.in/tools/utm-builder",
+  },
+  {
+    title: "QR Studio",
+    description: "Pro vector QR code and Wi-Fi credential generator.",
+    slug: "qr-studio",
+    liveUrl: "https://tirup.in/tool/qr",
   },
   {
     title: "Discuss",
