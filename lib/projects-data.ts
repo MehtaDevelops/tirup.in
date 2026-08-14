@@ -390,7 +390,7 @@ export const projectsData = {
   "qr-studio": {
     title: "QR Studio",
     description: "Pro vector QR code and Wi-Fi credential generator.",
-    fullDescription: "QR Studio is a developer-grade vector QR code generator and styling engine. Supports URLs, Wi-Fi credentials, vCards, crypto payments, custom color schemes, center logos, SVG vectors, and 4K PNG downloads with 100% offline privacy.",
+    fullDescription: "QR Studio is a developer-grade vector QR code generator and styling engine. Supports URLs, Wi-Fi credentials, vCards, WhatsApp chats, calendar events, custom color schemes, center logos, SVG vectors, and 4K PNG downloads with 100% offline privacy.",
     liveUrl: "https://tirup.in/tool/qr",
     techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Canvas API", "SVG Engine"],
     stats: {

@@ -12,7 +12,6 @@ import {
   User,
   Mail,
   MessageSquare,
-  Coins,
   FileText,
   Copy,
   Check,
@@ -25,28 +24,20 @@ import {
   Sliders,
   Image as ImageIcon,
   RotateCcw,
-  Code2,
   FileCode,
   Layers,
   Search,
-  Eye,
-  Info,
   CheckCircle2,
-  Smartphone,
   Upload,
   X,
   Scan,
   Calendar,
   PhoneCall,
-  CheckSquare,
-  Square,
-  Type,
-  Maximize2,
-  AlertTriangle,
+  SlidersHorizontal,
 } from "lucide-react"
 
 // Types
-type PayloadType = "url" | "text" | "wifi" | "vcard" | "email" | "sms" | "whatsapp" | "crypto" | "calendar"
+type PayloadType = "url" | "text" | "wifi" | "vcard" | "email" | "sms" | "whatsapp" | "calendar"
 type ErrorCorrectionLevel = "L" | "M" | "Q" | "H"
 type ModuleShape = "square" | "dots" | "rounded"
 type EyeShape = "square" | "rounded" | "circle"
@@ -57,25 +48,25 @@ interface ColorPreset {
   name: string
   fg: string
   bg: string
-  fgEnd?: string // For gradients
+  fgEnd?: string
   isDark?: boolean
 }
 
 const COLOR_PRESETS: ColorPreset[] = [
   { id: "monochrome-light", name: "Obsidian / White", fg: "#000000", bg: "#FFFFFF" },
-  { id: "monochrome-dark", name: "White / Dark Zinc", fg: "#FFFFFF", bg: "#09090B", isDark: true },
-  { id: "emerald", name: "Emerald Matrix", fg: "#10B981", fgEnd: "#059669", bg: "#022C22", isDark: true },
-  { id: "cyberpunk", name: "Cyberpunk Neon", fg: "#06B6D4", fgEnd: "#8B5CF6", bg: "#09090B", isDark: true },
-  { id: "royal-indigo", name: "Royal Indigo", fg: "#4F46E5", fgEnd: "#7C3AED", bg: "#EEF2FF" },
-  { id: "sunset", name: "Sunset Horizon", fg: "#F59E0B", fgEnd: "#EF4444", bg: "#18181B", isDark: true },
-  { id: "crimson", name: "Crimson Security", fg: "#E11D48", bg: "#FFF1F2" },
+  { id: "monochrome-dark", name: "White / Charcoal", fg: "#FFFFFF", bg: "#09090B", isDark: true },
+  { id: "midnight-navy", name: "Midnight Navy", fg: "#0F172A", bg: "#F8FAFC" },
+  { id: "emerald", name: "Emerald Minimal", fg: "#047857", bg: "#F0FDF4" },
+  { id: "royal-indigo", name: "Royal Indigo", fg: "#4338CA", bg: "#EEF2FF" },
+  { id: "charcoal-slate", name: "Charcoal Slate", fg: "#334155", bg: "#F1F5F9" },
+  { id: "sunset-amber", name: "Sunset Amber", fg: "#D97706", bg: "#FFFBEB" },
   { id: "transparent-dark", name: "Dark / Transparent", fg: "#000000", bg: "transparent" },
   { id: "transparent-light", name: "White / Transparent", fg: "#FFFFFF", bg: "transparent", isDark: true },
 ]
 
 const FRAME_PRESETS = [
   { id: "none", label: "No Frame" },
-  { id: "bottom-banner", label: "Bottom Banner ('SCAN ME')" },
+  { id: "bottom-banner", label: "Bottom 'SCAN ME'" },
   { id: "top-banner", label: "Top Header" },
   { id: "pill-badge", label: "Pill Badge" },
 ]
@@ -107,21 +98,18 @@ export default function QrStudioPage() {
   const smsMsgId = useId()
   const waPhoneId = useId()
   const waMsgId = useId()
-  const cryptoAddrId = useId()
-  const cryptoAmtId = useId()
   const calTitleId = useId()
   const calLocId = useId()
   const calStartId = useId()
   const calEndId = useId()
   const frameTextId = useId()
 
-  // Studio Mode: Single Builder vs Batch Matrix vs QR Decoder
+  // Studio Mode Tabs
   const [activeTab, setActiveTab] = useState<"single" | "design" | "batch" | "decode">("single")
 
   // Payload Type
   const [payloadType, setPayloadType] = useState<PayloadType>("url")
 
-  // State per payload type
   // 1. URL
   const [url, setUrl] = useState("https://tirup.in")
   // 2. Text
@@ -149,11 +137,7 @@ export default function QrStudioPage() {
   // 7. WhatsApp
   const [waPhone, setWaPhone] = useState("+1 ")
   const [waMessage, setWaMessage] = useState("Hi! I'm reaching out after scanning your QR code.")
-  // 8. Crypto & UPI
-  const [cryptoCurrency, setCryptoCurrency] = useState<"bitcoin" | "ethereum" | "solana" | "upi">("bitcoin")
-  const [cryptoAddress, setCryptoAddress] = useState("")
-  const [cryptoAmount, setCryptoAmount] = useState("")
-  // 9. Calendar
+  // 8. Calendar
   const [calTitle, setCalTitle] = useState("Keynote / Launch Event")
   const [calLocation, setCalLocation] = useState("Online / San Francisco")
   const [calStart, setCalStart] = useState("2026-09-01T10:00")
@@ -174,7 +158,7 @@ export default function QrStudioPage() {
 
   // Custom Logo Overlay State
   const [customLogoDataUrl, setCustomLogoDataUrl] = useState<string | null>(null)
-  const [customLogoSize, setCustomLogoSize] = useState<number>(22) // percentage 15-30%
+  const [customLogoSize, setCustomLogoSize] = useState<number>(22)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   // Batch Generation State
@@ -190,7 +174,6 @@ export default function QrStudioPage() {
     type: string
     parsedDetails?: Record<string, string>
   } | null>(null)
-  const [isDecoding, setIsDecoding] = useState(false)
   const decodeFileInputRef = useRef<HTMLInputElement | null>(null)
 
   // Copy Feedback State
@@ -212,7 +195,7 @@ export default function QrStudioPage() {
   // Load Persisted History from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("tirup_qr_studio_history_v2")
+      const saved = localStorage.getItem("tirup_qr_studio_history_v3")
       if (saved) setHistory(JSON.parse(saved))
     } catch (e) {}
   }, [])
@@ -270,23 +253,6 @@ export default function QrStudioPage() {
         const msg = encodeURIComponent(waMessage.trim())
         return `https://wa.me/${p}${msg ? `?text=${msg}` : ""}`
       }
-      case "crypto": {
-        const addr = cryptoAddress.trim()
-        const amt = cryptoAmount.trim()
-        if (cryptoCurrency === "bitcoin") {
-          return `bitcoin:${addr}${amt ? `?amount=${amt}` : ""}`
-        }
-        if (cryptoCurrency === "ethereum") {
-          return `ethereum:${addr}${amt ? `?value=${amt}` : ""}`
-        }
-        if (cryptoCurrency === "solana") {
-          return `solana:${addr}${amt ? `?amount=${amt}` : ""}`
-        }
-        if (cryptoCurrency === "upi") {
-          return `upi://pay?pa=${addr}&pn=Payee${amt ? `&am=${amt}` : ""}&cu=INR`
-        }
-        return addr
-      }
       case "calendar": {
         const sDate = calStart ? new Date(calStart).toISOString().replace(/-|:|\.\d+/g, "") : ""
         const eDate = calEnd ? new Date(calEnd).toISOString().replace(/-|:|\.\d+/g, "") : ""
@@ -329,52 +295,42 @@ export default function QrStudioPage() {
     smsMessage,
     waPhone,
     waMessage,
-    cryptoCurrency,
-    cryptoAddress,
-    cryptoAmount,
     calTitle,
     calLocation,
     calStart,
     calEnd,
   ])
 
-  // Contrast Ratio Validator to ensure mobile phone cameras can scan the QR code
+  // Contrast Ratio Validator
   const contrastCheck = useMemo(() => {
-    if (bgColor === "transparent") return { score: "Good", valid: true, text: "Transparent background with contrast dependent on surface." }
-    // Simple heuristic check
+    if (bgColor === "transparent") return { score: "Good", valid: true, text: "Transparent background (dependent on surface contrast)." }
     if (fgColor.toLowerCase() === bgColor.toLowerCase()) {
       return { score: "Unscannable", valid: false, text: "Foreground and background colors are identical." }
     }
-    return { score: "Optimal", valid: true, text: "High contrast detected. Readily scannable by all mobile cameras." }
+    return { score: "Optimal", valid: true, text: "High contrast detected. Readily scannable by all phone cameras." }
   }, [fgColor, bgColor])
 
-  // Custom Canvas Rendering Engine supporting Dots, Rounded Modules, Gradients, Finder Eyes, Frames & Logos
+  // Custom Canvas Rendering Engine
   const renderAdvancedCanvas = useCallback(async () => {
     if (!rawPayload) return
 
     try {
-      // 1. Generate QR Code Matrix via QRCode library
       const qr = QRCode.create(rawPayload, { errorCorrectionLevel: eccLevel })
       const moduleCount = qr.modules.size
       const moduleData = qr.modules.data
 
       const isFinderPattern = (r: number, c: number) => {
-        // Top-left
         if (r < 7 && c < 7) return true
-        // Top-right
         if (r < 7 && c >= moduleCount - 7) return true
-        // Bottom-left
         if (r >= moduleCount - 7 && c < 7) return true
         return false
       }
 
-      // Calculate Dimensions
       const baseQrResolution = 1024
       const margin = marginBlocks
       const totalGridSize = moduleCount + margin * 2
       const moduleSize = baseQrResolution / totalGridSize
 
-      // Add extra padding for CTA frame if requested
       const hasFrame = frameStyle !== "none" && frameText.trim()
       const frameHeight = hasFrame ? 140 : 0
       const canvasWidth = baseQrResolution
@@ -394,7 +350,7 @@ export default function QrStudioPage() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
       }
 
-      // Configure Foreground Fill (Solid or Linear Gradient)
+      // Configure Foreground Fill
       let fillStyle: string | CanvasGradient = fgColor === "transparent" ? "#000000" : fgColor
       if (useGradient && fgEndColor) {
         const grad = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight)
@@ -415,7 +371,6 @@ export default function QrStudioPage() {
           const x = (c + margin) * moduleSize
           const y = (r + margin) * moduleSize + qrOffsetY
 
-          // Skip drawing custom eye modules here; we draw them with custom styling below
           if (isFinderPattern(r, c) && eyeShape !== "square") {
             continue
           }
@@ -430,13 +385,12 @@ export default function QrStudioPage() {
             ctx.roundRect(x + 0.5, y + 0.5, moduleSize - 1, moduleSize - 1, rad)
             ctx.fill()
           } else {
-            // Crisp square
             ctx.fillRect(x, y, moduleSize + 0.2, moduleSize + 0.2)
           }
         }
       }
 
-      // Draw Custom Finder Eyes if requested
+      // Draw Custom Finder Eyes
       if (eyeShape !== "square") {
         const eyeLocations = [
           { r: 0, c: 0 },
@@ -451,31 +405,26 @@ export default function QrStudioPage() {
 
           ctx.save()
           if (eyeShape === "circle") {
-            // Outer Circle
             ctx.beginPath()
             ctx.arc(eyeX + eyeDimension / 2, eyeY + eyeDimension / 2, eyeDimension / 2, 0, Math.PI * 2)
             ctx.fillStyle = fillStyle
             ctx.fill()
 
-            // Inner Ring Background
             ctx.beginPath()
             ctx.arc(eyeX + eyeDimension / 2, eyeY + eyeDimension / 2, (5 * moduleSize) / 2, 0, Math.PI * 2)
             ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
             ctx.fill()
 
-            // Center Dot
             ctx.beginPath()
             ctx.arc(eyeX + eyeDimension / 2, eyeY + eyeDimension / 2, (3 * moduleSize) / 2, 0, Math.PI * 2)
             ctx.fillStyle = fillStyle
             ctx.fill()
           } else if (eyeShape === "rounded") {
-            // Outer Rounded Squircle
             ctx.beginPath()
             ctx.roundRect(eyeX, eyeY, eyeDimension, eyeDimension, eyeDimension * 0.28)
             ctx.fillStyle = fillStyle
             ctx.fill()
 
-            // Inner Cutout
             const innerOffset = moduleSize
             const innerDimension = 5 * moduleSize
             ctx.beginPath()
@@ -489,7 +438,6 @@ export default function QrStudioPage() {
             ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
             ctx.fill()
 
-            // Center Core
             const coreOffset = 2 * moduleSize
             const coreDimension = 3 * moduleSize
             ctx.beginPath()
@@ -501,19 +449,25 @@ export default function QrStudioPage() {
         })
       }
 
-      // Draw Center Logo / Emblem Badge Overlay
+      // Draw Refined Center Logo / Emblem Badge Overlay
       if (customLogoDataUrl && eccLevel === "H") {
         const logoDim = Math.round(baseQrResolution * (customLogoSize / 100))
         const centerX = canvasWidth / 2
         const centerY = qrOffsetY + baseQrResolution / 2
+        const badgePadding = Math.max(10, logoDim * 0.12)
+        const badgeDim = logoDim + badgePadding * 2
 
         ctx.save()
-        // Badge backing disk
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = "high"
+
+        const badgeRadius = Math.round(badgeDim * 0.22)
         ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
         ctx.beginPath()
-        ctx.arc(centerX, centerY, (logoDim / 2) * 1.15, 0, Math.PI * 2)
+        ctx.roundRect(centerX - badgeDim / 2, centerY - badgeDim / 2, badgeDim, badgeDim, badgeRadius)
         ctx.fill()
-        ctx.lineWidth = 4
+
+        ctx.lineWidth = Math.max(3, Math.round(baseQrResolution * 0.004))
         ctx.strokeStyle = fgColor === "transparent" ? "#000000" : fgColor
         ctx.stroke()
 
@@ -523,8 +477,9 @@ export default function QrStudioPage() {
         await new Promise((resolve) => {
           img.onload = () => {
             ctx.save()
+            const imgRadius = Math.round(logoDim * 0.18)
             ctx.beginPath()
-            ctx.arc(centerX, centerY, logoDim / 2, 0, Math.PI * 2)
+            ctx.roundRect(centerX - logoDim / 2, centerY - logoDim / 2, logoDim, logoDim, imgRadius)
             ctx.clip()
             ctx.drawImage(img, centerX - logoDim / 2, centerY - logoDim / 2, logoDim, logoDim)
             ctx.restore()
@@ -535,7 +490,7 @@ export default function QrStudioPage() {
         ctx.restore()
       }
 
-      // Draw Frame / Call-To-Action (CTA) Text
+      // Draw Frame Text
       if (hasFrame) {
         ctx.save()
         ctx.font = "bold 38px monospace, sans-serif"
@@ -571,7 +526,7 @@ export default function QrStudioPage() {
       const fullDataUrl = canvas.toDataURL("image/png")
       setPreviewDataUrl(fullDataUrl)
 
-      // Generate Clean Vector SVG
+      // Clean Vector SVG
       QRCode.toString(
         rawPayload,
         {
@@ -588,7 +543,7 @@ export default function QrStudioPage() {
         }
       )
 
-      // Generate Terminal ASCII Art
+      // Terminal ASCII
       QRCode.toString(
         rawPayload,
         {
@@ -619,7 +574,6 @@ export default function QrStudioPage() {
     customLogoSize,
   ])
 
-  // Trigger render on changes
   useEffect(() => {
     renderAdvancedCanvas()
   }, [renderAdvancedCanvas])
@@ -635,7 +589,7 @@ export default function QrStudioPage() {
         : payloadType === "vcard"
         ? `Contact: ${vcardFirst} ${vcardLast}`
         : payloadType === "email"
-        ? `Email to: ${emailTo}`
+        ? `Email: ${emailTo}`
         : payloadType === "whatsapp"
         ? `WhatsApp: ${waPhone}`
         : `${payloadType.toUpperCase()}: ${rawPayload.slice(0, 30)}...`
@@ -651,11 +605,11 @@ export default function QrStudioPage() {
     const updated = [newItem, ...history.filter((h) => h.payload !== rawPayload).slice(0, 19)]
     setHistory(updated)
     try {
-      localStorage.setItem("tirup_qr_studio_history_v2", JSON.stringify(updated))
+      localStorage.setItem("tirup_qr_studio_history_v3", JSON.stringify(updated))
     } catch (e) {}
   }, [rawPayload, payloadType, url, wifiSsid, vcardFirst, vcardLast, emailTo, waPhone, history])
 
-  // 1-Click Copy Image to Clipboard as PNG Blob
+  // 1-Click Copy Image to Clipboard
   const copyPngImageToClipboard = async () => {
     if (!previewDataUrl) return
     try {
@@ -669,12 +623,10 @@ export default function QrStudioPage() {
       setCopiedImage(true)
       setTimeout(() => setCopiedImage(false), 2000)
       logToHistory()
-    } catch (e) {
-      // Fallback
-    }
+    } catch (e) {}
   }
 
-  // 1-Click Copy SVG Code
+  // 1-Click Copy SVG
   const copySvgToClipboard = async () => {
     if (!svgOutputString) return
     try {
@@ -696,7 +648,7 @@ export default function QrStudioPage() {
     } catch (e) {}
   }
 
-  // 1-Click Copy Raw Encoded String
+  // 1-Click Copy Raw Payload
   const copyRawPayloadToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(rawPayload)
@@ -715,7 +667,7 @@ export default function QrStudioPage() {
     } catch (e) {}
   }
 
-  // Download High-Res PNG with Chosen Resolution
+  // Download High-Res PNG
   const downloadPng = (resolution: 1024 | 2048 | 4096 = downloadResolution) => {
     if (!previewDataUrl) return
     const link = document.createElement("a")
@@ -740,7 +692,7 @@ export default function QrStudioPage() {
     logToHistory()
   }
 
-  // Handle Custom Logo Upload
+  // Handle Logo Upload
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -748,7 +700,7 @@ export default function QrStudioPage() {
       reader.onload = (event) => {
         if (event.target?.result) {
           setCustomLogoDataUrl(event.target.result as string)
-          setEccLevel("H") // Force High Error Correction for Logo safety
+          setEccLevel("H")
         }
       }
       reader.readAsDataURL(file)
@@ -773,7 +725,7 @@ export default function QrStudioPage() {
     }
   }
 
-  // Batch Generation Processor
+  // Batch Processor
   const processBatchGeneration = async () => {
     const lines = batchRawInput
       .split("\n")
@@ -809,21 +761,16 @@ export default function QrStudioPage() {
     } catch (e) {}
   }
 
-  // QR Decoder & Scanner Handler (File upload or paste)
+  // QR Decoder Handler
   const handleDecodeImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setIsDecoding(true)
     const reader = new FileReader()
     reader.onload = async (ev) => {
       const src = ev.target?.result as string
-      if (!src) {
-        setIsDecoding(false)
-        return
-      }
+      if (!src) return
 
-      // Check if native BarcodeDetector is supported in browser
       if ("BarcodeDetector" in window) {
         try {
           const barcodeDetector = new (window as any).BarcodeDetector({ formats: ["qr_code"] })
@@ -832,22 +779,16 @@ export default function QrStudioPage() {
           await new Promise((r) => (img.onload = r))
           const barcodes = await barcodeDetector.detect(img)
           if (barcodes && barcodes.length > 0) {
-            const rawVal = barcodes[0].rawValue
-            parseDecodedPayload(rawVal)
-            setIsDecoding(false)
+            parseDecodedPayload(barcodes[0].rawValue)
             return
           }
-        } catch (err) {
-          // Fallback to canvas inspection
-        }
+        } catch (err) {}
       }
 
-      // Fallback: Display the image and allow manual entry / inspection
       setDecodedOutput({
-        text: "Image uploaded. If automatic detection is unsupported by your browser engine, paste the URL or text directly into the Studio.",
-        type: "Image Scanned",
+        text: "Image uploaded. Paste your URL or string in Single Studio to customize.",
+        type: "Scanned QR Image",
       })
-      setIsDecoding(false)
     }
     reader.readAsDataURL(file)
   }
@@ -859,36 +800,29 @@ export default function QrStudioPage() {
       const auth = raw.match(/T:([^;]+)/)?.[1] || "WPA"
       setDecodedOutput({
         text: raw,
-        type: "Wi-Fi Credentials",
-        parsedDetails: { SSID: ssid, Password: pass, "Security Type": auth },
+        type: "Wi-Fi Network",
+        parsedDetails: { SSID: ssid, Password: pass, "Security Protocol": auth },
       })
     } else if (raw.startsWith("BEGIN:VCARD")) {
       setDecodedOutput({
         text: raw,
-        type: "vCard Digital Contact",
-        parsedDetails: { Format: "vCard 3.0" },
+        type: "vCard Contact Card",
+        parsedDetails: { Format: "vCard 3.0 Standard" },
       })
     } else if (raw.startsWith("http://") || raw.startsWith("https://")) {
       setDecodedOutput({
         text: raw,
-        type: "Website Link",
-        parsedDetails: { URL: raw },
-      })
-    } else if (raw.startsWith("mailto:")) {
-      setDecodedOutput({
-        text: raw,
-        type: "Email Address",
-        parsedDetails: { Mailto: raw.replace("mailto:", "") },
+        type: "Website URL",
+        parsedDetails: { Target: raw },
       })
     } else {
       setDecodedOutput({
         text: raw,
-        type: "Plain Text / Custom Payload",
+        type: "Plain Text Message",
       })
     }
   }
 
-  // Restore item from history
   const restoreFromHistory = (item: HistoryItem) => {
     setPayloadType(item.type)
     if (item.type === "url") setUrl(item.payload)
@@ -899,11 +833,10 @@ export default function QrStudioPage() {
   const clearHistory = () => {
     setHistory([])
     try {
-      localStorage.removeItem("tirup_qr_studio_history_v2")
+      localStorage.removeItem("tirup_qr_studio_history_v3")
     } catch (e) {}
   }
 
-  // Filtered History
   const filteredHistory = useMemo(() => {
     if (!historySearch.trim()) return history
     return history.filter(
@@ -917,7 +850,8 @@ export default function QrStudioPage() {
     <main className="relative min-h-screen">
       <Header />
 
-      <section className="section max-w-5xl mx-auto w-full px-6 md:px-20 pb-20">
+      {/* ── Exact max-w-4xl width aligned with rest of site ── */}
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         {/* Header Title */}
         <TextWithBlur delay={50}>
           <div className="mb-8">
@@ -927,7 +861,7 @@ export default function QrStudioPage() {
               </div>
               <div className="flex items-center gap-2 text-xs font-mono text-black/50 dark:text-white/50">
                 <ShieldCheck size={13} className="text-emerald-500" />
-                100% Client-Side Privacy (Zero Telemetry)
+                100% Client-Side Privacy
               </div>
             </div>
 
@@ -935,7 +869,7 @@ export default function QrStudioPage() {
               Pro QR Code & Vector Studio
             </h1>
             <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 max-w-2xl leading-relaxed">
-              Generate print-ready vector SVGs, Wi-Fi credentials, vCards, custom module shapes, gradients, frames, and ultra-high-resolution QR codes with zero tracking.
+              Generate print-ready vector SVGs, Wi-Fi credentials, vCards, custom module shapes, gradients, frames, and high-resolution QR codes with zero tracking.
             </p>
           </div>
         </TextWithBlur>
@@ -963,7 +897,7 @@ export default function QrStudioPage() {
                     : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                 }`}
               >
-                <Palette size={14} /> Shapes, Gradients & Frames
+                <Palette size={14} /> Shapes & Styling
               </button>
 
               <button
@@ -974,7 +908,7 @@ export default function QrStudioPage() {
                     : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                 }`}
               >
-                <Layers size={14} /> Batch Multi-QR Matrix
+                <Layers size={14} /> Batch Matrix
               </button>
 
               <button
@@ -985,7 +919,7 @@ export default function QrStudioPage() {
                     : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                 }`}
               >
-                <Scan size={14} /> QR Decoder & Inspector
+                <Scan size={14} /> Decoder & Scanner
               </button>
             </div>
           </div>
@@ -1012,11 +946,10 @@ export default function QrStudioPage() {
                         { type: "text" as const, label: "Plain Text", icon: FileText },
                         { type: "wifi" as const, label: "Wi-Fi Network", icon: Wifi },
                         { type: "vcard" as const, label: "vCard Contact", icon: User },
-                        { type: "email" as const, label: "Email Mailto", icon: Mail },
-                        { type: "sms" as const, label: "SMS Message", icon: MessageSquare },
-                        { type: "whatsapp" as const, label: "WhatsApp Chat", icon: PhoneCall },
-                        { type: "crypto" as const, label: "Crypto & UPI", icon: Coins },
-                        { type: "calendar" as const, label: "Calendar Event", icon: Calendar },
+                        { type: "email" as const, label: "Email", icon: Mail },
+                        { type: "sms" as const, label: "SMS", icon: MessageSquare },
+                        { type: "whatsapp" as const, label: "WhatsApp", icon: PhoneCall },
+                        { type: "calendar" as const, label: "Event", icon: Calendar },
                       ].map(({ type, label, icon: Icon }) => (
                         <button
                           key={type}
@@ -1044,7 +977,7 @@ export default function QrStudioPage() {
                         <Sliders size={13} className="text-accent" /> Data Configuration ({payloadType.toUpperCase()})
                       </span>
                       <span className="text-[11px] font-mono text-black/40 dark:text-white/40">
-                        {rawPayload.length} characters
+                        {rawPayload.length} chars
                       </span>
                     </div>
 
@@ -1119,7 +1052,7 @@ export default function QrStudioPage() {
 
                           <div>
                             <label className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
-                              Encryption Protocol
+                              Security Protocol
                             </label>
                             <select
                               value={wifiAuth}
@@ -1336,56 +1269,6 @@ export default function QrStudioPage() {
                       </div>
                     )}
 
-                    {/* ── MODE: CRYPTO & UPI ── */}
-                    {payloadType === "crypto" && (
-                      <div className="space-y-3">
-                        <div className="flex gap-2">
-                          {(["bitcoin", "ethereum", "solana", "upi"] as const).map((curr) => (
-                            <button
-                              key={curr}
-                              type="button"
-                              onClick={() => setCryptoCurrency(curr)}
-                              className={`text-xs px-3 py-1.5 uppercase font-mono rounded-none border transition-all ${
-                                cryptoCurrency === curr
-                                  ? "bg-black text-white dark:bg-white dark:text-black font-medium"
-                                  : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
-                              }`}
-                            >
-                              {curr}
-                            </button>
-                          ))}
-                        </div>
-
-                        <div>
-                          <label htmlFor={cryptoAddrId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            {cryptoCurrency === "upi" ? "UPI VPA (e.g. name@okhdfcbank)" : `${cryptoCurrency.toUpperCase()} Wallet Address`}
-                          </label>
-                          <input
-                            id={cryptoAddrId}
-                            type="text"
-                            placeholder="Enter wallet address or UPI ID..."
-                            value={cryptoAddress}
-                            onChange={(e) => setCryptoAddress(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor={cryptoAmtId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Requested Amount (optional)
-                          </label>
-                          <input
-                            id={cryptoAmtId}
-                            type="text"
-                            placeholder="e.g. 0.05"
-                            value={cryptoAmount}
-                            onChange={(e) => setCryptoAmount(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                      </div>
-                    )}
-
                     {/* ── MODE: CALENDAR EVENT ── */}
                     {payloadType === "calendar" && (
                       <div className="space-y-3">
@@ -1450,7 +1333,7 @@ export default function QrStudioPage() {
                 <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-5">
                   <div className="border-b border-black/5 dark:border-white/5 pb-3">
                     <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
-                      <Palette size={13} className="text-accent" /> Vector Shapes, Color Palettes & CTA Frames
+                      <Palette size={13} className="text-accent" /> Vector Shapes, Color Palettes & Customization
                     </span>
                   </div>
 
@@ -1458,7 +1341,7 @@ export default function QrStudioPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block">
-                        Module / Dot Pattern
+                        Module Pattern:
                       </span>
                       <div className="flex gap-2">
                         {[
@@ -1472,7 +1355,7 @@ export default function QrStudioPage() {
                             onClick={() => setModuleShape(m.id)}
                             className={`flex-1 text-xs py-2 rounded-none border transition-all ${
                               moduleShape === m.id
-                                ? "bg-black text-white dark:bg-white dark:text-black font-medium"
+                                ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
                                 : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
                             }`}
                           >
@@ -1484,7 +1367,7 @@ export default function QrStudioPage() {
 
                     <div>
                       <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block">
-                        Corner Finder Eyes
+                        Corner Finder Eyes:
                       </span>
                       <div className="flex gap-2">
                         {[
@@ -1498,7 +1381,7 @@ export default function QrStudioPage() {
                             onClick={() => setEyeShape(e.id)}
                             className={`flex-1 text-xs py-2 rounded-none border transition-all ${
                               eyeShape === e.id
-                                ? "bg-black text-white dark:bg-white dark:text-black font-medium"
+                                ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
                                 : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
                             }`}
                           >
@@ -1511,8 +1394,8 @@ export default function QrStudioPage() {
 
                   {/* Curated Color Palettes */}
                   <div className="space-y-2 pt-2 border-t border-black/5 dark:border-white/5">
-                    <span className="text-xs font-mono uppercase text-black/50 dark:text-white/50 block">
-                      Curated Color Schemes:
+                    <span className="text-xs font-mono uppercase text-black/50 dark:text-white/50 block font-medium">
+                      Color Schemes:
                     </span>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {COLOR_PRESETS.map((p) => {
@@ -1524,8 +1407,8 @@ export default function QrStudioPage() {
                             onClick={() => applyColorPreset(p)}
                             className={`text-xs px-3 py-2 rounded-none border flex items-center justify-between transition-all ${
                               isSelected
-                                ? "border-black dark:border-white ring-1 ring-black dark:ring-white font-medium"
-                                : "border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30"
+                                ? "border-black dark:border-white ring-1 ring-black dark:ring-white font-medium bg-black/5 dark:bg-white/10"
+                                : "border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 bg-white/60 dark:bg-zinc-950/60"
                             }`}
                           >
                             <span className="text-black dark:text-white truncate pr-1">{p.name}</span>
@@ -1542,72 +1425,102 @@ export default function QrStudioPage() {
                     </div>
                   </div>
 
-                  {/* Gradient & Custom Color Pickers */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-black/5 dark:border-white/5">
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5">
-                        Foreground Color
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={fgColor === "transparent" ? "#000000" : fgColor}
-                          onChange={(e) => setFgColor(e.target.value)}
-                          className="w-8 h-8 rounded-none border border-black/20 cursor-pointer p-0 bg-transparent"
-                        />
-                        <input
-                          type="text"
-                          value={fgColor}
-                          onChange={(e) => setFgColor(e.target.value)}
-                          className="flex-1 text-xs px-2.5 py-1.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
-                        />
+                  {/* ── Fixed Clean & Beautiful 2-Row Color & ECC Layout ── */}
+                  <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-4">
+                    {/* Row 1: Foreground & Background Color Pickers */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Foreground Color */}
+                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                          Foreground Color
+                        </label>
+                        <div className="flex items-center gap-2.5">
+                          <input
+                            type="color"
+                            value={fgColor === "transparent" ? "#000000" : fgColor}
+                            onChange={(e) => setFgColor(e.target.value)}
+                            className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
+                            title="Pick color"
+                          />
+                          <input
+                            type="text"
+                            value={fgColor}
+                            onChange={(e) => setFgColor(e.target.value)}
+                            className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
+                            placeholder="#000000"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Background Color */}
+                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                          Background Color
+                        </label>
+                        <div className="flex items-center gap-2.5">
+                          <input
+                            type="color"
+                            value={bgColor === "transparent" ? "#FFFFFF" : bgColor}
+                            onChange={(e) => setBgColor(e.target.value)}
+                            className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
+                            title="Pick color"
+                          />
+                          <input
+                            type="text"
+                            value={bgColor}
+                            onChange={(e) => setBgColor(e.target.value)}
+                            className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
+                            placeholder="#FFFFFF or transparent"
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5">
-                        Gradient End (Optional)
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={fgEndColor || "#7C3AED"}
-                          onChange={(e) => {
-                            setFgEndColor(e.target.value)
-                            setUseGradient(true)
-                          }}
-                          className="w-8 h-8 rounded-none border border-black/20 cursor-pointer p-0 bg-transparent"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Disabled"
-                          value={fgEndColor}
-                          onChange={(e) => {
-                            setFgEndColor(e.target.value)
-                            setUseGradient(Boolean(e.target.value))
-                          }}
-                          className="flex-1 text-xs px-2.5 py-1.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
-                        />
+                    {/* Row 2: Error Correction (ECC) & Border Margin */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Error Correction Level */}
+                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                          Error Correction (ECC)
+                        </label>
+                        <select
+                          value={eccLevel}
+                          onChange={(e) => setEccLevel(e.target.value as ErrorCorrectionLevel)}
+                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono focus:outline-none"
+                        >
+                          <option value="H">H (30% Redundancy - Best for Logos)</option>
+                          <option value="Q">Q (25% High Reliability)</option>
+                          <option value="M">M (15% Standard)</option>
+                          <option value="L">L (7% Dense)</option>
+                        </select>
                       </div>
-                    </div>
 
-                    <div>
-                      <label className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5">
-                        Background Color
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="color"
-                          value={bgColor === "transparent" ? "#FFFFFF" : bgColor}
-                          onChange={(e) => setBgColor(e.target.value)}
-                          className="w-8 h-8 rounded-none border border-black/20 cursor-pointer p-0 bg-transparent"
-                        />
-                        <input
-                          type="text"
-                          value={bgColor}
-                          onChange={(e) => setBgColor(e.target.value)}
-                          className="flex-1 text-xs px-2.5 py-1.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
-                        />
+                      {/* Border Margin */}
+                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                          Quiet Zone Margin
+                        </label>
+                        <div className="flex gap-2">
+                          {[
+                            { val: 0, label: "0" },
+                            { val: 1, label: "1" },
+                            { val: 2, label: "2 (Default)" },
+                            { val: 4, label: "4" },
+                          ].map((m) => (
+                            <button
+                              key={m.val}
+                              type="button"
+                              onClick={() => setMarginBlocks(m.val)}
+                              className={`flex-1 text-xs py-1.5 rounded-none border transition-all ${
+                                marginBlocks === m.val
+                                  ? "bg-black text-white dark:bg-white dark:text-black font-medium"
+                                  : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                              }`}
+                            >
+                              {m.label}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1615,7 +1528,7 @@ export default function QrStudioPage() {
                   {/* Frame & Call-To-Action (CTA) Border */}
                   <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
                     <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium block">
-                      Call-To-Action (CTA) Frame:
+                      Call-To-Action Frame:
                     </span>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {FRAME_PRESETS.map((f) => (
@@ -1625,7 +1538,7 @@ export default function QrStudioPage() {
                           onClick={() => setFrameStyle(f.id as any)}
                           className={`text-xs py-2 px-2 rounded-none border transition-all truncate ${
                             frameStyle === f.id
-                              ? "bg-black text-white dark:bg-white dark:text-black font-medium"
+                              ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
                               : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
                           }`}
                         >
@@ -1662,7 +1575,7 @@ export default function QrStudioPage() {
                           onClick={removeCustomLogo}
                           className="text-xs font-mono text-red-500 hover:underline flex items-center gap-1"
                         >
-                          <X size={12} /> Remove Custom Logo
+                          <X size={12} /> Remove Logo
                         </button>
                       )}
                     </div>
@@ -1685,7 +1598,7 @@ export default function QrStudioPage() {
 
                       {customLogoDataUrl && (
                         <div className="flex items-center gap-2">
-                          <img src={customLogoDataUrl} alt="Logo Preview" className="w-8 h-8 object-contain bg-white p-0.5 border border-black/10" />
+                          <img src={customLogoDataUrl} alt="Logo Preview" className="w-8 h-8 object-contain bg-white p-0.5 border border-black/10 rounded-sm" />
                           <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400">ECC forced to Level H</span>
                         </div>
                       )}
@@ -1696,35 +1609,36 @@ export default function QrStudioPage() {
             </div>
 
             {/* ── RIGHT COLUMN: LIVE CANVAS & MULTI-FORMAT EXPORTS (5 COLS) ── */}
+            {/* ── Styled for both Light and Dark themes ── */}
             <div className="lg:col-span-5 space-y-6">
               <TextWithBlur delay={140}>
-                <div className="p-6 md:p-8 rounded-none bg-zinc-950 text-white border border-zinc-800 shadow-2xl space-y-5">
-                  <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-                    <span className="text-xs uppercase font-mono tracking-wider text-zinc-400 flex items-center gap-1.5 font-medium">
-                      <Sparkles size={14} className="text-accent" /> Live Vector Preview
+                <div className="p-6 md:p-8 rounded-none bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 shadow-sm space-y-5">
+                  <div className="flex items-center justify-between border-b border-black/10 dark:border-zinc-800 pb-3">
+                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
+                      <Sparkles size={14} className="text-accent" /> Vector Output Preview
                     </span>
-                    <span className="text-xs font-mono text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-800">
+                    <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
                       {downloadResolution}px Ready
                     </span>
                   </div>
 
-                  {/* Rendered Canvas Preview */}
-                  <div className="p-6 bg-white rounded-none border border-zinc-700/80 flex items-center justify-center shadow-inner relative group min-h-[290px]">
+                  {/* Rendered Canvas Preview - NO HOVER ANIMATION */}
+                  <div className="p-6 bg-zinc-50 dark:bg-black/40 rounded-none border border-black/10 dark:border-zinc-800 flex items-center justify-center min-h-[290px]">
                     {previewDataUrl ? (
                       <img
                         src={previewDataUrl}
                         alt="Rendered QR Code"
-                        className="w-full max-w-[270px] h-auto object-contain transition-transform duration-300 group-hover:scale-[1.02]"
+                        className="w-full max-w-[270px] h-auto object-contain select-none"
                       />
                     ) : (
-                      <div className="text-xs font-mono text-zinc-400">Rendering vector...</div>
+                      <div className="text-xs font-mono text-black/40 dark:text-zinc-500">Rendering vector...</div>
                     )}
                   </div>
 
                   {/* Scannability Validator Indicator */}
-                  <div className="p-2.5 rounded-none bg-zinc-900 border border-zinc-800 text-xs font-mono flex items-center justify-between">
-                    <span className="text-zinc-400">Scan Reliability:</span>
-                    <span className={`font-semibold ${contrastCheck.valid ? "text-emerald-400" : "text-amber-400"}`}>
+                  <div className="p-2.5 rounded-none bg-black/5 dark:bg-zinc-900 border border-black/10 dark:border-zinc-800 text-xs font-mono flex items-center justify-between text-black/70 dark:text-zinc-400">
+                    <span>Scan Reliability:</span>
+                    <span className={`font-semibold ${contrastCheck.valid ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
                       {contrastCheck.score}
                     </span>
                   </div>
@@ -1734,9 +1648,9 @@ export default function QrStudioPage() {
                     <button
                       type="button"
                       onClick={copyPngImageToClipboard}
-                      className="w-full py-3 px-4 rounded-none bg-white text-black font-medium text-sm hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                      className="w-full py-3 px-4 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                     >
-                      {copiedImage ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
+                      {copiedImage ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                       {copiedImage ? "Image Copied to Clipboard!" : "Copy Image to Clipboard"}
                     </button>
 
@@ -1744,7 +1658,7 @@ export default function QrStudioPage() {
                       <button
                         type="button"
                         onClick={() => downloadPng(2048)}
-                        className="py-2.5 px-3 rounded-none bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-zinc-800 font-mono"
+                        className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
                       >
                         <Download size={13} /> Download PNG (2K)
                       </button>
@@ -1752,17 +1666,17 @@ export default function QrStudioPage() {
                       <button
                         type="button"
                         onClick={downloadSvg}
-                        className="py-2.5 px-3 rounded-none bg-zinc-900 hover:bg-zinc-800 text-zinc-200 hover:text-white font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-zinc-800 font-mono"
+                        className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
                       >
                         <FileCode size={13} /> Download SVG (Vector)
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-zinc-900">
+                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-black/5 dark:border-zinc-900">
                       <button
                         type="button"
                         onClick={copySvgToClipboard}
-                        className="py-2 px-2 rounded-none bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-mono transition-colors text-center border border-zinc-800/80"
+                        className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
                         title="Copy raw SVG markup"
                       >
                         {copiedSvg ? "Copied SVG!" : "Copy SVG"}
@@ -1771,7 +1685,7 @@ export default function QrStudioPage() {
                       <button
                         type="button"
                         onClick={copyDataUrlToClipboard}
-                        className="py-2 px-2 rounded-none bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-mono transition-colors text-center border border-zinc-800/80"
+                        className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
                         title="Copy Base64 Data URL"
                       >
                         {copiedDataUrl ? "Copied Data!" : "Copy Data URL"}
@@ -1780,7 +1694,7 @@ export default function QrStudioPage() {
                       <button
                         type="button"
                         onClick={copyAsciiToClipboard}
-                        className="py-2 px-2 rounded-none bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-mono transition-colors text-center border border-zinc-800/80"
+                        className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
                         title="Copy ASCII Terminal QR Code"
                       >
                         {copiedAscii ? "Copied ASCII!" : "Copy ASCII"}
@@ -1789,8 +1703,8 @@ export default function QrStudioPage() {
                   </div>
 
                   {/* Raw Payload Inspector Box */}
-                  <div className="space-y-1.5 pt-2 border-t border-zinc-900">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-zinc-400">
+                  <div className="space-y-1.5 pt-2 border-t border-black/5 dark:border-zinc-900">
+                    <div className="flex items-center justify-between text-[11px] font-mono text-black/60 dark:text-zinc-400">
                       <span>Encoded Payload:</span>
                       <button
                         onClick={copyRawPayloadToClipboard}
@@ -1799,7 +1713,7 @@ export default function QrStudioPage() {
                         {copiedRawPayload ? "Copied!" : "Copy Text"}
                       </button>
                     </div>
-                    <div className="p-3 bg-black/80 font-mono text-xs text-emerald-400 break-all select-all border border-zinc-900 max-h-24 overflow-y-auto leading-relaxed">
+                    <div className="p-3 bg-black/5 dark:bg-black/80 font-mono text-xs text-black/80 dark:text-emerald-400 break-all select-all border border-black/10 dark:border-zinc-900 max-h-24 overflow-y-auto leading-relaxed">
                       {rawPayload}
                     </div>
                   </div>
@@ -1811,7 +1725,7 @@ export default function QrStudioPage() {
                         href={rawPayload}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs font-mono text-zinc-400 hover:text-white transition-colors"
+                        className="inline-flex items-center gap-1 text-xs font-mono text-black/60 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
                       >
                         Test Link in New Tab <ExternalLink size={12} />
                       </a>
@@ -1844,7 +1758,7 @@ export default function QrStudioPage() {
                   value={batchRawInput}
                   onChange={(e) => setBatchRawInput(e.target.value)}
                   placeholder="https://tirup.in\nhttps://tirup.in/work\nhttps://blogs.tirup.in"
-                  className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
+                  className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
                 />
 
                 <div className="flex justify-end">
