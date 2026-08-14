@@ -30,7 +30,6 @@ import {
   Calendar,
   PhoneCall,
   Code,
-  FileSpreadsheet,
 } from "lucide-react"
 
 // Types
@@ -48,22 +47,32 @@ interface ColorPreset {
 }
 
 const COLOR_PRESETS: ColorPreset[] = [
-  { id: "monochrome-light", name: "Obsidian / White", fg: "#000000", bg: "#FFFFFF" },
-  { id: "monochrome-dark", name: "White / Charcoal", fg: "#FFFFFF", bg: "#09090B" },
-  { id: "midnight-navy", name: "Midnight Navy", fg: "#0F172A", bg: "#F8FAFC" },
-  { id: "emerald", name: "Emerald Minimal", fg: "#047857", bg: "#F0FDF4" },
-  { id: "royal-indigo", name: "Royal Indigo", fg: "#4338CA", bg: "#EEF2FF" },
-  { id: "charcoal-slate", name: "Charcoal Slate", fg: "#334155", bg: "#F1F5F9" },
-  { id: "sunset-amber", name: "Sunset Amber", fg: "#D97706", bg: "#FFFBEB" },
-  { id: "transparent-dark", name: "Dark / Transparent", fg: "#000000", bg: "transparent" },
-  { id: "transparent-light", name: "White / Transparent", fg: "#FFFFFF", bg: "transparent" },
+  { id: "monochrome-light", name: "Obsidian", fg: "#000000", bg: "#FFFFFF" },
+  { id: "monochrome-dark", name: "Charcoal", fg: "#FFFFFF", bg: "#09090B" },
+  { id: "midnight-navy", name: "Navy", fg: "#0F172A", bg: "#F8FAFC" },
+  { id: "emerald", name: "Emerald", fg: "#047857", bg: "#F0FDF4" },
+  { id: "royal-indigo", name: "Indigo", fg: "#4338CA", bg: "#EEF2FF" },
+  { id: "sunset-amber", name: "Amber", fg: "#D97706", bg: "#FFFBEB" },
+  { id: "transparent-dark", name: "Dark / Clear", fg: "#000000", bg: "transparent" },
+  { id: "transparent-light", name: "White / Clear", fg: "#FFFFFF", bg: "transparent" },
 ]
 
 const FRAME_PRESETS = [
-  { id: "none", label: "No Frame" },
-  { id: "bottom-banner", label: "Bottom 'Scan Me'" },
-  { id: "top-banner", label: "Top Header" },
+  { id: "none", label: "None" },
+  { id: "bottom-banner", label: "Bottom Banner" },
+  { id: "top-banner", label: "Top Banner" },
   { id: "pill-badge", label: "Pill Badge" },
+]
+
+const DATA_TYPES = [
+  { type: "url" as const, label: "URL" },
+  { type: "text" as const, label: "Text" },
+  { type: "wifi" as const, label: "Wi-Fi" },
+  { type: "vcard" as const, label: "vCard" },
+  { type: "email" as const, label: "Email" },
+  { type: "sms" as const, label: "SMS" },
+  { type: "whatsapp" as const, label: "WhatsApp" },
+  { type: "calendar" as const, label: "Event" },
 ]
 
 interface HistoryItem {
@@ -129,8 +138,8 @@ export default function QrStudioPage() {
   const [calEnd, setCalEnd] = useState("2026-09-01T11:30")
 
   // Design Customization State
-  const [fgColor, setFgColor] = useState("#000000")
-  const [bgColor, setBgColor] = useState("#FFFFFF")
+  const [fgColor, setFgColorState] = useState("#000000")
+  const [bgColor, setBgColorState] = useState("#FFFFFF")
   const [eccLevel, setEccLevel] = useState<ErrorCorrectionLevel>("H")
   const [marginBlocks, setMarginBlocks] = useState<number>(2)
   const [moduleShape, setModuleShape] = useState<ModuleShape>("square")
@@ -142,6 +151,25 @@ export default function QrStudioPage() {
   const [customLogoDataUrl, setCustomLogoDataUrl] = useState<string | null>(null)
   const [customLogoSize, setCustomLogoSize] = useState<number>(22)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  // Smart Color Change with Auto-Contrast Handling
+  const handleFgColorChange = (newFg: string) => {
+    setFgColorState(newFg)
+    const isWhite = newFg.toLowerCase() === "#ffffff" || newFg.toLowerCase() === "#fff"
+    const isBgWhite = bgColor.toLowerCase() === "#ffffff" || bgColor.toLowerCase() === "#fff"
+    if (isWhite && isBgWhite) {
+      setBgColorState("#09090B") // Auto-flip to charcoal dark
+    }
+  }
+
+  const handleBgColorChange = (newBg: string) => {
+    setBgColorState(newBg)
+    const isBlack = newBg.toLowerCase() === "#000000" || newBg.toLowerCase() === "#09090b"
+    const isFgBlack = fgColor.toLowerCase() === "#000000" || fgColor.toLowerCase() === "#09090b"
+    if (isBlack && isFgBlack) {
+      setFgColorState("#FFFFFF") // Auto-flip to crisp white
+    }
+  }
 
   // Copy Feedback State
   const [copiedImage, setCopiedImage] = useState(false)
@@ -162,7 +190,7 @@ export default function QrStudioPage() {
   // Load Persisted History from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("tirup_qr_studio_history_v6")
+      const saved = localStorage.getItem("tirup_qr_studio_history_v8")
       if (saved) setHistory(JSON.parse(saved))
     } catch (e) {}
   }, [])
@@ -289,8 +317,9 @@ export default function QrStudioPage() {
       const totalGridSize = moduleCount + margin * 2
       const moduleSize = baseQrResolution / totalGridSize
 
+      // Large, prominent CTA Frame
       const hasFrame = frameStyle !== "none" && frameText.trim()
-      const frameHeight = hasFrame ? 140 : 0
+      const frameHeight = hasFrame ? 180 : 0
       const canvasWidth = baseQrResolution
       const canvasHeight = baseQrResolution + frameHeight
 
@@ -401,12 +430,12 @@ export default function QrStudioPage() {
         })
       }
 
-      // Draw Center Logo / Emblem Badge Overlay
+      // Draw Center Logo Emblem Badge Overlay
       if (customLogoDataUrl && eccLevel === "H") {
         const logoDim = Math.round(baseQrResolution * (customLogoSize / 100))
         const centerX = canvasWidth / 2
         const centerY = qrOffsetY + baseQrResolution / 2
-        const badgePadding = Math.max(10, logoDim * 0.12)
+        const badgePadding = Math.max(12, logoDim * 0.14)
         const badgeDim = logoDim + badgePadding * 2
 
         ctx.save()
@@ -445,7 +474,7 @@ export default function QrStudioPage() {
       // Draw Frame Text
       if (hasFrame) {
         ctx.save()
-        ctx.font = "bold 36px sans-serif"
+        ctx.font = "bold 50px sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
 
@@ -458,18 +487,18 @@ export default function QrStudioPage() {
           ctx.fillStyle = fillStyle
           ctx.fillText(frameText, canvasWidth / 2, bannerY)
         } else if (frameStyle === "pill-badge") {
-          const badgeWidth = Math.min(canvasWidth * 0.75, ctx.measureText(frameText).width + 80)
-          const badgeHeight = 54
+          const badgeWidth = Math.min(canvasWidth * 0.82, ctx.measureText(frameText).width + 100)
+          const badgeHeight = 72
           const badgeX = (canvasWidth - badgeWidth) / 2
-          const badgeY = baseQrResolution + 40
+          const badgeY = baseQrResolution + 54
 
           ctx.fillStyle = fillStyle
           ctx.beginPath()
-          ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 27)
+          ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 36)
           ctx.fill()
 
           ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
-          ctx.font = "bold 26px sans-serif"
+          ctx.font = "bold 34px sans-serif"
           ctx.fillText(frameText, canvasWidth / 2, badgeY + badgeHeight / 2)
         }
         ctx.restore()
@@ -478,7 +507,7 @@ export default function QrStudioPage() {
       const fullDataUrl = canvas.toDataURL("image/png")
       setPreviewDataUrl(fullDataUrl)
 
-      // Clean Vector SVG
+      // Vector SVG
       QRCode.toString(
         rawPayload,
         {
@@ -555,7 +584,7 @@ export default function QrStudioPage() {
     const updated = [newItem, ...history.filter((h) => h.payload !== rawPayload).slice(0, 19)]
     setHistory(updated)
     try {
-      localStorage.setItem("tirup_qr_studio_history_v6", JSON.stringify(updated))
+      localStorage.setItem("tirup_qr_studio_history_v8", JSON.stringify(updated))
     } catch (e) {}
   }, [rawPayload, payloadType, url, wifiSsid, vcardFirst, vcardLast, emailTo, waPhone, history])
 
@@ -664,8 +693,8 @@ export default function QrStudioPage() {
 
   // Apply Color Preset
   const applyColorPreset = (preset: ColorPreset) => {
-    setFgColor(preset.fg)
-    setBgColor(preset.bg)
+    setFgColorState(preset.fg)
+    setBgColorState(preset.bg)
   }
 
   const restoreFromHistory = (item: HistoryItem) => {
@@ -677,7 +706,7 @@ export default function QrStudioPage() {
   const clearHistory = () => {
     setHistory([])
     try {
-      localStorage.removeItem("tirup_qr_studio_history_v6")
+      localStorage.removeItem("tirup_qr_studio_history_v8")
     } catch (e) {}
   }
 
@@ -690,8 +719,8 @@ export default function QrStudioPage() {
 
   const payloadTitle = useMemo(() => {
     switch (payloadType) {
-      case "url": return "URL Link"
-      case "text": return "Plain Text"
+      case "url": return "URL"
+      case "text": return "Text"
       case "wifi": return "Wi-Fi"
       case "vcard": return "vCard"
       case "email": return "Email"
@@ -711,7 +740,7 @@ export default function QrStudioPage() {
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         {/* Header Title */}
         <TextWithBlur delay={50}>
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
               <div className="flex items-center gap-2 text-xs text-accent font-medium">
                 <Sparkles size={14} /> Developer Utility & Vector Studio
@@ -736,47 +765,38 @@ export default function QrStudioPage() {
           {/* ── LEFT COLUMN: DATA INPUTS & STYLING (7 COLS) ── */}
           <div className="lg:col-span-7 space-y-6">
             
-            {/* Payload Type Selector */}
+            {/* 1. Clean Text Navigation Bar for Data Types */}
             <TextWithBlur delay={75}>
               <div className="space-y-2">
-                <span className="text-xs text-black/60 dark:text-white/60 block font-medium">
-                  Select Data Type:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { type: "url" as const, label: "URL Link", icon: Globe },
-                    { type: "text" as const, label: "Plain Text", icon: FileText },
-                    { type: "wifi" as const, label: "Wi-Fi Network", icon: Wifi },
-                    { type: "vcard" as const, label: "vCard Contact", icon: User },
-                    { type: "email" as const, label: "Email", icon: Mail },
-                    { type: "sms" as const, label: "SMS", icon: MessageSquare },
-                    { type: "whatsapp" as const, label: "WhatsApp", icon: PhoneCall },
-                    { type: "calendar" as const, label: "Calendar Event", icon: Calendar },
-                  ].map(({ type, label, icon: Icon }) => (
-                    <button
-                      key={type}
-                      onClick={() => setPayloadType(type)}
-                      className={`text-xs px-3 py-2 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
-                        payloadType === type
-                          ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
-                          : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                      }`}
-                    >
-                      <Icon size={14} /> {label}
-                    </button>
-                  ))}
-                </div>
+                <nav className="flex items-center gap-x-5 gap-y-2.5 flex-wrap border-b border-black/5 dark:border-white/5 pb-2.5">
+                  {DATA_TYPES.map(({ type, label }) => {
+                    const isSelected = payloadType === type
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => setPayloadType(type)}
+                        className={`text-sm sm:text-base font-light transition-all duration-200 cursor-pointer select-none ${
+                          isSelected
+                            ? "text-black dark:text-white font-medium border-b border-black dark:border-white pb-0.5"
+                            : "text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    )
+                  })}
+                </nav>
               </div>
             </TextWithBlur>
 
-            {/* Dynamic Payload Form */}
-            <TextWithBlur delay={100}>
-              <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-4">
+            {/* 2. Dynamic Payload Configuration Form */}
+            <TextWithBlur delay={90}>
+              <div className="p-6 bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 space-y-4">
                 <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
                   <span className="text-xs text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
                     <Sliders size={13} className="text-accent" /> Data Configuration ({payloadTitle})
                   </span>
-                  <span className="text-xs text-black/40 dark:text-white/40">
+                  <span className="text-xs text-black/40 dark:text-white/40 font-mono">
                     {rawPayload.length} characters
                   </span>
                 </div>
@@ -793,7 +813,7 @@ export default function QrStudioPage() {
                       placeholder="https://tirup.in or https://yourdomain.com/page"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
+                      className="w-full text-base px-4 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                     />
                     <p className="text-xs text-black/50 dark:text-white/50 font-light">
                       Mobile cameras will immediately prompt visitors to open this link in their browser.
@@ -809,11 +829,11 @@ export default function QrStudioPage() {
                     </label>
                     <textarea
                       id={textInputId}
-                      rows={4}
+                      rows={5}
                       placeholder="Enter raw text, notes, serial numbers, or markdown..."
                       value={plainText}
                       onChange={(e) => setPlainText(e.target.value)}
-                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
+                      className="w-full text-base px-4 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                     />
                   </div>
                 )}
@@ -831,7 +851,7 @@ export default function QrStudioPage() {
                         placeholder="e.g. Office_5G_HighSpeed"
                         value={wifiSsid}
                         onChange={(e) => setWifiSsid(e.target.value)}
-                        className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
+                        className="w-full text-base px-4 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
 
@@ -846,7 +866,7 @@ export default function QrStudioPage() {
                           placeholder="Wi-Fi Password"
                           value={wifiPassword}
                           onChange={(e) => setWifiPassword(e.target.value)}
-                          className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
+                          className="w-full text-base px-4 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
 
@@ -857,7 +877,7 @@ export default function QrStudioPage() {
                         <select
                           value={wifiAuth}
                           onChange={(e) => setWifiAuth(e.target.value as any)}
-                          className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
+                          className="w-full text-sm px-4 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none cursor-pointer"
                         >
                           <option value="WPA">WPA / WPA2 / WPA3 (Default)</option>
                           <option value="WEP">WEP</option>
@@ -871,7 +891,7 @@ export default function QrStudioPage() {
                         type="checkbox"
                         checked={wifiHidden}
                         onChange={(e) => setWifiHidden(e.target.checked)}
-                        className="rounded-none accent-black dark:accent-white"
+                        className="accent-black dark:accent-white"
                       />
                       <span>Hidden SSID Network</span>
                     </label>
@@ -891,7 +911,7 @@ export default function QrStudioPage() {
                           type="text"
                           value={vcardFirst}
                           onChange={(e) => setVcardFirst(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
                       <div>
@@ -903,7 +923,7 @@ export default function QrStudioPage() {
                           type="text"
                           value={vcardLast}
                           onChange={(e) => setVcardLast(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
                     </div>
@@ -918,7 +938,7 @@ export default function QrStudioPage() {
                           type="text"
                           value={vcardOrg}
                           onChange={(e) => setVcardOrg(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
                       <div>
@@ -930,7 +950,7 @@ export default function QrStudioPage() {
                           type="tel"
                           value={vcardPhone}
                           onChange={(e) => setVcardPhone(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
                     </div>
@@ -945,7 +965,7 @@ export default function QrStudioPage() {
                           type="email"
                           value={vcardEmail}
                           onChange={(e) => setVcardEmail(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
                       <div>
@@ -957,7 +977,7 @@ export default function QrStudioPage() {
                           type="url"
                           value={vcardUrl}
                           onChange={(e) => setVcardUrl(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
                     </div>
@@ -977,7 +997,7 @@ export default function QrStudioPage() {
                         placeholder="recipient@example.com"
                         value={emailTo}
                         onChange={(e) => setEmailTo(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
                     <div>
@@ -989,7 +1009,7 @@ export default function QrStudioPage() {
                         type="text"
                         value={emailSubject}
                         onChange={(e) => setEmailSubject(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
                     <div>
@@ -998,10 +1018,11 @@ export default function QrStudioPage() {
                       </label>
                       <textarea
                         id={emailBodyId}
-                        rows={3}
+                        rows={6}
                         value={emailBody}
                         onChange={(e) => setEmailBody(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
+                        placeholder="Write your email body or draft message..."
                       />
                     </div>
                   </div>
@@ -1020,7 +1041,7 @@ export default function QrStudioPage() {
                         placeholder="+1 555 019 2834"
                         value={smsPhone}
                         onChange={(e) => setSmsPhone(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
                     <div>
@@ -1029,10 +1050,10 @@ export default function QrStudioPage() {
                       </label>
                       <textarea
                         id={smsMsgId}
-                        rows={3}
+                        rows={4}
                         value={smsMessage}
                         onChange={(e) => setSmsMessage(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
                   </div>
@@ -1051,7 +1072,7 @@ export default function QrStudioPage() {
                         placeholder="e.g. 15551234567"
                         value={waPhone}
                         onChange={(e) => setWaPhone(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
                     <div>
@@ -1060,10 +1081,10 @@ export default function QrStudioPage() {
                       </label>
                       <textarea
                         id={waMsgId}
-                        rows={3}
+                        rows={4}
                         value={waMessage}
                         onChange={(e) => setWaMessage(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
                   </div>
@@ -1081,7 +1102,7 @@ export default function QrStudioPage() {
                         type="text"
                         value={calTitle}
                         onChange={(e) => setCalTitle(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div>
@@ -1093,7 +1114,7 @@ export default function QrStudioPage() {
                         type="text"
                         value={calLocation}
                         onChange={(e) => setCalLocation(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -1106,7 +1127,7 @@ export default function QrStudioPage() {
                           type="datetime-local"
                           value={calStart}
                           onChange={(e) => setCalStart(e.target.value)}
-                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-xs px-2.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                       <div>
@@ -1118,7 +1139,7 @@ export default function QrStudioPage() {
                           type="datetime-local"
                           value={calEnd}
                           onChange={(e) => setCalEnd(e.target.value)}
-                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                          className="w-full text-xs px-2.5 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                     </div>
@@ -1127,76 +1148,75 @@ export default function QrStudioPage() {
               </div>
             </TextWithBlur>
 
-            {/* Visual Styling Controls */}
-            <TextWithBlur delay={120}>
-              <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-5">
+            {/* 3. Visual Shapes, Logo, Frame & Color Studio */}
+            <TextWithBlur delay={110}>
+              <div className="p-6 bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 space-y-6">
                 <div className="border-b border-black/5 dark:border-white/5 pb-3">
                   <span className="text-xs text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
                     <Palette size={13} className="text-accent" /> Vector Shapes & Styling
                   </span>
                 </div>
 
-                {/* Module Pattern & Corner Eye Shapes */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-xs text-black/60 dark:text-white/60 mb-1.5 block font-medium">
-                      Module Pattern:
-                    </span>
-                    <div className="flex gap-2">
-                      {[
-                        { id: "square" as const, label: "Square" },
-                        { id: "rounded" as const, label: "Rounded" },
-                        { id: "dots" as const, label: "Dots" },
-                      ].map((m) => (
-                        <button
-                          key={m.id}
-                          type="button"
-                          onClick={() => setModuleShape(m.id)}
-                          className={`flex-1 text-xs py-2 rounded-none border transition-all ${
-                            moduleShape === m.id
-                              ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                          }`}
-                        >
-                          {m.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <span className="text-xs text-black/60 dark:text-white/60 mb-1.5 block font-medium">
-                      Corner Finder Eyes:
-                    </span>
-                    <div className="flex gap-2">
-                      {[
-                        { id: "square" as const, label: "Classic" },
-                        { id: "rounded" as const, label: "Squircle" },
-                        { id: "circle" as const, label: "Circle" },
-                      ].map((e) => (
-                        <button
-                          key={e.id}
-                          type="button"
-                          onClick={() => setEyeShape(e.id)}
-                          className={`flex-1 text-xs py-2 rounded-none border transition-all ${
-                            eyeShape === e.id
-                              ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                          }`}
-                        >
-                          {e.label}
-                        </button>
-                      ))}
-                    </div>
+                {/* Module Pattern - Distinct, Spacious Row */}
+                <div className="space-y-2">
+                  <span className="text-xs text-black/60 dark:text-white/60 block font-medium">
+                    Module Pattern:
+                  </span>
+                  <div className="flex items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400 flex-wrap">
+                    {[
+                      { id: "square" as const, label: "Square" },
+                      { id: "rounded" as const, label: "Rounded" },
+                      { id: "dots" as const, label: "Dots" },
+                    ].map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setModuleShape(m.id)}
+                        className={`cursor-pointer transition-colors ${
+                          moduleShape === m.id
+                            ? "text-black dark:text-white font-medium border-b border-black dark:border-white pb-0.5"
+                            : "hover:text-black dark:hover:text-white"
+                        }`}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
-                {/* Curated Color Schemes */}
-                <div className="space-y-2 pt-2 border-t border-black/5 dark:border-white/5">
+                {/* Corner Finder Eyes - Distinct, Spacious Row */}
+                <div className="space-y-2 pt-3 border-t border-black/5 dark:border-white/5">
+                  <span className="text-xs text-black/60 dark:text-white/60 block font-medium">
+                    Corner Finder Eyes:
+                  </span>
+                  <div className="flex items-center gap-6 text-sm text-zinc-500 dark:text-zinc-400 flex-wrap">
+                    {[
+                      { id: "square" as const, label: "Classic" },
+                      { id: "rounded" as const, label: "Squircle" },
+                      { id: "circle" as const, label: "Circle" },
+                    ].map((e) => (
+                      <button
+                        key={e.id}
+                        type="button"
+                        onClick={() => setEyeShape(e.id)}
+                        className={`cursor-pointer transition-colors ${
+                          eyeShape === e.id
+                            ? "text-black dark:text-white font-medium border-b border-black dark:border-white pb-0.5"
+                            : "hover:text-black dark:hover:text-white"
+                        }`}
+                      >
+                        {e.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Curated Color Palettes */}
+                <div className="space-y-2.5 pt-3 border-t border-black/5 dark:border-white/5">
                   <span className="text-xs text-black/60 dark:text-white/60 block font-medium">
                     Color Schemes:
                   </span>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     {COLOR_PRESETS.map((p) => {
                       const isSelected = fgColor === p.fg && bgColor === p.bg
                       return (
@@ -1204,32 +1224,25 @@ export default function QrStudioPage() {
                           key={p.id}
                           type="button"
                           onClick={() => applyColorPreset(p)}
-                          className={`text-xs px-3 py-2 rounded-none border flex items-center justify-between transition-all ${
+                          className={`px-3 py-1.5 border text-xs flex items-center gap-2 transition-all cursor-pointer ${
                             isSelected
-                              ? "border-black dark:border-white ring-1 ring-black dark:ring-white font-medium bg-black/5 dark:bg-white/10"
-                              : "border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 bg-white/60 dark:bg-zinc-950/60"
+                              ? "border-black dark:border-white bg-black/5 dark:bg-white/10 font-medium text-black dark:text-white"
+                              : "border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-zinc-600 dark:text-zinc-400"
                           }`}
                         >
-                          <span className="text-black dark:text-white truncate pr-1">{p.name}</span>
-                          <div className="flex items-center gap-1 shrink-0">
-                            <span className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: p.fg }} />
-                            <span
-                              className="w-3 h-3 rounded-full border border-black/20"
-                              style={{ backgroundColor: p.bg === "transparent" ? "#E4E4E7" : p.bg }}
-                            />
-                          </div>
+                          <span className="w-2.5 h-2.5 rounded-full border border-black/20" style={{ backgroundColor: p.fg }} />
+                          <span>{p.name}</span>
                         </button>
                       )
                     })}
                   </div>
                 </div>
 
-                {/* ── Clean 2-Row Color & ECC Form ── */}
-                <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-4">
+                {/* Clean 2-Row Color & ECC Form */}
+                <div className="pt-3 border-t border-black/5 dark:border-white/5 space-y-4">
                   {/* Row 1: Foreground & Background Pickers */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Foreground Color */}
-                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                    <div className="p-3.5 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
                       <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Foreground Color
                       </label>
@@ -1237,22 +1250,21 @@ export default function QrStudioPage() {
                         <input
                           type="color"
                           value={fgColor === "transparent" ? "#000000" : fgColor}
-                          onChange={(e) => setFgColor(e.target.value)}
-                          className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
+                          onChange={(e) => handleFgColorChange(e.target.value)}
+                          className="w-8 h-8 border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
                           title="Pick color"
                         />
                         <input
                           type="text"
                           value={fgColor}
-                          onChange={(e) => setFgColor(e.target.value)}
-                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
+                          onChange={(e) => handleFgColorChange(e.target.value)}
+                          className="w-full text-xs px-3 py-2 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
                           placeholder="#000000"
                         />
                       </div>
                     </div>
 
-                    {/* Background Color */}
-                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                    <div className="p-3.5 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
                       <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Background Color
                       </label>
@@ -1260,15 +1272,15 @@ export default function QrStudioPage() {
                         <input
                           type="color"
                           value={bgColor === "transparent" ? "#FFFFFF" : bgColor}
-                          onChange={(e) => setBgColor(e.target.value)}
-                          className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
+                          onChange={(e) => handleBgColorChange(e.target.value)}
+                          className="w-8 h-8 border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
                           title="Pick color"
                         />
                         <input
                           type="text"
                           value={bgColor}
-                          onChange={(e) => setBgColor(e.target.value)}
-                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
+                          onChange={(e) => handleBgColorChange(e.target.value)}
+                          className="w-full text-xs px-3 py-2 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
                           placeholder="#FFFFFF or transparent"
                         />
                       </div>
@@ -1277,15 +1289,14 @@ export default function QrStudioPage() {
 
                   {/* Row 2: Error Correction & Margin */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* ECC */}
-                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                    <div className="p-3.5 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
                       <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Error Correction (ECC)
                       </label>
                       <select
                         value={eccLevel}
                         onChange={(e) => setEccLevel(e.target.value as ErrorCorrectionLevel)}
-                        className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
+                        className="w-full text-xs px-3 py-2 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none cursor-pointer"
                       >
                         <option value="H">H (30% Redundancy - Best for Logos)</option>
                         <option value="Q">Q (25% High Reliability)</option>
@@ -1294,12 +1305,11 @@ export default function QrStudioPage() {
                       </select>
                     </div>
 
-                    {/* Margin */}
-                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                    <div className="p-3.5 border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
                       <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Quiet Zone Margin
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-4 text-xs text-zinc-500 dark:text-zinc-400 pt-1">
                         {[
                           { val: 0, label: "0" },
                           { val: 1, label: "1" },
@@ -1310,10 +1320,10 @@ export default function QrStudioPage() {
                             key={m.val}
                             type="button"
                             onClick={() => setMarginBlocks(m.val)}
-                            className={`flex-1 text-xs py-1.5 rounded-none border transition-all ${
+                            className={`cursor-pointer transition-colors ${
                               marginBlocks === m.val
-                                ? "bg-black text-white dark:bg-white dark:text-black font-medium"
-                                : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
+                                ? "text-black dark:text-white font-medium border-b border-black dark:border-white pb-0.5"
+                                : "hover:text-black dark:hover:text-white"
                             }`}
                           >
                             {m.label}
@@ -1324,21 +1334,69 @@ export default function QrStudioPage() {
                   </div>
                 </div>
 
-                {/* Frame / Call-to-Action Border */}
-                <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
+                {/* Center Emblem / Brand Logo Upload (Naturally Placed Inside Styling) */}
+                <div className="pt-3 border-t border-black/5 dark:border-white/5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon size={14} className="text-accent" />
+                      <span className="text-xs font-medium text-black dark:text-white">
+                        Center Logo / Brand Emblem
+                      </span>
+                    </div>
+                    {customLogoDataUrl && (
+                      <button
+                        onClick={removeCustomLogo}
+                        className="text-xs text-red-500 hover:underline flex items-center gap-1 cursor-pointer"
+                      >
+                        <X size={12} /> Remove
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      id="custom-logo-upload"
+                    />
+                    <label
+                      htmlFor="custom-logo-upload"
+                      className="px-3.5 py-2 border border-dashed border-black/20 dark:border-white/20 text-xs text-black/80 dark:text-white/80 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center gap-1.5 font-medium"
+                    >
+                      <Upload size={13} /> {customLogoDataUrl ? "Change Logo Image..." : "Upload Logo (PNG, SVG, JPG)..."}
+                    </label>
+
+                    {customLogoDataUrl && (
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={customLogoDataUrl}
+                          alt="Logo Preview"
+                          className="w-7 h-7 object-contain bg-white p-0.5 border border-black/10 rounded-sm"
+                        />
+                        <span className="text-xs text-emerald-600 dark:text-emerald-400">ECC Level H enabled</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Call-to-Action Frame Style */}
+                <div className="pt-3 border-t border-black/5 dark:border-white/5 space-y-3">
                   <span className="text-xs text-black/60 dark:text-white/60 font-medium block">
                     Call-to-Action Frame:
                   </span>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="flex items-center gap-5 text-sm text-zinc-500 dark:text-zinc-400 flex-wrap">
                     {FRAME_PRESETS.map((f) => (
                       <button
                         key={f.id}
                         type="button"
                         onClick={() => setFrameStyle(f.id as any)}
-                        className={`text-xs py-2 px-2 rounded-none border transition-all truncate ${
+                        className={`cursor-pointer transition-colors ${
                           frameStyle === f.id
-                            ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                            : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
+                            ? "text-black dark:text-white font-medium border-b border-black dark:border-white pb-0.5"
+                            : "hover:text-black dark:hover:text-white"
                         }`}
                       >
                         {f.label}
@@ -1357,88 +1415,47 @@ export default function QrStudioPage() {
                         placeholder="e.g. Scan Me, Scan for Wi-Fi, Visit Website"
                         value={frameText}
                         onChange={(e) => setFrameText(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                   )}
-                </div>
-
-                {/* Center Emblem / Custom Logo Upload */}
-                <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
-                      <ImageIcon size={13} /> Center Emblem / Logo Overlay
-                    </span>
-                    {customLogoDataUrl && (
-                      <button
-                        onClick={removeCustomLogo}
-                        className="text-xs text-red-500 hover:underline flex items-center gap-1"
-                      >
-                        <X size={12} /> Remove Logo
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-3">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleLogoUpload}
-                      className="hidden"
-                      id="custom-logo-upload"
-                    />
-                    <label
-                      htmlFor="custom-logo-upload"
-                      className="px-3.5 py-2 rounded-none border border-dashed border-black/20 dark:border-white/20 text-xs text-black/80 dark:text-white/80 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center gap-1.5"
-                    >
-                      <Upload size={13} /> {customLogoDataUrl ? "Change Custom Logo..." : "Upload Logo (PNG/SVG)..."}
-                    </label>
-
-                    {customLogoDataUrl && (
-                      <div className="flex items-center gap-2">
-                        <img src={customLogoDataUrl} alt="Logo Preview" className="w-8 h-8 object-contain bg-white p-0.5 border border-black/10 rounded-sm" />
-                        <span className="text-xs text-emerald-600 dark:text-emerald-400">ECC Level H enabled</span>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </TextWithBlur>
           </div>
 
-          {/* ── RIGHT COLUMN: LIVE CANVAS & EXPORTS (5 COLS) ── */}
+          {/* ── RIGHT COLUMN: LARGE LIVE CANVAS & EXPORTS (5 COLS) ── */}
           <div className="lg:col-span-5 space-y-6">
-            <TextWithBlur delay={140}>
-              <div className="p-6 md:p-8 rounded-none bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 shadow-sm space-y-5">
+            <TextWithBlur delay={130}>
+              <div className="p-5 sm:p-6 bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 space-y-4">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-zinc-800 pb-3">
                   <span className="text-xs text-black/70 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
-                    <Sparkles size={14} className="text-accent" /> Vector Output Preview
+                    <Sparkles size={14} className="text-accent" /> Live Vector Preview
                   </span>
-                  <span className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
-                    2048px Vector
+                  <span className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 border border-emerald-200 dark:border-emerald-800 font-mono">
+                    2048px
                   </span>
                 </div>
 
-                {/* Rendered Canvas Preview */}
-                <div className="p-6 bg-zinc-50 dark:bg-black/40 rounded-none border border-black/10 dark:border-zinc-800 flex items-center justify-center min-h-[290px]">
+                {/* Rendered Canvas Preview - Generous, Bold, High QR Area Ratio */}
+                <div className="p-3 sm:p-4 bg-zinc-50 dark:bg-zinc-900/50 border border-black/10 dark:border-zinc-800 flex items-center justify-center">
                   {previewDataUrl ? (
                     <img
                       src={previewDataUrl}
                       alt="Rendered QR Code"
-                      className="w-full max-w-[270px] h-auto object-contain select-none"
+                      className="w-full max-w-full h-auto object-contain select-none"
                     />
                   ) : (
-                    <div className="text-xs text-black/40 dark:text-zinc-500">Rendering vector...</div>
+                    <div className="text-xs text-black/40 dark:text-zinc-500 py-20">Rendering vector...</div>
                   )}
                 </div>
 
-                {/* Primary Export Actions */}
-                <div className="space-y-2.5">
+                {/* Primary & Secondary Actions */}
+                <div className="space-y-2.5 pt-1">
                   <button
                     type="button"
                     onClick={copyPngImageToClipboard}
-                    className="w-full py-3 px-4 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                    className="w-full py-3 px-4 bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {copiedImage ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                     {copiedImage ? "Image Copied to Clipboard!" : "Copy Image to Clipboard"}
@@ -1448,7 +1465,7 @@ export default function QrStudioPage() {
                     <button
                       type="button"
                       onClick={() => downloadPng(2048)}
-                      className="w-full py-2.5 px-3 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 px-3 border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black dark:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <Download size={13} /> Download PNG (2K)
                     </button>
@@ -1456,41 +1473,33 @@ export default function QrStudioPage() {
                     <button
                       type="button"
                       onClick={downloadSvg}
-                      className="w-full py-2.5 px-3 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 px-3 border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 text-black dark:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <FileCode size={13} /> Download SVG (Vector)
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 pt-1 border-t border-black/5 dark:border-zinc-900">
+                  {/* Clean Text Actions Row (like Header Links) */}
+                  <div className="flex items-center justify-center gap-3 text-xs text-zinc-500 dark:text-zinc-400 pt-2.5 border-t border-black/5 dark:border-zinc-800 select-none">
                     <button
-                      type="button"
                       onClick={copySvgToClipboard}
-                      className="py-2 px-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
-                      title="Copy raw SVG markup"
+                      className="hover:text-black dark:hover:text-white transition-colors cursor-pointer"
                     >
-                      {copiedSvg ? <Check size={12} className="text-emerald-500" /> : <Code size={12} />}
-                      {copiedSvg ? "Copied" : "Copy SVG"}
+                      {copiedSvg ? "SVG Copied!" : "Copy SVG"}
                     </button>
-
+                    <span>/</span>
                     <button
-                      type="button"
                       onClick={copyDataUrlToClipboard}
-                      className="py-2 px-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
-                      title="Copy Base64 Data URL"
+                      className="hover:text-black dark:hover:text-white transition-colors cursor-pointer"
                     >
-                      {copiedDataUrl ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
-                      {copiedDataUrl ? "Copied" : "Data URL"}
+                      {copiedDataUrl ? "Data Copied!" : "Data URL"}
                     </button>
-
+                    <span>/</span>
                     <button
-                      type="button"
                       onClick={copyAsciiToClipboard}
-                      className="py-2 px-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
-                      title="Copy ASCII Terminal QR Code"
+                      className="hover:text-black dark:hover:text-white transition-colors cursor-pointer"
                     >
-                      {copiedAscii ? <Check size={12} className="text-emerald-500" /> : <FileText size={12} />}
-                      {copiedAscii ? "Copied" : "Terminal"}
+                      {copiedAscii ? "ASCII Copied!" : "Terminal Art"}
                     </button>
                   </div>
                 </div>
@@ -1501,7 +1510,7 @@ export default function QrStudioPage() {
                     <span>Encoded Payload:</span>
                     <button
                       onClick={copyRawPayloadToClipboard}
-                      className="text-accent hover:underline flex items-center gap-1"
+                      className="text-accent hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       {copiedRawPayload ? "Copied!" : "Copy text"}
                     </button>
@@ -1511,9 +1520,9 @@ export default function QrStudioPage() {
                   </div>
                 </div>
 
-                {/* Test Action */}
+                {/* Test Link Action */}
                 {payloadType === "url" && (
-                  <div className="pt-1 text-right">
+                  <div className="pt-0.5 text-right">
                     <a
                       href={rawPayload}
                       target="_blank"
@@ -1533,7 +1542,7 @@ export default function QrStudioPage() {
         {/* PERSISTENT HISTORY ARCHIVE                                         */}
         {/* ═══════════════════════════════════════════════════════════════════ */}
         {history.length > 0 && (
-          <TextWithBlur delay={180}>
+          <TextWithBlur delay={160}>
             <div className="mt-14 pt-8 border-t border-black/10 dark:border-white/10 space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
@@ -1550,7 +1559,7 @@ export default function QrStudioPage() {
                       placeholder="Search history..."
                       value={historySearch}
                       onChange={(e) => setHistorySearch(e.target.value)}
-                      className="text-xs px-3 py-1.5 pl-7 rounded-none border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 text-black dark:text-white focus:outline-none"
+                      className="text-xs px-3 py-1.5 pl-7 border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 text-black dark:text-white focus:outline-none"
                     />
                     <Search size={12} className="absolute left-2.5 top-2.5 text-black/40 dark:text-white/40" />
                   </div>
@@ -1571,7 +1580,7 @@ export default function QrStudioPage() {
                     className="py-3.5 border-b border-black/10 dark:border-white/10 flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="px-2 py-0.5 rounded-none bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 text-[10px]">
+                      <span className="px-2 py-0.5 bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 text-[10px]">
                         {item.type}
                       </span>
                       <span className="truncate text-black dark:text-white font-medium">{item.title}</span>
@@ -1581,7 +1590,7 @@ export default function QrStudioPage() {
                       <span className="text-black/40 dark:text-white/40 text-[11px] hidden sm:inline">{item.createdAt}</span>
                       <button
                         onClick={() => restoreFromHistory(item)}
-                        className="px-2.5 py-1 rounded-none border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-black dark:text-white font-medium"
+                        className="px-2.5 py-1 border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-black dark:text-white font-medium cursor-pointer"
                       >
                         Load
                       </button>
