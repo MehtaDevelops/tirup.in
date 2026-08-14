@@ -365,6 +365,28 @@ export const projectsData = {
       },
     ],
   },
+  "utm-builder": {
+    title: "Campaign URL Builder",
+    description: "GA4 campaign link builder and attribution studio for multi-channel marketing campaigns.",
+    fullDescription: "GA4 Campaign URL Builder is a developer utility and marketing attribution studio designed to construct standardized campaign links. It features instant single-link creation, multi-channel 8-network bulk generation, QR code exporting, and URL inspection with tracking-token sanitization.",
+    liveUrl: "https://tirup.in/tools/utm-builder",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Web APIs", "QRCode.js"],
+    stats: {
+      channels: "8",
+      platform: "Web Utility",
+      attribution: "GA4 Ready",
+    },
+    details: [
+      {
+        title: "The Challenge",
+        content: "Untracked or inconsistently tagged marketing URLs result in unclassified (direct) / (none) traffic in Google Analytics 4, obscuring attribution data.",
+      },
+      {
+        title: "The Solution",
+        content: "Engineered a fast, client-side UTM studio with parameter presets, automated casing normalization, live previews, QR code generation, and bulk multi-channel export capabilities.",
+      },
+    ],
+  },
 }
 
 export interface WorkProject {
@@ -417,6 +439,12 @@ export const projectsList: WorkProject[] = [
     slug: "typing-challenge",
     liveUrl: "https://typing-challenge.tirup.in/",
     isPrivate: true,
+  },
+  {
+    title: "Campaign URL Builder",
+    description: "GA4 campaign link builder and attribution studio for multi-channel marketing.",
+    slug: "utm-builder",
+    liveUrl: "https://tirup.in/tools/utm-builder",
   },
   {
     title: "Discuss",
