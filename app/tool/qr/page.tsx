@@ -23,17 +23,12 @@ import {
   ShieldCheck,
   Sliders,
   Image as ImageIcon,
-  RotateCcw,
   FileCode,
-  Layers,
   Search,
-  CheckCircle2,
   Upload,
   X,
-  Scan,
   Calendar,
   PhoneCall,
-  SlidersHorizontal,
 } from "lucide-react"
 
 // Types
@@ -48,20 +43,18 @@ interface ColorPreset {
   name: string
   fg: string
   bg: string
-  fgEnd?: string
-  isDark?: boolean
 }
 
 const COLOR_PRESETS: ColorPreset[] = [
   { id: "monochrome-light", name: "Obsidian / White", fg: "#000000", bg: "#FFFFFF" },
-  { id: "monochrome-dark", name: "White / Charcoal", fg: "#FFFFFF", bg: "#09090B", isDark: true },
+  { id: "monochrome-dark", name: "White / Charcoal", fg: "#FFFFFF", bg: "#09090B" },
   { id: "midnight-navy", name: "Midnight Navy", fg: "#0F172A", bg: "#F8FAFC" },
   { id: "emerald", name: "Emerald Minimal", fg: "#047857", bg: "#F0FDF4" },
   { id: "royal-indigo", name: "Royal Indigo", fg: "#4338CA", bg: "#EEF2FF" },
   { id: "charcoal-slate", name: "Charcoal Slate", fg: "#334155", bg: "#F1F5F9" },
   { id: "sunset-amber", name: "Sunset Amber", fg: "#D97706", bg: "#FFFBEB" },
   { id: "transparent-dark", name: "Dark / Transparent", fg: "#000000", bg: "transparent" },
-  { id: "transparent-light", name: "White / Transparent", fg: "#FFFFFF", bg: "transparent", isDark: true },
+  { id: "transparent-light", name: "White / Transparent", fg: "#FFFFFF", bg: "transparent" },
 ]
 
 const FRAME_PRESETS = [
@@ -104,9 +97,6 @@ export default function QrStudioPage() {
   const calEndId = useId()
   const frameTextId = useId()
 
-  // Studio Mode Tabs
-  const [activeTab, setActiveTab] = useState<"single" | "design" | "batch" | "decode">("single")
-
   // Payload Type
   const [payloadType, setPayloadType] = useState<PayloadType>("url")
 
@@ -145,8 +135,6 @@ export default function QrStudioPage() {
 
   // Design Customization State
   const [fgColor, setFgColor] = useState("#000000")
-  const [fgEndColor, setFgEndColor] = useState("")
-  const [useGradient, setUseGradient] = useState(false)
   const [bgColor, setBgColor] = useState("#FFFFFF")
   const [eccLevel, setEccLevel] = useState<ErrorCorrectionLevel>("H")
   const [marginBlocks, setMarginBlocks] = useState<number>(2)
@@ -154,27 +142,11 @@ export default function QrStudioPage() {
   const [eyeShape, setEyeShape] = useState<EyeShape>("square")
   const [frameStyle, setFrameStyle] = useState<FrameStyle>("none")
   const [frameText, setFrameText] = useState("SCAN ME")
-  const [downloadResolution, setDownloadResolution] = useState<1024 | 2048 | 4096>(2048)
 
   // Custom Logo Overlay State
   const [customLogoDataUrl, setCustomLogoDataUrl] = useState<string | null>(null)
   const [customLogoSize, setCustomLogoSize] = useState<number>(22)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-
-  // Batch Generation State
-  const [batchRawInput, setBatchRawInput] = useState(
-    "https://tirup.in\nhttps://github.com/TirupMehta\nhttps://blogs.tirup.in\nhttps://tirup.in/work"
-  )
-  const [batchGenerated, setBatchGenerated] = useState<{ text: string; dataUrl: string }[]>([])
-  const [copiedBatchIndex, setCopiedBatchIndex] = useState<number | null>(null)
-
-  // QR Decoder State
-  const [decodedOutput, setDecodedOutput] = useState<{
-    text: string
-    type: string
-    parsedDetails?: Record<string, string>
-  } | null>(null)
-  const decodeFileInputRef = useRef<HTMLInputElement | null>(null)
 
   // Copy Feedback State
   const [copiedImage, setCopiedImage] = useState(false)
@@ -195,7 +167,7 @@ export default function QrStudioPage() {
   // Load Persisted History from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("tirup_qr_studio_history_v3")
+      const saved = localStorage.getItem("tirup_qr_studio_history_v4")
       if (saved) setHistory(JSON.parse(saved))
     } catch (e) {}
   }, [])
@@ -303,11 +275,11 @@ export default function QrStudioPage() {
 
   // Contrast Ratio Validator
   const contrastCheck = useMemo(() => {
-    if (bgColor === "transparent") return { score: "Good", valid: true, text: "Transparent background (dependent on surface contrast)." }
+    if (bgColor === "transparent") return { score: "Good", valid: true, text: "Transparent background" }
     if (fgColor.toLowerCase() === bgColor.toLowerCase()) {
-      return { score: "Unscannable", valid: false, text: "Foreground and background colors are identical." }
+      return { score: "Unscannable", valid: false, text: "Colors are identical" }
     }
-    return { score: "Optimal", valid: true, text: "High contrast detected. Readily scannable by all phone cameras." }
+    return { score: "Optimal", valid: true, text: "High contrast" }
   }, [fgColor, bgColor])
 
   // Custom Canvas Rendering Engine
@@ -350,14 +322,8 @@ export default function QrStudioPage() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
       }
 
-      // Configure Foreground Fill
-      let fillStyle: string | CanvasGradient = fgColor === "transparent" ? "#000000" : fgColor
-      if (useGradient && fgEndColor) {
-        const grad = ctx.createLinearGradient(0, 0, canvasWidth, canvasHeight)
-        grad.addColorStop(0, fgColor)
-        grad.addColorStop(1, fgEndColor)
-        fillStyle = grad
-      }
+      // Foreground Fill
+      const fillStyle = fgColor === "transparent" ? "#000000" : fgColor
       ctx.fillStyle = fillStyle
 
       const qrOffsetY = frameStyle === "top-banner" ? frameHeight : 0
@@ -449,7 +415,7 @@ export default function QrStudioPage() {
         })
       }
 
-      // Draw Refined Center Logo / Emblem Badge Overlay
+      // Draw Center Logo / Emblem Badge Overlay
       if (customLogoDataUrl && eccLevel === "H") {
         const logoDim = Math.round(baseQrResolution * (customLogoSize / 100))
         const centerX = canvasWidth / 2
@@ -566,8 +532,6 @@ export default function QrStudioPage() {
     frameText,
     bgColor,
     fgColor,
-    useGradient,
-    fgEndColor,
     moduleShape,
     eyeShape,
     customLogoDataUrl,
@@ -605,7 +569,7 @@ export default function QrStudioPage() {
     const updated = [newItem, ...history.filter((h) => h.payload !== rawPayload).slice(0, 19)]
     setHistory(updated)
     try {
-      localStorage.setItem("tirup_qr_studio_history_v3", JSON.stringify(updated))
+      localStorage.setItem("tirup_qr_studio_history_v4", JSON.stringify(updated))
     } catch (e) {}
   }, [rawPayload, payloadType, url, wifiSsid, vcardFirst, vcardLast, emailTo, waPhone, history])
 
@@ -668,7 +632,7 @@ export default function QrStudioPage() {
   }
 
   // Download High-Res PNG
-  const downloadPng = (resolution: 1024 | 2048 | 4096 = downloadResolution) => {
+  const downloadPng = (resolution: 1024 | 2048 | 4096 = 2048) => {
     if (!previewDataUrl) return
     const link = document.createElement("a")
     link.href = previewDataUrl
@@ -716,124 +680,18 @@ export default function QrStudioPage() {
   const applyColorPreset = (preset: ColorPreset) => {
     setFgColor(preset.fg)
     setBgColor(preset.bg)
-    if (preset.fgEnd) {
-      setFgEndColor(preset.fgEnd)
-      setUseGradient(true)
-    } else {
-      setFgEndColor("")
-      setUseGradient(false)
-    }
-  }
-
-  // Batch Processor
-  const processBatchGeneration = async () => {
-    const lines = batchRawInput
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean)
-      .slice(0, 30)
-
-    const results: { text: string; dataUrl: string }[] = []
-    for (const line of lines) {
-      try {
-        const dUrl = await QRCode.toDataURL(line, {
-          width: 512,
-          margin: 2,
-          color: { dark: fgColor, light: bgColor === "transparent" ? "#00000000" : bgColor },
-        })
-        results.push({ text: line, dataUrl: dUrl })
-      } catch (e) {}
-    }
-    setBatchGenerated(results)
-  }
-
-  const copyBatchSingle = async (index: number, dataUrl: string) => {
-    try {
-      const response = await fetch(dataUrl)
-      const blob = await response.blob()
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob,
-        }),
-      ])
-      setCopiedBatchIndex(index)
-      setTimeout(() => setCopiedBatchIndex(null), 2000)
-    } catch (e) {}
-  }
-
-  // QR Decoder Handler
-  const handleDecodeImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = async (ev) => {
-      const src = ev.target?.result as string
-      if (!src) return
-
-      if ("BarcodeDetector" in window) {
-        try {
-          const barcodeDetector = new (window as any).BarcodeDetector({ formats: ["qr_code"] })
-          const img = new Image()
-          img.src = src
-          await new Promise((r) => (img.onload = r))
-          const barcodes = await barcodeDetector.detect(img)
-          if (barcodes && barcodes.length > 0) {
-            parseDecodedPayload(barcodes[0].rawValue)
-            return
-          }
-        } catch (err) {}
-      }
-
-      setDecodedOutput({
-        text: "Image uploaded. Paste your URL or string in Single Studio to customize.",
-        type: "Scanned QR Image",
-      })
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const parseDecodedPayload = (raw: string) => {
-    if (raw.startsWith("WIFI:")) {
-      const ssid = raw.match(/S:([^;]+)/)?.[1] || ""
-      const pass = raw.match(/P:([^;]+)/)?.[1] || ""
-      const auth = raw.match(/T:([^;]+)/)?.[1] || "WPA"
-      setDecodedOutput({
-        text: raw,
-        type: "Wi-Fi Network",
-        parsedDetails: { SSID: ssid, Password: pass, "Security Protocol": auth },
-      })
-    } else if (raw.startsWith("BEGIN:VCARD")) {
-      setDecodedOutput({
-        text: raw,
-        type: "vCard Contact Card",
-        parsedDetails: { Format: "vCard 3.0 Standard" },
-      })
-    } else if (raw.startsWith("http://") || raw.startsWith("https://")) {
-      setDecodedOutput({
-        text: raw,
-        type: "Website URL",
-        parsedDetails: { Target: raw },
-      })
-    } else {
-      setDecodedOutput({
-        text: raw,
-        type: "Plain Text Message",
-      })
-    }
   }
 
   const restoreFromHistory = (item: HistoryItem) => {
     setPayloadType(item.type)
     if (item.type === "url") setUrl(item.payload)
     if (item.type === "text") setPlainText(item.payload)
-    setActiveTab("single")
   }
 
   const clearHistory = () => {
     setHistory([])
     try {
-      localStorage.removeItem("tirup_qr_studio_history_v3")
+      localStorage.removeItem("tirup_qr_studio_history_v4")
     } catch (e) {}
   }
 
@@ -850,7 +708,7 @@ export default function QrStudioPage() {
     <main className="relative min-h-screen">
       <Header />
 
-      {/* ── Exact max-w-4xl width aligned with rest of site ── */}
+      {/* ── Single, Unified Section with max-w-4xl width ── */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         {/* Header Title */}
         <TextWithBlur delay={50}>
@@ -869,493 +727,593 @@ export default function QrStudioPage() {
               Pro QR Code & Vector Studio
             </h1>
             <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 max-w-2xl leading-relaxed">
-              Generate print-ready vector SVGs, Wi-Fi credentials, vCards, custom module shapes, gradients, frames, and high-resolution QR codes with zero tracking.
+              Generate print-ready vector SVGs, Wi-Fi credentials, vCards, custom module shapes, frames, and high-resolution QR codes with zero tracking.
             </p>
           </div>
         </TextWithBlur>
 
-        {/* Primary Studio Mode Navigation */}
-        <TextWithBlur delay={70}>
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-3 border-b border-black/10 dark:border-white/10">
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => setActiveTab("single")}
-                className={`text-sm px-4 py-2 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
-                  activeTab === "single"
-                    ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
-                    : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                }`}
-              >
-                <Sliders size={14} /> Single Studio
-              </button>
+        {/* ── UNIFIED 2-COLUMN STUDIO ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* ── LEFT COLUMN: DATA INPUTS & STYLING CONTROLS (7 COLS) ── */}
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* Payload Type Selector */}
+            <TextWithBlur delay={75}>
+              <div className="space-y-2">
+                <span className="text-xs uppercase font-mono tracking-wider text-black/50 dark:text-white/50 block font-medium">
+                  Select Data Type:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { type: "url" as const, label: "URL Link", icon: Globe },
+                    { type: "text" as const, label: "Plain Text", icon: FileText },
+                    { type: "wifi" as const, label: "Wi-Fi Network", icon: Wifi },
+                    { type: "vcard" as const, label: "vCard Contact", icon: User },
+                    { type: "email" as const, label: "Email", icon: Mail },
+                    { type: "sms" as const, label: "SMS", icon: MessageSquare },
+                    { type: "whatsapp" as const, label: "WhatsApp", icon: PhoneCall },
+                    { type: "calendar" as const, label: "Event", icon: Calendar },
+                  ].map(({ type, label, icon: Icon }) => (
+                    <button
+                      key={type}
+                      onClick={() => setPayloadType(type)}
+                      className={`text-xs px-3 py-2 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
+                        payloadType === type
+                          ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
+                          : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
+                      }`}
+                    >
+                      <Icon size={14} /> {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </TextWithBlur>
 
-              <button
-                onClick={() => setActiveTab("design")}
-                className={`text-sm px-4 py-2 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
-                  activeTab === "design"
-                    ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
-                    : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                }`}
-              >
-                <Palette size={14} /> Shapes & Styling
-              </button>
+            {/* Dynamic Payload Form */}
+            <TextWithBlur delay={100}>
+              <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
+                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
+                    <Sliders size={13} className="text-accent" /> Data Configuration ({payloadType.toUpperCase()})
+                  </span>
+                  <span className="text-[11px] font-mono text-black/40 dark:text-white/40">
+                    {rawPayload.length} chars
+                  </span>
+                </div>
 
-              <button
-                onClick={() => setActiveTab("batch")}
-                className={`text-sm px-4 py-2 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
-                  activeTab === "batch"
-                    ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
-                    : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                }`}
-              >
-                <Layers size={14} /> Batch Matrix
-              </button>
-
-              <button
-                onClick={() => setActiveTab("decode")}
-                className={`text-sm px-4 py-2 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
-                  activeTab === "decode"
-                    ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
-                    : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
-                }`}
-              >
-                <Scan size={14} /> Decoder & Scanner
-              </button>
-            </div>
-          </div>
-        </TextWithBlur>
-
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {/* TAB 1 & 2: MAIN STUDIO (SINGLE & DESIGN CUSTOMIZER)                */}
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {(activeTab === "single" || activeTab === "design") && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* ── LEFT COLUMN: INPUTS & CONTROLS (7 COLS) ── */}
-            <div className="lg:col-span-7 space-y-6">
-              
-              {/* Payload Type Selector */}
-              {activeTab === "single" && (
-                <TextWithBlur delay={85}>
+                {/* ── MODE: URL ── */}
+                {payloadType === "url" && (
                   <div className="space-y-2">
-                    <span className="text-xs uppercase font-mono tracking-wider text-black/50 dark:text-white/50 block font-medium">
-                      Select Data Type:
+                    <label htmlFor={urlInputId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 font-medium">
+                      Target Website Link <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      id={urlInputId}
+                      type="url"
+                      placeholder="https://tirup.in or https://yourdomain.com/page"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                    />
+                    <p className="text-xs text-black/50 dark:text-white/50 font-light">
+                      Mobile cameras will immediately prompt visitors to open this link in their browser.
+                    </p>
+                  </div>
+                )}
+
+                {/* ── MODE: PLAIN TEXT ── */}
+                {payloadType === "text" && (
+                  <div className="space-y-2">
+                    <label htmlFor={textInputId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 font-medium">
+                      Plain Text or Secret Message <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      id={textInputId}
+                      rows={4}
+                      placeholder="Enter raw text, notes, serial numbers, or markdown..."
+                      value={plainText}
+                      onChange={(e) => setPlainText(e.target.value)}
+                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                    />
+                  </div>
+                )}
+
+                {/* ── MODE: WI-FI ── */}
+                {payloadType === "wifi" && (
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor={wifiSsidId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
+                        Network Name (SSID) <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id={wifiSsidId}
+                        type="text"
+                        placeholder="e.g. Office_5G_HighSpeed"
+                        value={wifiSsid}
+                        onChange={(e) => setWifiSsid(e.target.value)}
+                        className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor={wifiPassId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
+                          Password
+                        </label>
+                        <input
+                          id={wifiPassId}
+                          type="text"
+                          placeholder="Wi-Fi Password"
+                          value={wifiPassword}
+                          onChange={(e) => setWifiPassword(e.target.value)}
+                          className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
+                          Security Protocol
+                        </label>
+                        <select
+                          value={wifiAuth}
+                          onChange={(e) => setWifiAuth(e.target.value as any)}
+                          className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none font-mono"
+                        >
+                          <option value="WPA">WPA / WPA2 / WPA3 (Default)</option>
+                          <option value="WEP">WEP</option>
+                          <option value="nopass">No Password (Open)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <label className="flex items-center gap-2 text-xs font-mono text-black/70 dark:text-white/70 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={wifiHidden}
+                        onChange={(e) => setWifiHidden(e.target.checked)}
+                        className="rounded-none accent-black dark:accent-white"
+                      />
+                      <span>Hidden SSID Network</span>
+                    </label>
+                  </div>
+                )}
+
+                {/* ── MODE: VCARD ── */}
+                {payloadType === "vcard" && (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor={vcardFirstId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          First Name
+                        </label>
+                        <input
+                          id={vcardFirstId}
+                          type="text"
+                          value={vcardFirst}
+                          onChange={(e) => setVcardFirst(e.target.value)}
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={vcardLastId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          Last Name
+                        </label>
+                        <input
+                          id={vcardLastId}
+                          type="text"
+                          value={vcardLast}
+                          onChange={(e) => setVcardLast(e.target.value)}
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor={vcardOrgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          Organization / Bio
+                        </label>
+                        <input
+                          id={vcardOrgId}
+                          type="text"
+                          value={vcardOrg}
+                          onChange={(e) => setVcardOrg(e.target.value)}
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={vcardPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          Phone Number
+                        </label>
+                        <input
+                          id={vcardPhoneId}
+                          type="tel"
+                          value={vcardPhone}
+                          onChange={(e) => setVcardPhone(e.target.value)}
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor={vcardEmailId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          Email Address
+                        </label>
+                        <input
+                          id={vcardEmailId}
+                          type="email"
+                          value={vcardEmail}
+                          onChange={(e) => setVcardEmail(e.target.value)}
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={vcardSiteId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          Website URL
+                        </label>
+                        <input
+                          id={vcardSiteId}
+                          type="url"
+                          value={vcardUrl}
+                          onChange={(e) => setVcardUrl(e.target.value)}
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── MODE: EMAIL ── */}
+                {payloadType === "email" && (
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor={emailToId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Recipient Email <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id={emailToId}
+                        type="email"
+                        placeholder="recipient@example.com"
+                        value={emailTo}
+                        onChange={(e) => setEmailTo(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={emailSubId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Subject Line
+                      </label>
+                      <input
+                        id={emailSubId}
+                        type="text"
+                        value={emailSubject}
+                        onChange={(e) => setEmailSubject(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={emailBodyId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Email Body
+                      </label>
+                      <textarea
+                        id={emailBodyId}
+                        rows={3}
+                        value={emailBody}
+                        onChange={(e) => setEmailBody(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* ── MODE: SMS ── */}
+                {payloadType === "sms" && (
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor={smsPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Recipient Phone Number <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id={smsPhoneId}
+                        type="tel"
+                        placeholder="+1 555 019 2834"
+                        value={smsPhone}
+                        onChange={(e) => setSmsPhone(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={smsMsgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Pre-filled SMS Text
+                      </label>
+                      <textarea
+                        id={smsMsgId}
+                        rows={3}
+                        value={smsMessage}
+                        onChange={(e) => setSmsMessage(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* ── MODE: WHATSAPP ── */}
+                {payloadType === "whatsapp" && (
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor={waPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        WhatsApp Number (with country code) <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id={waPhoneId}
+                        type="tel"
+                        placeholder="e.g. 15551234567"
+                        value={waPhone}
+                        onChange={(e) => setWaPhone(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={waMsgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Pre-filled Greeting Message
+                      </label>
+                      <textarea
+                        id={waMsgId}
+                        rows={3}
+                        value={waMessage}
+                        onChange={(e) => setWaMessage(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* ── MODE: CALENDAR EVENT ── */}
+                {payloadType === "calendar" && (
+                  <div className="space-y-3">
+                    <div>
+                      <label htmlFor={calTitleId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Event Title <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id={calTitleId}
+                        type="text"
+                        value={calTitle}
+                        onChange={(e) => setCalTitle(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={calLocId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Location
+                      </label>
+                      <input
+                        id={calLocId}
+                        type="text"
+                        value={calLocation}
+                        onChange={(e) => setCalLocation(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor={calStartId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          Start Time
+                        </label>
+                        <input
+                          id={calStartId}
+                          type="datetime-local"
+                          value={calStart}
+                          onChange={(e) => setCalStart(e.target.value)}
+                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor={calEndId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                          End Time
+                        </label>
+                        <input
+                          id={calEndId}
+                          type="datetime-local"
+                          value={calEnd}
+                          onChange={(e) => setCalEnd(e.target.value)}
+                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TextWithBlur>
+
+            {/* Visual Styling Controls (In the Same Flow) */}
+            <TextWithBlur delay={120}>
+              <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-5">
+                <div className="border-b border-black/5 dark:border-white/5 pb-3">
+                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
+                    <Palette size={13} className="text-accent" /> Vector Shapes & Styling
+                  </span>
+                </div>
+
+                {/* Module Pattern & Corner Eye Shapes */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block font-medium">
+                      Module Pattern:
                     </span>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="flex gap-2">
                       {[
-                        { type: "url" as const, label: "URL Link", icon: Globe },
-                        { type: "text" as const, label: "Plain Text", icon: FileText },
-                        { type: "wifi" as const, label: "Wi-Fi Network", icon: Wifi },
-                        { type: "vcard" as const, label: "vCard Contact", icon: User },
-                        { type: "email" as const, label: "Email", icon: Mail },
-                        { type: "sms" as const, label: "SMS", icon: MessageSquare },
-                        { type: "whatsapp" as const, label: "WhatsApp", icon: PhoneCall },
-                        { type: "calendar" as const, label: "Event", icon: Calendar },
-                      ].map(({ type, label, icon: Icon }) => (
+                        { id: "square" as const, label: "Square" },
+                        { id: "rounded" as const, label: "Rounded" },
+                        { id: "dots" as const, label: "Dots" },
+                      ].map((m) => (
                         <button
-                          key={type}
-                          onClick={() => setPayloadType(type)}
-                          className={`text-xs px-3 py-1.5 rounded-none border transition-all duration-200 flex items-center gap-1.5 ${
-                            payloadType === type
-                              ? "bg-black text-white dark:bg-white dark:text-black border-transparent font-medium shadow-sm"
-                              : "bg-white/80 dark:bg-zinc-900/80 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
+                          key={m.id}
+                          type="button"
+                          onClick={() => setModuleShape(m.id)}
+                          className={`flex-1 text-xs py-2 rounded-none border transition-all ${
+                            moduleShape === m.id
+                              ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
+                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
                           }`}
                         >
-                          <Icon size={13} /> {label}
+                          {m.label}
                         </button>
                       ))}
                     </div>
                   </div>
-                </TextWithBlur>
-              )}
 
-              {/* Dynamic Payload Form */}
-              {activeTab === "single" && (
-                <TextWithBlur delay={100}>
-                  <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-4">
-                    <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
-                      <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
-                        <Sliders size={13} className="text-accent" /> Data Configuration ({payloadType.toUpperCase()})
-                      </span>
-                      <span className="text-[11px] font-mono text-black/40 dark:text-white/40">
-                        {rawPayload.length} chars
-                      </span>
+                  <div>
+                    <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block font-medium">
+                      Corner Finder Eyes:
+                    </span>
+                    <div className="flex gap-2">
+                      {[
+                        { id: "square" as const, label: "Classic" },
+                        { id: "rounded" as const, label: "Squircle" },
+                        { id: "circle" as const, label: "Circle" },
+                      ].map((e) => (
+                        <button
+                          key={e.id}
+                          type="button"
+                          onClick={() => setEyeShape(e.id)}
+                          className={`flex-1 text-xs py-2 rounded-none border transition-all ${
+                            eyeShape === e.id
+                              ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
+                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                          }`}
+                        >
+                          {e.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Curated Color Schemes */}
+                <div className="space-y-2 pt-2 border-t border-black/5 dark:border-white/5">
+                  <span className="text-xs font-mono uppercase text-black/50 dark:text-white/50 block font-medium">
+                    Color Schemes:
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {COLOR_PRESETS.map((p) => {
+                      const isSelected = fgColor === p.fg && bgColor === p.bg
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => applyColorPreset(p)}
+                          className={`text-xs px-3 py-2 rounded-none border flex items-center justify-between transition-all ${
+                            isSelected
+                              ? "border-black dark:border-white ring-1 ring-black dark:ring-white font-medium bg-black/5 dark:bg-white/10"
+                              : "border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 bg-white/60 dark:bg-zinc-950/60"
+                          }`}
+                        >
+                          <span className="text-black dark:text-white truncate pr-1">{p.name}</span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <span className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: p.fg }} />
+                            <span
+                              className="w-3 h-3 rounded-full border border-black/20"
+                              style={{ backgroundColor: p.bg === "transparent" ? "#E4E4E7" : p.bg }}
+                            />
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* ── Clean 2-Row Color & ECC Form ── */}
+                <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-4">
+                  {/* Row 1: Foreground & Background Pickers */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Foreground Color */}
+                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                        Foreground Color
+                      </label>
+                      <div className="flex items-center gap-2.5">
+                        <input
+                          type="color"
+                          value={fgColor === "transparent" ? "#000000" : fgColor}
+                          onChange={(e) => setFgColor(e.target.value)}
+                          className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
+                          title="Pick color"
+                        />
+                        <input
+                          type="text"
+                          value={fgColor}
+                          onChange={(e) => setFgColor(e.target.value)}
+                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
+                          placeholder="#000000"
+                        />
+                      </div>
                     </div>
 
-                    {/* ── MODE: URL ── */}
-                    {payloadType === "url" && (
-                      <div className="space-y-2">
-                        <label htmlFor={urlInputId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 font-medium">
-                          Target Website Link <span className="text-red-500">*</span>
-                        </label>
+                    {/* Background Color */}
+                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                        Background Color
+                      </label>
+                      <div className="flex items-center gap-2.5">
                         <input
-                          id={urlInputId}
-                          type="url"
-                          placeholder="https://tirup.in or https://yourdomain.com/page"
-                          value={url}
-                          onChange={(e) => setUrl(e.target.value)}
-                          className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                          type="color"
+                          value={bgColor === "transparent" ? "#FFFFFF" : bgColor}
+                          onChange={(e) => setBgColor(e.target.value)}
+                          className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
+                          title="Pick color"
                         />
-                        <p className="text-xs text-black/50 dark:text-white/50 font-light">
-                          Mobile cameras will immediately prompt visitors to open this link in their browser.
-                        </p>
-                      </div>
-                    )}
-
-                    {/* ── MODE: PLAIN TEXT ── */}
-                    {payloadType === "text" && (
-                      <div className="space-y-2">
-                        <label htmlFor={textInputId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 font-medium">
-                          Plain Text or Secret Message <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          id={textInputId}
-                          rows={4}
-                          placeholder="Enter raw text, notes, serial numbers, or markdown..."
-                          value={plainText}
-                          onChange={(e) => setPlainText(e.target.value)}
-                          className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                        <input
+                          type="text"
+                          value={bgColor}
+                          onChange={(e) => setBgColor(e.target.value)}
+                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
+                          placeholder="#FFFFFF or transparent"
                         />
                       </div>
-                    )}
-
-                    {/* ── MODE: WI-FI ── */}
-                    {payloadType === "wifi" && (
-                      <div className="space-y-4">
-                        <div>
-                          <label htmlFor={wifiSsidId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
-                            Network Name (SSID) <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id={wifiSsidId}
-                            type="text"
-                            placeholder="e.g. Office_5G_HighSpeed"
-                            value={wifiSsid}
-                            onChange={(e) => setWifiSsid(e.target.value)}
-                            className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <div>
-                            <label htmlFor={wifiPassId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
-                              Password
-                            </label>
-                            <input
-                              id={wifiPassId}
-                              type="text"
-                              placeholder="Wi-Fi Password"
-                              value={wifiPassword}
-                              onChange={(e) => setWifiPassword(e.target.value)}
-                              className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
-                              Security Protocol
-                            </label>
-                            <select
-                              value={wifiAuth}
-                              onChange={(e) => setWifiAuth(e.target.value as any)}
-                              className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none font-mono"
-                            >
-                              <option value="WPA">WPA / WPA2 / WPA3 (Default)</option>
-                              <option value="WEP">WEP</option>
-                              <option value="nopass">No Password (Open)</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <label className="flex items-center gap-2 text-xs font-mono text-black/70 dark:text-white/70 cursor-pointer select-none">
-                          <input
-                            type="checkbox"
-                            checked={wifiHidden}
-                            onChange={(e) => setWifiHidden(e.target.checked)}
-                            className="rounded-none accent-black dark:accent-white"
-                          />
-                          <span>Hidden SSID Network</span>
-                        </label>
-                      </div>
-                    )}
-
-                    {/* ── MODE: VCARD ── */}
-                    {payloadType === "vcard" && (
-                      <div className="space-y-3">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor={vcardFirstId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              First Name
-                            </label>
-                            <input
-                              id={vcardFirstId}
-                              type="text"
-                              value={vcardFirst}
-                              onChange={(e) => setVcardFirst(e.target.value)}
-                              className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor={vcardLastId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              Last Name
-                            </label>
-                            <input
-                              id={vcardLastId}
-                              type="text"
-                              value={vcardLast}
-                              onChange={(e) => setVcardLast(e.target.value)}
-                              className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor={vcardOrgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              Organization / Bio
-                            </label>
-                            <input
-                              id={vcardOrgId}
-                              type="text"
-                              value={vcardOrg}
-                              onChange={(e) => setVcardOrg(e.target.value)}
-                              className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor={vcardPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              Phone Number
-                            </label>
-                            <input
-                              id={vcardPhoneId}
-                              type="tel"
-                              value={vcardPhone}
-                              onChange={(e) => setVcardPhone(e.target.value)}
-                              className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor={vcardEmailId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              Email Address
-                            </label>
-                            <input
-                              id={vcardEmailId}
-                              type="email"
-                              value={vcardEmail}
-                              onChange={(e) => setVcardEmail(e.target.value)}
-                              className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor={vcardSiteId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              Website URL
-                            </label>
-                            <input
-                              id={vcardSiteId}
-                              type="url"
-                              value={vcardUrl}
-                              onChange={(e) => setVcardUrl(e.target.value)}
-                              className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ── MODE: EMAIL ── */}
-                    {payloadType === "email" && (
-                      <div className="space-y-3">
-                        <div>
-                          <label htmlFor={emailToId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Recipient Email <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id={emailToId}
-                            type="email"
-                            placeholder="recipient@example.com"
-                            value={emailTo}
-                            onChange={(e) => setEmailTo(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={emailSubId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Subject Line
-                          </label>
-                          <input
-                            id={emailSubId}
-                            type="text"
-                            value={emailSubject}
-                            onChange={(e) => setEmailSubject(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={emailBodyId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Email Body
-                          </label>
-                          <textarea
-                            id={emailBodyId}
-                            rows={3}
-                            value={emailBody}
-                            onChange={(e) => setEmailBody(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ── MODE: SMS ── */}
-                    {payloadType === "sms" && (
-                      <div className="space-y-3">
-                        <div>
-                          <label htmlFor={smsPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Recipient Phone Number <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id={smsPhoneId}
-                            type="tel"
-                            placeholder="+1 555 019 2834"
-                            value={smsPhone}
-                            onChange={(e) => setSmsPhone(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={smsMsgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Pre-filled SMS Text
-                          </label>
-                          <textarea
-                            id={smsMsgId}
-                            rows={3}
-                            value={smsMessage}
-                            onChange={(e) => setSmsMessage(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ── MODE: WHATSAPP ── */}
-                    {payloadType === "whatsapp" && (
-                      <div className="space-y-3">
-                        <div>
-                          <label htmlFor={waPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            WhatsApp Number (with country code) <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id={waPhoneId}
-                            type="tel"
-                            placeholder="e.g. 15551234567"
-                            value={waPhone}
-                            onChange={(e) => setWaPhone(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={waMsgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Pre-filled Greeting Message
-                          </label>
-                          <textarea
-                            id={waMsgId}
-                            rows={3}
-                            value={waMessage}
-                            onChange={(e) => setWaMessage(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* ── MODE: CALENDAR EVENT ── */}
-                    {payloadType === "calendar" && (
-                      <div className="space-y-3">
-                        <div>
-                          <label htmlFor={calTitleId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Event Title <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            id={calTitleId}
-                            type="text"
-                            value={calTitle}
-                            onChange={(e) => setCalTitle(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                        <div>
-                          <label htmlFor={calLocId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                            Location
-                          </label>
-                          <input
-                            id={calLocId}
-                            type="text"
-                            value={calLocation}
-                            onChange={(e) => setCalLocation(e.target.value)}
-                            className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label htmlFor={calStartId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              Start Time
-                            </label>
-                            <input
-                              id={calStartId}
-                              type="datetime-local"
-                              value={calStart}
-                              onChange={(e) => setCalStart(e.target.value)}
-                              className="w-full text-xs px-2.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor={calEndId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                              End Time
-                            </label>
-                            <input
-                              id={calEndId}
-                              type="datetime-local"
-                              value={calEnd}
-                              onChange={(e) => setCalEnd(e.target.value)}
-                              className="w-full text-xs px-2.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </TextWithBlur>
-              )}
-
-              {/* Design Customizer (Shapes, Gradients & Frames) */}
-              <TextWithBlur delay={120}>
-                <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-5">
-                  <div className="border-b border-black/5 dark:border-white/5 pb-3">
-                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
-                      <Palette size={13} className="text-accent" /> Vector Shapes, Color Palettes & Customization
-                    </span>
+                    </div>
                   </div>
 
-                  {/* Module Shapes & Corner Eye Customization */}
+                  {/* Row 2: Error Correction & Margin */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block">
-                        Module Pattern:
-                      </span>
+                    {/* ECC */}
+                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                        Error Correction (ECC)
+                      </label>
+                      <select
+                        value={eccLevel}
+                        onChange={(e) => setEccLevel(e.target.value as ErrorCorrectionLevel)}
+                        className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono focus:outline-none"
+                      >
+                        <option value="H">H (30% Redundancy - Best for Logos)</option>
+                        <option value="Q">Q (25% High Reliability)</option>
+                        <option value="M">M (15% Standard)</option>
+                        <option value="L">L (7% Dense)</option>
+                      </select>
+                    </div>
+
+                    {/* Margin */}
+                    <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
+                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                        Quiet Zone Margin
+                      </label>
                       <div className="flex gap-2">
                         {[
-                          { id: "square" as const, label: "Square" },
-                          { id: "rounded" as const, label: "Rounded" },
-                          { id: "dots" as const, label: "Dots" },
+                          { val: 0, label: "0" },
+                          { val: 1, label: "1" },
+                          { val: 2, label: "2 (Default)" },
+                          { val: 4, label: "4" },
                         ].map((m) => (
                           <button
-                            key={m.id}
+                            key={m.val}
                             type="button"
-                            onClick={() => setModuleShape(m.id)}
-                            className={`flex-1 text-xs py-2 rounded-none border transition-all ${
-                              moduleShape === m.id
-                                ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
+                            onClick={() => setMarginBlocks(m.val)}
+                            className={`flex-1 text-xs py-1.5 rounded-none border transition-all ${
+                              marginBlocks === m.val
+                                ? "bg-black text-white dark:bg-white dark:text-black font-medium"
                                 : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
                             }`}
                           >
@@ -1364,537 +1322,221 @@ export default function QrStudioPage() {
                         ))}
                       </div>
                     </div>
-
-                    <div>
-                      <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block">
-                        Corner Finder Eyes:
-                      </span>
-                      <div className="flex gap-2">
-                        {[
-                          { id: "square" as const, label: "Classic" },
-                          { id: "rounded" as const, label: "Squircle" },
-                          { id: "circle" as const, label: "Circle" },
-                        ].map((e) => (
-                          <button
-                            key={e.id}
-                            type="button"
-                            onClick={() => setEyeShape(e.id)}
-                            className={`flex-1 text-xs py-2 rounded-none border transition-all ${
-                              eyeShape === e.id
-                                ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                                : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
-                            }`}
-                          >
-                            {e.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Curated Color Palettes */}
-                  <div className="space-y-2 pt-2 border-t border-black/5 dark:border-white/5">
-                    <span className="text-xs font-mono uppercase text-black/50 dark:text-white/50 block font-medium">
-                      Color Schemes:
-                    </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {COLOR_PRESETS.map((p) => {
-                        const isSelected = fgColor === p.fg && bgColor === p.bg
-                        return (
-                          <button
-                            key={p.id}
-                            type="button"
-                            onClick={() => applyColorPreset(p)}
-                            className={`text-xs px-3 py-2 rounded-none border flex items-center justify-between transition-all ${
-                              isSelected
-                                ? "border-black dark:border-white ring-1 ring-black dark:ring-white font-medium bg-black/5 dark:bg-white/10"
-                                : "border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 bg-white/60 dark:bg-zinc-950/60"
-                            }`}
-                          >
-                            <span className="text-black dark:text-white truncate pr-1">{p.name}</span>
-                            <div className="flex items-center gap-1 shrink-0">
-                              <span className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: p.fg }} />
-                              <span
-                                className="w-3 h-3 rounded-full border border-black/20"
-                                style={{ backgroundColor: p.bg === "transparent" ? "#E4E4E7" : p.bg }}
-                              />
-                            </div>
-                          </button>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  {/* ── Fixed Clean & Beautiful 2-Row Color & ECC Layout ── */}
-                  <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-4">
-                    {/* Row 1: Foreground & Background Color Pickers */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Foreground Color */}
-                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
-                          Foreground Color
-                        </label>
-                        <div className="flex items-center gap-2.5">
-                          <input
-                            type="color"
-                            value={fgColor === "transparent" ? "#000000" : fgColor}
-                            onChange={(e) => setFgColor(e.target.value)}
-                            className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
-                            title="Pick color"
-                          />
-                          <input
-                            type="text"
-                            value={fgColor}
-                            onChange={(e) => setFgColor(e.target.value)}
-                            className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
-                            placeholder="#000000"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Background Color */}
-                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
-                          Background Color
-                        </label>
-                        <div className="flex items-center gap-2.5">
-                          <input
-                            type="color"
-                            value={bgColor === "transparent" ? "#FFFFFF" : bgColor}
-                            onChange={(e) => setBgColor(e.target.value)}
-                            className="w-9 h-9 rounded-none border border-black/20 dark:border-white/20 cursor-pointer p-0 bg-transparent shrink-0"
-                            title="Pick color"
-                          />
-                          <input
-                            type="text"
-                            value={bgColor}
-                            onChange={(e) => setBgColor(e.target.value)}
-                            className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
-                            placeholder="#FFFFFF or transparent"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Row 2: Error Correction (ECC) & Border Margin */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Error Correction Level */}
-                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
-                          Error Correction (ECC)
-                        </label>
-                        <select
-                          value={eccLevel}
-                          onChange={(e) => setEccLevel(e.target.value as ErrorCorrectionLevel)}
-                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono focus:outline-none"
-                        >
-                          <option value="H">H (30% Redundancy - Best for Logos)</option>
-                          <option value="Q">Q (25% High Reliability)</option>
-                          <option value="M">M (15% Standard)</option>
-                          <option value="L">L (7% Dense)</option>
-                        </select>
-                      </div>
-
-                      {/* Border Margin */}
-                      <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                        <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
-                          Quiet Zone Margin
-                        </label>
-                        <div className="flex gap-2">
-                          {[
-                            { val: 0, label: "0" },
-                            { val: 1, label: "1" },
-                            { val: 2, label: "2 (Default)" },
-                            { val: 4, label: "4" },
-                          ].map((m) => (
-                            <button
-                              key={m.val}
-                              type="button"
-                              onClick={() => setMarginBlocks(m.val)}
-                              className={`flex-1 text-xs py-1.5 rounded-none border transition-all ${
-                                marginBlocks === m.val
-                                  ? "bg-black text-white dark:bg-white dark:text-black font-medium"
-                                  : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
-                              }`}
-                            >
-                              {m.label}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Frame & Call-To-Action (CTA) Border */}
-                  <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
-                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium block">
-                      Call-To-Action Frame:
-                    </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {FRAME_PRESETS.map((f) => (
-                        <button
-                          key={f.id}
-                          type="button"
-                          onClick={() => setFrameStyle(f.id as any)}
-                          className={`text-xs py-2 px-2 rounded-none border transition-all truncate ${
-                            frameStyle === f.id
-                              ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
-                          }`}
-                        >
-                          {f.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    {frameStyle !== "none" && (
-                      <div className="pt-1">
-                        <label htmlFor={frameTextId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
-                          Frame Text
-                        </label>
-                        <input
-                          id={frameTextId}
-                          type="text"
-                          placeholder="e.g. SCAN ME, SCAN FOR WI-FI, VISIT WEBSITE"
-                          value={frameText}
-                          onChange={(e) => setFrameText(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Center Emblem / Custom Logo Upload */}
-                  <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
-                        <ImageIcon size={13} /> Center Emblem / Logo Overlay
-                      </span>
-                      {customLogoDataUrl && (
-                        <button
-                          onClick={removeCustomLogo}
-                          className="text-xs font-mono text-red-500 hover:underline flex items-center gap-1"
-                        >
-                          <X size={12} /> Remove Logo
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        className="hidden"
-                        id="custom-logo-upload"
-                      />
-                      <label
-                        htmlFor="custom-logo-upload"
-                        className="px-3.5 py-2 rounded-none border border-dashed border-black/20 dark:border-white/20 text-xs font-mono text-black/80 dark:text-white/80 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Upload size={13} /> {customLogoDataUrl ? "Change Custom Logo..." : "Upload Logo (PNG/SVG)..."}
-                      </label>
-
-                      {customLogoDataUrl && (
-                        <div className="flex items-center gap-2">
-                          <img src={customLogoDataUrl} alt="Logo Preview" className="w-8 h-8 object-contain bg-white p-0.5 border border-black/10 rounded-sm" />
-                          <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400">ECC forced to Level H</span>
-                        </div>
-                      )}
-                    </div>
                   </div>
                 </div>
-              </TextWithBlur>
-            </div>
 
-            {/* ── RIGHT COLUMN: LIVE CANVAS & MULTI-FORMAT EXPORTS (5 COLS) ── */}
-            {/* ── Styled for both Light and Dark themes ── */}
-            <div className="lg:col-span-5 space-y-6">
-              <TextWithBlur delay={140}>
-                <div className="p-6 md:p-8 rounded-none bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 shadow-sm space-y-5">
-                  <div className="flex items-center justify-between border-b border-black/10 dark:border-zinc-800 pb-3">
-                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
-                      <Sparkles size={14} className="text-accent" /> Vector Output Preview
-                    </span>
-                    <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
-                      {downloadResolution}px Ready
-                    </span>
+                {/* Frame / Call-To-Action (CTA) Border */}
+                <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
+                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium block">
+                    Call-To-Action Frame:
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {FRAME_PRESETS.map((f) => (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => setFrameStyle(f.id as any)}
+                        className={`text-xs py-2 px-2 rounded-none border transition-all truncate ${
+                          frameStyle === f.id
+                            ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
+                            : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
                   </div>
 
-                  {/* Rendered Canvas Preview - NO HOVER ANIMATION */}
-                  <div className="p-6 bg-zinc-50 dark:bg-black/40 rounded-none border border-black/10 dark:border-zinc-800 flex items-center justify-center min-h-[290px]">
-                    {previewDataUrl ? (
-                      <img
-                        src={previewDataUrl}
-                        alt="Rendered QR Code"
-                        className="w-full max-w-[270px] h-auto object-contain select-none"
+                  {frameStyle !== "none" && (
+                    <div className="pt-1">
+                      <label htmlFor={frameTextId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        Frame Text
+                      </label>
+                      <input
+                        id={frameTextId}
+                        type="text"
+                        placeholder="e.g. SCAN ME, SCAN FOR WI-FI, VISIT WEBSITE"
+                        value={frameText}
+                        onChange={(e) => setFrameText(e.target.value)}
+                        className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
                       />
-                    ) : (
-                      <div className="text-xs font-mono text-black/40 dark:text-zinc-500">Rendering vector...</div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Center Emblem / Custom Logo Upload */}
+                <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
+                      <ImageIcon size={13} /> Center Emblem / Logo Overlay
+                    </span>
+                    {customLogoDataUrl && (
+                      <button
+                        onClick={removeCustomLogo}
+                        className="text-xs font-mono text-red-500 hover:underline flex items-center gap-1"
+                      >
+                        <X size={12} /> Remove Logo
+                      </button>
                     )}
                   </div>
 
-                  {/* Scannability Validator Indicator */}
-                  <div className="p-2.5 rounded-none bg-black/5 dark:bg-zinc-900 border border-black/10 dark:border-zinc-800 text-xs font-mono flex items-center justify-between text-black/70 dark:text-zinc-400">
-                    <span>Scan Reliability:</span>
-                    <span className={`font-semibold ${contrastCheck.valid ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
-                      {contrastCheck.score}
-                    </span>
-                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      id="custom-logo-upload"
+                    />
+                    <label
+                      htmlFor="custom-logo-upload"
+                      className="px-3.5 py-2 rounded-none border border-dashed border-black/20 dark:border-white/20 text-xs font-mono text-black/80 dark:text-white/80 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Upload size={13} /> {customLogoDataUrl ? "Change Custom Logo..." : "Upload Logo (PNG/SVG)..."}
+                    </label>
 
-                  {/* Primary Export Actions */}
-                  <div className="space-y-2.5">
+                    {customLogoDataUrl && (
+                      <div className="flex items-center gap-2">
+                        <img src={customLogoDataUrl} alt="Logo Preview" className="w-8 h-8 object-contain bg-white p-0.5 border border-black/10 rounded-sm" />
+                        <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400">ECC forced to Level H</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </TextWithBlur>
+          </div>
+
+          {/* ── RIGHT COLUMN: LIVE CANVAS & MULTI-FORMAT EXPORTS (5 COLS) ── */}
+          <div className="lg:col-span-5 space-y-6">
+            <TextWithBlur delay={140}>
+              <div className="p-6 md:p-8 rounded-none bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 shadow-sm space-y-5">
+                <div className="flex items-center justify-between border-b border-black/10 dark:border-zinc-800 pb-3">
+                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
+                    <Sparkles size={14} className="text-accent" /> Vector Output Preview
+                  </span>
+                  <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
+                    2048px Ready
+                  </span>
+                </div>
+
+                {/* Rendered Canvas Preview - NO HOVER ANIMATION */}
+                <div className="p-6 bg-zinc-50 dark:bg-black/40 rounded-none border border-black/10 dark:border-zinc-800 flex items-center justify-center min-h-[290px]">
+                  {previewDataUrl ? (
+                    <img
+                      src={previewDataUrl}
+                      alt="Rendered QR Code"
+                      className="w-full max-w-[270px] h-auto object-contain select-none"
+                    />
+                  ) : (
+                    <div className="text-xs font-mono text-black/40 dark:text-zinc-500">Rendering vector...</div>
+                  )}
+                </div>
+
+                {/* Scannability Validator Indicator */}
+                <div className="p-2.5 rounded-none bg-black/5 dark:bg-zinc-900 border border-black/10 dark:border-zinc-800 text-xs font-mono flex items-center justify-between text-black/70 dark:text-zinc-400">
+                  <span>Scan Reliability:</span>
+                  <span className={`font-semibold ${contrastCheck.valid ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
+                    {contrastCheck.score}
+                  </span>
+                </div>
+
+                {/* Primary Export Actions */}
+                <div className="space-y-2.5">
+                  <button
+                    type="button"
+                    onClick={copyPngImageToClipboard}
+                    className="w-full py-3 px-4 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                  >
+                    {copiedImage ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                    {copiedImage ? "Image Copied to Clipboard!" : "Copy Image to Clipboard"}
+                  </button>
+
+                  <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={copyPngImageToClipboard}
-                      className="w-full py-3 px-4 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                      onClick={() => downloadPng(2048)}
+                      className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
                     >
-                      {copiedImage ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
-                      {copiedImage ? "Image Copied to Clipboard!" : "Copy Image to Clipboard"}
+                      <Download size={13} /> Download PNG (2K)
                     </button>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => downloadPng(2048)}
-                        className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
-                      >
-                        <Download size={13} /> Download PNG (2K)
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={downloadSvg}
-                        className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
-                      >
-                        <FileCode size={13} /> Download SVG (Vector)
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 pt-1 border-t border-black/5 dark:border-zinc-900">
-                      <button
-                        type="button"
-                        onClick={copySvgToClipboard}
-                        className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
-                        title="Copy raw SVG markup"
-                      >
-                        {copiedSvg ? "Copied SVG!" : "Copy SVG"}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={copyDataUrlToClipboard}
-                        className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
-                        title="Copy Base64 Data URL"
-                      >
-                        {copiedDataUrl ? "Copied Data!" : "Copy Data URL"}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={copyAsciiToClipboard}
-                        className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
-                        title="Copy ASCII Terminal QR Code"
-                      >
-                        {copiedAscii ? "Copied ASCII!" : "Copy ASCII"}
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={downloadSvg}
+                      className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
+                    >
+                      <FileCode size={13} /> Download SVG (Vector)
+                    </button>
                   </div>
 
-                  {/* Raw Payload Inspector Box */}
-                  <div className="space-y-1.5 pt-2 border-t border-black/5 dark:border-zinc-900">
-                    <div className="flex items-center justify-between text-[11px] font-mono text-black/60 dark:text-zinc-400">
-                      <span>Encoded Payload:</span>
-                      <button
-                        onClick={copyRawPayloadToClipboard}
-                        className="text-accent hover:underline flex items-center gap-1"
-                      >
-                        {copiedRawPayload ? "Copied!" : "Copy Text"}
-                      </button>
-                    </div>
-                    <div className="p-3 bg-black/5 dark:bg-black/80 font-mono text-xs text-black/80 dark:text-emerald-400 break-all select-all border border-black/10 dark:border-zinc-900 max-h-24 overflow-y-auto leading-relaxed">
-                      {rawPayload}
-                    </div>
+                  <div className="grid grid-cols-3 gap-2 pt-1 border-t border-black/5 dark:border-zinc-900">
+                    <button
+                      type="button"
+                      onClick={copySvgToClipboard}
+                      className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
+                      title="Copy raw SVG markup"
+                    >
+                      {copiedSvg ? "Copied SVG!" : "Copy SVG"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={copyDataUrlToClipboard}
+                      className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
+                      title="Copy Base64 Data URL"
+                    >
+                      {copiedDataUrl ? "Copied Data!" : "Copy Data URL"}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={copyAsciiToClipboard}
+                      className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
+                      title="Copy ASCII Terminal QR Code"
+                    >
+                      {copiedAscii ? "Copied ASCII!" : "Copy ASCII"}
+                    </button>
                   </div>
-
-                  {/* Test Action */}
-                  {payloadType === "url" && (
-                    <div className="pt-1 text-right">
-                      <a
-                        href={rawPayload}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs font-mono text-black/60 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
-                      >
-                        Test Link in New Tab <ExternalLink size={12} />
-                      </a>
-                    </div>
-                  )}
-                </div>
-              </TextWithBlur>
-            </div>
-          </div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {/* TAB 3: BATCH MULTI-QR GENERATOR                                    */}
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {activeTab === "batch" && (
-          <div className="space-y-6">
-            <TextWithBlur delay={100}>
-              <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-4">
-                <div>
-                  <h2 className="text-xs uppercase font-mono tracking-wider text-black/70 dark:text-white/70 font-medium mb-1">
-                    Batch QR Code Matrix
-                  </h2>
-                  <p className="text-xs text-black/50 dark:text-white/50 font-light mb-3">
-                    Paste multiple URLs, SKUs, or strings (one per line, up to 30 items) to generate a batch of high-resolution QR codes at once.
-                  </p>
                 </div>
 
-                <textarea
-                  rows={5}
-                  value={batchRawInput}
-                  onChange={(e) => setBatchRawInput(e.target.value)}
-                  placeholder="https://tirup.in\nhttps://tirup.in/work\nhttps://blogs.tirup.in"
-                  className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
-                />
-
-                <div className="flex justify-end">
-                  <button
-                    onClick={processBatchGeneration}
-                    className="px-5 py-2.5 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-xs font-mono flex items-center gap-1.5 shadow-sm"
-                  >
-                    <Layers size={13} /> Generate Batch ({batchRawInput.split("\n").filter(Boolean).length} Codes)
-                  </button>
+                {/* Raw Payload Inspector Box */}
+                <div className="space-y-1.5 pt-2 border-t border-black/5 dark:border-zinc-900">
+                  <div className="flex items-center justify-between text-[11px] font-mono text-black/60 dark:text-zinc-400">
+                    <span>Encoded Payload:</span>
+                    <button
+                      onClick={copyRawPayloadToClipboard}
+                      className="text-accent hover:underline flex items-center gap-1"
+                    >
+                      {copiedRawPayload ? "Copied!" : "Copy Text"}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-black/5 dark:bg-black/80 font-mono text-xs text-black/80 dark:text-emerald-400 break-all select-all border border-black/10 dark:border-zinc-900 max-h-24 overflow-y-auto leading-relaxed">
+                    {rawPayload}
+                  </div>
                 </div>
+
+                {/* Test Action */}
+                {payloadType === "url" && (
+                  <div className="pt-1 text-right">
+                    <a
+                      href={rawPayload}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-mono text-black/60 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      Test Link in New Tab <ExternalLink size={12} />
+                    </a>
+                  </div>
+                )}
               </div>
             </TextWithBlur>
-
-            {batchGenerated.length > 0 && (
-              <TextWithBlur delay={120}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {batchGenerated.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-none border border-black/10 dark:border-white/10 bg-white/60 dark:bg-zinc-900/60 flex flex-col items-center space-y-3"
-                    >
-                      <img src={item.dataUrl} alt={item.text} className="w-36 h-36 bg-white p-2 border border-black/5" />
-                      <p className="font-mono text-xs text-black/70 dark:text-white/70 truncate w-full text-center">
-                        {item.text}
-                      </p>
-                      <div className="flex gap-2 w-full">
-                        <button
-                          onClick={() => copyBatchSingle(idx, item.dataUrl)}
-                          className="flex-1 py-1.5 text-xs font-mono rounded-none border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-1"
-                        >
-                          {copiedBatchIndex === idx ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
-                          {copiedBatchIndex === idx ? "Copied" : "Copy"}
-                        </button>
-                        <a
-                          href={item.dataUrl}
-                          download={`qr-batch-${idx + 1}.png`}
-                          className="flex-1 py-1.5 text-xs font-mono rounded-none bg-black text-white dark:bg-white dark:text-black text-center"
-                        >
-                          Download
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </TextWithBlur>
-            )}
           </div>
-        )}
+        </div>
 
         {/* ═══════════════════════════════════════════════════════════════════ */}
-        {/* TAB 4: QR DECODER & INSPECTOR                                      */}
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {activeTab === "decode" && (
-          <div className="space-y-6">
-            <TextWithBlur delay={100}>
-              <div className="p-8 rounded-none border-2 border-dashed border-black/15 dark:border-white/15 bg-white/40 dark:bg-zinc-900/40 text-center space-y-4">
-                <Scan size={32} className="mx-auto text-black/40 dark:text-white/40" />
-                <div>
-                  <h2 className="text-sm font-mono uppercase font-medium text-black dark:text-white">
-                    Scan or Upload a QR Code Image
-                  </h2>
-                  <p className="text-xs text-black/50 dark:text-white/50 font-light mt-1 max-w-md mx-auto">
-                    Upload an image or screenshot of any QR code to inspect its underlying payload, parse credentials, and verify link safety.
-                  </p>
-                </div>
-
-                <input
-                  ref={decodeFileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleDecodeImageUpload}
-                  className="hidden"
-                  id="qr-decode-upload"
-                />
-
-                <label
-                  htmlFor="qr-decode-upload"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-xs font-mono cursor-pointer shadow-sm"
-                >
-                  <Upload size={13} /> Select QR Image...
-                </label>
-              </div>
-            </TextWithBlur>
-
-            {decodedOutput && (
-              <TextWithBlur delay={120}>
-                <div className="p-6 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 space-y-4">
-                  <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
-                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium">
-                      Decoded Payload ({decodedOutput.type})
-                    </span>
-                    <button
-                      onClick={async () => {
-                        await navigator.clipboard.writeText(decodedOutput.text)
-                      }}
-                      className="text-xs font-mono text-accent hover:underline flex items-center gap-1"
-                    >
-                      <Copy size={12} /> Copy Payload
-                    </button>
-                  </div>
-
-                  <div className="p-4 bg-black/5 dark:bg-black/40 font-mono text-sm break-all select-all text-black dark:text-white">
-                    {decodedOutput.text}
-                  </div>
-
-                  {decodedOutput.parsedDetails && (
-                    <div className="space-y-1.5 font-mono text-xs text-black/70 dark:text-white/70 pt-2 border-t border-black/5 dark:border-white/5">
-                      {Object.entries(decodedOutput.parsedDetails).map(([k, v]) => (
-                        <div key={k} className="flex justify-between">
-                          <span className="opacity-60">{k}:</span>
-                          <span className="font-semibold text-black dark:text-white">{v}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="pt-2 flex justify-end">
-                    <button
-                      onClick={() => {
-                        setUrl(decodedOutput.text)
-                        setPayloadType("url")
-                        setActiveTab("single")
-                      }}
-                      className="px-4 py-2 rounded-none bg-black text-white dark:bg-white dark:text-black text-xs font-mono font-medium"
-                    >
-                      Load into Studio to Re-style
-                    </button>
-                  </div>
-                </div>
-              </TextWithBlur>
-            )}
-          </div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════ */}
-        {/* PERSISTENT HISTORY ARCHIVE ACROSS ALL TABS                         */}
+        {/* PERSISTENT HISTORY ARCHIVE                                         */}
         {/* ═══════════════════════════════════════════════════════════════════ */}
         {history.length > 0 && (
           <TextWithBlur delay={180}>
