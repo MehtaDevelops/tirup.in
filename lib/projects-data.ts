@@ -366,24 +366,24 @@ export const projectsData = {
     ],
   },
   "utm-builder": {
-    title: "Campaign URL Builder",
-    description: "GA4 campaign link builder and attribution studio for multi-channel marketing campaigns.",
-    fullDescription: "GA4 Campaign URL Builder is a developer utility and marketing attribution studio designed to construct standardized campaign links. It features instant single-link creation, multi-channel 8-network bulk generation, QR code exporting, and URL inspection with tracking-token sanitization.",
+    title: "UTM Builder",
+    description: "GA4 campaign URL generator and link attribution studio.",
+    fullDescription: "UTM Builder is a developer-grade marketing attribution studio to construct standardized Google Analytics 4 links. It features live GA4 channel grouping diagnostics, 12-channel bulk exports, QR code generator, and deep URL syntax inspection.",
     liveUrl: "https://tirup.in/tools/utm-builder",
     techStack: ["Next.js", "TypeScript", "Tailwind CSS", "Web APIs", "QRCode.js"],
     stats: {
-      channels: "8",
-      platform: "Web Utility",
+      channels: "12+",
+      mode: "Single & Bulk",
       attribution: "GA4 Ready",
     },
     details: [
       {
         title: "The Challenge",
-        content: "Untracked or inconsistently tagged marketing URLs result in unclassified (direct) / (none) traffic in Google Analytics 4, obscuring attribution data.",
+        content: "Inconsistent UTM tagging causes unclassified (direct) / (none) traffic in GA4, skewing conversion attribution across marketing channels.",
       },
       {
         title: "The Solution",
-        content: "Engineered a fast, client-side UTM studio with parameter presets, automated casing normalization, live previews, QR code generation, and bulk multi-channel export capabilities.",
+        content: "Built a client-side UTM studio with live GA4 channel grouping validation, automated casing normalization, 12-channel bulk exports, and QR code downloads.",
       },
     ],
   },
@@ -441,8 +441,8 @@ export const projectsList: WorkProject[] = [
     isPrivate: true,
   },
   {
-    title: "Campaign URL Builder",
-    description: "GA4 campaign link builder and attribution studio for multi-channel marketing.",
+    title: "UTM Builder",
+    description: "GA4 campaign URL generator and attribution studio.",
     slug: "utm-builder",
     liveUrl: "https://tirup.in/tools/utm-builder",
   },
