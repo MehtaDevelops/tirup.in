@@ -29,6 +29,8 @@ import {
   X,
   Calendar,
   PhoneCall,
+  Code,
+  FileSpreadsheet,
 } from "lucide-react"
 
 // Types
@@ -160,7 +162,7 @@ export default function QrStudioPage() {
   // Load Persisted History from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("tirup_qr_studio_history_v5")
+      const saved = localStorage.getItem("tirup_qr_studio_history_v6")
       if (saved) setHistory(JSON.parse(saved))
     } catch (e) {}
   }, [])
@@ -265,15 +267,6 @@ export default function QrStudioPage() {
     calStart,
     calEnd,
   ])
-
-  // Contrast Ratio Validator
-  const contrastCheck = useMemo(() => {
-    if (bgColor === "transparent") return { score: "Good", valid: true }
-    if (fgColor.toLowerCase() === bgColor.toLowerCase()) {
-      return { score: "Unscannable", valid: false }
-    }
-    return { score: "Optimal", valid: true }
-  }, [fgColor, bgColor])
 
   // Custom Canvas Rendering Engine
   const renderAdvancedCanvas = useCallback(async () => {
@@ -452,7 +445,7 @@ export default function QrStudioPage() {
       // Draw Frame Text
       if (hasFrame) {
         ctx.save()
-        ctx.font = "bold 36px monospace, sans-serif"
+        ctx.font = "bold 36px sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
 
@@ -476,7 +469,7 @@ export default function QrStudioPage() {
           ctx.fill()
 
           ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
-          ctx.font = "bold 26px monospace, sans-serif"
+          ctx.font = "bold 26px sans-serif"
           ctx.fillText(frameText, canvasWidth / 2, badgeY + badgeHeight / 2)
         }
         ctx.restore()
@@ -562,7 +555,7 @@ export default function QrStudioPage() {
     const updated = [newItem, ...history.filter((h) => h.payload !== rawPayload).slice(0, 19)]
     setHistory(updated)
     try {
-      localStorage.setItem("tirup_qr_studio_history_v5", JSON.stringify(updated))
+      localStorage.setItem("tirup_qr_studio_history_v6", JSON.stringify(updated))
     } catch (e) {}
   }, [rawPayload, payloadType, url, wifiSsid, vcardFirst, vcardLast, emailTo, waPhone, history])
 
@@ -684,7 +677,7 @@ export default function QrStudioPage() {
   const clearHistory = () => {
     setHistory([])
     try {
-      localStorage.removeItem("tirup_qr_studio_history_v5")
+      localStorage.removeItem("tirup_qr_studio_history_v6")
     } catch (e) {}
   }
 
@@ -720,10 +713,10 @@ export default function QrStudioPage() {
         <TextWithBlur delay={50}>
           <div className="mb-8">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2 text-xs font-mono tracking-wide text-accent font-medium">
+              <div className="flex items-center gap-2 text-xs text-accent font-medium">
                 <Sparkles size={14} /> Developer Utility & Vector Studio
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono text-black/50 dark:text-white/50">
+              <div className="flex items-center gap-2 text-xs text-black/50 dark:text-white/50">
                 <ShieldCheck size={13} className="text-emerald-500" />
                 100% Client-Side Privacy
               </div>
@@ -746,7 +739,7 @@ export default function QrStudioPage() {
             {/* Payload Type Selector */}
             <TextWithBlur delay={75}>
               <div className="space-y-2">
-                <span className="text-xs font-mono text-black/60 dark:text-white/60 block font-medium">
+                <span className="text-xs text-black/60 dark:text-white/60 block font-medium">
                   Select Data Type:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -780,18 +773,18 @@ export default function QrStudioPage() {
             <TextWithBlur delay={100}>
               <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
-                  <span className="text-xs font-mono text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
+                  <span className="text-xs text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
                     <Sliders size={13} className="text-accent" /> Data Configuration ({payloadTitle})
                   </span>
-                  <span className="text-xs font-mono text-black/40 dark:text-white/40">
-                    {rawPayload.length} chars
+                  <span className="text-xs text-black/40 dark:text-white/40">
+                    {rawPayload.length} characters
                   </span>
                 </div>
 
                 {/* ── MODE: URL ── */}
                 {payloadType === "url" && (
                   <div className="space-y-2">
-                    <label htmlFor={urlInputId} className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
+                    <label htmlFor={urlInputId} className="block text-xs text-black/70 dark:text-white/70 font-medium">
                       Target Website Link <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -800,7 +793,7 @@ export default function QrStudioPage() {
                       placeholder="https://tirup.in or https://yourdomain.com/page"
                       value={url}
                       onChange={(e) => setUrl(e.target.value)}
-                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                     />
                     <p className="text-xs text-black/50 dark:text-white/50 font-light">
                       Mobile cameras will immediately prompt visitors to open this link in their browser.
@@ -811,7 +804,7 @@ export default function QrStudioPage() {
                 {/* ── MODE: PLAIN TEXT ── */}
                 {payloadType === "text" && (
                   <div className="space-y-2">
-                    <label htmlFor={textInputId} className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
+                    <label htmlFor={textInputId} className="block text-xs text-black/70 dark:text-white/70 font-medium">
                       Plain Text or Secret Message <span className="text-red-500">*</span>
                     </label>
                     <textarea
@@ -820,7 +813,7 @@ export default function QrStudioPage() {
                       placeholder="Enter raw text, notes, serial numbers, or markdown..."
                       value={plainText}
                       onChange={(e) => setPlainText(e.target.value)}
-                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                      className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                     />
                   </div>
                 )}
@@ -829,7 +822,7 @@ export default function QrStudioPage() {
                 {payloadType === "wifi" && (
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor={wifiSsidId} className="block text-xs font-mono text-black/70 dark:text-white/70 mb-1 font-medium">
+                      <label htmlFor={wifiSsidId} className="block text-xs text-black/70 dark:text-white/70 mb-1 font-medium">
                         Network Name (SSID) <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -838,13 +831,13 @@ export default function QrStudioPage() {
                         placeholder="e.g. Office_5G_HighSpeed"
                         value={wifiSsid}
                         onChange={(e) => setWifiSsid(e.target.value)}
-                        className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                        className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor={wifiPassId} className="block text-xs font-mono text-black/70 dark:text-white/70 mb-1 font-medium">
+                        <label htmlFor={wifiPassId} className="block text-xs text-black/70 dark:text-white/70 mb-1 font-medium">
                           Password
                         </label>
                         <input
@@ -853,18 +846,18 @@ export default function QrStudioPage() {
                           placeholder="Wi-Fi Password"
                           value={wifiPassword}
                           onChange={(e) => setWifiPassword(e.target.value)}
-                          className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
+                          className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none focus:border-accent"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-mono text-black/70 dark:text-white/70 mb-1 font-medium">
+                        <label className="block text-xs text-black/70 dark:text-white/70 mb-1 font-medium">
                           Security Protocol
                         </label>
                         <select
                           value={wifiAuth}
                           onChange={(e) => setWifiAuth(e.target.value as any)}
-                          className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none font-mono"
+                          className="w-full text-sm px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
                         >
                           <option value="WPA">WPA / WPA2 / WPA3 (Default)</option>
                           <option value="WEP">WEP</option>
@@ -873,7 +866,7 @@ export default function QrStudioPage() {
                       </div>
                     </div>
 
-                    <label className="flex items-center gap-2 text-xs font-mono text-black/70 dark:text-white/70 cursor-pointer select-none">
+                    <label className="flex items-center gap-2 text-xs text-black/70 dark:text-white/70 cursor-pointer select-none">
                       <input
                         type="checkbox"
                         checked={wifiHidden}
@@ -890,7 +883,7 @@ export default function QrStudioPage() {
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={vcardFirstId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardFirstId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           First Name
                         </label>
                         <input
@@ -898,11 +891,11 @@ export default function QrStudioPage() {
                           type="text"
                           value={vcardFirst}
                           onChange={(e) => setVcardFirst(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                       <div>
-                        <label htmlFor={vcardLastId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardLastId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           Last Name
                         </label>
                         <input
@@ -910,14 +903,14 @@ export default function QrStudioPage() {
                           type="text"
                           value={vcardLast}
                           onChange={(e) => setVcardLast(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={vcardOrgId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardOrgId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           Organization / Bio
                         </label>
                         <input
@@ -925,11 +918,11 @@ export default function QrStudioPage() {
                           type="text"
                           value={vcardOrg}
                           onChange={(e) => setVcardOrg(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                       <div>
-                        <label htmlFor={vcardPhoneId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardPhoneId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           Phone Number
                         </label>
                         <input
@@ -937,14 +930,14 @@ export default function QrStudioPage() {
                           type="tel"
                           value={vcardPhone}
                           onChange={(e) => setVcardPhone(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={vcardEmailId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardEmailId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           Email Address
                         </label>
                         <input
@@ -952,11 +945,11 @@ export default function QrStudioPage() {
                           type="email"
                           value={vcardEmail}
                           onChange={(e) => setVcardEmail(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                       <div>
-                        <label htmlFor={vcardSiteId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardSiteId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           Website URL
                         </label>
                         <input
@@ -964,7 +957,7 @@ export default function QrStudioPage() {
                           type="url"
                           value={vcardUrl}
                           onChange={(e) => setVcardUrl(e.target.value)}
-                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                     </div>
@@ -975,7 +968,7 @@ export default function QrStudioPage() {
                 {payloadType === "email" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={emailToId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={emailToId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Recipient Email <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -984,11 +977,11 @@ export default function QrStudioPage() {
                         placeholder="recipient@example.com"
                         value={emailTo}
                         onChange={(e) => setEmailTo(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div>
-                      <label htmlFor={emailSubId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={emailSubId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Subject Line
                       </label>
                       <input
@@ -996,11 +989,11 @@ export default function QrStudioPage() {
                         type="text"
                         value={emailSubject}
                         onChange={(e) => setEmailSubject(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div>
-                      <label htmlFor={emailBodyId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={emailBodyId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Email Body
                       </label>
                       <textarea
@@ -1008,7 +1001,7 @@ export default function QrStudioPage() {
                         rows={3}
                         value={emailBody}
                         onChange={(e) => setEmailBody(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                   </div>
@@ -1018,7 +1011,7 @@ export default function QrStudioPage() {
                 {payloadType === "sms" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={smsPhoneId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={smsPhoneId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Recipient Phone Number <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -1027,11 +1020,11 @@ export default function QrStudioPage() {
                         placeholder="+1 555 019 2834"
                         value={smsPhone}
                         onChange={(e) => setSmsPhone(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div>
-                      <label htmlFor={smsMsgId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={smsMsgId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Pre-filled SMS Text
                       </label>
                       <textarea
@@ -1039,7 +1032,7 @@ export default function QrStudioPage() {
                         rows={3}
                         value={smsMessage}
                         onChange={(e) => setSmsMessage(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                   </div>
@@ -1049,7 +1042,7 @@ export default function QrStudioPage() {
                 {payloadType === "whatsapp" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={waPhoneId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={waPhoneId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         WhatsApp Number (with country code) <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -1058,11 +1051,11 @@ export default function QrStudioPage() {
                         placeholder="e.g. 15551234567"
                         value={waPhone}
                         onChange={(e) => setWaPhone(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div>
-                      <label htmlFor={waMsgId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={waMsgId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Pre-filled Greeting Message
                       </label>
                       <textarea
@@ -1070,7 +1063,7 @@ export default function QrStudioPage() {
                         rows={3}
                         value={waMessage}
                         onChange={(e) => setWaMessage(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                   </div>
@@ -1080,7 +1073,7 @@ export default function QrStudioPage() {
                 {payloadType === "calendar" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={calTitleId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={calTitleId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Event Title <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -1088,11 +1081,11 @@ export default function QrStudioPage() {
                         type="text"
                         value={calTitle}
                         onChange={(e) => setCalTitle(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div>
-                      <label htmlFor={calLocId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={calLocId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Location
                       </label>
                       <input
@@ -1100,12 +1093,12 @@ export default function QrStudioPage() {
                         type="text"
                         value={calLocation}
                         onChange={(e) => setCalLocation(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                        className="w-full text-sm px-3.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={calStartId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={calStartId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           Start Time
                         </label>
                         <input
@@ -1113,11 +1106,11 @@ export default function QrStudioPage() {
                           type="datetime-local"
                           value={calStart}
                           onChange={(e) => setCalStart(e.target.value)}
-                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                       <div>
-                        <label htmlFor={calEndId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={calEndId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                           End Time
                         </label>
                         <input
@@ -1125,7 +1118,7 @@ export default function QrStudioPage() {
                           type="datetime-local"
                           value={calEnd}
                           onChange={(e) => setCalEnd(e.target.value)}
-                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono"
+                          className="w-full text-xs px-2.5 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                         />
                       </div>
                     </div>
@@ -1134,11 +1127,11 @@ export default function QrStudioPage() {
               </div>
             </TextWithBlur>
 
-            {/* Visual Styling Controls (In the Same Flow) */}
+            {/* Visual Styling Controls */}
             <TextWithBlur delay={120}>
               <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-5">
                 <div className="border-b border-black/5 dark:border-white/5 pb-3">
-                  <span className="text-xs font-mono text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
+                  <span className="text-xs text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
                     <Palette size={13} className="text-accent" /> Vector Shapes & Styling
                   </span>
                 </div>
@@ -1146,7 +1139,7 @@ export default function QrStudioPage() {
                 {/* Module Pattern & Corner Eye Shapes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-xs font-mono text-black/60 dark:text-white/60 mb-1.5 block font-medium">
+                    <span className="text-xs text-black/60 dark:text-white/60 mb-1.5 block font-medium">
                       Module Pattern:
                     </span>
                     <div className="flex gap-2">
@@ -1162,7 +1155,7 @@ export default function QrStudioPage() {
                           className={`flex-1 text-xs py-2 rounded-none border transition-all ${
                             moduleShape === m.id
                               ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                           }`}
                         >
                           {m.label}
@@ -1172,7 +1165,7 @@ export default function QrStudioPage() {
                   </div>
 
                   <div>
-                    <span className="text-xs font-mono text-black/60 dark:text-white/60 mb-1.5 block font-medium">
+                    <span className="text-xs text-black/60 dark:text-white/60 mb-1.5 block font-medium">
                       Corner Finder Eyes:
                     </span>
                     <div className="flex gap-2">
@@ -1188,7 +1181,7 @@ export default function QrStudioPage() {
                           className={`flex-1 text-xs py-2 rounded-none border transition-all ${
                             eyeShape === e.id
                               ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                              : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                           }`}
                         >
                           {e.label}
@@ -1200,7 +1193,7 @@ export default function QrStudioPage() {
 
                 {/* Curated Color Schemes */}
                 <div className="space-y-2 pt-2 border-t border-black/5 dark:border-white/5">
-                  <span className="text-xs font-mono text-black/60 dark:text-white/60 block font-medium">
+                  <span className="text-xs text-black/60 dark:text-white/60 block font-medium">
                     Color Schemes:
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -1237,7 +1230,7 @@ export default function QrStudioPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Foreground Color */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Foreground Color
                       </label>
                       <div className="flex items-center gap-2.5">
@@ -1252,7 +1245,7 @@ export default function QrStudioPage() {
                           type="text"
                           value={fgColor}
                           onChange={(e) => setFgColor(e.target.value)}
-                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
+                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
                           placeholder="#000000"
                         />
                       </div>
@@ -1260,7 +1253,7 @@ export default function QrStudioPage() {
 
                     {/* Background Color */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Background Color
                       </label>
                       <div className="flex items-center gap-2.5">
@@ -1275,7 +1268,7 @@ export default function QrStudioPage() {
                           type="text"
                           value={bgColor}
                           onChange={(e) => setBgColor(e.target.value)}
-                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white focus:outline-none"
+                          className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
                           placeholder="#FFFFFF or transparent"
                         />
                       </div>
@@ -1286,13 +1279,13 @@ export default function QrStudioPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* ECC */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Error Correction (ECC)
                       </label>
                       <select
                         value={eccLevel}
                         onChange={(e) => setEccLevel(e.target.value as ErrorCorrectionLevel)}
-                        className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white font-mono focus:outline-none"
+                        className="w-full text-xs px-3 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none"
                       >
                         <option value="H">H (30% Redundancy - Best for Logos)</option>
                         <option value="Q">Q (25% High Reliability)</option>
@@ -1303,7 +1296,7 @@ export default function QrStudioPage() {
 
                     {/* Margin */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs text-black/70 dark:text-white/70 font-medium">
                         Quiet Zone Margin
                       </label>
                       <div className="flex gap-2">
@@ -1320,7 +1313,7 @@ export default function QrStudioPage() {
                             className={`flex-1 text-xs py-1.5 rounded-none border transition-all ${
                               marginBlocks === m.val
                                 ? "bg-black text-white dark:bg-white dark:text-black font-medium"
-                                : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                                : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                             }`}
                           >
                             {m.label}
@@ -1333,7 +1326,7 @@ export default function QrStudioPage() {
 
                 {/* Frame / Call-to-Action Border */}
                 <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
-                  <span className="text-xs font-mono text-black/60 dark:text-white/60 font-medium block">
+                  <span className="text-xs text-black/60 dark:text-white/60 font-medium block">
                     Call-to-Action Frame:
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -1345,7 +1338,7 @@ export default function QrStudioPage() {
                         className={`text-xs py-2 px-2 rounded-none border transition-all truncate ${
                           frameStyle === f.id
                             ? "bg-black text-white dark:bg-white dark:text-black font-medium shadow-sm"
-                            : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70"
+                            : "bg-white dark:bg-zinc-950 border-black/10 dark:border-white/10 text-black/70 dark:text-white/70 hover:border-black/30 dark:hover:border-white/30"
                         }`}
                       >
                         {f.label}
@@ -1355,7 +1348,7 @@ export default function QrStudioPage() {
 
                   {frameStyle !== "none" && (
                     <div className="pt-1">
-                      <label htmlFor={frameTextId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={frameTextId} className="block text-xs text-black/60 dark:text-white/60 mb-1">
                         Frame Text
                       </label>
                       <input
@@ -1364,7 +1357,7 @@ export default function QrStudioPage() {
                         placeholder="e.g. Scan Me, Scan for Wi-Fi, Visit Website"
                         value={frameText}
                         onChange={(e) => setFrameText(e.target.value)}
-                        className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
+                        className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white"
                       />
                     </div>
                   )}
@@ -1373,13 +1366,13 @@ export default function QrStudioPage() {
                 {/* Center Emblem / Custom Logo Upload */}
                 <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-mono text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
+                    <span className="text-xs text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
                       <ImageIcon size={13} /> Center Emblem / Logo Overlay
                     </span>
                     {customLogoDataUrl && (
                       <button
                         onClick={removeCustomLogo}
-                        className="text-xs font-mono text-red-500 hover:underline flex items-center gap-1"
+                        className="text-xs text-red-500 hover:underline flex items-center gap-1"
                       >
                         <X size={12} /> Remove Logo
                       </button>
@@ -1397,7 +1390,7 @@ export default function QrStudioPage() {
                     />
                     <label
                       htmlFor="custom-logo-upload"
-                      className="px-3.5 py-2 rounded-none border border-dashed border-black/20 dark:border-white/20 text-xs font-mono text-black/80 dark:text-white/80 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center gap-1.5"
+                      className="px-3.5 py-2 rounded-none border border-dashed border-black/20 dark:border-white/20 text-xs text-black/80 dark:text-white/80 hover:border-black dark:hover:border-white transition-colors cursor-pointer flex items-center gap-1.5"
                     >
                       <Upload size={13} /> {customLogoDataUrl ? "Change Custom Logo..." : "Upload Logo (PNG/SVG)..."}
                     </label>
@@ -1405,7 +1398,7 @@ export default function QrStudioPage() {
                     {customLogoDataUrl && (
                       <div className="flex items-center gap-2">
                         <img src={customLogoDataUrl} alt="Logo Preview" className="w-8 h-8 object-contain bg-white p-0.5 border border-black/10 rounded-sm" />
-                        <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400">ECC forced to Level H</span>
+                        <span className="text-xs text-emerald-600 dark:text-emerald-400">ECC Level H enabled</span>
                       </div>
                     )}
                   </div>
@@ -1419,11 +1412,11 @@ export default function QrStudioPage() {
             <TextWithBlur delay={140}>
               <div className="p-6 md:p-8 rounded-none bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 shadow-sm space-y-5">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-zinc-800 pb-3">
-                  <span className="text-xs font-mono text-black/60 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
+                  <span className="text-xs text-black/70 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
                     <Sparkles size={14} className="text-accent" /> Vector Output Preview
                   </span>
-                  <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
-                    2048px Ready
+                  <span className="text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
+                    2048px Vector
                   </span>
                 </div>
 
@@ -1436,16 +1429,8 @@ export default function QrStudioPage() {
                       className="w-full max-w-[270px] h-auto object-contain select-none"
                     />
                   ) : (
-                    <div className="text-xs font-mono text-black/40 dark:text-zinc-500">Rendering vector...</div>
+                    <div className="text-xs text-black/40 dark:text-zinc-500">Rendering vector...</div>
                   )}
-                </div>
-
-                {/* Scannability Validator Indicator */}
-                <div className="p-2.5 rounded-none bg-black/5 dark:bg-zinc-900 border border-black/10 dark:border-zinc-800 text-xs font-mono flex items-center justify-between text-black/70 dark:text-zinc-400">
-                  <span>Scan Reliability:</span>
-                  <span className={`font-semibold ${contrastCheck.valid ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}`}>
-                    {contrastCheck.score}
-                  </span>
                 </div>
 
                 {/* Primary Export Actions */}
@@ -1453,7 +1438,7 @@ export default function QrStudioPage() {
                   <button
                     type="button"
                     onClick={copyPngImageToClipboard}
-                    className="w-full py-3 px-4 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                    className="w-full py-3 px-4 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer shadow-sm"
                   >
                     {copiedImage ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
                     {copiedImage ? "Image Copied to Clipboard!" : "Copy Image to Clipboard"}
@@ -1463,7 +1448,7 @@ export default function QrStudioPage() {
                     <button
                       type="button"
                       onClick={() => downloadPng(2048)}
-                      className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
+                      className="w-full py-2.5 px-3 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
                     >
                       <Download size={13} /> Download PNG (2K)
                     </button>
@@ -1471,7 +1456,7 @@ export default function QrStudioPage() {
                     <button
                       type="button"
                       onClick={downloadSvg}
-                      className="py-2.5 px-3 rounded-none bg-black/5 dark:bg-zinc-900 hover:bg-black/10 dark:hover:bg-zinc-800 text-black dark:text-zinc-200 font-medium text-xs transition-colors flex items-center justify-center gap-1.5 border border-black/10 dark:border-zinc-800 font-mono"
+                      className="w-full py-2.5 px-3 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black dark:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
                     >
                       <FileCode size={13} /> Download SVG (Vector)
                     </button>
@@ -1481,41 +1466,44 @@ export default function QrStudioPage() {
                     <button
                       type="button"
                       onClick={copySvgToClipboard}
-                      className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
+                      className="py-2 px-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
                       title="Copy raw SVG markup"
                     >
-                      {copiedSvg ? "Copied SVG!" : "Copy SVG"}
+                      {copiedSvg ? <Check size={12} className="text-emerald-500" /> : <Code size={12} />}
+                      {copiedSvg ? "Copied" : "Copy SVG"}
                     </button>
 
                     <button
                       type="button"
                       onClick={copyDataUrlToClipboard}
-                      className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
+                      className="py-2 px-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
                       title="Copy Base64 Data URL"
                     >
-                      {copiedDataUrl ? "Copied Data!" : "Copy Data URL"}
+                      {copiedDataUrl ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
+                      {copiedDataUrl ? "Copied" : "Data URL"}
                     </button>
 
                     <button
                       type="button"
                       onClick={copyAsciiToClipboard}
-                      className="py-2 px-2 rounded-none bg-black/5 dark:bg-zinc-900 text-black/70 dark:text-zinc-400 hover:text-black dark:hover:text-white text-[11px] font-mono transition-colors text-center border border-black/10 dark:border-zinc-800/80"
+                      className="py-2 px-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/80 dark:bg-zinc-900/80 hover:bg-black/5 dark:hover:bg-white/5 text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white text-xs font-medium transition-colors flex items-center justify-center gap-1"
                       title="Copy ASCII Terminal QR Code"
                     >
-                      {copiedAscii ? "Copied ASCII!" : "Copy ASCII"}
+                      {copiedAscii ? <Check size={12} className="text-emerald-500" /> : <FileText size={12} />}
+                      {copiedAscii ? "Copied" : "Terminal"}
                     </button>
                   </div>
                 </div>
 
                 {/* Raw Payload Inspector Box */}
                 <div className="space-y-1.5 pt-2 border-t border-black/5 dark:border-zinc-900">
-                  <div className="flex items-center justify-between text-[11px] font-mono text-black/60 dark:text-zinc-400">
+                  <div className="flex items-center justify-between text-xs text-black/60 dark:text-zinc-400">
                     <span>Encoded Payload:</span>
                     <button
                       onClick={copyRawPayloadToClipboard}
                       className="text-accent hover:underline flex items-center gap-1"
                     >
-                      {copiedRawPayload ? "Copied!" : "Copy Text"}
+                      {copiedRawPayload ? "Copied!" : "Copy text"}
                     </button>
                   </div>
                   <div className="p-3 bg-black/5 dark:bg-black/80 font-mono text-xs text-black/80 dark:text-emerald-400 break-all select-all border border-black/10 dark:border-zinc-900 max-h-24 overflow-y-auto leading-relaxed">
@@ -1530,9 +1518,9 @@ export default function QrStudioPage() {
                       href={rawPayload}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs font-mono text-black/60 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+                      className="inline-flex items-center gap-1 text-xs text-black/60 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
                     >
-                      Test Link in New Tab <ExternalLink size={12} />
+                      Test link in new tab <ExternalLink size={12} />
                     </a>
                   </div>
                 )}
@@ -1550,7 +1538,7 @@ export default function QrStudioPage() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <History size={14} className="text-accent" />
-                  <h2 className="text-xs font-mono text-black/60 dark:text-white/60 font-medium">
+                  <h2 className="text-xs text-black/60 dark:text-white/60 font-medium">
                     Recent Generated QR Codes ({history.length})
                   </h2>
                 </div>
@@ -1562,14 +1550,14 @@ export default function QrStudioPage() {
                       placeholder="Search history..."
                       value={historySearch}
                       onChange={(e) => setHistorySearch(e.target.value)}
-                      className="text-xs px-3 py-1.5 pl-7 rounded-none border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 text-black dark:text-white focus:outline-none font-mono"
+                      className="text-xs px-3 py-1.5 pl-7 rounded-none border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 text-black dark:text-white focus:outline-none"
                     />
                     <Search size={12} className="absolute left-2.5 top-2.5 text-black/40 dark:text-white/40" />
                   </div>
 
                   <button
                     onClick={clearHistory}
-                    className="text-xs font-mono text-red-500 hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-xs text-red-500 hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <Trash2 size={12} /> Clear
                   </button>
@@ -1580,7 +1568,7 @@ export default function QrStudioPage() {
                 {filteredHistory.map((item) => (
                   <div
                     key={item.id}
-                    className="py-3.5 border-b border-black/10 dark:border-white/10 flex items-center justify-between gap-3 text-xs font-mono"
+                    className="py-3.5 border-b border-black/10 dark:border-white/10 flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="flex items-center gap-2 min-w-0 flex-1">
                       <span className="px-2 py-0.5 rounded-none bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 text-[10px]">
@@ -1593,7 +1581,7 @@ export default function QrStudioPage() {
                       <span className="text-black/40 dark:text-white/40 text-[11px] hidden sm:inline">{item.createdAt}</span>
                       <button
                         onClick={() => restoreFromHistory(item)}
-                        className="px-2.5 py-1 rounded-none border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-black dark:text-white"
+                        className="px-2.5 py-1 rounded-none border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-black dark:text-white font-medium"
                       >
                         Load
                       </button>
