@@ -59,7 +59,7 @@ const COLOR_PRESETS: ColorPreset[] = [
 
 const FRAME_PRESETS = [
   { id: "none", label: "No Frame" },
-  { id: "bottom-banner", label: "Bottom 'SCAN ME'" },
+  { id: "bottom-banner", label: "Bottom 'Scan Me'" },
   { id: "top-banner", label: "Top Header" },
   { id: "pill-badge", label: "Pill Badge" },
 ]
@@ -100,16 +100,13 @@ export default function QrStudioPage() {
   // Payload Type
   const [payloadType, setPayloadType] = useState<PayloadType>("url")
 
-  // 1. URL
+  // Form States
   const [url, setUrl] = useState("https://tirup.in")
-  // 2. Text
   const [plainText, setPlainText] = useState("Hello from Tirup Mehta's QR Studio!")
-  // 3. Wi-Fi
   const [wifiSsid, setWifiSsid] = useState("")
   const [wifiPassword, setWifiPassword] = useState("")
   const [wifiAuth, setWifiAuth] = useState<"WPA" | "WEP" | "nopass">("WPA")
   const [wifiHidden, setWifiHidden] = useState(false)
-  // 4. vCard
   const [vcardFirst, setVcardFirst] = useState("Tirup")
   const [vcardLast, setVcardLast] = useState("Mehta")
   const [vcardOrg, setVcardOrg] = useState("Developer & Security Researcher")
@@ -117,17 +114,13 @@ export default function QrStudioPage() {
   const [vcardPhone, setVcardPhone] = useState("+91 ")
   const [vcardEmail, setVcardEmail] = useState("me@tirup.in")
   const [vcardUrl, setVcardUrl] = useState("https://tirup.in")
-  // 5. Email
   const [emailTo, setEmailTo] = useState("me@tirup.in")
   const [emailSubject, setEmailSubject] = useState("Project Collaboration Inquiry")
   const [emailBody, setEmailBody] = useState("Hi Tirup,\n\nI came across your work and would love to connect.")
-  // 6. SMS
   const [smsPhone, setSmsPhone] = useState("+1 ")
   const [smsMessage, setSmsMessage] = useState("Hey, check out this link: https://tirup.in")
-  // 7. WhatsApp
   const [waPhone, setWaPhone] = useState("+1 ")
-  const [waMessage, setWaMessage] = useState("Hi! I'm reaching out after scanning your QR code.")
-  // 8. Calendar
+  const [waMessage, setWaMessage] = useState("Hi! Reaching out from your QR code.")
   const [calTitle, setCalTitle] = useState("Keynote / Launch Event")
   const [calLocation, setCalLocation] = useState("Online / San Francisco")
   const [calStart, setCalStart] = useState("2026-09-01T10:00")
@@ -141,7 +134,7 @@ export default function QrStudioPage() {
   const [moduleShape, setModuleShape] = useState<ModuleShape>("square")
   const [eyeShape, setEyeShape] = useState<EyeShape>("square")
   const [frameStyle, setFrameStyle] = useState<FrameStyle>("none")
-  const [frameText, setFrameText] = useState("SCAN ME")
+  const [frameText, setFrameText] = useState("Scan Me")
 
   // Custom Logo Overlay State
   const [customLogoDataUrl, setCustomLogoDataUrl] = useState<string | null>(null)
@@ -167,7 +160,7 @@ export default function QrStudioPage() {
   // Load Persisted History from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("tirup_qr_studio_history_v4")
+      const saved = localStorage.getItem("tirup_qr_studio_history_v5")
       if (saved) setHistory(JSON.parse(saved))
     } catch (e) {}
   }, [])
@@ -275,11 +268,11 @@ export default function QrStudioPage() {
 
   // Contrast Ratio Validator
   const contrastCheck = useMemo(() => {
-    if (bgColor === "transparent") return { score: "Good", valid: true, text: "Transparent background" }
+    if (bgColor === "transparent") return { score: "Good", valid: true }
     if (fgColor.toLowerCase() === bgColor.toLowerCase()) {
-      return { score: "Unscannable", valid: false, text: "Colors are identical" }
+      return { score: "Unscannable", valid: false }
     }
-    return { score: "Optimal", valid: true, text: "High contrast" }
+    return { score: "Optimal", valid: true }
   }, [fgColor, bgColor])
 
   // Custom Canvas Rendering Engine
@@ -459,20 +452,20 @@ export default function QrStudioPage() {
       // Draw Frame Text
       if (hasFrame) {
         ctx.save()
-        ctx.font = "bold 38px monospace, sans-serif"
+        ctx.font = "bold 36px monospace, sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
 
         if (frameStyle === "bottom-banner") {
           const bannerY = baseQrResolution + frameHeight / 2
           ctx.fillStyle = fillStyle
-          ctx.fillText(frameText.toUpperCase(), canvasWidth / 2, bannerY)
+          ctx.fillText(frameText, canvasWidth / 2, bannerY)
         } else if (frameStyle === "top-banner") {
           const bannerY = frameHeight / 2
           ctx.fillStyle = fillStyle
-          ctx.fillText(frameText.toUpperCase(), canvasWidth / 2, bannerY)
+          ctx.fillText(frameText, canvasWidth / 2, bannerY)
         } else if (frameStyle === "pill-badge") {
-          const badgeWidth = Math.min(canvasWidth * 0.75, ctx.measureText(frameText.toUpperCase()).width + 80)
+          const badgeWidth = Math.min(canvasWidth * 0.75, ctx.measureText(frameText).width + 80)
           const badgeHeight = 54
           const badgeX = (canvasWidth - badgeWidth) / 2
           const badgeY = baseQrResolution + 40
@@ -484,7 +477,7 @@ export default function QrStudioPage() {
 
           ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
           ctx.font = "bold 26px monospace, sans-serif"
-          ctx.fillText(frameText.toUpperCase(), canvasWidth / 2, badgeY + badgeHeight / 2)
+          ctx.fillText(frameText, canvasWidth / 2, badgeY + badgeHeight / 2)
         }
         ctx.restore()
       }
@@ -556,7 +549,7 @@ export default function QrStudioPage() {
         ? `Email: ${emailTo}`
         : payloadType === "whatsapp"
         ? `WhatsApp: ${waPhone}`
-        : `${payloadType.toUpperCase()}: ${rawPayload.slice(0, 30)}...`
+        : `${payloadType}: ${rawPayload.slice(0, 30)}...`
 
     const newItem: HistoryItem = {
       id: Date.now().toString(),
@@ -569,7 +562,7 @@ export default function QrStudioPage() {
     const updated = [newItem, ...history.filter((h) => h.payload !== rawPayload).slice(0, 19)]
     setHistory(updated)
     try {
-      localStorage.setItem("tirup_qr_studio_history_v4", JSON.stringify(updated))
+      localStorage.setItem("tirup_qr_studio_history_v5", JSON.stringify(updated))
     } catch (e) {}
   }, [rawPayload, payloadType, url, wifiSsid, vcardFirst, vcardLast, emailTo, waPhone, history])
 
@@ -691,7 +684,7 @@ export default function QrStudioPage() {
   const clearHistory = () => {
     setHistory([])
     try {
-      localStorage.removeItem("tirup_qr_studio_history_v4")
+      localStorage.removeItem("tirup_qr_studio_history_v5")
     } catch (e) {}
   }
 
@@ -702,19 +695,32 @@ export default function QrStudioPage() {
     )
   }, [history, historySearch])
 
+  const payloadTitle = useMemo(() => {
+    switch (payloadType) {
+      case "url": return "URL Link"
+      case "text": return "Plain Text"
+      case "wifi": return "Wi-Fi"
+      case "vcard": return "vCard"
+      case "email": return "Email"
+      case "sms": return "SMS"
+      case "whatsapp": return "WhatsApp"
+      case "calendar": return "Calendar Event"
+      default: return "Data"
+    }
+  }, [payloadType])
+
   const currentYear = new Date().getFullYear()
 
   return (
     <main className="relative min-h-screen">
       <Header />
 
-      {/* ── Single, Unified Section with max-w-4xl width ── */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         {/* Header Title */}
         <TextWithBlur delay={50}>
           <div className="mb-8">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-accent uppercase font-medium">
+              <div className="flex items-center gap-2 text-xs font-mono tracking-wide text-accent font-medium">
                 <Sparkles size={14} /> Developer Utility & Vector Studio
               </div>
               <div className="flex items-center gap-2 text-xs font-mono text-black/50 dark:text-white/50">
@@ -734,13 +740,13 @@ export default function QrStudioPage() {
 
         {/* ── UNIFIED 2-COLUMN STUDIO ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* ── LEFT COLUMN: DATA INPUTS & STYLING CONTROLS (7 COLS) ── */}
+          {/* ── LEFT COLUMN: DATA INPUTS & STYLING (7 COLS) ── */}
           <div className="lg:col-span-7 space-y-6">
             
             {/* Payload Type Selector */}
             <TextWithBlur delay={75}>
               <div className="space-y-2">
-                <span className="text-xs uppercase font-mono tracking-wider text-black/50 dark:text-white/50 block font-medium">
+                <span className="text-xs font-mono text-black/60 dark:text-white/60 block font-medium">
                   Select Data Type:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -752,7 +758,7 @@ export default function QrStudioPage() {
                     { type: "email" as const, label: "Email", icon: Mail },
                     { type: "sms" as const, label: "SMS", icon: MessageSquare },
                     { type: "whatsapp" as const, label: "WhatsApp", icon: PhoneCall },
-                    { type: "calendar" as const, label: "Event", icon: Calendar },
+                    { type: "calendar" as const, label: "Calendar Event", icon: Calendar },
                   ].map(({ type, label, icon: Icon }) => (
                     <button
                       key={type}
@@ -774,10 +780,10 @@ export default function QrStudioPage() {
             <TextWithBlur delay={100}>
               <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-4">
                 <div className="flex items-center justify-between border-b border-black/5 dark:border-white/5 pb-3">
-                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
-                    <Sliders size={13} className="text-accent" /> Data Configuration ({payloadType.toUpperCase()})
+                  <span className="text-xs font-mono text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
+                    <Sliders size={13} className="text-accent" /> Data Configuration ({payloadTitle})
                   </span>
-                  <span className="text-[11px] font-mono text-black/40 dark:text-white/40">
+                  <span className="text-xs font-mono text-black/40 dark:text-white/40">
                     {rawPayload.length} chars
                   </span>
                 </div>
@@ -785,7 +791,7 @@ export default function QrStudioPage() {
                 {/* ── MODE: URL ── */}
                 {payloadType === "url" && (
                   <div className="space-y-2">
-                    <label htmlFor={urlInputId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 font-medium">
+                    <label htmlFor={urlInputId} className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
                       Target Website Link <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -805,7 +811,7 @@ export default function QrStudioPage() {
                 {/* ── MODE: PLAIN TEXT ── */}
                 {payloadType === "text" && (
                   <div className="space-y-2">
-                    <label htmlFor={textInputId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 font-medium">
+                    <label htmlFor={textInputId} className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
                       Plain Text or Secret Message <span className="text-red-500">*</span>
                     </label>
                     <textarea
@@ -823,7 +829,7 @@ export default function QrStudioPage() {
                 {payloadType === "wifi" && (
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor={wifiSsidId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
+                      <label htmlFor={wifiSsidId} className="block text-xs font-mono text-black/70 dark:text-white/70 mb-1 font-medium">
                         Network Name (SSID) <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -838,7 +844,7 @@ export default function QrStudioPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor={wifiPassId} className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
+                        <label htmlFor={wifiPassId} className="block text-xs font-mono text-black/70 dark:text-white/70 mb-1 font-medium">
                           Password
                         </label>
                         <input
@@ -852,7 +858,7 @@ export default function QrStudioPage() {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-mono uppercase tracking-wider text-black/70 dark:text-white/70 mb-1 font-medium">
+                        <label className="block text-xs font-mono text-black/70 dark:text-white/70 mb-1 font-medium">
                           Security Protocol
                         </label>
                         <select
@@ -884,7 +890,7 @@ export default function QrStudioPage() {
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={vcardFirstId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardFirstId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           First Name
                         </label>
                         <input
@@ -896,7 +902,7 @@ export default function QrStudioPage() {
                         />
                       </div>
                       <div>
-                        <label htmlFor={vcardLastId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardLastId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           Last Name
                         </label>
                         <input
@@ -911,7 +917,7 @@ export default function QrStudioPage() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={vcardOrgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardOrgId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           Organization / Bio
                         </label>
                         <input
@@ -923,7 +929,7 @@ export default function QrStudioPage() {
                         />
                       </div>
                       <div>
-                        <label htmlFor={vcardPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardPhoneId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           Phone Number
                         </label>
                         <input
@@ -938,7 +944,7 @@ export default function QrStudioPage() {
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={vcardEmailId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardEmailId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           Email Address
                         </label>
                         <input
@@ -950,7 +956,7 @@ export default function QrStudioPage() {
                         />
                       </div>
                       <div>
-                        <label htmlFor={vcardSiteId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={vcardSiteId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           Website URL
                         </label>
                         <input
@@ -969,7 +975,7 @@ export default function QrStudioPage() {
                 {payloadType === "email" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={emailToId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={emailToId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Recipient Email <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -982,7 +988,7 @@ export default function QrStudioPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor={emailSubId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={emailSubId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Subject Line
                       </label>
                       <input
@@ -994,7 +1000,7 @@ export default function QrStudioPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor={emailBodyId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={emailBodyId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Email Body
                       </label>
                       <textarea
@@ -1012,7 +1018,7 @@ export default function QrStudioPage() {
                 {payloadType === "sms" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={smsPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={smsPhoneId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Recipient Phone Number <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -1025,7 +1031,7 @@ export default function QrStudioPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor={smsMsgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={smsMsgId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Pre-filled SMS Text
                       </label>
                       <textarea
@@ -1043,7 +1049,7 @@ export default function QrStudioPage() {
                 {payloadType === "whatsapp" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={waPhoneId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={waPhoneId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         WhatsApp Number (with country code) <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -1056,7 +1062,7 @@ export default function QrStudioPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor={waMsgId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={waMsgId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Pre-filled Greeting Message
                       </label>
                       <textarea
@@ -1074,7 +1080,7 @@ export default function QrStudioPage() {
                 {payloadType === "calendar" && (
                   <div className="space-y-3">
                     <div>
-                      <label htmlFor={calTitleId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={calTitleId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Event Title <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -1086,7 +1092,7 @@ export default function QrStudioPage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor={calLocId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={calLocId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Location
                       </label>
                       <input
@@ -1099,7 +1105,7 @@ export default function QrStudioPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label htmlFor={calStartId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={calStartId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           Start Time
                         </label>
                         <input
@@ -1111,7 +1117,7 @@ export default function QrStudioPage() {
                         />
                       </div>
                       <div>
-                        <label htmlFor={calEndId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                        <label htmlFor={calEndId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                           End Time
                         </label>
                         <input
@@ -1132,7 +1138,7 @@ export default function QrStudioPage() {
             <TextWithBlur delay={120}>
               <div className="p-6 rounded-none bg-white/70 dark:bg-zinc-900/70 border border-black/10 dark:border-white/10 shadow-sm space-y-5">
                 <div className="border-b border-black/5 dark:border-white/5 pb-3">
-                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
+                  <span className="text-xs font-mono text-black/70 dark:text-white/70 font-medium flex items-center gap-1.5">
                     <Palette size={13} className="text-accent" /> Vector Shapes & Styling
                   </span>
                 </div>
@@ -1140,7 +1146,7 @@ export default function QrStudioPage() {
                 {/* Module Pattern & Corner Eye Shapes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block font-medium">
+                    <span className="text-xs font-mono text-black/60 dark:text-white/60 mb-1.5 block font-medium">
                       Module Pattern:
                     </span>
                     <div className="flex gap-2">
@@ -1166,7 +1172,7 @@ export default function QrStudioPage() {
                   </div>
 
                   <div>
-                    <span className="text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1.5 block font-medium">
+                    <span className="text-xs font-mono text-black/60 dark:text-white/60 mb-1.5 block font-medium">
                       Corner Finder Eyes:
                     </span>
                     <div className="flex gap-2">
@@ -1194,7 +1200,7 @@ export default function QrStudioPage() {
 
                 {/* Curated Color Schemes */}
                 <div className="space-y-2 pt-2 border-t border-black/5 dark:border-white/5">
-                  <span className="text-xs font-mono uppercase text-black/50 dark:text-white/50 block font-medium">
+                  <span className="text-xs font-mono text-black/60 dark:text-white/60 block font-medium">
                     Color Schemes:
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -1231,7 +1237,7 @@ export default function QrStudioPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Foreground Color */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
                         Foreground Color
                       </label>
                       <div className="flex items-center gap-2.5">
@@ -1254,7 +1260,7 @@ export default function QrStudioPage() {
 
                     {/* Background Color */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
                         Background Color
                       </label>
                       <div className="flex items-center gap-2.5">
@@ -1280,7 +1286,7 @@ export default function QrStudioPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* ECC */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
                         Error Correction (ECC)
                       </label>
                       <select
@@ -1297,7 +1303,7 @@ export default function QrStudioPage() {
 
                     {/* Margin */}
                     <div className="p-3.5 rounded-none border border-black/10 dark:border-white/10 bg-white/50 dark:bg-zinc-950/50 space-y-2">
-                      <label className="block text-xs font-mono uppercase text-black/70 dark:text-white/70 font-medium">
+                      <label className="block text-xs font-mono text-black/70 dark:text-white/70 font-medium">
                         Quiet Zone Margin
                       </label>
                       <div className="flex gap-2">
@@ -1325,10 +1331,10 @@ export default function QrStudioPage() {
                   </div>
                 </div>
 
-                {/* Frame / Call-To-Action (CTA) Border */}
+                {/* Frame / Call-to-Action Border */}
                 <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
-                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium block">
-                    Call-To-Action Frame:
+                  <span className="text-xs font-mono text-black/60 dark:text-white/60 font-medium block">
+                    Call-to-Action Frame:
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {FRAME_PRESETS.map((f) => (
@@ -1349,13 +1355,13 @@ export default function QrStudioPage() {
 
                   {frameStyle !== "none" && (
                     <div className="pt-1">
-                      <label htmlFor={frameTextId} className="block text-xs font-mono uppercase text-black/60 dark:text-white/60 mb-1">
+                      <label htmlFor={frameTextId} className="block text-xs font-mono text-black/60 dark:text-white/60 mb-1">
                         Frame Text
                       </label>
                       <input
                         id={frameTextId}
                         type="text"
-                        placeholder="e.g. SCAN ME, SCAN FOR WI-FI, VISIT WEBSITE"
+                        placeholder="e.g. Scan Me, Scan for Wi-Fi, Visit Website"
                         value={frameText}
                         onChange={(e) => setFrameText(e.target.value)}
                         className="w-full text-sm px-3.5 py-2 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 font-mono text-black dark:text-white"
@@ -1367,7 +1373,7 @@ export default function QrStudioPage() {
                 {/* Center Emblem / Custom Logo Upload */}
                 <div className="pt-2 border-t border-black/5 dark:border-white/5 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
+                    <span className="text-xs font-mono text-black/60 dark:text-white/60 font-medium flex items-center gap-1.5">
                       <ImageIcon size={13} /> Center Emblem / Logo Overlay
                     </span>
                     {customLogoDataUrl && (
@@ -1408,12 +1414,12 @@ export default function QrStudioPage() {
             </TextWithBlur>
           </div>
 
-          {/* ── RIGHT COLUMN: LIVE CANVAS & MULTI-FORMAT EXPORTS (5 COLS) ── */}
+          {/* ── RIGHT COLUMN: LIVE CANVAS & EXPORTS (5 COLS) ── */}
           <div className="lg:col-span-5 space-y-6">
             <TextWithBlur delay={140}>
               <div className="p-6 md:p-8 rounded-none bg-white dark:bg-zinc-950 text-black dark:text-white border border-black/10 dark:border-zinc-800 shadow-sm space-y-5">
                 <div className="flex items-center justify-between border-b border-black/10 dark:border-zinc-800 pb-3">
-                  <span className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
+                  <span className="text-xs font-mono text-black/60 dark:text-zinc-400 flex items-center gap-1.5 font-medium">
                     <Sparkles size={14} className="text-accent" /> Vector Output Preview
                   </span>
                   <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-none border border-emerald-200 dark:border-emerald-800">
@@ -1421,7 +1427,7 @@ export default function QrStudioPage() {
                   </span>
                 </div>
 
-                {/* Rendered Canvas Preview - NO HOVER ANIMATION */}
+                {/* Rendered Canvas Preview */}
                 <div className="p-6 bg-zinc-50 dark:bg-black/40 rounded-none border border-black/10 dark:border-zinc-800 flex items-center justify-center min-h-[290px]">
                   {previewDataUrl ? (
                     <img
@@ -1544,7 +1550,7 @@ export default function QrStudioPage() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <History size={14} className="text-accent" />
-                  <h2 className="text-xs uppercase font-mono tracking-wider text-black/60 dark:text-white/60 font-medium">
+                  <h2 className="text-xs font-mono text-black/60 dark:text-white/60 font-medium">
                     Recent Generated QR Codes ({history.length})
                   </h2>
                 </div>
@@ -1577,7 +1583,7 @@ export default function QrStudioPage() {
                     className="py-3.5 border-b border-black/10 dark:border-white/10 flex items-center justify-between gap-3 text-xs font-mono"
                   >
                     <div className="flex items-center gap-2 min-w-0 flex-1">
-                      <span className="px-2 py-0.5 rounded-none bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 uppercase text-[10px]">
+                      <span className="px-2 py-0.5 rounded-none bg-black/5 dark:bg-white/10 text-black/70 dark:text-white/70 text-[10px]">
                         {item.type}
                       </span>
                       <span className="truncate text-black dark:text-white font-medium">{item.title}</span>
