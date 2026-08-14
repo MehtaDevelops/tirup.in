@@ -471,34 +471,62 @@ export default function QrStudioPage() {
         ctx.restore()
       }
 
-      // Draw Frame Text
+      // Draw High-Contrast Frame Text
       if (hasFrame) {
         ctx.save()
-        ctx.font = "bold 50px sans-serif"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
 
+        const getContrastingColor = (hex: string) => {
+          if (!hex || hex === "transparent") return "#000000"
+          const clean = hex.replace("#", "")
+          const fullHex = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean
+          const r = parseInt(fullHex.substring(0, 2) || "0", 16)
+          const g = parseInt(fullHex.substring(2, 4) || "0", 16)
+          const b = parseInt(fullHex.substring(4, 6) || "0", 16)
+          const yiq = (r * 299 + g * 587 + b * 114) / 1000
+          return yiq >= 140 ? "#09090B" : "#FFFFFF"
+        }
+
         if (frameStyle === "bottom-banner") {
           const bannerY = baseQrResolution + frameHeight / 2
-          ctx.fillStyle = fillStyle
+          ctx.font = "bold 50px sans-serif"
+          const bannerTextColor =
+            bgColor === "transparent"
+              ? (fillStyle.toLowerCase() === "#ffffff" ? "#09090B" : fillStyle)
+              : getContrastingColor(bgColor)
+          ctx.fillStyle = bannerTextColor
           ctx.fillText(frameText, canvasWidth / 2, bannerY)
         } else if (frameStyle === "top-banner") {
           const bannerY = frameHeight / 2
-          ctx.fillStyle = fillStyle
+          ctx.font = "bold 50px sans-serif"
+          const bannerTextColor =
+            bgColor === "transparent"
+              ? (fillStyle.toLowerCase() === "#ffffff" ? "#09090B" : fillStyle)
+              : getContrastingColor(bgColor)
+          ctx.fillStyle = bannerTextColor
           ctx.fillText(frameText, canvasWidth / 2, bannerY)
         } else if (frameStyle === "pill-badge") {
+          ctx.font = "bold 34px sans-serif"
           const badgeWidth = Math.min(canvasWidth * 0.82, ctx.measureText(frameText).width + 100)
           const badgeHeight = 72
           const badgeX = (canvasWidth - badgeWidth) / 2
           const badgeY = baseQrResolution + 54
 
+          // Draw pill background
           ctx.fillStyle = fillStyle
           ctx.beginPath()
           ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, 36)
           ctx.fill()
 
-          ctx.fillStyle = bgColor === "transparent" ? "#FFFFFF" : bgColor
-          ctx.font = "bold 34px sans-serif"
+          // Draw subtle pill boundary
+          const isPillLight = getContrastingColor(fillStyle) === "#09090B"
+          ctx.strokeStyle = isPillLight ? "rgba(0, 0, 0, 0.18)" : "rgba(255, 255, 255, 0.3)"
+          ctx.lineWidth = 3
+          ctx.stroke()
+
+          // Pill text color: ALWAYS high-contrast against the pill fill color
+          ctx.fillStyle = getContrastingColor(fillStyle)
           ctx.fillText(frameText, canvasWidth / 2, badgeY + badgeHeight / 2)
         }
         ctx.restore()
