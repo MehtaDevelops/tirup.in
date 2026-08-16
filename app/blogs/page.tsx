@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
 import { CONVEX_API_URL } from "@/lib/utils"
@@ -16,7 +17,7 @@ interface BlogPost {
   title: string
   tldr: string
   createdAt: string
-  status: "draft" | "published"
+  status?: "draft" | "published"
 }
 
 export default async function BlogsPage() {
@@ -27,10 +28,15 @@ export default async function BlogsPage() {
     const res = await fetch(`${CONVEX_API_URL}/api/posts`, {
       next: { revalidate: 60 },
     })
-    const data = await res.json()
-    
-    if (Array.isArray(data)) {
-      posts = data
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data)) {
+        posts = data
+          .filter((post) => post && post.slug && (post.status === "published" || !post.status))
+          .slice(0, 10)
+      } else {
+        error = true
+      }
     } else {
       error = true
     }
@@ -44,11 +50,11 @@ export default async function BlogsPage() {
       const date = new Date(dateStr)
       if (isNaN(date.getTime())) return dateStr
       const day = String(date.getDate()).padStart(2, "0")
-      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
       const month = months[date.getMonth()]
       const year = date.getFullYear()
       return `${day}.${month}.${year}`
-    } catch (e) {
+    } catch {
       return dateStr
     }
   }
@@ -74,21 +80,21 @@ export default async function BlogsPage() {
           <div className="flex flex-col">
             {posts.map((post, index) => {
               return (
-                <TextWithBlur key={post.slug} delay={index * 40}>
+                <TextWithBlur key={post.slug} delay={index * 35}>
                   <Link
                     href={`/blogs/${post.slug}`}
                     className={`group block py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
                   >
                     <div className="flex justify-between items-baseline gap-4">
                       {/* Left: Title only */}
-                      <div className="flex items-baseline gap-x-2 leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
+                      <div className="flex items-baseline gap-x-2 leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out min-w-0 flex-1">
                         <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300 text-sm md:text-base">
                           {post.title}
                         </span>
                       </div>
                       
                       {/* Right: Date */}
-                      <span className="font-mono tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0 group-hover:-translate-x-1.5 transition-transform duration-300 ease-out">
+                      <span className="tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0 group-hover:-translate-x-1.5 transition-transform duration-300 ease-out whitespace-nowrap">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>
@@ -98,12 +104,27 @@ export default async function BlogsPage() {
             })}
             {/* End border */}
             <div className="border-t border-black/10 dark:border-white/10" />
+
+            {/* View all articles at blogs.tirup.in link */}
+            <TextWithBlur delay={posts.length * 35 + 40}>
+              <div className="pt-8 pb-2 flex justify-start">
+                <a
+                  href="https://blogs.tirup.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-1 text-xs sm:text-sm text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white transition-colors duration-200"
+                >
+                  <span className="link-hover pb-0.5">View all articles at blogs.tirup.in</span>
+                  <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
+                </a>
+              </div>
+            </TextWithBlur>
           </div>
         )}
       </section>
 
       {/* Footer */}
-      <footer className="py-6 px-6 text-center border-t border-black/10">
+      <footer className="py-6 px-6 text-center border-t border-black/10 dark:border-white/10">
         <p className="text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>

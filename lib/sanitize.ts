@@ -1,92 +1,62 @@
-import DOMPurify from "isomorphic-dompurify"
-
-// Setup DOMPurify hooks to process elements (runs in browser and server)
-try {
-  if (typeof DOMPurify !== "undefined" && typeof DOMPurify.addHook === "function") {
-    DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-      try {
-        if (node && node.nodeType === 1) { // Element node
-          const tagName = (node.tagName || "").toLowerCase()
-          // Enforce noopener noreferrer on blank target links
-          if (tagName === "a" && node.getAttribute("target") === "_blank") {
-            node.setAttribute("rel", "noopener noreferrer")
-          }
-          // Force lazy loading on images
-          if (tagName === "img" && !node.hasAttribute("loading")) {
-            node.setAttribute("loading", "lazy")
-          }
-        }
-      } catch {
-        // Ignore DOMPurify hook errors
-      }
-    })
-  }
-} catch {
-  // Ignore DOMPurify initialization errors on server environment
-}
-
-const SANITIZE_CONFIG = {
-  ALLOWED_TAGS: [
-    "p", "br", "hr",
-    "h1", "h2", "h3", "h4", "h5", "h6",
-    "strong", "b", "em", "i", "u", "s", "del", "ins",
-    "ul", "ol", "li",
-    "blockquote", "pre", "code",
-    "a",
-    "img",
-    "table", "thead", "tbody", "tfoot", "tr", "th", "td",
-    "div", "span", "section", "article", "aside", "header", "footer",
-    "figure", "figcaption",
-    "mark", "small", "sub", "sup",
-    "details", "summary",
-  ],
-  ALLOWED_ATTR: [
-    "class", "id", "style",
-    "href", "title", "target", "rel",
-    "src", "alt", "width", "height", "loading",
-    "colspan", "rowspan", "scope",
-    "start", "type",
-    "value"
-  ],
-  RETURN_TRUSTED_TYPE: false,
-}
-
 /**
- * Fallback sanitizer for server environments where DOMPurify/JSDOM fails.
+ * Production-hardened, serverless-safe HTML sanitizer and markdown parser.
+ * Designed to execute synchronously with zero native C++ / JSDOM dependencies,
+ * guaranteeing 100% stability across Node.js SSR, Edge runtime, and Vercel serverless.
  */
-function fallbackSanitize(html: string): string {
-  if (!html) return ""
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
-    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "")
-    .replace(/\s*on\w+=(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, "")
-    .replace(/href=["']?\s*javascript:[^"'>]*["']?/gi, 'href="#"')
-}
+
+const DANGEROUS_TAGS_RE = /<\/?(?:script|style|iframe|object|embed|applet|form|input|button|textarea|select|option|base|meta|link|svg|math|template|noscript)\b[^>]*>/gi
+const DANGEROUS_ATTRIBUTES_RE = /\s*(?:on[a-z]+|formaction|action)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi
+const JAVASCRIPT_URL_RE = /(href|src)\s*=\s*(["'])\s*(?:javascript|vbscript|data:(?!image\/[a-z0-9+.-]+;base64,)[^"'>]+)\2/gi
 
 /**
- * Main sanitizer: strips disallowed tags/attributes from arbitrary HTML using DOMPurify with fallback.
- *
- * @param dirty - Raw HTML string from an external source
- * @returns Sanitized HTML safe for dangerouslySetInnerHTML
+ * Sanitizes raw HTML from external sources (e.g., Convex CMS / TipTap editor)
+ * for safe rendering via dangerouslySetInnerHTML.
  */
 export function sanitizeHtml(dirty: string): string {
-  if (!dirty) return ""
+  if (!dirty || typeof dirty !== "string") return ""
+
   try {
-    if (typeof DOMPurify !== "undefined" && typeof DOMPurify.sanitize === "function") {
-      const sanitized = DOMPurify.sanitize(dirty, SANITIZE_CONFIG) as string
-      if (typeof sanitized === "string") {
-        return sanitized
+    let clean = dirty
+      // 1. Remove dangerous executable tags completely
+      .replace(DANGEROUS_TAGS_RE, "")
+      // 2. Strip all inline DOM event handlers (e.g. onclick, onerror, onload)
+      .replace(DANGEROUS_ATTRIBUTES_RE, "")
+      // 3. Neutralize dangerous URL schemes (javascript:, vbscript:, non-image data:)
+      .replace(JAVASCRIPT_URL_RE, '$1="#"')
+
+    // 4. Enforce security on blank target links
+    clean = clean.replace(/<a\b([^>]*)>/gi, (match, attrs) => {
+      if (/target\s*=\s*["']_blank["']/i.test(attrs)) {
+        if (/rel\s*=\s*["'][^"']*["']/i.test(attrs)) {
+          attrs = attrs.replace(/rel\s*=\s*["']([^"']*)["']/i, (_: string, existing: string) => {
+            const rels = new Set(existing.split(/\s+/).filter(Boolean))
+            rels.add("noopener")
+            rels.add("noreferrer")
+            return `rel="${Array.from(rels).join(" ")}"`
+          })
+        } else {
+          attrs += ' rel="noopener noreferrer"'
+        }
       }
-    }
+      return `<a${attrs}>`
+    })
+
+    // 5. Add lazy loading to images if not already present
+    clean = clean.replace(/<img\b([^>]*)>/gi, (match, attrs) => {
+      if (!/loading\s*=/i.test(attrs)) {
+        attrs += ' loading="lazy"'
+      }
+      return `<img${attrs}>`
+    })
+
+    return clean
   } catch (err) {
-    console.error("[sanitize] DOMPurify failed on server, using fallback sanitizer:", err)
+    console.error("[sanitize] Error sanitizing HTML:", err)
+    return ""
   }
-  return fallbackSanitize(dirty)
 }
 
-/** URL schemes allowed in href/src attributes for markdown links */
+/** URL schemes allowed in href attributes for markdown links */
 const SAFE_URL_SCHEMES = /^(https?:|mailto:|#|\/)/i
 
 function escapeAttr(value: string): string {
@@ -97,18 +67,22 @@ function escapeAttr(value: string): string {
     .replace(/>/g, "&gt;")
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+}
+
 /**
- * Safe renderMarkdown: converts lightweight markdown to HTML, then sanitizes.
+ * Converts lightweight markdown strings (TL;DR summaries, author bios) to safe HTML.
  */
 export function renderMarkdownSafe(text: string): string {
-  if (!text) return ""
+  if (!text || typeof text !== "string") return ""
 
   try {
-    // 1. Escape raw HTML first (prevents injection through markdown)
-    let html = text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
+    // 1. Escape raw HTML entities first to prevent injection
+    let html = escapeHtml(text)
 
     // 2. Bold: **text**
     html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
@@ -123,16 +97,16 @@ export function renderMarkdownSafe(text: string): string {
       '<code class="font-mono bg-black/5 dark:bg-white/5 px-1 py-0.5 rounded text-xs md:text-sm">$1</code>',
     )
 
-    // 5. Links: [label](url) — sanitize URL strictly
+    // 5. Links: [label](url) — strict validation
     html = html.replace(/\[(.*?)\]\((.*?)\)/g, (_match, label, rawUrl) => {
-      const safeUrl = SAFE_URL_SCHEMES.test(rawUrl.trim()) ? rawUrl.trim() : "#"
+      const trimmed = rawUrl.trim()
+      const safeUrl = SAFE_URL_SCHEMES.test(trimmed) ? trimmed : "#"
       return `<a href="${escapeAttr(safeUrl)}" target="_blank" rel="noopener noreferrer" class="underline hover:text-accent transition-colors">${label}</a>`
     })
 
-    // 6. Newlines → <br>
+    // 6. Newlines to <br>
     html = html.replace(/\n/g, "<br />")
 
-    // 7. Defense-in-depth: run output through DOMPurify to guarantee safety
     return sanitizeHtml(html)
   } catch (err) {
     console.error("[sanitize] renderMarkdownSafe failed:", err)

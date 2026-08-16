@@ -37,10 +37,13 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
         isClosing ? "animate-spring-slide-down" : "animate-spring-slide-up"
       }`}
     >
-      <div className="bg-white/95 dark:bg-zinc-950/95 border-shadow rounded-xl p-5 backdrop-blur-md cursor-default">
-        <div className="flex items-center gap-1.5 mb-3">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-accent">
+      <div className="bg-white/95 dark:bg-zinc-950/95 border-shadow rounded-xl p-5 backdrop-blur-md cursor-default border border-black/5 dark:border-white/10 shadow-2xl">
+        <div className="flex items-center gap-2.5 mb-3">
+          <span className="relative flex h-2 w-2 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black/40 dark:bg-white/40 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-black dark:bg-white" />
+          </span>
+          <span className="text-xs sm:text-[13px] font-normal text-black dark:text-white">
             TL;DR Summary
           </span>
         </div>

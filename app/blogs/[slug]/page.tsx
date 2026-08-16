@@ -1,9 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
 import TldrPopup from "@/components/tldr-popup"
+import { BlogContentRenderer } from "@/components/blog-content-renderer"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
 import { CONVEX_API_URL } from "@/lib/utils"
 import { notFound } from "next/navigation"
@@ -22,8 +23,6 @@ interface PageProps {
 }
 
 // ─── Slug validation ──────────────────────────────────────────────────────────
-// Allow alphanumeric characters, hyphens, underscores, and dots in slugs (up to 300 chars).
-// This prevents path traversal and injection attacks via the URL parameter while supporting modern slugs.
 const SAFE_SLUG_RE = /^[a-zA-Z0-9_.-]{1,300}$/
 
 function isValidSlug(slug: string): boolean {
@@ -61,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   let slug = ""
   try {
     const p = await params
-    slug = p.slug
+    slug = p?.slug || ""
   } catch {
     return { title: "Article Not Found" }
   }
@@ -91,8 +90,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         },
       }
     }
-  } catch {
-    // Swallow — return default below
+  } catch (err) {
+    console.error("[blog/metadata] Error fetching post metadata:", err)
   }
   return {
     title: "Article Not Found",
@@ -103,37 +102,35 @@ export default async function BlogPostPage({ params }: PageProps) {
   let slug = ""
   try {
     const p = await params
-    slug = p.slug
+    slug = p?.slug || ""
   } catch {
     notFound()
   }
-
-  let post: BlogPost | null = null
-  let error = false
 
   // ── Validate slug strictly before touching the network ─────────────────────
   if (!isValidSlug(slug)) {
     notFound()
   }
 
+  let post: BlogPost | null = null
+
   try {
     const res = await fetch(`${API_BASE}/api/post?slug=${encodeURIComponent(slug)}`, {
       next: { revalidate: 60 },
     })
 
-    if (!res.ok) {
-      error = true
-    } else {
+    if (res.ok) {
       const data = await res.json()
       if (data && !data.error && data.title) {
         post = data
-      } else {
-        error = true
       }
     }
   } catch (err) {
     console.error("[blog/page] Failed to fetch post:", err)
-    error = true
+  }
+
+  if (!post) {
+    notFound()
   }
 
   const formatDate = (dateStr: string) => {
@@ -141,7 +138,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       const date = new Date(dateStr)
       if (isNaN(date.getTime())) return ""
       const day = String(date.getDate()).padStart(2, "0")
-      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
       const month = months[date.getMonth()]
       const year = date.getFullYear()
       return `${day}.${month}.${year}`
@@ -151,10 +148,6 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const currentYear = new Date().getFullYear()
-
-  if (error || !post) {
-    notFound()
-  }
 
   // ── Sanitize ALL content from the external API before rendering ─────────────
   let safeContentHtml = ""
@@ -168,8 +161,6 @@ export default async function BlogPostPage({ params }: PageProps) {
     safeTldrHtml = post.tldr ?? ""
   }
 
-  // Sanitize scalar fields that render into JSX (React auto-escapes these, but
-  // be explicit for clarity and defence-in-depth)
   const safeTitle = String(post.title ?? "").slice(0, 300)
   const safeReadingTime = Number.isFinite(post.readingTime) ? Math.max(1, Math.min(999, post.readingTime)) : 0
   const safeTags = Array.isArray(post.tags)
@@ -179,13 +170,20 @@ export default async function BlogPostPage({ params }: PageProps) {
         .slice(0, 20)
     : []
 
+  // Wrap tables in responsive scroll wrapper if not already wrapped
+  const processBlogHtml = (html: string) => {
+    if (!html) return ""
+    const unwrapped = html.replace(/<div class="table-wrapper">\s*(<table[\s\S]*?<\/table>)\s*<\/div>/gi, "$1")
+    return unwrapped.replace(/(<table[\s\S]*?<\/table>)/gi, '<div class="table-wrapper">$1</div>')
+  }
+
   return (
     <main className="relative min-h-screen">
-      <div className="section px-6 md:px-20 pt-10 md:pt-20 pb-20 max-w-4xl mx-auto w-full">
+      <div className="section px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-16 max-w-4xl mx-auto w-full">
         
         {/* Breadcrumb Header */}
         <TextWithBlur>
-          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-10 select-none flex-wrap">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-5 sm:mb-7 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
               <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
                 <Image
@@ -209,25 +207,29 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Title */}
         <TextWithBlur delay={50}>
-          <h1 className="text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-6 leading-tight max-w-3xl font-medium">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-serif italic text-black dark:text-white mb-5 leading-[1.18] max-w-3xl font-medium break-words">
             {safeTitle}
           </h1>
         </TextWithBlur>
 
         {/* Article Header info */}
         <TextWithBlur delay={50}>
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm text-black/40 dark:text-white/40 mb-3">
             <span>Essay</span>
             <span className="select-none text-black/20 dark:text-white/20">/</span>
-            <span className="font-mono tabular-nums">{formatDate(post.createdAt)}</span>
-            <span className="select-none text-black/20 dark:text-white/20">/</span>
-            {safeReadingTime > 0 && <span className="font-mono tabular-nums">{safeReadingTime} min read</span>}
+            <span className="tabular-nums">{formatDate(post.createdAt)}</span>
+            {safeReadingTime > 0 && (
+              <>
+                <span className="select-none text-black/20 dark:text-white/20">/</span>
+                <span className="tabular-nums">{safeReadingTime} min read</span>
+              </>
+            )}
           </div>
         </TextWithBlur>
 
         {/* Separator line */}
         <TextWithBlur delay={80}>
-          <div className="border-b border-black/5 dark:border-white/5 mb-10 pb-2 flex justify-between items-center max-w-3xl">
+          <div className="border-b border-black/5 dark:border-white/5 mb-8 sm:mb-10 pb-2 flex justify-between items-center max-w-3xl">
             {safeTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {safeTags.map((tag) => (
@@ -237,7 +239,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 ))}
               </div>
             )}
-            {/* External link to blogs.tirup.in — slug is already validated above */}
+            {/* External link to blogs.tirup.in */}
             <a
               href={`https://blogs.tirup.in/${encodeURIComponent(slug)}`}
               target="_blank"
@@ -253,7 +255,15 @@ export default async function BlogPostPage({ params }: PageProps) {
         {safeTldrHtml && !safeContentHtml.includes("tldr-box") && (
           <TextWithBlur delay={90}>
             <div className="tldr-box max-w-3xl mb-8 block md:hidden">
-              <span className="tldr-label">TL;DR</span>
+              <div className="tldr-header flex items-center gap-2.5 mb-2">
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black/40 dark:bg-white/40 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-black dark:bg-white" />
+                </span>
+                <span className="tldr-label text-xs sm:text-[13px] font-normal text-black dark:text-white">
+                  TL;DR Summary
+                </span>
+              </div>
               <div
                 className="text-base md:text-lg font-light leading-relaxed text-black/75 dark:text-white/75"
                 dangerouslySetInnerHTML={{ __html: safeTldrHtml }}
@@ -262,11 +272,9 @@ export default async function BlogPostPage({ params }: PageProps) {
           </TextWithBlur>
         )}
 
-        {/* Article Content — sanitized HTML from external API */}
+        {/* Article Content — sanitized and enhanced with copy buttons */}
         <TextWithBlur delay={120}>
-          <div className="blog-content text-black/80 dark:text-white/85 max-w-3xl mb-16">
-            <div dangerouslySetInnerHTML={{ __html: safeContentHtml }} />
-          </div>
+          <BlogContentRenderer html={processBlogHtml(safeContentHtml)} />
         </TextWithBlur>
 
         {/* Footer */}
