@@ -151,9 +151,11 @@ p {
 
 @keyframes revealInMobile {
   from {
+    filter: blur(1px);
     transform: translate(-5px, -4px);
   }
   to {
+    filter: blur(0);
     transform: translate(0px, 0px);
   }
 }
@@ -168,6 +170,7 @@ p {
 @media (max-width: 767px) {
   .reveal-in {
     animation-name: revealInMobile;
+    animation-duration: 0.4s;
   }
 }
 
