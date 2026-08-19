@@ -4,6 +4,7 @@ import { Inter, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
+import PageTransition from "@/components/page-transition"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
 
@@ -244,7 +245,7 @@ export default function RootLayout({
         />
         <GoogleTagManagerNoscript />
 
-        {children}
+        <PageTransition>{children}</PageTransition>
         <Analytics />
         <SpeedInsights />
       </body>
