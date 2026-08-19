@@ -154,16 +154,34 @@ p {
   animation-delay: var(--reveal-delay, 0ms);
 }
 
-/* Mobile gets a stable first render; the desktop reveal is intentionally not
-   forced onto a smaller viewport where it makes the layout feel unsettled. */
+@keyframes mobileRouteReveal {
+  from {
+    opacity: 0.94;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile uses one composed page transition instead of animating every block. */
 @media (max-width: 767px) {
   .reveal-in {
     animation: none;
+  }
+
+  .route-transition {
+    animation: mobileRouteReveal 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal-in {
+    animation: none;
+  }
+
+  .route-transition {
     animation: none;
   }
 }
