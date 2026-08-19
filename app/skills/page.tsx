@@ -5,6 +5,8 @@ import SkillsSection from "@/components/skills-section"
 export const metadata: Metadata = {
   title: "Skills",
   description: "View the technical skills and core stack utilized by Tirup Mehta across frontend, backend, and security development.",
+  alternates: { canonical: "/skills" },
+  openGraph: { url: "/skills" },
 }
 
 export default function SkillsPage() {
@@ -16,6 +18,7 @@ export default function SkillsPage() {
 
       {/* Skills Section */}
       <section className="section pb-20 max-w-4xl mx-auto w-full px-6 md:px-20">
+        <h1 className="sr-only">Technical Skills</h1>
         <SkillsSection />
       </section>
 

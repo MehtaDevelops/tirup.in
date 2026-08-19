@@ -58,13 +58,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : undefined
 
   if (project) {
+    const canonicalUrl = `/projects/${normalizedSlug}`
     return {
       title: project.title,
       description: project.description,
+      alternates: { canonical: canonicalUrl },
       openGraph: {
         title: `${project.title} | Tirup Mehta`,
         description: project.description,
         type: "website",
+        url: canonicalUrl,
         images: ["/profile.png"],
       },
     }

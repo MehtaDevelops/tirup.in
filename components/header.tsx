@@ -38,6 +38,7 @@ export default function Header() {
   }
 
   const isActive = (path: string) => pathname === path
+  const isHome = pathname === "/"
 
   return (
     <>
@@ -104,9 +105,15 @@ export default function Header() {
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white leading-none">
-                Tirup Mehta
-              </h1>
+              {isHome ? (
+                <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white leading-none">
+                  Tirup Mehta
+                </h1>
+              ) : (
+                <p className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white leading-none">
+                  Tirup Mehta
+                </p>
+              )}
               <a 
                 href="/Resume_Tirup_Mehta.pdf" 
                 download

@@ -10,6 +10,8 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: "Writing",
   description: "Thoughts on development, design, and security by Tirup Mehta.",
+  alternates: { canonical: "/blogs" },
+  openGraph: { url: "/blogs" },
 }
 
 interface BlogPost {
@@ -67,7 +69,7 @@ export default async function BlogsPage() {
 
       {/* Blogs list Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <h2 className="sr-only">Articles & Writing</h2>
+        <h1 className="sr-only">Articles and Writing</h1>
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>

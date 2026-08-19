@@ -79,13 +79,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const data = await res.json()
     if (data && !data.error && data.title) {
+      const title = String(data.title).slice(0, 200)
+      const description = String(data.tldr ?? "").slice(0, 300)
+      const originalUrl = `https://blogs.tirup.in/${encodeURIComponent(slug)}`
       return {
-        title: `${String(data.title).slice(0, 200)} | Tirup Mehta`,
-        description: String(data.tldr ?? "").slice(0, 300),
+        title,
+        description,
+        alternates: { canonical: originalUrl },
+        robots: { index: false, follow: true },
         openGraph: {
-          title: `${String(data.title).slice(0, 200)} | Tirup Mehta`,
-          description: String(data.tldr ?? "").slice(0, 300),
+          title: `${title} | Tirup Mehta`,
+          description,
           type: "article",
+          url: originalUrl,
+          images: ["/profile.png"],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description,
           images: ["/profile.png"],
         },
       }

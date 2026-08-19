@@ -7,6 +7,8 @@ import { projectsList as projects } from "@/lib/projects-data"
 export const metadata: Metadata = {
   title: "Work",
   description: "Explore projects, developer tools, and security libraries built by Tirup Mehta.",
+  alternates: { canonical: "/work" },
+  openGraph: { url: "/work" },
 }
 
 export default function WorkPage() {
@@ -18,7 +20,7 @@ export default function WorkPage() {
 
       {/* Projects Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <h2 className="sr-only">Selected Work & Projects</h2>
+        <h1 className="sr-only">Selected Work & Projects</h1>
         <div className="flex flex-col">
           {projects.map((project, index) => {
             return (

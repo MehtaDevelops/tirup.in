@@ -4,7 +4,7 @@ A modern, responsive portfolio website built with cutting-edge web technologies.
 
 ## 🚀 Tech Stack
 
-- **Framework**: [Next.js 15](https://nextjs.org/) - React framework for production
+- **Framework**: [Next.js 16](https://nextjs.org/) - React framework for production
 - **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 - **UI Components**: [Radix UI](https://www.radix-ui.com/) - Unstyled, accessible component library
