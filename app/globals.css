@@ -149,28 +149,16 @@ p {
   }
 }
 
-@keyframes revealInMobile {
-  from {
-    filter: blur(1px);
-    transform: translate(-5px, -4px);
-  }
-  to {
-    filter: blur(0);
-    transform: translate(0px, 0px);
-  }
-}
-
 .reveal-in {
   animation: revealIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--reveal-delay, 0ms);
 }
 
-/* Keep the same movement on small screens without asking mobile GPUs to blur
-   several independent text layers simultaneously. */
+/* Mobile gets a stable first render; the desktop reveal is intentionally not
+   forced onto a smaller viewport where it makes the layout feel unsettled. */
 @media (max-width: 767px) {
   .reveal-in {
-    animation-name: revealInMobile;
-    animation-duration: 0.4s;
+    animation: none;
   }
 }
 
