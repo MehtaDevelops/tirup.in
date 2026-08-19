@@ -91,7 +91,6 @@ export default function Header() {
                   width={48}
                   height={48}
                   className="w-full h-full object-contain dark:hidden"
-                  priority
                 />
                 {/* Dark theme: White hand emoji */}
                 <Image
@@ -100,7 +99,6 @@ export default function Header() {
                   width={48}
                   height={48}
                   className="w-full h-full object-contain hidden dark:block"
-                  priority
                 />
               </div>
             </div>
