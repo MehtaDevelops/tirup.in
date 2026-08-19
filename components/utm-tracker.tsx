@@ -1,16 +1,16 @@
 "use client"
 
-import { useEffect, Suspense } from "react"
-import { useSearchParams, usePathname } from "next/navigation"
+import { useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { captureUtmParams, trackEvent, cleanUrlFromAddressBar } from "@/lib/gtam"
 
-function UtmTrackerInner() {
-  const searchParams = useSearchParams()
+export default function UtmTracker() {
   const pathname = usePathname()
 
   useEffect(() => {
-    const searchString = searchParams?.toString() ? `?${searchParams.toString()}` : ""
-    captureUtmParams(searchString)
+    // Reading the URL after hydration avoids turning the entire root into a
+    // client-rendered bailout just to capture optional campaign parameters.
+    captureUtmParams(window.location.search)
     
     // Log page view event with GA4
     trackEvent("page_view", {
@@ -20,15 +20,7 @@ function UtmTrackerInner() {
 
     // Clean tracking query params from browser address bar
     cleanUrlFromAddressBar()
-  }, [searchParams, pathname])
+  }, [pathname])
 
   return null
-}
-
-export default function UtmTracker() {
-  return (
-    <Suspense fallback={null}>
-      <UtmTrackerInner />
-    </Suspense>
-  )
 }

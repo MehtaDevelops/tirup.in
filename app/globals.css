@@ -149,9 +149,32 @@ p {
   }
 }
 
+@keyframes revealInMobile {
+  from {
+    transform: translate(-5px, -4px);
+  }
+  to {
+    transform: translate(0px, 0px);
+  }
+}
+
 .reveal-in {
   animation: revealIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* Keep the same movement on small screens without asking mobile GPUs to blur
+   several independent text layers simultaneously. */
+@media (max-width: 767px) {
+  .reveal-in {
+    animation-name: revealInMobile;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-in {
+    animation: none;
+  }
 }
 
 /* Contextual ArrowUpRight micro-interaction class */

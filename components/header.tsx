@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight, Download, X } from "lucide-react"
@@ -10,8 +10,9 @@ import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 export default function Header() {
   const pathname = usePathname()
-  const router = useRouter()
-  const [showPopup, setShowPopup] = useState(false)
+  // Render the banner in the server HTML as well. Starting hidden and adding it
+  // after hydration shifts the entire page down on a first visit.
+  const [showPopup, setShowPopup] = useState(true)
 
   useEffect(() => {
     // Check localStorage for popup dismissal
@@ -20,17 +21,7 @@ export default function Header() {
       setShowPopup(true)
     }
 
-    // Auto-refresh site content silently when network reconnects
-    const handleOnline = () => {
-      try {
-        router.refresh()
-      } catch (err) {
-        console.error("Auto-refresh on reconnect failed:", err)
-      }
-    }
-    window.addEventListener("online", handleOnline)
-    return () => window.removeEventListener("online", handleOnline)
-  }, [router])
+  }, [])
 
   const handleDismissPopup = () => {
     setShowPopup(false)
