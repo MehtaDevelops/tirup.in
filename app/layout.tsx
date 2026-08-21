@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | Tirup Mehta"
   },
   description:
-    "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
+    "Official portfolio of Tirup Mehta, a software engineering student building secure, high-performance web applications with React, Next.js, and TypeScript.",
   keywords: [
     "Tirup Mehta",
     "Tirup",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://tirup.in",
     title: "Tirup Mehta",
-    description: "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
+    description: "Official portfolio of Tirup Mehta, a software engineering student building secure, high-performance web applications with React, Next.js, and TypeScript.",
     siteName: "Tirup Mehta Portfolio",
     images: [
       {
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Tirup Mehta",
-    description: "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
+    description: "Official portfolio of Tirup Mehta, a software engineering student building secure, high-performance web applications with React, Next.js, and TypeScript.",
     creator: "@TirupMehta",
     images: ["/profile.png"]
   },
@@ -87,7 +87,7 @@ const profilePageSchema = {
   "@id": "https://tirup.in/#profilepage",
   "url": "https://tirup.in",
   "name": "Tirup Mehta - Profile & Portfolio",
-  "description": "Official profile and developer portfolio of Tirup Mehta, software engineer and security researcher.",
+  "description": "Official profile and developer portfolio of Tirup Mehta, a software engineering student building secure, high-performance web applications.",
   "mainEntity": {
     "@id": "https://tirup.in/#person"
   },
@@ -104,8 +104,8 @@ const personSchema = {
   "name": "Tirup Mehta",
   "url": "https://tirup.in",
   "image": "https://tirup.in/profile.png",
-  "description": "Software engineer specializing in frontend architectures, systems security, and cryptography.",
-  "jobTitle": "Software Engineer",
+  "description": "Software engineering student building secure systems and high-performance web applications with React, Next.js, and TypeScript.",
+  "jobTitle": "Student Software Engineer",
   "knowsAbout": [
     "Software Engineering",
     "Computer Science",
@@ -128,7 +128,11 @@ const personSchema = {
     "@type": "Country",
     "name": "India"
   },
+  "subjectOf": {
+    "@id": "https://blogs.tirup.in/#blog"
+  },
   "sameAs": [
+    "https://blogs.tirup.in",
     "https://github.com/TirupMehta",
     "https://www.linkedin.com/in/TirupMehta",
     "https://peerlist.io/tirupmehta",
@@ -149,11 +153,30 @@ const websiteSchema = {
   "@id": "https://tirup.in/#website",
   "name": "Tirup Mehta Portfolio",
   "url": "https://tirup.in",
-  "description": "Official portfolio of Tirup Mehta, a software engineer specializing in frontend architectures, systems security, and cryptography.",
+  "description": "Official portfolio of Tirup Mehta, a software engineering student building secure, high-performance web applications with React, Next.js, and TypeScript.",
+  "about": {
+    "@id": "https://tirup.in/#person"
+  },
+  "significantLink": "https://blogs.tirup.in",
   "publisher": {
     "@id": "https://tirup.in/#person"
   },
   "author": {
+    "@id": "https://tirup.in/#person"
+  }
+}
+
+const writingSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "@id": "https://blogs.tirup.in/#blog",
+  "url": "https://blogs.tirup.in",
+  "name": "Tirup Mehta's Engineering Blog",
+  "description": "Writing by Tirup Mehta on software engineering, web security, performance, and interface design.",
+  "author": {
+    "@id": "https://tirup.in/#person"
+  },
+  "publisher": {
     "@id": "https://tirup.in/#person"
   }
 }
@@ -215,6 +238,7 @@ const jsonLdGraph = {
     profilePageSchema,
     personSchema,
     websiteSchema,
+    writingSchema,
     traceGuardSchema,
     gleanBoxSchema
   ]
