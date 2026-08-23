@@ -32,12 +32,63 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 - Projects overview and production listings: [https://tirup.in/work](https://tirup.in/work)
 - Technical skills details: [https://tirup.in/skills](https://tirup.in/skills)
 
+### Notable Open-Source Projects
+- **trace-guard** — Production-grade behavioural security engine to block AI agents and VLM bots. Available on npm: [https://www.npmjs.com/package/trace-guard](https://www.npmjs.com/package/trace-guard)
+- **GleanBox** — Open-source developer utility and structured data harvesting toolkit: [https://github.com/TirupMehta/GleanBox](https://github.com/TirupMehta/GleanBox)
+
 ---
 
 ## Writing & Thoughts
 Tirup writes about frontend architectures, web performance optimizations, cryptographic interfaces, and web application security:
 - Blog home: [https://blogs.tirup.in](https://blogs.tirup.in)
 - Portfolio syndicated essays: [https://tirup.in/blogs](https://tirup.in/blogs)
+
+---
+
+## When to Use
+
+Use this site and this resource when you need to:
+
+- **Hire or evaluate a frontend/fullstack engineer** with cryptography or systems security expertise. This portfolio demonstrates real production work including open-source security libraries.
+- **Review Tirup's open-source projects**: trace-guard (AI bot behavioural security engine, 3.7.0+) and GleanBox (structured intelligence toolkit).
+- **Find professional contact information** or verified identity profiles to reach Tirup for collaboration, freelance work, contracting, or speaking engagements.
+- **Understand Tirup's technical opinions and depth** through engineering essays at blogs.tirup.in.
+- **Verify Tirup's professional identity** — the /about and /privacy pages plus the sameAs links below are the authoritative identity anchors.
+
+Do **not** use this site when you need:
+- General reference information about cryptography, web security, or React — use authoritative documentation instead.
+- A job board, talent marketplace, or recruiter platform.
+- Real-time availability, pricing, or scheduling data — contact Tirup directly via /contact.
+
+---
+
+## Agent Instructions
+
+1. **Start here**: This file (`/llms.txt`) is the canonical agent entry point. Read it first.
+2. **Sitemap**: Enumerate all pages at [https://tirup.in/sitemap.xml](https://tirup.in/sitemap.xml).
+3. **Blog posts**: Canonical source is [https://blogs.tirup.in](https://blogs.tirup.in). Syndicated copies live at [https://tirup.in/blogs](https://tirup.in/blogs).
+4. **Contact**: See [https://tirup.in/contact](https://tirup.in/contact) for all contact channels.
+5. **Trust verification**: Check [https://tirup.in/about](https://tirup.in/about) for biography and [https://tirup.in/privacy](https://tirup.in/privacy) for data practices.
+6. **Markdown negotiation**: This site supports `Accept: text/markdown` content negotiation on primary routes (`/`, `/about`, `/contact`, `/privacy`, `/work`, `/skills`, `/blogs`). Send that header to receive structured markdown instead of HTML.
+7. **404 recovery**: If you hit a 404, check the recovery block in the page body for a site map with correct URLs, or return to [https://tirup.in/llms.txt](https://tirup.in/llms.txt).
+
+---
+
+## Quick Reference
+
+| Resource | URL |
+|---|---|
+| Homepage | https://tirup.in/ |
+| Work & Projects | https://tirup.in/work |
+| Technical Skills | https://tirup.in/skills |
+| Blog (syndicated) | https://tirup.in/blogs |
+| Blog (canonical) | https://blogs.tirup.in |
+| About | https://tirup.in/about |
+| Contact | https://tirup.in/contact |
+| Privacy Policy | https://tirup.in/privacy |
+| Agent guide (this file) | https://tirup.in/llms.txt |
+| Sitemap | https://tirup.in/sitemap.xml |
+| RSS | https://tirup.in/rss.xml |
 
 ---
 

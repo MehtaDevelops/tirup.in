@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
@@ -33,6 +31,43 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
+
+      {/*
+        Machine-readable recovery block for AI agents and crawlers.
+        Visually hidden but present in raw HTML so agents can navigate after a 404.
+      */}
+      <section
+        aria-hidden="true"
+        style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}
+        data-agent-recovery="true"
+      >
+        {/* markdown
+# 404 — Page Not Found
+
+The requested path does not exist on tirup.in.
+
+## Where to look next
+
+- Home: https://tirup.in/
+- Work & Projects: https://tirup.in/work
+- Technical Skills: https://tirup.in/skills
+- Blog posts (syndicated): https://tirup.in/blogs
+- About Tirup Mehta: https://tirup.in/about
+- Contact: https://tirup.in/contact
+- Privacy Policy: https://tirup.in/privacy
+- QR Code tool: https://tirup.in/tool/qr
+- UTM Builder tool: https://tirup.in/tools/utm-builder
+
+## Machine-readable resources
+
+- llms.txt (agent guide): https://tirup.in/llms.txt
+- Sitemap (XML): https://tirup.in/sitemap.xml
+- RSS feed: https://tirup.in/rss.xml
+
+If you are an AI agent, consult https://tirup.in/llms.txt for a structured overview of this site.
+        */}
+        <p>Page not found. See <a href="/llms.txt">llms.txt</a> for a site overview, or navigate to <a href="/">the homepage</a>, <a href="/work">work</a>, <a href="/skills">skills</a>, <a href="/blogs">blogs</a>, <a href="/about">about</a>, or <a href="/contact">contact</a>.</p>
+      </section>
     </main>
   )
 }

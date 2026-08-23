@@ -20,6 +20,61 @@ export default function Home() {
     <main className="relative min-h-screen">
       <Header />
 
+      {/*
+        SSR content block for AI crawlers and agents that do not execute JavaScript.
+        <noscript> is hidden from JS-enabled browsers but present in raw HTML.
+      */}
+      <noscript>
+        <article style={{ maxWidth: "48rem", margin: "0 auto", padding: "2rem 1.5rem", fontFamily: "sans-serif", lineHeight: 1.7, color: "#111" }}>
+          <h1>Tirup Mehta — Software Engineer</h1>
+          <p>
+            Official portfolio of Tirup Mehta, a software engineer based in Gujarat, India, specialising in secure frontend architectures, systems security, and cryptography.
+          </p>
+
+          <h2>About</h2>
+          <p>
+            I build interfaces where visual clarity meets system performance. Working at the intersection of design and front-end engineering, I focus on creating fast, robust web applications that feel natural to use.
+          </p>
+          <p>
+            Driven by a strong curiosity for cryptography and systems security, I design software with data safety built into its foundation, bridging the gap between secure backend architecture and polished visual flows.
+          </p>
+          <p>
+            I write about interface design and web security on my engineering blog at blogs.tirup.in, share active experiments on GitHub, and am always open to fresh ideas.
+          </p>
+
+          <h2>Technical Stack</h2>
+          <ul>
+            <li><strong>Languages:</strong> TypeScript, JavaScript</li>
+            <li><strong>Frameworks:</strong> React, Next.js</li>
+            <li><strong>Styling &amp; UI:</strong> Tailwind CSS, Motion, shadcn/ui, Base UI</li>
+            <li><strong>Backend &amp; Databases:</strong> Convex, Supabase, Redis, MongoDB</li>
+            <li><strong>Security focus:</strong> Secure key exchange, CSP, cryptographic protocols, data protection</li>
+          </ul>
+
+          <h2>Navigation</h2>
+          <ul>
+            <li><a href="/work">Work &amp; Projects</a></li>
+            <li><a href="/skills">Technical Skills</a></li>
+            <li><a href="/blogs">Blog Posts</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+
+          <h2>Connect</h2>
+          <ul>
+            <li><a href="https://github.com/TirupMehta" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://www.linkedin.com/in/TirupMehta" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a href="https://blogs.tirup.in" rel="noopener noreferrer">Engineering Blog</a></li>
+            <li><a href="https://peerlist.io/tirupmehta" rel="noopener noreferrer">Peerlist</a></li>
+            <li><a href="https://x.com/TirupMehta" rel="noopener noreferrer">X (Twitter)</a></li>
+          </ul>
+
+          <p>
+            Agent resources: <a href="/llms.txt">llms.txt</a> — <a href="/sitemap.xml">sitemap.xml</a>
+          </p>
+        </article>
+      </noscript>
+
       {/* Intro/Hero Section */}
       <section className="section px-6 md:px-20 pb-20 max-w-4xl mx-auto w-full">
         {/* Story Description Paragraphs */}
@@ -38,7 +93,7 @@ export default function Home() {
 
           <TextWithBlur delay={250}>
             <p>
-              I write about interface design and web security on <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">my engineering blog</a>, share active experiments on <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">GitHub</a>, and am always open to fresh ideas. Let's connect.
+              I write about interface design and web security on <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">my engineering blog</a>, share active experiments on <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">GitHub</a>, and am always open to fresh ideas. Let&apos;s connect.
             </p>
           </TextWithBlur>
         </div>
