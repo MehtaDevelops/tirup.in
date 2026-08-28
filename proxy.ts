@@ -53,7 +53,7 @@ const MAX_URL_LENGTH = 2048
 
 // ─── Markdown content negotiation ─────────────────────────────────────────────
 // Routes that support Accept: text/markdown responses.
-const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/blogs"])
+const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/blogs", "/tools"])
 
 // Inline content for each markdown route.
 // This is kept inline because proxy.ts runs at the edge where filesystem access
@@ -217,6 +217,20 @@ Tirup writes about frontend architectures, web performance, cryptographic interf
 
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
+`,
+  "/tools": `# Developer Tools & Utilities — Tirup Mehta
+
+Full page: https://tirup.in/tools
+
+Privacy-first, client-side developer utilities and marketing attribution tools built by Tirup Mehta.
+
+## Available Tools
+1. **QR Studio** (https://tirup.in/tool/qr): Vector QR code, Wi-Fi credentials, vCard, and print-ready SVG generator. 100% offline & client-side.
+2. **UTM Builder** (https://tirup.in/tools/utm-builder): GA4 campaign URL generator and attribution studio with live channel grouping diagnostics and 12-channel bulk exports.
+
+## Agent Resources
+- Site guide: https://tirup.in/llms.txt
+- Sitemap: https://tirup.in/sitemap.xml
 `,
 }
 

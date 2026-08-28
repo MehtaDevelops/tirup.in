@@ -1,5 +1,7 @@
-Contact: mailto:security@tirup.in
-Expires: 2027-12-31T00:00:00.000Z
+Contact: https://tirup.in/contact
+Expires: 2027-12-31T23:59:59.000Z
 Preferred-Languages: en
 Canonical: https://tirup.in/.well-known/security.txt
-Policy: https://tirup.in/security-policy
+Policy: https://tirup.in/contact
+Hiring: https://tirup.in/contact
+

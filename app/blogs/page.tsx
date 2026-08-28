@@ -96,7 +96,7 @@ export default async function BlogsPage() {
                       </div>
                       
                       {/* Right: Date */}
-                      <span className="tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0 group-hover:-translate-x-1.5 transition-transform duration-300 ease-out whitespace-nowrap">
+                      <span className="tabular-nums text-[10px] md:text-xs text-black/45 dark:text-white/45 select-none shrink-0 group-hover:-translate-x-1.5 transition-transform duration-300 ease-out whitespace-nowrap">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>

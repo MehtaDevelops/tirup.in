@@ -77,7 +77,7 @@ export default function ContactPage() {
                   className="flex items-baseline gap-4 md:gap-6"
                 >
                   {/* Index */}
-                  <span className="font-mono tabular-nums text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0">
+                  <span className="font-mono tabular-nums text-xs md:text-sm text-black/45 dark:text-white/45 select-none w-6 shrink-0">
                     {String(index + 1).padStart(2, "0")}
                   </span>
 
@@ -87,13 +87,13 @@ export default function ContactPage() {
                       {ch.name}
                     </span>
                     <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
-                    <span className="text-black/40 dark:text-white/40 font-light group-hover:text-black/70 dark:group-hover:text-white/70 transition-colors duration-300 text-sm">
+                    <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/80 dark:group-hover:text-white/80 transition-colors duration-300 text-sm">
                       {ch.handle}
                     </span>
                     {ch.note && (
                       <>
                         <span className="text-black/20 dark:text-white/20 select-none font-extralight hidden sm:inline">/</span>
-                        <span className="text-black/35 dark:text-white/35 font-light text-sm hidden sm:inline">
+                        <span className="text-black/45 dark:text-white/45 font-light text-sm hidden sm:inline">
                           {ch.note}
                         </span>
                       </>

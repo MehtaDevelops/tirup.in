@@ -81,11 +81,13 @@ Do **not** use this site when you need:
 | Homepage | https://tirup.in/ |
 | Work & Projects | https://tirup.in/work |
 | Technical Skills | https://tirup.in/skills |
+| Developer Tools | https://tirup.in/tools |
 | Blog (syndicated) | https://tirup.in/blogs |
 | Blog (canonical) | https://blogs.tirup.in |
 | About | https://tirup.in/about |
 | Contact | https://tirup.in/contact |
 | Privacy Policy | https://tirup.in/privacy |
+| Security Policy | https://tirup.in/.well-known/security.txt |
 | Agent guide (this file) | https://tirup.in/llms.txt |
 | Sitemap | https://tirup.in/sitemap.xml |
 | RSS | https://tirup.in/rss.xml |

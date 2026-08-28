@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
 import TextWithBlur from "@/components/text-with-blur"
-import { ArrowLeft, ArrowUpRight } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 import { projectsData } from "@/lib/projects-data"
 import { notFound } from "next/navigation"
 
@@ -111,7 +111,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
         {/* Breadcrumb Header */}
         <TextWithBlur>
-          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-10 select-none flex-wrap">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-black/45 dark:text-white/45 mb-10 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
               <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
                 <Image
@@ -129,13 +129,13 @@ export default async function ProjectPage({ params }: PageProps) {
               Work
             </Link>
             <span className="text-black/20 dark:text-white/20 select-none">›</span>
-            <span className="truncate max-w-[200px] sm:max-w-xs font-light text-black/30 dark:text-white/30">{project.title}</span>
+            <span className="truncate max-w-[200px] sm:max-w-xs font-light text-black/45 dark:text-white/45">{project.title}</span>
           </div>
         </TextWithBlur>
 
         {/* Project label + title */}
         <TextWithBlur delay={50}>
-          <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-4">
+          <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45 mb-4">
             Project
           </p>
           <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white mb-6">
@@ -145,7 +145,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
         {/* Links row */}
         <TextWithBlur delay={80}>
-          <div className="flex gap-6 text-sm md:text-base font-light text-black/40 dark:text-white/40 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
+          <div className="flex gap-6 text-sm md:text-base font-light text-black/45 dark:text-white/45 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
             {project.liveUrl && isSafeUrl(project.liveUrl) && (
               <a
                 href={project.liveUrl}
@@ -221,8 +221,8 @@ export default async function ProjectPage({ params }: PageProps) {
             <TextWithBlur>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">01</span>
-                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Tech Stack</h2>
+                  <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">01</span>
+                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">Tech Stack</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2 flex flex-wrap gap-2">
                   {project.techStack.map((tech: string) => (
@@ -242,8 +242,8 @@ export default async function ProjectPage({ params }: PageProps) {
             <TextWithBlur>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">02</span>
-                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Core Engine</h2>
+                  <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">02</span>
+                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">Core Engine</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2">
                   <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">{project.engine}</p>
@@ -260,8 +260,8 @@ export default async function ProjectPage({ params }: PageProps) {
               <TextWithBlur key={index} delay={index * 40}>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                   <div className="col-span-1 flex items-baseline gap-2">
-                    <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">{displayIndex}</span>
-                    <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">{detail.title}</h2>
+                    <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">{displayIndex}</span>
+                    <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">{detail.title}</h2>
                   </div>
                   <div className="col-span-1 md:col-span-2">
                     <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">{detail.content}</p>
@@ -275,17 +275,17 @@ export default async function ProjectPage({ params }: PageProps) {
             <TextWithBlur>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
                 <div className="col-span-1 flex items-baseline gap-2">
-                  <span className="font-mono tabular-nums text-xs text-black/30 dark:text-white/30 select-none">
+                  <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">
                     {String((project.techStack ? 1 : 0) + (project.engine ? 1 : 0) + (project.details ? project.details.length : 0) + 1).padStart(2, "0")}
                   </span>
-                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40">Metrics</h2>
+                  <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">Metrics</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 md:gap-8">
                   {Object.entries(project.stats).map(([key, value]: [string, any]) => {
                     const isNum = isNumericMetric(String(value))
                     return (
                       <div key={key}>
-                        <h3 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-1 select-none">
+                        <h3 className="text-xs uppercase tracking-[0.2em] text-black/45 dark:text-white/45 mb-1 select-none">
                           {key.replace(/([A-Z])/g, " $1").trim()}
                         </h3>
                         <p
@@ -313,7 +313,7 @@ export default async function ProjectPage({ params }: PageProps) {
         {nextProject && (
           <TextWithBlur>
             <div className="pt-16 pb-4">
-              <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-8">
+              <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45 mb-8">
                 Next
               </h2>
               <Link
@@ -321,13 +321,13 @@ export default async function ProjectPage({ params }: PageProps) {
                 className="group block py-5 border-t border-black/10 dark:border-white/10"
               >
                 <div className="flex items-baseline gap-4 md:gap-6">
-                  <span className="font-mono text-xs md:text-sm text-black/30 dark:text-white/30 select-none w-6 shrink-0 group-hover:translate-x-0.5 transition-transform duration-300 ease-out">→</span>
+                  <span className="font-mono text-xs md:text-sm text-black/45 dark:text-white/45 select-none w-6 shrink-0 group-hover:translate-x-0.5 transition-transform duration-300 ease-out">→</span>
                   <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
                     <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300">
                       {nextProject.title}
                     </span>
                     <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
-                    <span className="text-black/40 dark:text-white/40 font-light group-hover:text-black/70 dark:group-hover:text-white/70 transition-colors duration-300 text-sm">
+                    <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/80 dark:group-hover:text-white/80 transition-colors duration-300 text-sm">
                       {nextProject.description}
                     </span>
                   </div>
