@@ -16,7 +16,7 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
     
     const timer = setTimeout(() => {
       setShowTldr(true)
-    }, 2000) // Show popup after 2 seconds
+    }, 2000)
 
     return () => clearTimeout(timer)
   }, [safeTldrHtml, isDismissed])
@@ -26,37 +26,34 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
     setTimeout(() => {
       setShowTldr(false)
       setIsDismissed(true)
-    }, 350) // wait for animation duration (350ms)
+    }, 350)
   }
 
   if (!showTldr) return null
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-50 max-w-xs w-[calc(100vw-3rem)] hidden md:block select-none ${
+      className={`fixed bottom-6 right-6 z-50 max-w-[340px] w-[calc(100vw-3rem)] hidden md:block select-none ${
         isClosing ? "animate-spring-slide-down" : "animate-spring-slide-up"
       }`}
     >
-      <div className="bg-white/95 dark:bg-zinc-950/95 border-shadow rounded-xl p-5 backdrop-blur-md cursor-default border border-black/5 dark:border-white/10 shadow-2xl">
-        <div className="flex items-center gap-2.5 mb-3">
-          <span className="relative flex h-2 w-2 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black/40 dark:bg-white/40 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-black dark:bg-white" />
-          </span>
-          <span className="text-xs sm:text-[13px] font-normal text-black dark:text-white">
+      <div className="bg-white/75 dark:bg-white/[0.04] backdrop-blur-md border border-black/10 dark:border-white/10 rounded-xl p-[18px] shadow-lg">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <span className="text-[13px] font-medium text-black/80 dark:text-white/80 tracking-tight">
             TL;DR Summary
           </span>
+          <button
+            onClick={handleDismiss}
+            aria-label="Dismiss summary"
+            className="text-[13px] text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors p-1 -mr-1 cursor-pointer leading-none"
+          >
+            ✕
+          </button>
         </div>
         <div
-          className="text-xs md:text-sm font-light leading-relaxed text-black/75 dark:text-white/75 mb-1"
+          className="text-[13px] font-light leading-relaxed text-black/70 dark:text-white/70"
           dangerouslySetInnerHTML={{ __html: safeTldrHtml }}
         />
-        <button
-          onClick={handleDismiss}
-          className="w-full mt-4 py-2.5 text-xs font-medium text-center bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 rounded-lg text-black/70 dark:text-zinc-300 hover:text-black dark:hover:text-white transition-colors duration-200 cursor-pointer"
-        >
-          Dismiss Summary
-        </button>
       </div>
     </div>
   )
