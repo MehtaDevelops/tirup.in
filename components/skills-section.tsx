@@ -57,10 +57,10 @@ function TechItem({ name }: { name: string }) {
   const icon = techIcons[name] || null
   return (
     <div className="flex items-center gap-3 group cursor-default select-none">
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-zinc-500/[0.03] dark:bg-zinc-100/[0.03] border border-zinc-200 dark:border-zinc-800 transition-colors duration-300">
+      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-zinc-500/[0.03] dark:bg-zinc-100/[0.03] border border-zinc-200 dark:border-zinc-800 [transition:border-color_120ms_ease-out,background-color_120ms_ease-out] group-hover:border-zinc-300 dark:group-hover:border-zinc-700">
         {icon}
       </div>
-      <span className="font-sans text-sm md:text-base font-light text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors duration-300">
+      <span className="font-sans text-sm md:text-base font-light text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 [transition:color_80ms_ease-out]">
         {name}
       </span>
     </div>

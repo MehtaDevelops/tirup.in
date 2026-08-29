@@ -6,9 +6,11 @@
   --accent: #8a9dff;
   --black: #000000;
   --white: #ffffff;
-  --transition-slow: 0.7s cubic-bezier(0.25, 0.1, 0.25, 1);
-  --transition-medium: 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-  --transition-fast: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* Spring curve: fast start, soft land — matches Benji Taylor / Family style */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.45s var(--ease-spring);
+  --transition-medium: 0.22s var(--ease-spring);
+  --transition-fast: 0.14s var(--ease-spring);
   --bg: #ffffff;
   --fg: #000000;
   --border-color: rgba(0, 0, 0, 0.08);
@@ -137,22 +139,59 @@ p {
   100% { opacity: 0.7; transform: scale(1); }
 }
 
-/* Directional blur reveal — stays paintable so performance metrics can identify LCP. */
+/*
+  Fade-up reveal — avoids blur compositing cost and the mid-frame
+  smear that blur+translate together cause on low-dpi displays.
+  translateY(6px) is subtle enough to feel like natural settling.
+*/
 @keyframes revealIn {
   from {
-    filter: blur(2px);
-    transform: translate(-5px, -4px);
+    opacity: 0;
+    transform: translateY(6px);
   }
   to {
-    filter: blur(0px);
-    transform: translate(0px, 0px);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .reveal-in {
-  animation: revealIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: revealIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: var(--reveal-delay, 0ms);
 }
+
+/*
+  Sibling dimming — learned from benji.org.
+  When any row in a list is hovered, all *other* rows fade to 40% opacity.
+  The active row stays at full opacity. This makes the hovered item feel
+  spotlit and makes the list read like one cohesive, interactive object
+  rather than a pile of independent links.
+
+  Usage: add class "list-hover-group" to the flex container holding the rows.
+  Each direct child must be a wrapper element (div/TextWithBlur output).
+  The actual <a> or link inside each child gets the transition.
+
+  Benji's exact values: opacity 0.3, transition 0.14s
+  We use 0.35 (slightly more readable) and 140ms (same timing).
+*/
+.list-hover-group:hover > * {
+  opacity: 0.35;
+  transition: opacity 140ms ease-out;
+}
+
+.list-hover-group:hover > *:hover {
+  opacity: 1;
+}
+
+.list-hover-group > * {
+  transition: opacity 140ms ease-out;
+}
+
+/* Balance headings for better typographic rag */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+
 
 @media (max-width: 767px) {
   .reveal-in {
@@ -181,11 +220,28 @@ p {
   }
 }
 
+/*
+  Desktop: subtle cross-fade + 4px vertical settle.
+  Nothing moves laterally — the content just breathes in.
+  Duration is short (180ms) so it never feels sluggish.
+*/
 @media (min-width: 768px) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
+  ::view-transition-old(root) {
+    animation: desktopOldPage 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
   }
+  ::view-transition-new(root) {
+    animation: desktopNewPage 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+@keyframes desktopOldPage {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes desktopNewPage {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes routeOldPage {

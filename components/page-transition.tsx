@@ -29,11 +29,8 @@ export default function PageTransition({ children }: { children: React.ReactNode
         destination.pathname === window.location.pathname && destination.search === window.location.search
       ) return
 
-      // Keep desktop navigation exactly as it was; the composed transition is
-      // intentionally a mobile-only enhancement.
-      if (window.matchMedia("(min-width: 768px)").matches) return
-
       event.preventDefault()
+
       const navigate = () => flushSync(() => {
         router.push(`${destination.pathname}${destination.search}${destination.hash}`)
       })

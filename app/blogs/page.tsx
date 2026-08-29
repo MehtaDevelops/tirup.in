@@ -79,24 +79,27 @@ export default async function BlogsPage() {
             <p className="text-sm font-light text-black/40 dark:text-white/40">No articles published yet.</p>
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className="flex flex-col list-hover-group">
             {posts.map((post, index) => {
               return (
                 <TextWithBlur key={post.slug} delay={index * 35}>
                   <Link
                     href={`/blogs/${post.slug}`}
-                    className={`group block py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
+                    className={[
+                      "group block py-5 -mx-3 px-3 rounded-lg",
+                      index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
+                      "hover:bg-black/[0.025] dark:hover:bg-white/[0.025]",
+                      "[transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
+                      "active:scale-[0.99]",
+                    ].join(" ")}
                   >
                     <div className="flex justify-between items-baseline gap-4">
-                      {/* Left: Title only */}
-                      <div className="flex items-baseline gap-x-2 leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out min-w-0 flex-1">
-                        <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300 text-sm md:text-base">
-                          {post.title}
-                        </span>
-                      </div>
-                      
-                      {/* Right: Date */}
-                      <span className="tabular-nums text-[10px] md:text-xs text-black/45 dark:text-white/45 select-none shrink-0 group-hover:-translate-x-1.5 transition-transform duration-300 ease-out whitespace-nowrap">
+                      {/* Left: Title — stays put */}
+                      <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-sm md:text-base leading-relaxed min-w-0 flex-1">
+                        {post.title}
+                      </span>
+                      {/* Right: Date — stays put */}
+                      <span className="tabular-nums text-[10px] md:text-xs text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>

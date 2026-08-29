@@ -3,24 +3,144 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
-import { ArrowUpRight, Download, X } from "lucide-react"
+import { Download, X } from "lucide-react"
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
+// ---------------------------------------------------------------------------
+// Nav items — single source of truth
+// ---------------------------------------------------------------------------
+const NAV_ITEMS = [
+  { label: "Home",    href: "/" },
+  { label: "Work",    href: "/work" },
+  { label: "Skills",  href: "/skills" },
+  { label: "Writing", href: "/blogs" },
+] as const
+
+// ---------------------------------------------------------------------------
+// NavLinks — sliding background pill follows cursor & active route.
+//
+// Key correctness details:
+//  1. The pill has NO transition on first render — it snaps to the active
+//     link position silently. The transition class is added after the initial
+//     paint via the `ready` ref so the pill never slides in from x=0.
+//  2. Only `transform` and `width` are transitioned — both are GPU-composited
+//     so the animation never triggers a layout or paint step.
+//  3. Text color changes in 80ms — fast enough to feel instant, slow enough
+//     to not look like a hard toggle.
+// ---------------------------------------------------------------------------
+function NavLinks({ pathname }: { pathname: string }) {
+  const navRef   = useRef<HTMLElement>(null)
+  const pillRef  = useRef<HTMLDivElement>(null)
+  const ready    = useRef(false)           // true after first position is set
+  const [hoverHref, setHoverHref] = useState<string | null>(null)
+
+  function isLinkActive(href: string) {
+    if (href === "/blogs") return pathname === "/blogs" || pathname?.startsWith("/blogs/")
+    return pathname === href
+  }
+
+  const activeHref = NAV_ITEMS.find((n) => isLinkActive(n.href))?.href ?? "/"
+  const targetHref = hoverHref ?? activeHref
+
+  function positionPill(href: string, animate: boolean) {
+    const nav  = navRef.current
+    const pill = pillRef.current
+    if (!nav || !pill) return
+
+    const anchor = nav.querySelector<HTMLElement>(`[data-navhref="${href}"]`)
+    if (!anchor) return
+
+    const nRect = nav.getBoundingClientRect()
+    const aRect = anchor.getBoundingClientRect()
+
+    // Enable transition only after the initial snap is committed
+    if (animate) {
+      pill.style.transition =
+        "transform 160ms cubic-bezier(0.16,1,0.3,1), width 160ms cubic-bezier(0.16,1,0.3,1)"
+    } else {
+      pill.style.transition = "none"
+    }
+
+    pill.style.width     = `${aRect.width}px`
+    pill.style.transform = `translateX(${aRect.left - nRect.left}px)`
+  }
+
+  // Mount: snap to active position with zero transition
+  useEffect(() => {
+    // rAF ensures the browser has laid out the nav anchors before we measure
+    const id = requestAnimationFrame(() => {
+      positionPill(activeHref, false)
+      // After the snap frame commits, re-enable transitions for interactions
+      requestAnimationFrame(() => { ready.current = true })
+    })
+    return () => cancelAnimationFrame(id)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Subsequent moves (hover / route change): animate
+  useEffect(() => {
+    if (!ready.current) return
+    positionPill(targetHref, true)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetHref])
+
+  // Keep pill aligned if the container resizes (font-load, viewport change)
+  useEffect(() => {
+    const ro = new ResizeObserver(() => {
+      positionPill(ready.current ? targetHref : activeHref, false)
+    })
+    if (navRef.current) ro.observe(navRef.current)
+    return () => ro.disconnect()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetHref])
+
+  return (
+    <nav ref={navRef} className="relative flex items-center gap-4 sm:gap-6">
+      {/* Sliding background pill — purely presentational, GPU-composited */}
+      <div
+        ref={pillRef}
+        aria-hidden="true"
+        className="absolute inset-y-0 rounded-md bg-black/[0.045] dark:bg-white/[0.055] pointer-events-none will-change-transform"
+        // Transition is set imperatively above to prevent mount-slide
+      />
+
+      {NAV_ITEMS.map(({ label, href }) => (
+        <Link
+          key={href}
+          href={href}
+          data-navhref={href}
+          onMouseEnter={() => setHoverHref(href)}
+          onMouseLeave={() => setHoverHref(null)}
+          style={{ transition: "color 80ms ease-out" }}
+          className={[
+            "relative z-10 py-1 px-2 rounded-md",
+            "text-sm sm:text-base md:text-lg font-light select-none cursor-pointer",
+            // Press scale only on transform — no `transition-all` bloat
+            "[transition:color_80ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
+            "active:scale-[0.97]",
+            isLinkActive(href)
+              ? "text-black dark:text-white"
+              : "text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white",
+          ].join(" ")}
+        >
+          {label}
+        </Link>
+      ))}
+    </nav>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Main Header
+// ---------------------------------------------------------------------------
 export default function Header() {
   const pathname = usePathname()
-  // Render the banner in the server HTML as well. Starting hidden and adding it
-  // after hydration shifts the entire page down on a first visit.
   const [showPopup, setShowPopup] = useState(true)
 
   useEffect(() => {
-    // Check localStorage for popup dismissal
-    const hasDismissed = localStorage.getItem("dismissedBlogPopup")
-    if (!hasDismissed) {
-      setShowPopup(true)
-    }
-
+    if (localStorage.getItem("dismissedBlogPopup")) setShowPopup(false)
   }, [])
 
   const handleDismissPopup = () => {
@@ -28,38 +148,44 @@ export default function Header() {
     localStorage.setItem("dismissedBlogPopup", "true")
   }
 
-  const isActive = (path: string) => pathname === path
   const isHome = pathname === "/"
 
   return (
     <>
-      {/* Top Notice Banner */}
+      {/* ── Top notice banner ────────────────────────────────────────────── */}
       {showPopup && (
         <div className="reveal-in w-full bg-black/[0.015] dark:bg-white/[0.01] border-b border-black/5 dark:border-white/5 py-2.5 text-xs font-light text-black/50 dark:text-white/50">
           <div className="max-w-4xl mx-auto w-full px-6 md:px-20 flex items-center justify-between gap-4">
-             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
               <span className="text-accent font-medium uppercase tracking-[0.15em] text-[10px]">blogs</span>
               <span className="text-black/20 dark:text-white/20 select-none">/</span>
               <span>
                 <span className="hidden sm:inline">Thoughts on development, design, and security. Read at </span>
                 <span className="sm:hidden">Read thoughts at </span>
-                <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent dark:hover:text-white transition-colors font-medium">blogs.tirup.in</a> ↗
+                <a
+                  href="https://blogs.tirup.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-hover hover:text-accent dark:hover:text-white transition-colors font-medium"
+                >
+                  blogs.tirup.in
+                </a>{" "}
+                ↗
               </span>
             </div>
-            <button 
+            <button
               onClick={handleDismissPopup}
-              className="group p-1 rounded-full text-black/35 dark:text-white/35 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 shrink-0 cursor-pointer active:scale-90"
+              className="group p-1 rounded-full text-black/35 dark:text-white/35 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-150 shrink-0 cursor-pointer active:scale-[0.97]"
               aria-label="Dismiss banner"
             >
-              <X size={13} className="transition-transform duration-300 group-hover:rotate-90" />
+              <X size={13} className="transition-transform duration-200 group-hover:rotate-90" />
             </button>
           </div>
         </div>
       )}
 
-      {/* Intro/Hero Header Area */}
+      {/* ── Avatar + name ────────────────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-6 md:pt-28 pb-0">
-        {/* Avatar + Title inline */}
         <TextWithBlur>
           <div className="flex items-center gap-4 mb-4 md:mb-6">
             <div className="relative shrink-0 select-none group">
@@ -73,9 +199,8 @@ export default function Header() {
                   priority
                 />
               </div>
-              {/* Apple waving hand "Hii" emoji - Hover-triggered & bottom-left */}
+              {/* Waving hand — hover-triggered */}
               <div className="absolute -bottom-1 -left-1.5 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-waving-hand origin-[70%_75%] pointer-events-none">
-                {/* Light theme: Yellow hand emoji */}
                 <Image
                   src="/waving-hand.png"
                   alt="Waving Hand Emoji (Yellow)"
@@ -83,7 +208,6 @@ export default function Header() {
                   height={48}
                   className="w-full h-full object-contain dark:hidden"
                 />
-                {/* Dark theme: White hand emoji */}
                 <Image
                   src="/waving-hand-white.png"
                   alt="Waving Hand Emoji (White)"
@@ -93,6 +217,7 @@ export default function Header() {
                 />
               </div>
             </div>
+
             <div className="flex items-center gap-3 flex-wrap">
               {isHome ? (
                 <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white leading-none">
@@ -103,67 +228,31 @@ export default function Header() {
                   Tirup Mehta
                 </p>
               )}
-              <a 
-                href="/Resume_Tirup_Mehta.pdf" 
+              <a
+                href="/Resume_Tirup_Mehta.pdf"
                 download
-                className="group inline-flex items-center justify-center gap-1.5 h-[26px] px-3 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-300 select-none cursor-pointer"
+                className="group inline-flex items-center justify-center gap-1.5 h-[26px] px-3 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-150 select-none cursor-pointer active:scale-[0.97]"
               >
-                <Download size={12} className="text-black/50 dark:text-white/50 group-hover:text-black dark:group-hover:text-white transition-colors duration-300" />
+                <Download
+                  size={12}
+                  className="text-black/50 dark:text-white/50 group-hover:text-black dark:group-hover:text-white transition-colors duration-150"
+                />
                 <span className="leading-none select-none">Resume</span>
               </a>
             </div>
           </div>
-        </TextWithBlur>        {/* Navigation Tabs */}
+        </TextWithBlur>
+
+        {/* ── Navigation tabs ─────────────────────────────────────────────── */}
         <div className="flex justify-between items-center gap-4 mb-5 md:mb-8 border-b border-black/5 dark:border-white/5 pb-3 md:pb-4 flex-nowrap">
           <TextWithBlur delay={100} className="min-w-0">
-            <nav className="flex items-center gap-4 sm:gap-6 flex-wrap">
-              <Link 
-                href="/" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
-                  isActive("/") 
-                    ? "text-black dark:text-white" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
-                }`}
-              >
-                Home
-              </Link>
-              <Link 
-                href="/work" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
-                  isActive("/work") 
-                    ? "text-black dark:text-white" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
-                }`}
-              >
-                Work
-              </Link>
-              <Link 
-                href="/skills" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
-                  isActive("/skills") 
-                    ? "text-black dark:text-white" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
-                }`}
-              >
-                Skills
-              </Link>
-              <Link 
-                href="/blogs" 
-                className={`py-1 text-sm sm:text-base md:text-lg transition-all duration-300 cursor-pointer select-none font-light ${
-                  isActive("/blogs") || pathname?.startsWith("/blogs")
-                    ? "text-black dark:text-white" 
-                    : "text-zinc-400 dark:text-zinc-550 hover:text-black dark:hover:text-white"
-                }`}
-              >
-                Writing
-              </Link>
-            </nav>
+            <NavLinks pathname={pathname} />
           </TextWithBlur>
-          
-          {/* Theme Switcher on the far right */}
-          <AnimatedThemeToggler 
+
+          {/* Theme switcher */}
+          <AnimatedThemeToggler
             variant="circle"
-            className="flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-300 cursor-pointer shrink-0 active:scale-90"
+            className="flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-150 cursor-pointer shrink-0 active:scale-[0.97]"
           />
         </div>
       </div>
