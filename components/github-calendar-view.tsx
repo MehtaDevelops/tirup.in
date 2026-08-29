@@ -265,8 +265,8 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
           <div className="w-full select-none">
             {/* Month Labels across top */}
             <div className="flex text-[11px] text-black/40 dark:text-white/40 mb-2 w-full justify-between px-0.5 font-light">
-              {monthLabels.map(({ month }) => (
-                <span key={month}>{month}</span>
+              {monthLabels.map(({ month, colIndex }) => (
+                <span key={`${month}-${colIndex}`}>{month}</span>
               ))}
             </div>
 
