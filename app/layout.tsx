@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
+import AmbientShader from "@/components/ambient-shader"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
 
@@ -251,7 +252,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-[#fafaf9] dark:bg-[#08090b] text-[#121314] dark:text-[#ededed] transition-colors duration-300 relative`} suppressHydrationWarning>
+        <AmbientShader />
         <GoogleAnalytics />
         <UtmTracker />
         {/* JSON-LD Schemas for Search Engines */}

@@ -16,7 +16,7 @@ export default function BlogError({
   }, [error])
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300">
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 text-[#121314] dark:text-[#ededed]">
       <div className="max-w-xl w-full text-center space-y-6 reveal-in">
         {/* Error Code Tag */}
         <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-black/35 dark:text-white/35">
