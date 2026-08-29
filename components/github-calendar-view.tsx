@@ -1,0 +1,369 @@
+"use client"
+
+import { useState, useMemo } from "react"
+import type { MergedContributionsData, ContributionDay } from "@/lib/github-contributions"
+import TextWithBlur from "@/components/text-with-blur"
+
+interface GitHubCalendarViewProps {
+  data: MergedContributionsData
+}
+
+type TabType = "combined" | "tirupMehta" | "mehtaDevelops"
+
+export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
+  const [activeTab, setActiveTab] = useState<TabType>("combined")
+  const [hoveredDay, setHoveredDay] = useState<ContributionDay | null>(null)
+
+  const activeData = useMemo(() => {
+    switch (activeTab) {
+      case "tirupMehta":
+        return {
+          total: data.tirupMehta.total,
+          days: data.tirupMehta.days,
+          label: "TirupMehta",
+          handle: "@TirupMehta",
+          url: "https://github.com/TirupMehta",
+        }
+      case "mehtaDevelops":
+        return {
+          total: data.mehtaDevelops.total,
+          days: data.mehtaDevelops.days,
+          label: "MehtaDevelops",
+          handle: "@MehtaDevelops",
+          url: "https://github.com/MehtaDevelops",
+        }
+      default:
+        return {
+          total: data.combined.total,
+          days: data.combined.days,
+          label: "Combined Activity",
+          handle: "All Accounts",
+          url: "https://github.com/TirupMehta",
+        }
+    }
+  }, [activeTab, data])
+
+  // Group days into 7-day columns (weeks)
+  const weeks = useMemo(() => {
+    const days = activeData.days
+    const result: ContributionDay[][] = []
+    if (!days || days.length === 0) return result
+
+    let currentWeek: ContributionDay[] = []
+
+    const firstDate = new Date(days[0].date)
+    const firstDayOfWeek = isNaN(firstDate.getTime()) ? 0 : firstDate.getUTCDay()
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      currentWeek.push({ date: "", count: 0, level: 0 })
+    }
+
+    for (const day of days) {
+      currentWeek.push(day)
+      if (currentWeek.length === 7) {
+        result.push(currentWeek)
+        currentWeek = []
+      }
+    }
+
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push({ date: "", count: 0, level: 0 })
+      }
+      result.push(currentWeek)
+    }
+
+    return result
+  }, [activeData.days])
+
+  // Month label positions across the columns
+  const monthLabels = useMemo(() => {
+    const labels: { month: string; colIndex: number }[] = []
+    let lastMonth = -1
+
+    weeks.forEach((week, colIndex) => {
+      const validDay = week.find((d) => d.date)
+      if (validDay) {
+        const d = new Date(validDay.date)
+        if (!isNaN(d.getTime())) {
+          const month = d.getUTCMonth()
+          if (month !== lastMonth) {
+            const monthName = d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" })
+            labels.push({ month: monthName, colIndex })
+            lastMonth = month
+          }
+        }
+      }
+    })
+
+    return labels
+  }, [weeks])
+
+  // Unified color scale using emerald opacities and site border tokens (border-black/10 dark:border-white/10)
+  const getCellColor = (level: number) => {
+    switch (level) {
+      case 1:
+        return "bg-emerald-500/25 border border-emerald-500/35"
+      case 2:
+        return "bg-emerald-500/50 border border-emerald-500/60"
+      case 3:
+        return "bg-emerald-500/75 border border-emerald-500/80"
+      case 4:
+        return "bg-emerald-500 border border-emerald-400"
+      default:
+        // Exact site outline token: border-black/10 dark:border-white/10
+        return "bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10"
+    }
+  }
+
+  const formatTooltipDate = (dateStr: string) => {
+    if (!dateStr) return ""
+    try {
+      const d = new Date(dateStr)
+      return d.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC",
+      })
+    } catch {
+      return dateStr
+    }
+  }
+
+  return (
+    <div className="w-full pt-0">
+      {/* Intro Narrative Section */}
+      <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-12">
+        <TextWithBlur delay={50}>
+          <p>
+            Engineering activity across my GitHub accounts. My primary profile is{" "}
+            <a
+              href="https://github.com/TirupMehta"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-hover hover:text-accent transition-colors font-normal text-black dark:text-white"
+            >
+              @TirupMehta
+            </a>{" "}
+            for systems research, security experiments, and technical essays. Open-source utilities, developer tooling, and client architectures are published under{" "}
+            <a
+              href="https://github.com/MehtaDevelops"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-hover hover:text-accent transition-colors font-normal text-black dark:text-white"
+            >
+              @MehtaDevelops
+            </a>
+            .
+          </p>
+        </TextWithBlur>
+      </div>
+
+      {/* Metrics Row */}
+      <TextWithBlur delay={100}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 py-6 border-t border-black/10 dark:border-white/10">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[13px] text-black/50 dark:text-white/50 font-light">Total Commits</span>
+            <span className="text-2xl sm:text-3xl tabular-nums font-light text-black dark:text-white">
+              {data.combined.total}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[13px] text-black/50 dark:text-white/50 font-light">Current Streak</span>
+            <span className="text-2xl sm:text-3xl tabular-nums font-light text-black dark:text-white">
+              {data.combined.currentStreak} <span className="text-sm font-normal text-black/40 dark:text-white/40">days</span>
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[13px] text-black/50 dark:text-white/50 font-light">Longest Streak</span>
+            <span className="text-2xl sm:text-3xl tabular-nums font-light text-black dark:text-white">
+              {data.combined.longestStreak} <span className="text-sm font-normal text-black/40 dark:text-white/40">days</span>
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[13px] text-black/50 dark:text-white/50 font-light">Peak Day</span>
+            <span className="text-2xl sm:text-3xl tabular-nums font-light text-black dark:text-white">
+              {data.combined.maxDayCount} <span className="text-sm font-normal text-black/40 dark:text-white/40">commits</span>
+            </span>
+          </div>
+        </div>
+      </TextWithBlur>
+
+      {/* Account Tabs Switcher */}
+      <TextWithBlur delay={150}>
+        <div className="flex flex-wrap items-center justify-between gap-3 py-4 border-t border-black/10 dark:border-white/10 select-none">
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setActiveTab("combined")}
+              className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] ${
+                activeTab === "combined"
+                  ? "text-black dark:text-white bg-black/[0.04] dark:bg-white/[0.08]"
+                  : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+              }`}
+            >
+              Combined ({data.combined.total})
+            </button>
+            <button
+              onClick={() => setActiveTab("tirupMehta")}
+              className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] inline-flex items-center gap-1.5 ${
+                activeTab === "tirupMehta"
+                  ? "text-black dark:text-white bg-black/[0.04] dark:bg-white/[0.08]"
+                  : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+              }`}
+            >
+              <span>@TirupMehta</span>
+              <span className="text-[11px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal">Main</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("mehtaDevelops")}
+              className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] ${
+                activeTab === "mehtaDevelops"
+                  ? "text-black dark:text-white bg-black/[0.04] dark:bg-white/[0.08]"
+                  : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+              }`}
+            >
+              @MehtaDevelops ({data.mehtaDevelops.total})
+            </button>
+          </div>
+
+          <div className="text-[13px] text-black/50 dark:text-white/50 tabular-nums font-light">
+            {activeData.label}: <span className="text-black dark:text-white font-normal">{activeData.total} commits</span>
+          </div>
+        </div>
+      </TextWithBlur>
+
+      {/* Calendar Matrix Section */}
+      <TextWithBlur delay={200}>
+        <div className="flex flex-col gap-3.5 py-6 border-t border-black/10 dark:border-white/10">
+          {/* Active Hover Readout */}
+          <div className="min-h-[26px] flex items-center justify-between text-sm text-black/70 dark:text-white/70 font-light">
+            {hoveredDay ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-black dark:text-white font-normal">
+                  {hoveredDay.count} {hoveredDay.count === 1 ? "contribution" : "contributions"}
+                </span>
+                <span className="text-black/40 dark:text-white/40">on</span>
+                <span className="text-black dark:text-white">{formatTooltipDate(hoveredDay.date)}</span>
+                {hoveredDay.details && (
+                  <span className="text-xs text-black/50 dark:text-white/50">
+                    (TirupMehta: {hoveredDay.details.tirupMehta}, MehtaDevelops: {hoveredDay.details.mehtaDevelops})
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span className="text-black/40 dark:text-white/40 text-xs">
+                Hover over days to inspect contribution volume.
+              </span>
+            )}
+          </div>
+
+          {/* 53 Columns x 7 Rows Flex Grid (100% Fluid, Zero Horizontal Scroll) */}
+          <div className="w-full select-none">
+            {/* Month Labels across top */}
+            <div className="flex text-[11px] text-black/40 dark:text-white/40 mb-2 w-full justify-between px-0.5 font-light">
+              {monthLabels.map(({ month }) => (
+                <span key={month}>{month}</span>
+              ))}
+            </div>
+
+            {/* Matrix Columns with concentric border-black/10 dark:border-white/10 */}
+            <div className="flex gap-[2px] sm:gap-[3px] w-full items-stretch">
+              {weeks.map((week, colIdx) => (
+                <div key={colIdx} className="flex flex-col gap-[2px] sm:gap-[3px] flex-1">
+                  {week.map((day, rowIdx) => {
+                    if (!day.date) {
+                      return <div key={rowIdx} className="w-full aspect-square opacity-0" />
+                    }
+                    return (
+                      <div
+                        key={day.date}
+                        onMouseEnter={() => setHoveredDay(day)}
+                        onMouseLeave={() => setHoveredDay(null)}
+                        className={`w-full aspect-square rounded-[2px] transition-transform duration-100 cursor-pointer ${getCellColor(
+                          day.level
+                        )} hover:scale-150 hover:z-10`}
+                      />
+                    )
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="flex items-center justify-between pt-3 text-xs text-black/50 dark:text-white/50 font-light">
+            <span className="text-xs">Last 12 months</span>
+            <div className="flex items-center gap-1.5">
+              <span>Less</span>
+              <div className="w-2.5 h-2.5 rounded-[1px] bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10" />
+              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/25 border border-emerald-500/35" />
+              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/50 border border-emerald-500/60" />
+              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/75 border border-emerald-500/80" />
+              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500 border border-emerald-400" />
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+      </TextWithBlur>
+
+      {/* Dual Account Directory List (Exact 100% match with Work page .list-hover-group) */}
+      <div className="flex flex-col list-hover-group border-t border-black/10 dark:border-white/10 pt-2">
+        {/* TirupMehta Row (Main Account) */}
+        <TextWithBlur delay={250}>
+          <a
+            href="https://github.com/TirupMehta"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block py-5 -mx-3 px-3 rounded-lg hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
+          >
+            <div className="flex items-baseline justify-between gap-4">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
+                <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] inline-flex items-center gap-1.5">
+                  @TirupMehta
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal text-black/70 dark:text-white/70">Main Profile</span>
+                </span>
+                <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
+                <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/70 dark:group-hover:text-white/70 [transition:color_80ms_ease-out] text-sm">
+                  Primary profile — systems security research, cryptographic tools, and technical essays.
+                </span>
+              </div>
+              <span className="font-mono tabular-nums text-xs md:text-sm text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out]">
+                {data.tirupMehta.total} commits ↗
+              </span>
+            </div>
+          </a>
+        </TextWithBlur>
+
+        {/* MehtaDevelops Row */}
+        <TextWithBlur delay={300}>
+          <a
+            href="https://github.com/MehtaDevelops"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block py-5 -mx-3 px-3 rounded-lg border-t border-black/10 dark:border-white/10 hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
+          >
+            <div className="flex items-baseline justify-between gap-4">
+              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
+                <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out]">
+                  @MehtaDevelops
+                </span>
+                <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
+                <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/70 dark:group-hover:text-white/70 [transition:color_80ms_ease-out] text-sm">
+                  Development organization — open-source libraries, trace utilities, and client systems.
+                </span>
+              </div>
+              <span className="font-mono tabular-nums text-xs md:text-sm text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out]">
+                {data.mehtaDevelops.total} commits ↗
+              </span>
+            </div>
+          </a>
+        </TextWithBlur>
+        <div className="border-t border-black/10 dark:border-white/10" />
+      </div>
+    </div>
+  )
+}
