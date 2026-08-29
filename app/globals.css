@@ -21,13 +21,13 @@
 }
 
 html.dark {
-  --bg: #08090b;
-  --fg: #ededed;
+  --bg: #090a0d;
+  --fg: #f4f4f5;
   --border-color: rgba(255, 255, 255, 0.08);
-  --text-muted: rgba(237, 237, 237, 0.4);
-  --text-secondary: rgba(237, 237, 237, 0.65);
-  --text-primary: rgba(237, 237, 237, 0.9);
-  --accent: #a5b4fc;
+  --text-muted: rgba(244, 244, 245, 0.42);
+  --text-secondary: rgba(244, 244, 245, 0.65);
+  --text-primary: rgba(244, 244, 245, 0.92);
+  --accent: #818cf8;
   --tldr-accent: #38bdf8;
 }
 
