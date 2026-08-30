@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import type { MergedContributionsData, ContributionDay } from "@/lib/github-contributions"
 import TextWithBlur from "@/components/text-with-blur"
 
@@ -13,6 +13,15 @@ type TabType = "combined" | "tirupMehta" | "mehtaDevelops"
 export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>("combined")
   const [hoveredDay, setHoveredDay] = useState<ContributionDay | null>(null)
+  const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll calendar matrix to the current date (right) on mobile/tablet viewports
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth
+    }
+  }, [activeTab])
 
   const activeData = useMemo(() => {
     switch (activeTab) {
@@ -75,7 +84,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
     return result
   }, [activeData.days])
 
-  // Month label positions across the columns
+  // Month label positions calculated per column index
   const monthLabels = useMemo(() => {
     const labels: { month: string; colIndex: number }[] = []
     let lastMonth = -1
@@ -95,24 +104,39 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
       }
     })
 
+    // Filter out initial label if it collides with the next month within 3 columns
+    if (labels.length > 1 && labels[1].colIndex - labels[0].colIndex < 3) {
+      labels.shift()
+    }
+
     return labels
   }, [weeks])
 
-  // Unified color scale using emerald opacities and site border tokens (border-black/10 dark:border-white/10)
-  const getCellColor = (level: number) => {
+  // Unified color scale using emerald opacities and site border tokens
+  const getCellColor = (level: number, isSelected: boolean) => {
+    let base = ""
     switch (level) {
       case 1:
-        return "bg-emerald-500/25 border border-emerald-500/35"
+        base = "bg-emerald-500/25 border-emerald-500/35"
+        break
       case 2:
-        return "bg-emerald-500/50 border border-emerald-500/60"
+        base = "bg-emerald-500/50 border-emerald-500/60"
+        break
       case 3:
-        return "bg-emerald-500/75 border border-emerald-500/80"
+        base = "bg-emerald-500/75 border-emerald-500/80"
+        break
       case 4:
-        return "bg-emerald-500 border border-emerald-400"
+        base = "bg-emerald-500 border-emerald-400"
+        break
       default:
-        // Exact site outline token: border-black/10 dark:border-white/10
-        return "bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10"
+        base = "bg-black/[0.025] dark:bg-white/[0.025] border-black/10 dark:border-white/10"
     }
+
+    if (isSelected) {
+      return `${base} ring-2 ring-accent ring-offset-1 ring-offset-background scale-125 z-10`
+    }
+
+    return base
   }
 
   const formatTooltipDate = (dateStr: string) => {
@@ -130,6 +154,8 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
       return dateStr
     }
   }
+
+  const activeInspectedDay = hoveredDay || selectedDay
 
   return (
     <div className="w-full pt-0">
@@ -166,7 +192,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
           <div className="flex flex-col gap-1.5">
             <span className="text-[13px] text-black/50 dark:text-white/50 font-light">Total Commits</span>
             <span className="text-2xl sm:text-3xl tabular-nums font-light text-black dark:text-white">
-              {data.combined.total}
+              {activeData.total}
             </span>
           </div>
 
@@ -198,7 +224,10 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
         <div className="flex flex-wrap items-center justify-between gap-3 py-4 border-t border-black/10 dark:border-white/10 select-none">
           <div className="flex items-center gap-1.5">
             <button
-              onClick={() => setActiveTab("combined")}
+              onClick={() => {
+                setActiveTab("combined")
+                setSelectedDay(null)
+              }}
               className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] ${
                 activeTab === "combined"
                   ? "text-black dark:text-white bg-black/[0.04] dark:bg-white/[0.08]"
@@ -208,7 +237,10 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
               Combined ({data.combined.total})
             </button>
             <button
-              onClick={() => setActiveTab("tirupMehta")}
+              onClick={() => {
+                setActiveTab("tirupMehta")
+                setSelectedDay(null)
+              }}
               className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] inline-flex items-center gap-1.5 ${
                 activeTab === "tirupMehta"
                   ? "text-black dark:text-white bg-black/[0.04] dark:bg-white/[0.08]"
@@ -219,7 +251,10 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
               <span className="text-[11px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal">Main</span>
             </button>
             <button
-              onClick={() => setActiveTab("mehtaDevelops")}
+              onClick={() => {
+                setActiveTab("mehtaDevelops")
+                setSelectedDay(null)
+              }}
               className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] ${
                 activeTab === "mehtaDevelops"
                   ? "text-black dark:text-white bg-black/[0.04] dark:bg-white/[0.08]"
@@ -239,63 +274,108 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
       {/* Calendar Matrix Section */}
       <TextWithBlur delay={200}>
         <div className="flex flex-col gap-3.5 py-6 border-t border-black/10 dark:border-white/10">
-          {/* Active Hover Readout */}
+          {/* Active Hover / Tap Readout */}
           <div className="min-h-[26px] flex items-center justify-between text-sm text-black/70 dark:text-white/70 font-light">
-            {hoveredDay ? (
+            {activeInspectedDay ? (
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-black dark:text-white font-normal">
-                  {hoveredDay.count} {hoveredDay.count === 1 ? "contribution" : "contributions"}
+                  {activeInspectedDay.count} {activeInspectedDay.count === 1 ? "contribution" : "contributions"}
                 </span>
                 <span className="text-black/40 dark:text-white/40">on</span>
-                <span className="text-black dark:text-white">{formatTooltipDate(hoveredDay.date)}</span>
-                {hoveredDay.details && (
+                <span className="text-black dark:text-white">{formatTooltipDate(activeInspectedDay.date)}</span>
+                {activeInspectedDay.details && (
                   <span className="text-xs text-black/50 dark:text-white/50">
-                    (TirupMehta: {hoveredDay.details.tirupMehta}, MehtaDevelops: {hoveredDay.details.mehtaDevelops})
+                    (TirupMehta: {activeInspectedDay.details.tirupMehta}, MehtaDevelops: {activeInspectedDay.details.mehtaDevelops})
                   </span>
                 )}
               </div>
             ) : (
               <span className="text-black/40 dark:text-white/40 text-xs">
-                Hover over days to inspect contribution volume.
+                Hover or tap days to inspect contribution volume.
               </span>
             )}
           </div>
 
-          {/* 53 Columns x 7 Rows Flex Grid (100% Fluid, Zero Horizontal Scroll) */}
+          {/* 53 Columns x 7 Rows Grid (Responsive with Horizontal Scroll on Smaller Screens) */}
           <div className="w-full select-none">
-            {/* Month Labels across top */}
-            <div className="flex text-[11px] text-black/40 dark:text-white/40 mb-2 w-full justify-between px-0.5 font-light">
-              {monthLabels.map(({ month, colIndex }) => (
-                <span key={`${month}-${colIndex}`}>{month}</span>
-              ))}
-            </div>
-
-            {/* Matrix Columns with concentric border-black/10 dark:border-white/10 */}
-            <div className="flex gap-[2px] sm:gap-[3px] w-full items-stretch">
-              {weeks.map((week, colIdx) => (
-                <div key={colIdx} className="flex flex-col gap-[2px] sm:gap-[3px] flex-1">
-                  {week.map((day, rowIdx) => {
-                    if (!day.date) {
-                      return <div key={rowIdx} className="w-full aspect-square opacity-0" />
-                    }
-                    return (
-                      <div
-                        key={day.date}
-                        onMouseEnter={() => setHoveredDay(day)}
-                        onMouseLeave={() => setHoveredDay(null)}
-                        className={`w-full aspect-square rounded-[2px] transition-transform duration-100 cursor-pointer ${getCellColor(
-                          day.level
-                        )} hover:scale-150 hover:z-10`}
-                      />
-                    )
-                  })}
+            <div
+              ref={scrollContainerRef}
+              className="w-full overflow-x-auto overflow-y-hidden py-1 px-1.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            >
+              <div className="min-w-[680px] sm:min-w-0 w-full flex gap-2">
+                {/* Weekday indicators on the left */}
+                <div className="flex flex-col justify-between pt-5 pb-0.5 text-[9px] text-black/40 dark:text-white/40 font-mono select-none pr-0.5 shrink-0">
+                  <span className="opacity-0">Sun</span>
+                  <span>Mon</span>
+                  <span className="opacity-0">Tue</span>
+                  <span>Wed</span>
+                  <span className="opacity-0">Thu</span>
+                  <span>Fri</span>
+                  <span className="opacity-0">Sat</span>
                 </div>
-              ))}
+
+                {/* Columns & Month Headers */}
+                <div className="flex-1 flex flex-col">
+                  {/* Month Labels positioned proportionally across columns */}
+                  <div className="relative w-full h-5 mb-1.5 text-[11px] text-black/40 dark:text-white/40 font-light">
+                    {monthLabels.map(({ month, colIndex }) => (
+                      <span
+                        key={`${month}-${colIndex}`}
+                        className="absolute top-0 whitespace-nowrap transform -translate-x-1/2 first:translate-x-0"
+                        style={{
+                          left: `${((colIndex + 0.5) / Math.max(weeks.length, 1)) * 100}%`,
+                        }}
+                      >
+                        {month}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Matrix Columns */}
+                  <div className="flex gap-[2.5px] sm:gap-[3px] w-full items-stretch">
+                    {weeks.map((week, colIdx) => {
+                      const isFirstCol = colIdx === 0
+                      const isLastCol = colIdx === weeks.length - 1
+                      const originClass = isLastCol
+                        ? "hover:origin-right"
+                        : isFirstCol
+                        ? "hover:origin-left"
+                        : "hover:origin-center"
+
+                      return (
+                        <div key={colIdx} className="flex flex-col gap-[2.5px] sm:gap-[3px] flex-1">
+                          {week.map((day, rowIdx) => {
+                            if (!day.date) {
+                              return <div key={rowIdx} className="w-full aspect-square opacity-0 pointer-events-none" />
+                            }
+
+                            const isSelected = selectedDay?.date === day.date
+
+                            return (
+                              <div
+                                key={day.date}
+                                onMouseEnter={() => setHoveredDay(day)}
+                                onMouseLeave={() => setHoveredDay(null)}
+                                onClick={() => setSelectedDay((prev) => (prev?.date === day.date ? null : day))}
+                                className={`w-full aspect-square rounded-[2px] border transition-transform duration-100 cursor-pointer ${originClass} ${getCellColor(
+                                  day.level,
+                                  isSelected
+                                )} hover:scale-135 hover:z-20`}
+                                title={`${day.count} contributions on ${formatTooltipDate(day.date)}`}
+                              />
+                            )
+                          })}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-between pt-3 text-xs text-black/50 dark:text-white/50 font-light">
+          <div className="flex items-center justify-between pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
             <span className="text-xs">Last 12 months</span>
             <div className="flex items-center gap-1.5">
               <span>Less</span>
