@@ -18,6 +18,13 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
   const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
+  // Default to 6-month view on mobile screens for optimal sizing and zero-scroll fit
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 640) {
+      setTimeRange("6m")
+    }
+  }, [])
+
   // Auto-scroll calendar matrix to the current date (right) when in 1y mode on small viewports
   useEffect(() => {
     if (scrollContainerRef.current && timeRange === "1y") {
@@ -237,54 +244,103 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
         </div>
       </TextWithBlur>
 
-      {/* Account Tabs Switcher (Clean Responsive Flex Bar) */}
+      {/* Account Switcher: Mobile Segmented Bar / Desktop Minimal Inline Tabs */}
       <TextWithBlur delay={150}>
-        <div className="flex items-center justify-between gap-3 py-4 border-t border-black/10 dark:border-white/10 select-none">
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-0.5 max-w-full">
+        <div className="py-4 border-t border-black/10 dark:border-white/10 select-none">
+          {/* Mobile Segmented Control */}
+          <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-black/[0.03] dark:bg-white/[0.04] sm:hidden">
             <button
               onClick={() => {
                 setActiveTab("combined")
                 setSelectedDay(null)
               }}
-              className={`px-3 sm:px-3.5 py-1.5 text-xs sm:text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer shrink-0 active:scale-[0.97] ${
+              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-md transition-all text-center cursor-pointer active:scale-[0.96] ${
                 activeTab === "combined"
-                  ? "text-black dark:text-white bg-black/[0.05] dark:bg-white/[0.09]"
+                  ? "bg-white dark:bg-white/15 text-black dark:text-white shadow-xs font-normal"
                   : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
               }`}
             >
-              Combined ({data.combined.total})
+              <span className="text-xs font-medium">Combined</span>
+              <span className="text-[10px] opacity-60 tabular-nums">({data.combined.total})</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab("tirupMehta")
                 setSelectedDay(null)
               }}
-              className={`px-3 sm:px-3.5 py-1.5 text-xs sm:text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer shrink-0 active:scale-[0.97] inline-flex items-center gap-1.5 ${
+              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-md transition-all text-center cursor-pointer active:scale-[0.96] ${
                 activeTab === "tirupMehta"
-                  ? "text-black dark:text-white bg-black/[0.05] dark:bg-white/[0.09]"
+                  ? "bg-white dark:bg-white/15 text-black dark:text-white shadow-xs font-normal"
                   : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
               }`}
             >
-              <span>@TirupMehta</span>
-              <span className="text-[10px] sm:text-[11px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal">Main</span>
+              <span className="text-xs font-medium">@TirupMehta</span>
+              <span className="text-[10px] opacity-60">Main Profile</span>
             </button>
             <button
               onClick={() => {
                 setActiveTab("mehtaDevelops")
                 setSelectedDay(null)
               }}
-              className={`px-3 sm:px-3.5 py-1.5 text-xs sm:text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer shrink-0 active:scale-[0.97] ${
+              className={`flex flex-col items-center justify-center py-1.5 px-1 rounded-md transition-all text-center cursor-pointer active:scale-[0.96] ${
                 activeTab === "mehtaDevelops"
-                  ? "text-black dark:text-white bg-black/[0.05] dark:bg-white/[0.09]"
+                  ? "bg-white dark:bg-white/15 text-black dark:text-white shadow-xs font-normal"
                   : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
               }`}
             >
-              @MehtaDevelops ({data.mehtaDevelops.total})
+              <span className="text-xs font-medium">@MehtaDev</span>
+              <span className="text-[10px] opacity-60 tabular-nums">({data.mehtaDevelops.total})</span>
             </button>
           </div>
 
-          <div className="hidden md:block text-[13px] text-black/50 dark:text-white/50 tabular-nums font-light shrink-0">
-            {activeData.label}: <span className="text-black dark:text-white font-normal">{activeData.total} commits</span>
+          {/* Desktop Inline Tabs */}
+          <div className="hidden sm:flex items-center justify-between gap-3">
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => {
+                  setActiveTab("combined")
+                  setSelectedDay(null)
+                }}
+                className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] ${
+                  activeTab === "combined"
+                    ? "text-black dark:text-white bg-black/[0.05] dark:bg-white/[0.09]"
+                    : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+                }`}
+              >
+                Combined ({data.combined.total})
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab("tirupMehta")
+                  setSelectedDay(null)
+                }}
+                className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] inline-flex items-center gap-1.5 ${
+                  activeTab === "tirupMehta"
+                    ? "text-black dark:text-white bg-black/[0.05] dark:bg-white/[0.09]"
+                    : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+                }`}
+              >
+                <span>@TirupMehta</span>
+                <span className="text-[11px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal">Main</span>
+              </button>
+              <button
+                onClick={() => {
+                  setActiveTab("mehtaDevelops")
+                  setSelectedDay(null)
+                }}
+                className={`px-3.5 py-1.5 text-[13px] font-light rounded-md transition-colors duration-150 cursor-pointer active:scale-[0.97] ${
+                  activeTab === "mehtaDevelops"
+                    ? "text-black dark:text-white bg-black/[0.05] dark:bg-white/[0.09]"
+                    : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+                }`}
+              >
+                @MehtaDevelops ({data.mehtaDevelops.total})
+              </button>
+            </div>
+
+            <div className="text-[13px] text-black/50 dark:text-white/50 tabular-nums font-light shrink-0">
+              {activeData.label}: <span className="text-black dark:text-white font-normal">{activeData.total} commits</span>
+            </div>
           </div>
         </div>
       </TextWithBlur>
@@ -397,8 +453,8 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
           </div>
 
           {/* Legend & Minimalist Range Switcher */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
+            <div className="flex items-center gap-1.5">
               <span className="text-xs">Range:</span>
               <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
                 {(["3m", "6m", "1y"] as const).map((r) => (
@@ -420,14 +476,14 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <span>Less</span>
+            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+              <span className="text-[11px] sm:text-xs">Less</span>
               <div className="w-2.5 h-2.5 rounded-[1px] bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10" />
               <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/25 border border-emerald-500/35" />
               <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/50 border border-emerald-500/60" />
               <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/75 border border-emerald-500/80" />
               <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500 border border-emerald-400" />
-              <span>More</span>
+              <span className="text-[11px] sm:text-xs">More</span>
             </div>
           </div>
         </div>
