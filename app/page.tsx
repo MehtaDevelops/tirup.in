@@ -93,7 +93,7 @@ export default function Home() {
 
           <TextWithBlur delay={250}>
             <p>
-              I write about interface design and web security on <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">my engineering blog</a>, share active experiments on <a href="/github" className="link-hover hover:text-accent transition-colors">GitHub — see live activity</a>, and am always open to fresh ideas. Let&apos;s connect.
+              I write about interface design and web security on <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">my engineering blog</a>, share active experiments on <a href="/github" className="link-hover hover:text-accent transition-colors">GitHub (live activity)</a>, and am always open to fresh ideas. Let&apos;s connect.
             </p>
           </TextWithBlur>
         </div>
