@@ -451,6 +451,13 @@ export const projectsList: WorkProject[] = [
     liveUrl: "https://quott.tirup.in",
   },
   {
+    title: "Discuss",
+    description: "AI-moderated group debate platform on any topic.",
+    slug: "discuss",
+    liveUrl: "https://discuss.tirup.in",
+    isPrivate: true,
+  },
+  {
     title: "Typing Challenge",
     description: "Fast-paced typing challenge app to test and improve typing speed.",
     slug: "typing-challenge",
@@ -468,13 +475,6 @@ export const projectsList: WorkProject[] = [
     description: "Pro vector QR code and Wi-Fi credential generator.",
     slug: "qr-studio",
     liveUrl: "https://tirup.in/tool/qr",
-  },
-  {
-    title: "Discuss",
-    description: "AI-moderated group debate platform on any topic.",
-    slug: "discuss",
-    liveUrl: "https://discuss.tirup.in",
-    isPrivate: true,
   },
   {
     title: "DevGathering",
