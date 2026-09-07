@@ -1,4 +1,36 @@
 export const projectsData = {
+  "modelregistry": {
+    title: "ModelRegistry",
+    description: "Open machine-readable registry of frontier AI models with live REST API, RSS, and badges.",
+    fullDescription: "ModelRegistry is a community-driven, machine-readable index tracking frontier AI models across 14 laboratories with a clear dual-tier structure: reigning foundation flagships developers use in production, plus newly dropped specialized checkpoints. Everything is syndicated through a public REST API, RSS feed, llms.txt, embeddable badges, and a zero-install curl dashboard.",
+    liveUrl: "https://modelregistry.tirup.in",
+    github: "github.com/TirupMehta/ModelRegistry",
+    techStack: ["Next.js", "TypeScript", "REST API", "RSS"],
+    stats: {
+      laboratories: "14",
+      models: "29",
+      syndication: "REST + RSS",
+      license: "MIT",
+    },
+    details: [
+      {
+        title: "The Challenge",
+        content: "Frontier model releases ship weekly across 14+ labs, but developers rely on stale charts and buried changelogs, so outdated models clutter workflows while new flagships go unnoticed.",
+      },
+      {
+        title: "The Solution",
+        content: "Built an open registry with a dual-tier structure that separates heavyweight foundation flagships for production use from newly dropped specialized checkpoints, each tracked with context windows, pricing, and access terms.",
+      },
+      {
+        title: "Open Telemetry",
+        content: "Every model is machine-readable via a public JSON REST API with filters, an RSS 2.0 feed, llms.txt ground truth for AI crawlers, embeddable flagship badges, and a terminal dashboard with zero installation.",
+      },
+      {
+        title: "Contributing",
+        content: "A single-file contribution workflow: edit one data file, run validation that auto-syncs the README index, and open a pull request in under 60 seconds.",
+      },
+    ],
+  },
   "trace-guard": {
     title: "Trace Guard",
     description: "Production-grade behavioral security engine to block sophisticated AI agents and Vision-Language Model (VLM) bots.",
@@ -276,50 +308,6 @@ export const projectsData = {
       },
     ],
   },
-  "visitorip": {
-    title: "VisitorIP",
-    description: "Advanced IP tracking and analytics for enterprise security solutions.",
-    fullDescription: "VisitorIP is an enterprise-grade security tool that provides real-time IP tracking, analysis, and threat detection. It helps organizations monitor network traffic and identify potential security threats.",
-    github: "github.com/TirupMehta/Begins/blob/main/visitorip.html",
-    techStack: ["JavaScript", "Particles.js", "PHP", "Fetch API"],
-    stats: {
-      tracking: "Real-time",
-      analysis: "Advanced",
-      status: "Active",
-    },
-    details: [
-      {
-        title: "The Challenge",
-        content: "Enterprise networks face constant security threats from unknown IP addresses and lack real-time visualization of threats.",
-      },
-      {
-        title: "The Solution",
-        content: "VisitorIP provides real-time monitoring with advanced analytics and visualization to flag suspicious activity.",
-      },
-    ],
-  },
-  "linkharvest": {
-    title: "LinkHarvest",
-    description: "AI-powered web scraping tool for cybersecurity researchers.",
-    fullDescription: "LinkHarvest is an intelligent web scraping tool designed specifically for cybersecurity researchers. It uses AI to identify, collect, and analyze links across the web to discover potential vulnerabilities.",
-    github: "github.com/TirupMehta/LinkHarvest",
-    techStack: ["JavaScript", "ML Algorithms", "Fetch API", "DOMParser"],
-    stats: {
-      scraping: "AI-Powered",
-      type: "Open Source",
-      status: "Active",
-    },
-    details: [
-      {
-        title: "The Challenge",
-        content: "Cybersecurity researchers need to efficiently collect and analyze large numbers of web links to identify potential vulnerabilities.",
-      },
-      {
-        title: "The Solution",
-        content: "LinkHarvest automates the process of discovering and analyzing web links using machine learning algorithms.",
-      },
-    ],
-  },
   "enigmabegins": {
     title: "Enigma Begins",
     description: "Modern cryptography learning platform with interactive challenges.",
@@ -422,6 +410,13 @@ export interface WorkProject {
 
 export const projectsList: WorkProject[] = [
   {
+    title: "ModelRegistry",
+    description: "Open registry of frontier AI models with live API, RSS, and badges.",
+    slug: "modelregistry",
+    github: "github.com/TirupMehta/ModelRegistry",
+    liveUrl: "https://modelregistry.tirup.in",
+  },
+  {
     title: "Trace Guard",
     description: "Bot-resistant behavioral security engine and NPM package.",
     slug: "trace-guard",
@@ -518,18 +513,6 @@ export const projectsList: WorkProject[] = [
     description: "Electron app showing real-time system, network info, and speed test.",
     slug: "portal",
     github: "github.com/TirupMehta/Portal",
-  },
-  {
-    title: "VisitorIP",
-    description: "Advanced IP tracking and analytics for enterprise security solutions.",
-    slug: "visitorip",
-    github: "github.com/TirupMehta/Begins/blob/main/visitorip.html",
-  },
-  {
-    title: "LinkHarvest",
-    description: "AI-powered web scraping tool for cybersecurity researchers.",
-    slug: "linkharvest",
-    github: "github.com/TirupMehta/linkharvest",
   },
 ]
 
