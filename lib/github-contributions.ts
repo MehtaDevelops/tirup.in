@@ -48,31 +48,56 @@ function generateFallbackCalendar(): { date: string; count: number; level: numbe
   return days
 }
 
+const FETCH_TIMEOUT_MS = 10000
+const FETCH_MAX_ATTEMPTS = 3
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 async function fetchUserContributions(username: string): Promise<{ total: number; days: { date: string; count: number; level: number }[] }> {
-  try {
+  let lastError: unknown = null
+
+  for (let attempt = 1; attempt <= FETCH_MAX_ATTEMPTS; attempt++) {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), 4000)
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
 
-    const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`, {
-      signal: controller.signal,
-      next: { revalidate: 3600 },
-    })
+    try {
+      const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`, {
+        signal: controller.signal,
+        next: { revalidate: 3600 },
+        headers: {
+          Accept: "application/json",
+        },
+      })
 
-    clearTimeout(timeoutId)
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
+      }
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`)
+      const data = await res.json()
+      const days = Array.isArray(data.contributions) ? data.contributions : []
+      if (days.length === 0) {
+        throw new Error("Empty contributions payload")
+      }
+      const total = data.total?.lastYear ?? days.reduce((acc: number, d: { count: number }) => acc + (d.count || 0), 0)
+      return { total, days }
+    } catch (err) {
+      lastError = err
+      // Retry transient failures (timeout, 5xx, network blip) with a short backoff.
+      // A single slow response previously fell through to an all-zero calendar
+      // which then stayed cached by ISR for an hour.
+      if (attempt < FETCH_MAX_ATTEMPTS) {
+        await sleep(600 * attempt)
+      }
+    } finally {
+      clearTimeout(timeoutId)
     }
-
-    const data = await res.json()
-    const days = Array.isArray(data.contributions) ? data.contributions : []
-    const total = data.total?.lastYear ?? days.reduce((acc: number, d: { count: number }) => acc + (d.count || 0), 0)
-    return { total, days }
-  } catch (err) {
-    console.warn(`[GitHub Contributions] Notice: live fetch for ${username} returned fallback:`, err)
-    const fallbackDays = generateFallbackCalendar()
-    return { total: 0, days: fallbackDays }
   }
+
+  console.warn(`[GitHub Contributions] Notice: live fetch for ${username} returned fallback after ${FETCH_MAX_ATTEMPTS} attempts:`, lastError)
+  const fallbackDays = generateFallbackCalendar()
+  return { total: 0, days: fallbackDays }
 }
 
 export async function getMergedGitHubContributions(): Promise<MergedContributionsData> {
