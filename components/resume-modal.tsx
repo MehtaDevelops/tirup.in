@@ -159,25 +159,16 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         }
         pdfDoc = pdf
 
-        // Backing store at devicePixelRatio (capped) for crisp pages.
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
-
         for (let i = 1; i <= pdf.numPages; i++) {
           if (cancelled) return
           const page = await pdf.getPage(i)
           if (cancelled) return
           const base = page.getViewport({ scale: 1 })
-          const renderViewport = page.getViewport({ scale: dpr })
 
           const pageDiv = document.createElement("div")
           pageDiv.className = "resume-pdf-page"
 
           const canvas = document.createElement("canvas")
-          canvas.width = Math.floor(renderViewport.width)
-          canvas.height = Math.floor(renderViewport.height)
-          // Fill by construction — immune to measurement timing.
-          canvas.style.width = "100%"
-          canvas.style.height = "auto"
           pageDiv.appendChild(canvas)
 
           const textDiv = document.createElement("div")
@@ -185,11 +176,28 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           pageDiv.appendChild(textDiv)
           container.appendChild(pageDiv)
 
+          // Displayed width is final once appended — render the backing
+          // store at displayed-size × DPR so pages stay crisp on DPR-1
+          // wide screens instead of upscaling a small raster.
+          const displayWidth =
+            pageDiv.clientWidth ||
+            container.clientWidth ||
+            base.width
+          const dpr = Math.min(window.devicePixelRatio || 1, 2)
+          const renderViewport = page.getViewport({
+            scale: (displayWidth / base.width) * dpr,
+          })
+          canvas.width = Math.floor(renderViewport.width)
+          canvas.height = Math.floor(renderViewport.height)
+          // Fill by construction — immune to measurement timing.
+          canvas.style.width = "100%"
+          canvas.style.height = "auto"
+
           await page.render({ canvas, viewport: renderViewport }).promise
           if (cancelled) return
           // Overlay measured post-layout, when the width is final.
-          const displayWidth = pageDiv.clientWidth || base.width
-          const textViewport = page.getViewport({ scale: displayWidth / base.width })
+          const overlayWidth = pageDiv.clientWidth || base.width
+          const textViewport = page.getViewport({ scale: overlayWidth / base.width })
           const textLayer = new pdfjs.TextLayer({
             textContentSource: page.streamTextContent(),
             container: textDiv,
