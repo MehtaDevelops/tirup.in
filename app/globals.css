@@ -114,6 +114,8 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 
 .resume-pdf-page canvas {
   display: block;
+  width: 100%;
+  height: auto;
 }
 
 @keyframes resumePdfPageIn {

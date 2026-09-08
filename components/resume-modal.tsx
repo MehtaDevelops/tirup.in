@@ -121,9 +121,10 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
   // draws its own unstyleable scrollbars). pdfjs-dist is dynamically
   // imported so it only loads when the popup opens.
   //
-  // The first render waits for `entered`: on mobile the PDF bytes often
-  // arrive before the popup's enter transition settles, and measuring the
-  // container mid-animation yields a too-narrow page stuck at that size.
+  // Sizing is done by CSS construction, not JS measurement: each canvas
+  // is styled width:100%/height:auto so it always fills the container by
+  // definition — a wrong measurement can never shrink it again. Only the
+  // invisible text-selection overlay needs a post-layout read.
   useEffect(() => {
     if (!isOpen || !entered || !pdfData) return
     const container = scrollerRef.current
@@ -131,11 +132,9 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
 
     let cancelled = false
     let resizeTimer: number | null = null
-    let verifyTimer: number | null = null
     let pdfDoc: { cleanup: () => unknown } | null = null
     let observer: ResizeObserver | null = null
     let lastWidth = 0
-    let renderedWidth = 0
     let rendering = false
     let dirty = false
 
@@ -160,10 +159,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         }
         pdfDoc = pdf
 
-        const style = window.getComputedStyle(container)
-        const padX =
-          parseFloat(style.paddingLeft || "0") + parseFloat(style.paddingRight || "0")
-        const width = Math.max(200, container.clientWidth - padX)
+        // Backing store at devicePixelRatio (capped) for crisp pages.
         const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
         for (let i = 1; i <= pdf.numPages; i++) {
@@ -171,20 +167,17 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           const page = await pdf.getPage(i)
           if (cancelled) return
           const base = page.getViewport({ scale: 1 })
-          const viewport = page.getViewport({ scale: width / base.width })
+          const renderViewport = page.getViewport({ scale: dpr })
 
           const pageDiv = document.createElement("div")
           pageDiv.className = "resume-pdf-page"
-          pageDiv.style.width = `${viewport.width}px`
-          pageDiv.style.height = `${viewport.height}px`
 
           const canvas = document.createElement("canvas")
-          // Backing store sized for devicePixelRatio — page.render maps the
-          // viewport onto the full canvas resolution automatically.
-          canvas.width = Math.floor(viewport.width * dpr)
-          canvas.height = Math.floor(viewport.height * dpr)
-          canvas.style.width = `${viewport.width}px`
-          canvas.style.height = `${viewport.height}px`
+          canvas.width = Math.floor(renderViewport.width)
+          canvas.height = Math.floor(renderViewport.height)
+          // Fill by construction — immune to measurement timing.
+          canvas.style.width = "100%"
+          canvas.style.height = "auto"
           pageDiv.appendChild(canvas)
 
           const textDiv = document.createElement("div")
@@ -192,33 +185,21 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           pageDiv.appendChild(textDiv)
           container.appendChild(pageDiv)
 
-          await page.render({ canvas, viewport }).promise
+          await page.render({ canvas, viewport: renderViewport }).promise
           if (cancelled) return
+          // Overlay measured post-layout, when the width is final.
+          const displayWidth = pageDiv.clientWidth || base.width
+          const textViewport = page.getViewport({ scale: displayWidth / base.width })
           const textLayer = new pdfjs.TextLayer({
             textContentSource: page.streamTextContent(),
             container: textDiv,
-            viewport,
+            viewport: textViewport,
           })
           await textLayer.render()
           page.cleanup()
         }
 
-        if (!cancelled) {
-          setLoading(false)
-          renderedWidth = width
-          // Late layout shifts (mobile URL bar, font settle) don't always
-          // fire ResizeObserver — verify once and re-render if drifted.
-          if (verifyTimer) window.clearTimeout(verifyTimer)
-          verifyTimer = window.setTimeout(() => {
-            if (cancelled || !container) return
-            const cs = window.getComputedStyle(container)
-            const target =
-              container.clientWidth -
-              parseFloat(cs.paddingLeft || "0") -
-              parseFloat(cs.paddingRight || "0")
-            if (Math.abs(target - renderedWidth) > 4) renderAll()
-          }, 600)
-        }
+        if (!cancelled) setLoading(false)
         rendering = false
         // A resize arrived mid-render — do one trailing pass at the new width.
         if (dirty && !cancelled && container) {
@@ -253,7 +234,6 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
       cancelled = true
       observer?.disconnect()
       if (resizeTimer) window.clearTimeout(resizeTimer)
-      if (verifyTimer) window.clearTimeout(verifyTimer)
       if (container) container.innerHTML = ""
       try {
         pdfDoc?.cleanup()
