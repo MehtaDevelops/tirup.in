@@ -120,16 +120,22 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
   // site's themed scrollbar applies (the browser's built-in PDF viewer
   // draws its own unstyleable scrollbars). pdfjs-dist is dynamically
   // imported so it only loads when the popup opens.
+  //
+  // The first render waits for `entered`: on mobile the PDF bytes often
+  // arrive before the popup's enter transition settles, and measuring the
+  // container mid-animation yields a too-narrow page stuck at that size.
   useEffect(() => {
-    if (!isOpen || !pdfData) return
+    if (!isOpen || !entered || !pdfData) return
     const container = scrollerRef.current
     if (!container) return
 
     let cancelled = false
     let resizeTimer: number | null = null
+    let verifyTimer: number | null = null
     let pdfDoc: { cleanup: () => unknown } | null = null
     let observer: ResizeObserver | null = null
     let lastWidth = 0
+    let renderedWidth = 0
     let rendering = false
     let dirty = false
 
@@ -197,7 +203,22 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           page.cleanup()
         }
 
-        if (!cancelled) setLoading(false)
+        if (!cancelled) {
+          setLoading(false)
+          renderedWidth = width
+          // Late layout shifts (mobile URL bar, font settle) don't always
+          // fire ResizeObserver — verify once and re-render if drifted.
+          if (verifyTimer) window.clearTimeout(verifyTimer)
+          verifyTimer = window.setTimeout(() => {
+            if (cancelled || !container) return
+            const cs = window.getComputedStyle(container)
+            const target =
+              container.clientWidth -
+              parseFloat(cs.paddingLeft || "0") -
+              parseFloat(cs.paddingRight || "0")
+            if (Math.abs(target - renderedWidth) > 4) renderAll()
+          }, 600)
+        }
         rendering = false
         // A resize arrived mid-render — do one trailing pass at the new width.
         if (dirty && !cancelled && container) {
@@ -232,6 +253,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
       cancelled = true
       observer?.disconnect()
       if (resizeTimer) window.clearTimeout(resizeTimer)
+      if (verifyTimer) window.clearTimeout(verifyTimer)
       if (container) container.innerHTML = ""
       try {
         pdfDoc?.cleanup()
@@ -239,7 +261,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         /* ignore */
       }
     }
-  }, [isOpen, pdfData])
+  }, [isOpen, pdfData, entered])
 
   if (!isOpen) return null
 
