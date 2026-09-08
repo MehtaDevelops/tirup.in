@@ -276,6 +276,13 @@ export function proxy(request: NextRequest) {
         "Content-Type": "text/markdown; charset=utf-8",
         "Vary": "Accept, Accept-Encoding",
         "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+        // Plain-text body needs no scripts/objects; keep framing locked to
+        // self to mirror the HTML X-Frame-Options: SAMEORIGIN policy.
+        "Content-Security-Policy":
+          "default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "X-Frame-Options": "SAMEORIGIN",
       },
     })
   }

@@ -1,4 +1,37 @@
 /** @type {import('next').NextConfig} */
+
+// React/Next dev mode (Turbopack) uses eval() for debugging callstacks, so
+// `unsafe-eval` is required locally. Production never uses eval(), so it is
+// only added when NODE_ENV=development to keep the deployed policy tight.
+const isDev = process.env.NODE_ENV === "development"
+
+const cspScriptSrc = [
+  "'self'",
+  "'unsafe-inline'",
+  ...(isDev ? ["'unsafe-eval'"] : []),
+  "https://www.googletagmanager.com",
+  "https://*.googletagmanager.com",
+  "https://www.google-analytics.com",
+  "https://va.vercel-scripts.com",
+  "https://vitals.vercel-insights.com",
+].join(" ")
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  `script-src ${cspScriptSrc}`,
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https://fonts.gstatic.com",
+  "connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://github-contributions-api.jogruber.de",
+  "frame-src 'self' https://www.googletagmanager.com",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  "upgrade-insecure-requests",
+].join("; ")
+
 const nextConfig = {
   // ─── Build Quality ────────────────────────────────────────────────────────
   // In Next.js 16, ESLint is run via `next lint` CLI — the `eslint` config key
@@ -68,6 +101,18 @@ const nextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
+          },
+          // ── Content Security Policy ──────────────────────────────────────
+          // frame-ancestors 'self' mirrors X-Frame-Options: SAMEORIGIN above
+          // (same-origin resume preview still works, other sites cannot frame).
+          // script-src allows Next.js inline bootstraps + GTM/GA/Vercel
+          // analytics; connect-src allows Convex API + analytics beacons +
+          // GitHub contributions API; img-src allows data:/blob: for QR tool,
+          // shader noise SVG, and PDF blob previews.
+          // (`unsafe-eval` is auto-included in dev only — see top of file.)
+          {
+            key: "Content-Security-Policy",
+            value: contentSecurityPolicy,
           },
           // ── Browser feature restrictions ─────────────────────────────────
           {

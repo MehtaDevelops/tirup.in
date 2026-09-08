@@ -123,7 +123,7 @@ function NavLinks({ pathname }: { pathname: string }) {
             "active:scale-[0.97]",
             isLinkActive(href)
               ? "text-black dark:text-white"
-              : "text-zinc-400 dark:text-zinc-500 hover:text-black dark:hover:text-white",
+              : "text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white",
           ].join(" ")}
         >
           {label}
@@ -159,7 +159,7 @@ export default function Header() {
         <div className="reveal-in w-full bg-black/[0.015] dark:bg-white/[0.01] border-b border-black/5 dark:border-white/5 py-2.5 text-xs font-light text-black/50 dark:text-white/50">
           <div className="max-w-4xl mx-auto w-full px-6 md:px-20 flex items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-accent font-medium uppercase tracking-[0.15em] text-[10px]">blogs</span>
+              <span className="text-[#646DBB] dark:text-accent font-medium uppercase tracking-[0.15em] text-[10px]">blogs</span>
               <span className="text-black/20 dark:text-white/20 select-none">/</span>
               <span>
                 <span className="hidden sm:inline">Thoughts on development, design, and security. Read at </span>

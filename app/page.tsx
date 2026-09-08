@@ -26,7 +26,7 @@ export default function Home() {
       */}
       <noscript>
         <article style={{ maxWidth: "48rem", margin: "0 auto", padding: "2rem 1.5rem", fontFamily: "sans-serif", lineHeight: 1.7, color: "#111" }}>
-          <h1>Tirup Mehta — Software Engineer</h1>
+          <h2>Tirup Mehta — Software Engineer</h2>
           <p>
             Official portfolio of Tirup Mehta, a software engineer based in Gujarat, India, specialising in secure frontend architectures, systems security, and cryptography.
           </p>
@@ -93,7 +93,7 @@ export default function Home() {
 
           <TextWithBlur delay={250}>
             <p>
-              I write about interface design and web security on <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">my engineering blog</a>, share active experiments on <a href="/github" className="link-hover hover:text-accent transition-colors">GitHub</a>, and am always open to fresh ideas. Let&apos;s connect.
+              I write about interface design and web security on <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="link-hover hover:text-accent transition-colors">my engineering blog</a>, share active experiments on <a href="/github" className="link-hover hover:text-accent transition-colors">GitHub</a>, and am always open to fresh ideas. <a href="/contact" className="link-hover hover:text-accent transition-colors">Let&apos;s connect.</a>
             </p>
           </TextWithBlur>
         </div>
