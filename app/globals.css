@@ -37,6 +37,111 @@ html.dark {
   transition: none !important;
 }
 
+/* Custom scrollbar — thin, rounded, theme-aware (replaces the default bulky bar) */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.45) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 9999px;
+  border: 3px solid var(--bg);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  background-clip: padding-box;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border: 3px solid var(--bg);
+  background-clip: padding-box;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Resume PDF viewer — pages are rendered by PDF.js into our own scroll
+   container. The scrollbar is hidden here (scroll still works via wheel /
+   touch / keyboard); the reserved gutter keeps the width stable so pages
+   never re-render in a loop when content overflows. */
+.resume-pdf-scroller {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-gutter: stable;
+}
+
+.resume-pdf-scroller::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.resume-pdf-page {
+  position: relative;
+  margin: 0 auto 12px;
+  background: #fff;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.08);
+  animation: resumePdfPageIn 0.3s ease-out both;
+}
+
+.resume-pdf-page:last-child {
+  margin-bottom: 0;
+}
+
+.resume-pdf-page canvas {
+  display: block;
+}
+
+@keyframes resumePdfPageIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Selectable text overlay painted over each page canvas */
+.resume-pdf-page .textLayer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.resume-pdf-page .textLayer span,
+.resume-pdf-page .textLayer br {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+.resume-pdf-page .textLayer ::selection {
+  background: rgba(124, 136, 232, 0.35);
+}
+
 html {
   scroll-behavior: smooth;
   height: 100%;

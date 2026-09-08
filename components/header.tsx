@@ -5,7 +5,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
-import { Download, X } from "lucide-react"
+import ResumeModal from "@/components/resume-modal"
+import { X, ArrowUpRight } from "lucide-react"
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 // ---------------------------------------------------------------------------
@@ -138,6 +139,7 @@ function NavLinks({ pathname }: { pathname: string }) {
 export default function Header() {
   const pathname = usePathname()
   const [showPopup, setShowPopup] = useState(true)
+  const [isResumeOpen, setIsResumeOpen] = useState(false)
 
   useEffect(() => {
     if (localStorage.getItem("dismissedBlogPopup")) setShowPopup(false)
@@ -187,7 +189,8 @@ export default function Header() {
       {/* ── Avatar + name ────────────────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-6 md:pt-28 pb-0">
         <TextWithBlur>
-          <div className="flex items-center gap-4 mb-4 md:mb-6">
+          <div className="flex items-center justify-between gap-x-4 gap-y-3 mb-4 md:mb-6 flex-wrap">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <div className="relative shrink-0 select-none group">
               <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900">
                 <Image
@@ -218,7 +221,7 @@ export default function Header() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap">
+            <div className="min-w-0">
               {isHome ? (
                 <h1 className="text-3xl md:text-4xl font-light tracking-tight text-black dark:text-white leading-none">
                   Tirup Mehta
@@ -228,18 +231,17 @@ export default function Header() {
                   Tirup Mehta
                 </p>
               )}
-              <a
-                href="/Resume_Tirup_Mehta.pdf"
-                download
-                className="group inline-flex items-center justify-center gap-1.5 h-[26px] px-3 text-[11px] font-medium tracking-wide bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 rounded-full text-black/60 dark:text-white/60 hover:text-black dark:hover:text-white transition-all duration-150 select-none cursor-pointer active:scale-[0.97]"
-              >
-                <Download
-                  size={12}
-                  className="text-black/50 dark:text-white/50 group-hover:text-black dark:group-hover:text-white transition-colors duration-150"
-                />
-                <span className="leading-none select-none">Resume</span>
-              </a>
             </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsResumeOpen(true)}
+              className="group inline-flex items-center gap-1 pl-4 pr-3 h-8 text-xs font-medium tracking-wide rounded-full border bg-transparent transition-all duration-150 select-none cursor-pointer shrink-0 active:scale-[0.97] border-[rgba(18,19,20,0.15)] hover:border-[rgba(18,19,20,0.3)] hover:bg-[rgba(18,19,20,0.05)] text-[rgba(18,19,20,0.7)] hover:text-black dark:border-[rgba(255,255,255,0.07)] dark:hover:border-[rgba(255,255,255,0.16)] dark:hover:bg-[rgba(255,255,255,0.05)] dark:text-[rgba(244,244,245,0.7)] dark:hover:text-white"
+            >
+              <span className="leading-none select-none">Resume</span>
+              <ArrowUpRight size={13} className="icon-arrow-hover opacity-70" />
+            </button>
           </div>
         </TextWithBlur>
 
@@ -256,6 +258,9 @@ export default function Header() {
           />
         </div>
       </div>
+
+      {/* ── Resume preview popup (inline, no auto-download) ── */}
+      <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
     </>
   )
 }

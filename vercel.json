@@ -9,7 +9,7 @@
         },
         {
           "key": "X-Frame-Options",
-          "value": "DENY"
+          "value": "SAMEORIGIN"
         },
         {
           "key": "X-Content-Type-Options",
@@ -67,7 +67,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment"
+          "value": "inline"
         },
         {
           "key": "X-Content-Type-Options",

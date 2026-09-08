@@ -52,9 +52,12 @@ const nextConfig = {
             value: "max-age=63072000; includeSubDomains; preload",
           },
           // ── Clickjacking protection ──────────────────────────────────────
+          // SAMEORIGIN (not DENY) so same-origin iframes like the
+          // resume preview popup can embed the PDF, while other
+          // sites still cannot frame this site.
           {
             key: "X-Frame-Options",
-            value: "DENY",
+            value: "SAMEORIGIN",
           },
           // ── MIME sniffing protection ─────────────────────────────────────
           {
