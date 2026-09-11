@@ -119,7 +119,7 @@ export default async function BlogsPage() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-1 text-xs sm:text-sm text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white transition-colors duration-200"
                 >
-                  <span className="link-hover pb-0.5">View all articles at blogs.tirup.in</span>
+                  <span className="link-hover pb-0.5">View all articles on Tirup Mehta Blogs</span>
                   <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
                 </a>
               </div>
