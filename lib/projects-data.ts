@@ -440,17 +440,17 @@ export const projectsList: WorkProject[] = [
     liveUrl: "https://modelregistry.tirup.in",
   },
   {
-    title: "Trace Guard",
-    description: "Bot-resistant behavioral security engine and NPM package.",
-    slug: "trace-guard",
-    liveUrl: "https://www.npmjs.com/package/trace-guard",
-  },
-  {
     title: "GleanBox",
     description: "Open-source developer utility and data harvesting toolkit.",
     slug: "gleanbox",
     github: "github.com/TirupMehta/GleanBox",
     liveUrl: "https://github.com/TirupMehta/GleanBox",
+  },
+  {
+    title: "Trace Guard",
+    description: "Bot-resistant behavioral security engine and NPM package.",
+    slug: "trace-guard",
+    liveUrl: "https://www.npmjs.com/package/trace-guard",
   },
   {
     title: "Peace",
@@ -467,13 +467,6 @@ export const projectsList: WorkProject[] = [
     isPrivate: true,
   },
   {
-    title: "QUOTT",
-    description: "Daily inspiration Android app with hand-picked shareable quotes.",
-    slug: "quott",
-    github: "github.com/TirupMehta/QUOTT",
-    liveUrl: "https://quott.tirup.in",
-  },
-  {
     title: "Discuss",
     description: "AI-moderated group debate platform on any topic.",
     slug: "discuss",
@@ -481,11 +474,11 @@ export const projectsList: WorkProject[] = [
     isPrivate: true,
   },
   {
-    title: "Typing Challenge",
-    description: "Fast-paced typing challenge app to test and improve typing speed.",
-    slug: "typing-challenge",
-    liveUrl: "https://typing-challenge.tirup.in/",
-    isPrivate: true,
+    title: "QUOTT",
+    description: "Daily inspiration Android app with hand-picked shareable quotes.",
+    slug: "quott",
+    github: "github.com/TirupMehta/QUOTT",
+    liveUrl: "https://quott.tirup.in",
   },
   {
     title: "Archive",
@@ -493,6 +486,13 @@ export const projectsList: WorkProject[] = [
     slug: "archive",
     github: "github.com/TirupMehta/archive",
     liveUrl: "https://archive.tirup.in",
+  },
+  {
+    title: "Typing Challenge",
+    description: "Fast-paced typing challenge app to test and improve typing speed.",
+    slug: "typing-challenge",
+    liveUrl: "https://typing-challenge.tirup.in/",
+    isPrivate: true,
   },
   {
     title: "UTM Builder",
