@@ -440,13 +440,6 @@ export const projectsList: WorkProject[] = [
     liveUrl: "https://modelregistry.tirup.in",
   },
   {
-    title: "GleanBox",
-    description: "Open-source developer utility and data harvesting toolkit.",
-    slug: "gleanbox",
-    github: "github.com/TirupMehta/GleanBox",
-    liveUrl: "https://github.com/TirupMehta/GleanBox",
-  },
-  {
     title: "Trace Guard",
     description: "Bot-resistant behavioral security engine and NPM package.",
     slug: "trace-guard",
@@ -460,25 +453,11 @@ export const projectsList: WorkProject[] = [
     isPrivate: true,
   },
   {
-    title: "Vectorize AI API",
-    description: "Free AI API for small companies — powerful capabilities, zero setup.",
-    slug: "vectorize-ai-api",
-    liveUrl: "https://vectorize.in",
-    isPrivate: true,
-  },
-  {
     title: "Discuss",
     description: "AI-moderated group debate platform on any topic.",
     slug: "discuss",
     liveUrl: "https://discuss.tirup.in",
     isPrivate: true,
-  },
-  {
-    title: "QUOTT",
-    description: "Daily inspiration Android app with hand-picked shareable quotes.",
-    slug: "quott",
-    github: "github.com/TirupMehta/QUOTT",
-    liveUrl: "https://quott.tirup.in",
   },
   {
     title: "Archive",
@@ -488,11 +467,25 @@ export const projectsList: WorkProject[] = [
     liveUrl: "https://archive.tirup.in",
   },
   {
+    title: "Vectorize AI API",
+    description: "Free AI API for small companies — powerful capabilities, zero setup.",
+    slug: "vectorize-ai-api",
+    liveUrl: "https://vectorize.in",
+    isPrivate: true,
+  },
+  {
     title: "Typing Challenge",
     description: "Fast-paced typing challenge app to test and improve typing speed.",
     slug: "typing-challenge",
     liveUrl: "https://typing-challenge.tirup.in/",
     isPrivate: true,
+  },
+  {
+    title: "QUOTT",
+    description: "Daily inspiration Android app with hand-picked shareable quotes.",
+    slug: "quott",
+    github: "github.com/TirupMehta/QUOTT",
+    liveUrl: "https://quott.tirup.in",
   },
   {
     title: "UTM Builder",
@@ -543,6 +536,13 @@ export const projectsList: WorkProject[] = [
     description: "Electron app showing real-time system, network info, and speed test.",
     slug: "portal",
     github: "github.com/TirupMehta/Portal",
+  },
+  {
+    title: "GleanBox",
+    description: "Open-source developer utility and data harvesting toolkit.",
+    slug: "gleanbox",
+    github: "github.com/TirupMehta/GleanBox",
+    liveUrl: "https://github.com/TirupMehta/GleanBox",
   },
 ]
 
