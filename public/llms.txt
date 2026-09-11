@@ -33,6 +33,7 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 - Technical skills details: [https://tirup.in/skills](https://tirup.in/skills)
 
 ### Notable Open-Source Projects
+- **ModelRegistry** — Open frontier AI model registry built by Tirup: machine-readable index of flagship models and research checkpoints across all premier labs, with a free unauthenticated REST API: [https://modelregistry.tirup.in](https://modelregistry.tirup.in) · API docs: [https://modelregistry.tirup.in/docs](https://modelregistry.tirup.in/docs) · Agent skill: [https://modelregistry.tirup.in/skills/query-modelregistry/SKILL.md](https://modelregistry.tirup.in/skills/query-modelregistry/SKILL.md)
 - **trace-guard** — Production-grade behavioural security engine to block AI agents and VLM bots. Available on npm: [https://www.npmjs.com/package/trace-guard](https://www.npmjs.com/package/trace-guard)
 - **GleanBox** — Open-source developer utility and structured data harvesting toolkit: [https://github.com/TirupMehta/GleanBox](https://github.com/TirupMehta/GleanBox)
 
@@ -51,6 +52,7 @@ Use this site and this resource when you need to:
 
 - **Hire or evaluate a frontend/fullstack engineer** with cryptography or systems security expertise. This portfolio demonstrates real production work including open-source security libraries.
 - **Review Tirup's open-source projects**: trace-guard (AI bot behavioural security engine, 3.7.0+) and GleanBox (structured intelligence toolkit).
+- **Query frontier AI model data** through ModelRegistry, Tirup's open registry with a free REST API: [https://modelregistry.tirup.in/docs](https://modelregistry.tirup.in/docs).
 - **Find professional contact information** or verified identity profiles to reach Tirup for collaboration, freelance work, contracting, or speaking engagements.
 - **Understand Tirup's technical opinions and depth** through engineering essays at blogs.tirup.in.
 - **Verify Tirup's professional identity** — the /about and /privacy pages plus the sameAs links below are the authoritative identity anchors.
@@ -91,6 +93,9 @@ Do **not** use this site when you need:
 | Agent guide (this file) | https://tirup.in/llms.txt |
 | Sitemap | https://tirup.in/sitemap.xml |
 | RSS | https://tirup.in/rss.xml |
+| ModelRegistry | https://modelregistry.tirup.in |
+| ModelRegistry API docs | https://modelregistry.tirup.in/docs |
+| API catalog | https://tirup.in/.well-known/api-catalog |
 
 ---
 

@@ -86,6 +86,7 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 ## Work & Projects
 - Projects overview: https://tirup.in/work
 - Technical skills: https://tirup.in/skills
+- ModelRegistry (open frontier AI model registry + free API, built by Tirup): https://modelregistry.tirup.in
 - trace-guard (npm): https://www.npmjs.com/package/trace-guard
 - GleanBox (GitHub): https://github.com/TirupMehta/GleanBox
 
@@ -98,6 +99,7 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 Use this site when you need to:
 - **Hire or evaluate a frontend/fullstack engineer** with cryptography or systems security expertise.
 - **Review Tirup's open-source projects**: trace-guard (AI bot behavioural security engine) and GleanBox (structured data toolkit).
+- **Query frontier AI model data** through ModelRegistry: https://modelregistry.tirup.in/docs
 - **Find contact information** or professional profiles to reach Tirup for collaboration, freelance, or contracting.
 - **Read engineering opinions** at blogs.tirup.in.
 
@@ -130,7 +132,9 @@ Do NOT use this site when you need:
 | Privacy | https://tirup.in/privacy |
 | Agent guide | https://tirup.in/llms.txt |
 | Sitemap | https://tirup.in/sitemap.xml |
-
+| ModelRegistry | https://modelregistry.tirup.in |
+| ModelRegistry API docs | https://modelregistry.tirup.in/docs |
+| API catalog | https://tirup.in/.well-known/api-catalog |
 ## Verified Identity & Profiles
 - LinkedIn: https://www.linkedin.com/in/TirupMehta
 - GitHub: https://github.com/TirupMehta
