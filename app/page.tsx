@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: {
     absolute: "Tirup Mehta",
   },
-  description: "Tirup Mehta — software engineer building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+  description: "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   alternates: {
     canonical: "https://tirup.in"
   }
@@ -28,7 +28,7 @@ export default function Home() {
         <article style={{ maxWidth: "48rem", margin: "0 auto", padding: "2rem 1.5rem", fontFamily: "sans-serif", lineHeight: 1.7, color: "#111" }}>
           <h2>Tirup Mehta — Software Engineer</h2>
           <p>
-            Tirup Mehta — software engineer building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
+            Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
           </p>
 
           <h2>About</h2>
