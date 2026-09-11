@@ -61,7 +61,7 @@ const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work",
 const ROUTE_MARKDOWN: Record<string, string> = {
   "/": `# Tirup Mehta
 
-Official portfolio and professional resource for Tirup Mehta, a Software Engineer based in Gujarat, India, specializing in secure frontend architectures, systems security, and cryptography.
+Tirup Mehta — software engineer building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
 
 ## Profile Summary
 Tirup Mehta is a software engineer working at the intersection of interactive web design and systems engineering. Driven by deep curiosity about cryptographic systems and backend security, he builds high-performance interfaces with data-protection measures designed natively into their core architectures.
