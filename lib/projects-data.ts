@@ -175,6 +175,26 @@ export const projectsData = {
       },
     ],
   },
+  "archive": {
+    title: "Archive",
+    description: "Minimalist writing app for focused, distraction-free writing.",
+    fullDescription: "Archive is a minimalist writing app built for focused, distraction-free writing. A clean canvas for thoughts, drafts, and essays — nothing between the writer and the words.",
+    liveUrl: "https://archive.tirup.in",
+    stats: {
+      type: "Writing App",
+      style: "Minimalist",
+    },
+    details: [
+      {
+        title: "The Challenge",
+        content: "Most writing tools bury the page under toolbars, sidebars, and notifications, breaking the focus that good writing needs.",
+      },
+      {
+        title: "The Solution",
+        content: "Archive strips the interface down to the text itself, so drafting feels like paper — open it and write.",
+      },
+    ],
+  },
   "devgathering": {
     title: "DevGathering",
     description: "A community platform for developers focusing on AI, Cybersecurity, and programming event updates.",
@@ -463,6 +483,12 @@ export const projectsList: WorkProject[] = [
     slug: "typing-challenge",
     liveUrl: "https://typing-challenge.tirup.in/",
     isPrivate: true,
+  },
+  {
+    title: "Archive",
+    description: "Minimalist writing app for focused, distraction-free writing.",
+    slug: "archive",
+    liveUrl: "https://archive.tirup.in",
   },
   {
     title: "UTM Builder",
