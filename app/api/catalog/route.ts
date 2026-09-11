@@ -16,7 +16,7 @@ const CATALOG = {
       anchor: "https://modelregistry.tirup.in/api/v1/models",
       "service-desc": [
         {
-          href: "https://tirup.in/openapi/modelregistry.json",
+          href: "https://modelregistry.tirup.in/openapi.json",
           type: "application/json",
         },
       ],
