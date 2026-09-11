@@ -155,6 +155,20 @@ const nextConfig = {
           },
         ],
       },
+      // ── Homepage agent discovery (RFC 8288 + RFC 9727 §3) ───────────────
+      // Advertise machine-readable resources. Only relations whose targets
+      // actually exist are listed; API-level service-desc/service-doc links
+      // live in the catalog itself, where their anchor context is correct.
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value:
+              '</.well-known/api-catalog>; rel="api-catalog", </llms.txt>; rel="describedby"',
+          },
+        ],
+      },
     ]
   },
 
