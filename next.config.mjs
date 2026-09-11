@@ -171,6 +171,20 @@ const nextConfig = {
   async redirects() {
     return []
   },
+
+  // ─── Well-Known URIs (RFC 8615) ───────────────────────────────────────────
+  // RFC 9727 api-catalog: canonical route lives at /api/catalog; the
+  // well-known URI rewrites to it so scanners and agents find it at
+  // /.well-known/api-catalog with the route's application/linkset+json
+  // Content-Type preserved.
+  async rewrites() {
+    return [
+      {
+        source: "/.well-known/api-catalog",
+        destination: "/api/catalog",
+      },
+    ]
+  },
 }
 
 export default nextConfig
