@@ -177,21 +177,24 @@ export const projectsData = {
   },
   "archive": {
     title: "Archive",
-    description: "Minimalist writing app for focused, distraction-free writing.",
-    fullDescription: "Archive is a minimalist writing app built for focused, distraction-free writing. A clean canvas for thoughts, drafts, and essays — nothing between the writer and the words.",
+    description: "Minimalist writing app with AI formatting and real-time cloud sync.",
+    fullDescription: "Archive is a keyboard-first writing environment that stays out of your way. Write as a guest and everything saves locally, or sign in with Google to sync projects across devices. Hit the AI button and Gemini restructures and formats the document in one click — grammar, structure, code blocks, and spacing handled automatically.",
     liveUrl: "https://archive.tirup.in",
+    github: "github.com/TirupMehta/archive",
+    techStack: ["Next.js", "TypeScript", "TipTap", "Firebase", "Gemini AI"],
     stats: {
-      type: "Writing App",
-      style: "Minimalist",
+      stars: "3",
+      sync: "Real-time",
+      license: "MIT",
     },
     details: [
       {
         title: "The Challenge",
-        content: "Most writing tools bury the page under toolbars, sidebars, and notifications, breaking the focus that good writing needs.",
+        content: "Most writing tools bury the page under toolbars, sidebars, and notifications, while raw drafts still need manual cleanup for grammar and structure.",
       },
       {
         title: "The Solution",
-        content: "Archive strips the interface down to the text itself, so drafting feels like paper — open it and write.",
+        content: "Archive pairs a distraction-free TipTap editor — bold, headings, lists, links, code blocks with copy button, multiple projects, voice typing, export, and word counter — with one-click Gemini formatting and Firestore sync that falls back to localStorage without an account.",
       },
     ],
   },
@@ -486,8 +489,9 @@ export const projectsList: WorkProject[] = [
   },
   {
     title: "Archive",
-    description: "Minimalist writing app for focused, distraction-free writing.",
+    description: "Minimalist writing app with AI formatting and real-time cloud sync.",
     slug: "archive",
+    github: "github.com/TirupMehta/archive",
     liveUrl: "https://archive.tirup.in",
   },
   {
