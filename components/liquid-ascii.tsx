@@ -15,7 +15,7 @@ import { createPortal } from "react-dom"
  * | fillHeight      | 0.4         | 0.4                                              |
  * | cursorRadius    | 0.25        | 0.25 × short side                                |
  * | cursorForce     | 66          | 66-equivalent                                    |
- * | flipRatio       | 0.3         | 0.5 PIC/FLIP blend — livelier, less damping      |
+ * | flipRatio       | 0.3         | 0.7 PIC/FLIP blend — seiche survives, far side answers |
  * | pressureIters   | 30          | 30 Gauss-Seidel iterations — the real thing      |
  * | overRelaxation  | 1.5         | 1.5 — the real thing                             |
  * | separationIters | 3           | 3 density passes — the real thing                |
@@ -43,12 +43,12 @@ const P = {
   renderCap: 12000,
   ppc: 5, // particles per sim cell at seed (dense body)
   pmax: 8000,
-  gravityPx: 1500, // ≈ Pro gravity -25, scaled to px/s²
+  gravityPx: 1800, // ≈ Pro gravity -25, scaled to px/s² (firm drainage)
   fillHeight: 0.4,
   cursorRadius: 0.25,
   cursorForce: 66,
-  flipRatio: 0.5, // Pro default 0.3; raised — less numerical dissipation,
-  // motion stays alive longer instead of dying in a second
+  flipRatio: 0.7, // Pro default 0.3; raised — less numerical dissipation,
+  // piles collapse into far-side seiche instead of dying on the spot
   pressureIters: 30,
   overRelaxation: 1.5,
   separationIters: 3,
@@ -115,6 +115,8 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     let cvx = 0
     let cvy = 0
     let lastInput = 0
+    let prevMaxS = 999 // peak speed last step — separation only runs while
+    // violent; jittering calm piles feeds fake velocity back forever
     let frame = 0 // advances every step — separation jitter varies per
     // frame so it averages to zero instead of drifting the pile thin
     let visible = true
@@ -159,13 +161,17 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       const n = GLYPHS.length
       // fluid top per column: first row with neighborhood support (≥3 in
       // a 3-wide window) — lone stuck dots can't fake a surface.
+      // Near side walls the bar is higher (≥6): thin climbs must not
+      // render the heavy $@$ line, only genuinely deep wall piles do.
+      const edge = Math.max(2, Math.round((2 * h) / (W / rcols)))
       for (let x = 0; x < rcols; x++) {
         let s = rrows
+        const need = x < edge || x >= rcols - edge ? 6 : 3
         for (let y = 0; y < rrows; y++) {
           let sup = rcount[y * rcols + x]
           if (x > 0) sup += rcount[y * rcols + x - 1]
           if (x < rcols - 1) sup += rcount[y * rcols + x + 1]
-          if (sup >= 3) {
+          if (sup >= need) {
             s = y
             break
           }
@@ -367,8 +373,8 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
         pu[p] = nu
         pv[p] = nv
         if (sp > maxS) maxS = sp
-        px[p] += nu * dtCur
-        py[p] += nv * dtCur
+        px[p] += pu[p] * dtCur
+        py[p] += pv[p] * dtCur
         // walls: impact-aware contact. Gentle touches rest and slide
         // (smooth sheeting), hard impacts rebound damped. Kills the
         // every-step micro-bounce that made piles shimmer.
@@ -389,29 +395,33 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       }
 
       // --- separation (density passes): thin overfull cells ---
+      // Gated on violence: calm piles are left alone, otherwise the
+      // per-frame jitter injects energy that never lets them settle.
       const kept = new Uint16Array(nx * ny)
-      for (let s = 0; s < P.separationIters; s++) {
-        bin()
-        kept.fill(0)
-        for (let p = 0; p < active; p++) {
-          const i = clamp(Math.floor(px[p] / h), 1, nx - 2)
-          const j = clamp(Math.floor(py[p] / h), 1, ny - 2)
-          const k = j * nx + i
-          if (kept[k] < P.ppc) {
-            kept[k]++
-          } else {
-            // time-varying push (frame in the hash): averages to zero over
-            // frames instead of marching the pile in one direction.
-            px[p] = clamp(
-              px[p] + (hash1(p * 3 + s * 131 + frame * 17) - 0.5) * h * 0.5,
-              h,
-              W - h
-            )
-            py[p] = clamp(
-              py[p] + (hash1(p * 7 + s * 17 + frame * 41) - 0.5) * h * 0.5,
-              h,
-              H - h
-            )
+      if (prevMaxS >= 25) {
+        for (let s = 0; s < P.separationIters; s++) {
+          bin()
+          kept.fill(0)
+          for (let p = 0; p < active; p++) {
+            const i = clamp(Math.floor(px[p] / h), 1, nx - 2)
+            const j = clamp(Math.floor(py[p] / h), 1, ny - 2)
+            const k = j * nx + i
+            if (kept[k] < P.ppc) {
+              kept[k]++
+            } else {
+              // time-varying push (frame in the hash): averages to zero over
+              // frames instead of marching the pile in one direction.
+              px[p] = clamp(
+                px[p] + (hash1(p * 3 + s * 131 + frame * 17) - 0.5) * h * 0.5,
+                h,
+                W - h
+              )
+              py[p] = clamp(
+                py[p] + (hash1(p * 7 + s * 17 + frame * 41) - 0.5) * h * 0.5,
+                h,
+                H - h
+              )
+            }
           }
         }
       }
@@ -434,6 +444,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       renderParticles()
 
       if (paint) draw()
+      prevMaxS = maxS
       return maxS
     }
 
@@ -452,15 +463,17 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       // feature now, so the extra solver cost is affordable)
       dtCur = dt / 2
       step(false)
-      const maxS = step(true)
-      // NaN watchdog: if the solver ever blows up, reseed instead of
+      const maxS = step(true)      // NaN watchdog: if the solver ever blows up, reseed instead of
       // rendering nothing forever.
       if (!Number.isFinite(maxS)) {
         seed()
         renderParticles()
         draw()
       }
-      if (maxS < 10 && now - lastInput > 500) {
+      // Sleep only when truly still. The threshold sits below slow
+      // drainage speed, so wall runoff always finishes instead of
+      // freezing halfway (frozen = stuck for minutes; slow = flowing).
+      if (maxS < 1.5 && now - lastInput > 2000) {
         sleeping = true
         running = false
         return
@@ -473,6 +486,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       if (!visible || !inView) return
       sleeping = false
       running = true
+      prevMaxS = 999 // fresh input = violent until proven calm
       last = performance.now()
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(tick)
