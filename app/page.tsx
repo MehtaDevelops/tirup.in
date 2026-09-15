@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
+import HeroDots from "@/components/hero-dots"
 import { ArrowUpRight } from "lucide-react"
 
 export const metadata: Metadata = {
@@ -143,13 +144,7 @@ export default function Home() {
         </TextWithBlur>
 
         {/* Dynamic Indicator Dots at the bottom of hero */}
-        <TextWithBlur delay={350}>
-          <div className="flex gap-2 mt-8 select-none">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff6b6b]/60 transition-all duration-300 hover:scale-125 hover:shadow-[0_0_8px_#ff6b6b] hover:opacity-100 cursor-pointer" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#feca57]/60 transition-all duration-300 hover:scale-125 hover:shadow-[0_0_8px_#feca57] hover:opacity-100 cursor-pointer" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1dd1a1]/60 transition-all duration-300 hover:scale-125 hover:shadow-[0_0_8px_#1dd1a1] hover:opacity-100 cursor-pointer" />
-          </div>
-        </TextWithBlur>
+        <HeroDots />
       </section>
 
       {/* Footer */}
