@@ -51,7 +51,7 @@ The requested path does not exist on tirup.in.
 - Home: https://tirup.in/
 - Work & Projects: https://tirup.in/work
 - Technical Skills: https://tirup.in/skills
-- Blog posts (syndicated): https://tirup.in/blogs
+- Blog posts (syndicated): https://tirup.in/writing
 - About Tirup Mehta: https://tirup.in/about
 - Contact: https://tirup.in/contact
 - Privacy Policy: https://tirup.in/privacy
@@ -66,7 +66,7 @@ The requested path does not exist on tirup.in.
 
 If you are an AI agent, consult https://tirup.in/llms.txt for a structured overview of this site.
         */}
-        <p>Page not found. See <a href="/llms.txt">llms.txt</a> for a site overview, or navigate to <a href="/">the homepage</a>, <a href="/work">work</a>, <a href="/skills">skills</a>, <a href="/blogs">blogs</a>, <a href="/about">about</a>, or <a href="/contact">contact</a>.</p>
+        <p>Page not found. See <a href="/llms.txt">llms.txt</a> for a site overview, or navigate to <a href="/">the homepage</a>, <a href="/work">work</a>, <a href="/skills">skills</a>, <a href="/writing">writing</a>, <a href="/about">about</a>, or <a href="/contact">contact</a>.</p>
       </section>
     </main>
   )

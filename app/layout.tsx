@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Playfair_Display } from "next/font/google"
+import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
@@ -21,6 +21,12 @@ const playfair = Playfair_Display({
   display: "swap",
   preload: false,
   style: ["normal", "italic"],
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -85,12 +91,12 @@ export const metadata: Metadata = {
 const profilePageSchema = {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
-  "@id": "https://tirup.in/#profilepage",
+  "@id": "https://tirup.in/",
   "url": "https://tirup.in",
   "name": "Tirup Mehta - Profile & Portfolio",
   "description": "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "mainEntity": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "hasPart": [
     { "@id": "https://tirup.in/#trace-guard" },
@@ -101,7 +107,7 @@ const profilePageSchema = {
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
-  "@id": "https://tirup.in/#person",
+  "@id": "https://tirup.in/about",
   "name": "Tirup Mehta",
   "url": "https://tirup.in",
   "image": "https://tirup.in/profile.png",
@@ -130,7 +136,7 @@ const personSchema = {
     "name": "India"
   },
   "subjectOf": {
-    "@id": "https://blogs.tirup.in/#blog"
+    "@id": "https://blogs.tirup.in"
   },
   "sameAs": [
     "https://blogs.tirup.in",
@@ -151,41 +157,40 @@ const personSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "@id": "https://tirup.in/#website",
   "name": "Tirup Mehta Portfolio",
   "url": "https://tirup.in",
   "description": "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "about": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "significantLink": "https://blogs.tirup.in",
   "publisher": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "author": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   }
 }
 
 const writingSchema = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  "@id": "https://blogs.tirup.in/#blog",
+  "@id": "https://blogs.tirup.in",
   "url": "https://blogs.tirup.in",
   "name": "Tirup Mehta's Engineering Blog",
   "description": "Writing by Tirup Mehta on software engineering, web security, performance, and interface design.",
   "author": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "publisher": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   }
 }
 
 const traceGuardSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "@id": "https://tirup.in/#trace-guard",
+  "@id": "https://www.npmjs.com/package/trace-guard",
   "name": "trace-guard",
   "alternateName": "Trace Guard",
   "description": "Production-grade behavioral security engine to block AI agents and Vision-Language Model (VLM) bots.",
@@ -197,10 +202,10 @@ const traceGuardSchema = {
   "softwareVersion": "3.7.0",
   "programmingLanguage": ["TypeScript", "JavaScript"],
   "author": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "creator": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "offers": {
     "@type": "Offer",
@@ -212,7 +217,7 @@ const traceGuardSchema = {
 const gleanBoxSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "@id": "https://tirup.in/#gleanbox",
+  "@id": "https://github.com/TirupMehta/GleanBox",
   "name": "GleanBox",
   "description": "Open-source developer utility and data harvesting toolkit for structured intelligence.",
   "applicationCategory": "DeveloperApplication",
@@ -221,10 +226,10 @@ const gleanBoxSchema = {
   "sameAs": "https://github.com/TirupMehta/GleanBox",
   "programmingLanguage": ["TypeScript", "JavaScript"],
   "author": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "creator": {
-    "@id": "https://tirup.in/#person"
+    "@id": "https://tirup.in/about"
   },
   "offers": {
     "@type": "Offer",
@@ -252,7 +257,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-[#fafaf9] dark:bg-[#090a0d] text-[#121314] dark:text-[#f4f4f5] transition-colors duration-300 relative`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fafaf9] dark:bg-[#090a0d] text-[#121314] dark:text-[#f4f4f5] transition-colors duration-300 relative`} suppressHydrationWarning>
         <AmbientShader />
         <GoogleAnalytics />
         <UtmTracker />

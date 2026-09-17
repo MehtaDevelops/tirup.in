@@ -16,7 +16,7 @@ const NAV_ITEMS = [
   { label: "Home",    href: "/" },
   { label: "Work",    href: "/work" },
   { label: "Skills",  href: "/skills" },
-  { label: "Writing", href: "/blogs" },
+  { label: "Writing", href: "/writing" },
 ] as const
 
 // ---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ function NavLinks({ pathname }: { pathname: string }) {
   const [hoverHref, setHoverHref] = useState<string | null>(null)
 
   function isLinkActive(href: string) {
-    if (href === "/blogs") return pathname === "/blogs" || pathname?.startsWith("/blogs/")
+    if (href === "/writing") return pathname === "/writing" || pathname?.startsWith("/writing/")
     return pathname === href
   }
 

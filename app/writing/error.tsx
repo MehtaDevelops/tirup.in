@@ -43,7 +43,7 @@ export default function BlogError({
             <span>Reload</span>
           </button>
           <Link
-            href="/blogs"
+            href="/writing"
             className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium tracking-wider uppercase border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.05] dark:hover:bg-white/[0.05] rounded-full text-black/65 dark:text-white/65 hover:text-black dark:hover:text-white transition-all duration-300 active:scale-95 cursor-pointer"
           >
             <ArrowLeft size={12} />

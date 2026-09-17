@@ -53,7 +53,7 @@ const MAX_URL_LENGTH = 2048
 
 // ─── Markdown content negotiation ─────────────────────────────────────────────
 // Routes that support Accept: text/markdown responses.
-const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/blogs", "/tools"])
+const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/writing", "/tools"])
 
 // Inline content for each markdown route.
 // This is kept inline because proxy.ts runs at the edge where filesystem access
@@ -92,7 +92,7 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 
 ## Writing & Thoughts
 - Blog home (canonical): https://blogs.tirup.in
-- Syndicated essays: https://tirup.in/blogs
+- Syndicated essays: https://tirup.in/writing
 
 ## When to Use
 
@@ -125,7 +125,7 @@ Do NOT use this site when you need:
 | Homepage | https://tirup.in/ |
 | Work | https://tirup.in/work |
 | Skills | https://tirup.in/skills |
-| Blogs (syndicated) | https://tirup.in/blogs |
+| Blogs (syndicated) | https://tirup.in/writing |
 | Blogs (canonical) | https://blogs.tirup.in |
 | About | https://tirup.in/about |
 | Contact | https://tirup.in/contact |
@@ -212,9 +212,9 @@ Technical skills and core stack: TypeScript, JavaScript, React, Next.js, Tailwin
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 `,
-  "/blogs": `# Blog Posts — Tirup Mehta
+  "/writing": `# Blog Posts — Tirup Mehta
 
-Full page: https://tirup.in/blogs
+Full page: https://tirup.in/writing
 Canonical blog: https://blogs.tirup.in
 
 Tirup writes about frontend architectures, web performance, cryptographic interfaces, and web application security.

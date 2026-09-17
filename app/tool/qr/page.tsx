@@ -1684,8 +1684,8 @@ export default function QrStudioPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-6 px-6 text-center border-t border-black/10 dark:border-white/10">
-        <p className="text-xs text-black/50 dark:text-white/50" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )

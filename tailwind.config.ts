@@ -71,6 +71,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
+        serif: ["ui-serif", "Georgia", "Cambria", '"Times New Roman"', "Times", "serif"],
+        mono: ["var(--font-jetbrains-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       keyframes: {
         "accordion-down": {

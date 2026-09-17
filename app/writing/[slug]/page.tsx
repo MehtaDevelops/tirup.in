@@ -6,6 +6,7 @@ import TextWithBlur from "@/components/text-with-blur"
 import TldrPopup from "@/components/tldr-popup"
 import { BlogContentRenderer } from "@/components/blog-content-renderer"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
+import { formatCategory } from "@/lib/category"
 import { CONVEX_API_URL } from "@/lib/utils"
 import { notFound } from "next/navigation"
 
@@ -182,6 +183,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         .slice(0, 20)
     : []
 
+  const dynamicCategory = formatCategory(safeTags)
+
   // Wrap tables in responsive scroll wrapper if not already wrapped
   const processBlogHtml = (html: string) => {
     if (!html) return ""
@@ -209,7 +212,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <span className="font-light">Tirup Mehta</span>
             </Link>
             <span className="text-black/20 dark:text-white/20 select-none">›</span>
-            <Link href="/blogs" className="hover:text-black dark:hover:text-white transition-colors font-light">
+            <Link href="/writing" className="hover:text-black dark:hover:text-white transition-colors font-light">
               Writing
             </Link>
             <span className="text-black/20 dark:text-white/20 select-none">›</span>
@@ -227,7 +230,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Article Header info */}
         <TextWithBlur delay={50}>
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm text-black/40 dark:text-white/40 mb-3">
-            <span>Essay</span>
+            <span>{dynamicCategory}</span>
             <span className="select-none text-black/20 dark:text-white/20">/</span>
             <span className="tabular-nums">{formatDate(post.createdAt)}</span>
             {safeReadingTime > 0 && (
@@ -290,8 +293,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         </TextWithBlur>
 
         {/* Footer */}
-        <footer className="py-6 text-center border-t border-black/10 dark:border-white/10 mt-8">
-          <p className="text-sm text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
+        <footer className="py-4 text-center border-t border-black/10 dark:border-white/10 mt-8">
+          <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
         </footer>
       </div>
 

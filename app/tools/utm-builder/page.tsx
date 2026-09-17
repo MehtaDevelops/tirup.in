@@ -941,7 +941,7 @@ export default function UtmBuilderPage() {
                     <input
                       id={customPathId}
                       type="text"
-                      placeholder="/work or /blogs/post-slug"
+                      placeholder="/work or /writing/post-slug"
                       value={customPath}
                       onChange={(e) => setCustomPath(e.target.value)}
                       className="w-full text-base px-4 py-2.5 rounded-none border border-black/10 dark:border-white/10 bg-white/70 dark:bg-zinc-900/70 text-black dark:text-white focus:outline-none focus:border-accent font-mono"
@@ -1803,8 +1803,8 @@ export default function UtmBuilderPage() {
       />
 
       {/* Footer */}
-      <footer className="py-6 px-6 text-center border-t border-black/10 dark:border-white/10">
-        <p className="text-xs text-black/50 dark:text-white/50" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )

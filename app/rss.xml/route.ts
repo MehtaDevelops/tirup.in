@@ -48,8 +48,8 @@ export async function GET() {
       (blog: BlogPost) => `
     <item>
       <title><![CDATA[${blog.title}]]></title>
-      <link>${siteUrl}/blogs/${blog.slug}</link>
-      <guid isPermaLink="true">${siteUrl}/blogs/${blog.slug}</guid>
+      <link>${siteUrl}/writing/${blog.slug}</link>
+      <guid isPermaLink="true">${siteUrl}/writing/${blog.slug}</guid>
       <pubDate>${new Date(blog.createdAt).toUTCString()}</pubDate>
       <description><![CDATA[${blog.tldr || blog.title}]]></description>
     </item>`

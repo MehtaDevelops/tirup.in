@@ -183,7 +183,19 @@ const nextConfig = {
   // ─── Redirect HTTP → HTTPS ────────────────────────────────────────────────
   // Vercel handles this at the edge, but belt-and-suspenders for self-hosted.
   async redirects() {
-    return []
+    return [
+      // /blogs renamed to /writing — keep old indexed/shared links working
+      {
+        source: "/blogs",
+        destination: "/writing",
+        permanent: true,
+      },
+      {
+        source: "/blogs/:path*",
+        destination: "/writing/:path*",
+        permanent: true,
+      },
+    ]
   },
 
   // ─── Well-Known URIs (RFC 8615) ───────────────────────────────────────────

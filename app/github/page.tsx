@@ -35,8 +35,8 @@ export default async function GitHubActivityPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-6 px-6 text-center border-t border-black/10 dark:border-white/10">
-        <p className="text-black/50 dark:text-white/50 text-xs" suppressHydrationWarning>
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+        <p className="text-black/40 dark:text-white/40 text-xs md:text-sm" suppressHydrationWarning>
           © {currentYear} Tirup Mehta. All rights reserved.
         </p>
       </footer>

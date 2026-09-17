@@ -28,8 +28,9 @@ export default function WorkPage() {
                 <Link
                   href={`/projects/${project.slug}`}
                   className={[
-                    "group block py-5 -mx-3 px-3 rounded-lg",
-                    index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
+                      "group block -mx-3 px-3 rounded-lg",
+                      index === 0 ? "pb-5 pt-1" : "py-5",
+                      index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
                     "[transition:background-color_120ms_ease-out]",
                     "hover:bg-black/[0.025] dark:hover:bg-white/[0.025]",
                     "active:scale-[0.99] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
@@ -62,8 +63,8 @@ export default function WorkPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-6 px-6 text-center border-t border-black/10">
-        <p className="text-black/50 dark:text-white/50" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )

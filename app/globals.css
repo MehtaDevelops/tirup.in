@@ -38,9 +38,9 @@ html.dark {
 }
 
 /* Custom scrollbar — thin, rounded, theme-aware (replaces the default bulky bar) */
-html {
+* {
   scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.45) transparent;
+  scrollbar-color: rgba(128, 128, 128, 0.25) transparent;
 }
 
 ::-webkit-scrollbar {
@@ -49,32 +49,17 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(128, 128, 128, 0.25);
   border-radius: 9999px;
-  border: 3px solid var(--bg);
-  background-clip: padding-box;
+  border: 2px solid var(--bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-  border: 3px solid var(--bg);
-  background-clip: padding-box;
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
-  border: 3px solid var(--bg);
-  background-clip: padding-box;
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent);
-  border: 3px solid var(--bg);
-  background-clip: padding-box;
+  background: rgba(128, 128, 128, 0.45);
 }
 
 ::-webkit-scrollbar-corner {
@@ -383,24 +368,21 @@ h1, h2, h3 {
   opacity: 1 !important;
 }
 
-/* Link hover effect */
+/* Link hover effect — animated slide-in underline that covers every line.
+   A positioned ::after bar only ever hits the last line box on wrapped
+   links; a background gradient is painted per line fragment instead, so
+   all lines underline with the same left-to-right animation. */
 .link-hover {
-  position: relative;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  padding-bottom: 2px;
+  transition: background-size var(--transition-medium);
 }
 
-.link-hover::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background-color: var(--accent);
-  transition: width var(--transition-medium);
-}
-
-.link-hover:hover::after {
-  width: 100%;
+.link-hover:hover {
+  background-size: 100% 1px;
 }
 
 .card-hover {
@@ -486,43 +468,63 @@ h1, h2, h3 {
 
 /* Blog post typography & table styles matching blogs.tirup.in quality */
 .blog-content {
-  font-weight: 300;
-  line-height: 1.8;
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.85);
+  font-weight: 350;
+  line-height: 1.84;
+  font-size: 16.5px;
+  color: rgba(0, 0, 0, 0.86);
   overflow-wrap: break-word;
   word-break: break-word;
   max-width: 100%;
 }
 .dark .blog-content {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.87);
 }
 
 @media (min-width: 768px) {
   .blog-content {
-    font-size: 17px;
+    font-size: 17.5px;
   }
 }
 .blog-content h1, .blog-content h2, .blog-content h3, .blog-content h4 {
-  font-weight: 600;
   color: var(--fg);
-  margin-top: 2.5rem;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
+  letter-spacing: -0.022em;
   overflow-wrap: break-word;
 }
-.blog-content h1 { font-size: 1.75rem; }
-.blog-content h2 { font-size: 1.45rem; }
-.blog-content h3 { font-size: 1.2rem; }
-.blog-content h4 { font-size: 1.05rem; }
+.blog-content h1 {
+  font-size: 1.85rem;
+  font-weight: 600;
+  margin-top: 2.75rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.25;
+}
+.blog-content h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+.blog-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.35;
+}
+.blog-content h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
 
 .blog-content p {
-  margin-bottom: 1.5rem;
-  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 1.65rem;
+  color: rgba(0, 0, 0, 0.85);
 }
 .dark .blog-content p {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.84);
 }
 .blog-content strong {
   color: var(--fg);
@@ -530,10 +532,11 @@ h1, h2, h3 {
 }
 .blog-content a {
   text-decoration: underline;
-  text-underline-offset: 4px;
+  text-underline-offset: 3.5px;
+  text-decoration-thickness: 1px;
   text-decoration-color: var(--accent);
   color: var(--fg);
-  transition: color 0.2s, text-decoration-color 0.2s;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -542,17 +545,21 @@ h1, h2, h3 {
 }
 .blog-content ul {
   list-style-type: disc;
-  padding-left: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding-left: 1.35rem;
+  margin-bottom: 1.65rem;
 }
 .blog-content ol {
   list-style-type: decimal;
-  padding-left: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding-left: 1.35rem;
+  margin-bottom: 1.65rem;
 }
 .blog-content li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.55rem;
   padding-left: 0.25rem;
+  color: rgba(0, 0, 0, 0.85);
+}
+.dark .blog-content li {
+  color: rgba(255, 255, 255, 0.83);
 }
 .blog-content img,
 .blog-content video,
@@ -560,53 +567,48 @@ h1, h2, h3 {
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-top: 1.75rem;
+  margin-bottom: 1.75rem;
 }
 
 .blog-content pre {
   position: relative;
-  background-color: rgba(0, 0, 0, 0.035);
+  background-color: #f7f8fa;
   border: 1px solid rgba(0, 0, 0, 0.08);
-  padding: 2.75rem 1.4rem 1.4rem 1.4rem;
-  border-radius: 8px;
+  padding: 2.75rem 1.35rem 1.35rem 1.35rem;
+  border-radius: 10px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
-  margin-top: 1.6rem;
-  margin-bottom: 1.85rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: #111827;
+  margin-top: 1.75rem;
+  margin-bottom: 2rem;
+  font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.935rem;
+  line-height: 1.7;
   letter-spacing: -0.01em;
-}
-@media (min-width: 768px) {
-  .blog-content pre {
-    font-size: 0.965rem;
-    line-height: 1.7;
-    padding: 2.75rem 1.6rem 1.5rem 1.6rem;
-  }
+  color: #111827;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 .dark .blog-content pre {
-  background-color: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: #0b0b0d;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
   color: #f3f4f6;
 }
 
 /* Copy code icon button in top right of code box */
 .code-copy-btn {
   position: absolute;
-  top: 0.65rem;
-  right: 0.65rem;
+  top: 0.6rem;
+  right: 0.6rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.95rem;
-  height: 1.95rem;
+  width: 1.85rem;
+  height: 1.85rem;
   padding: 0;
   color: rgba(0, 0, 0, 0.45);
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   cursor: pointer;
@@ -614,7 +616,7 @@ h1, h2, h3 {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   opacity: 0.55;
-  transition: all 0.18s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: all 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
   z-index: 10;
 }
 
@@ -626,76 +628,76 @@ h1, h2, h3 {
 
 .dark .code-copy-btn {
   color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(24, 24, 27, 0.8);
+  background-color: rgba(24, 24, 27, 0.75);
   border-color: rgba(255, 255, 255, 0.1);
 }
 
 .code-copy-btn:hover {
   color: var(--fg);
   background-color: rgba(255, 255, 255, 0.98);
-  border-color: rgba(0, 0, 0, 0.16);
-  transform: scale(1.04);
+  border-color: rgba(0, 0, 0, 0.18);
+  transform: scale(1.05);
   opacity: 1;
 }
 
 .dark .code-copy-btn:hover {
   color: #ffffff;
   background-color: rgba(39, 39, 42, 0.95);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: scale(1.04);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: scale(1.05);
   opacity: 1;
 }
 
 .code-copy-btn:active {
-  transform: scale(0.94);
+  transform: scale(0.97);
 }
 
 .code-copy-btn.copied {
   color: #10b981;
   background-color: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.28);
+  border-color: rgba(16, 185, 129, 0.3);
   opacity: 1;
 }
 
 .dark .code-copy-btn.copied {
   color: #34d399;
   background-color: rgba(52, 211, 153, 0.15);
-  border-color: rgba(52, 211, 153, 0.32);
+  border-color: rgba(52, 211, 153, 0.35);
   opacity: 1;
 }
 
-/* Code language title in top left of code block */
+/* Code language badge */
 .code-lang-label {
   position: absolute;
-  top: 0.72rem;
-  left: 1.15rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.725rem;
+  top: 0.65rem;
+  left: 0.95rem;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 0.72rem;
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.45);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  color: rgba(0, 0, 0, 0.4);
   user-select: none;
   pointer-events: none;
-  text-transform: lowercase;
-  letter-spacing: 0.02em;
 }
 .dark .code-lang-label {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .blog-content code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.89em;
-  font-weight: 450;
-  background-color: rgba(0, 0, 0, 0.045);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 0.15em 0.4em;
-  border-radius: 4px;
+  font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 0.15rem 0.42rem;
+  border-radius: 5px;
   color: var(--fg);
   overflow-wrap: break-word;
+  font-weight: 400;
 }
 .dark .blog-content code {
-  background-color: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 .blog-content pre code {
   padding: 0;
@@ -703,21 +705,21 @@ h1, h2, h3 {
   border: none;
   border-radius: 0;
   color: inherit;
-  font-size: inherit;
-  font-weight: inherit;
   overflow-wrap: normal;
+  font-weight: inherit;
 }
 
-/* Blockquotes & Callout Annotations */
+/* Blockquotes & Callout Annotations — Senior Minimalist Style */
 .blog-content blockquote {
-  border-left: 3px solid var(--accent);
-  padding: 1rem 1.25rem;
+  border-left: 2px solid var(--accent);
+  padding: 0.85rem 1.25rem;
   margin-top: 1.75rem;
   margin-bottom: 1.75rem;
   background: rgba(138, 157, 255, 0.04);
-  border-radius: 0 8px 8px 0;
-  font-style: italic;
+  border-radius: 0 6px 6px 0;
+  font-style: normal;
   color: rgba(0, 0, 0, 0.85);
+  max-width: 100%;
 }
 .dark .blog-content blockquote {
   background: rgba(165, 180, 252, 0.03);
@@ -726,6 +728,7 @@ h1, h2, h3 {
 .blog-content blockquote p {
   margin: 0;
   color: inherit;
+  font-style: italic;
 }
 .blog-content blockquote strong {
   font-style: normal;
@@ -848,26 +851,29 @@ h1, h2, h3 {
   background: rgba(128, 128, 128, 0.45);
 }
 
-/* TL;DR Box styling */
+/* Mobile TL;DR Card — Sleek Ambient Box with Pulse Glow */
 .tldr-box {
-  background: rgba(2, 132, 199, 0.035);
-  border: 1px solid rgba(2, 132, 199, 0.12);
-  border-radius: 8px;
-  padding: 1.25rem 1.4rem;
+  position: relative;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(2, 132, 199, 0.02) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.22);
+  border-radius: 12px;
+  padding: 1.25rem 1.35rem;
   margin-top: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.25rem;
+  box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.06);
 }
 
 html.dark .tldr-box {
-  background: rgba(56, 189, 248, 0.03);
-  border: 1px solid rgba(56, 189, 248, 0.12);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0.015) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
 }
 
 .tldr-box .tldr-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.65rem;
 }
 
 .tldr-box .tldr-label {
@@ -880,6 +886,14 @@ html.dark .tldr-box {
 
 .tldr-box p {
   margin: 0;
+  color: rgba(0, 0, 0, 0.82);
+  font-size: 0.925rem;
+  line-height: 1.65;
+  font-weight: 350;
+}
+
+html.dark .tldr-box p {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* Hide embedded TL;DR cards inside blog HTML on desktop so only the popup displays it */

@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
+import { ArrowUpRight } from "lucide-react"
 import { CONVEX_API_URL } from "@/lib/utils"
 
 export const revalidate = 60
@@ -10,8 +10,8 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: "Writing",
   description: "Thoughts on development, design, and security by Tirup Mehta.",
-  alternates: { canonical: "/blogs" },
-  openGraph: { url: "/blogs" },
+  alternates: { canonical: "/writing" },
+  openGraph: { url: "/writing" },
 }
 
 interface BlogPost {
@@ -35,6 +35,12 @@ export default async function BlogsPage() {
       if (Array.isArray(data)) {
         posts = data
           .filter((post) => post && post.slug && (post.status === "published" || !post.status))
+          .sort((a, b) => {
+            const ta = new Date(a.createdAt).getTime()
+            const tb = new Date(b.createdAt).getTime()
+            if (isNaN(ta) || isNaN(tb)) return 0
+            return tb - ta
+          })
           .slice(0, 10)
       } else {
         error = true
@@ -67,9 +73,9 @@ export default async function BlogsPage() {
     <main className="relative min-h-screen">
       <Header />
 
-      {/* Blogs list Section */}
+      {/* Blogs list Section — latest 10 titles only. Full essays live on blogs.tirup.in */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <h1 className="sr-only">Articles and Writing</h1>
+        <h1 className="sr-only">Writing</h1>
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>
@@ -82,24 +88,25 @@ export default async function BlogsPage() {
           <div className="flex flex-col list-hover-group">
             {posts.map((post, index) => {
               return (
-                <TextWithBlur key={post.slug} delay={index * 35}>
+                <TextWithBlur key={post.slug} delay={Math.min(index * 35, 140)}>
                   <Link
-                    href={`/blogs/${post.slug}`}
+                    href={`/writing/${post.slug}`}
                     className={[
-                      "group block py-5 -mx-3 px-3 rounded-lg",
+                      "group block -mx-3 px-3 rounded-lg",
+                      index === 0 ? "pb-5 pt-1" : "py-5",
                       index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
                       "hover:bg-black/[0.025] dark:hover:bg-white/[0.025]",
                       "[transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
                       "active:scale-[0.99]",
                     ].join(" ")}
                   >
-                    <div className="flex justify-between items-baseline gap-4">
-                      {/* Left: Title — stays put */}
-                      <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-sm md:text-base leading-relaxed min-w-0 flex-1">
+                    <div className="flex justify-between items-baseline gap-2 sm:gap-4">
+                      {/* Left: Title */}
+                      <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-sm md:text-base break-words leading-relaxed min-w-0 flex-1">
                         {post.title}
                       </span>
-                      {/* Right: Date — stays put */}
-                      <span className="tabular-nums text-[10px] md:text-xs text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
+                      {/* Right: Date */}
+                      <span className="tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
                         {formatDate(post.createdAt)}
                       </span>
                     </div>
@@ -110,17 +117,17 @@ export default async function BlogsPage() {
             {/* End border */}
             <div className="border-t border-black/10 dark:border-white/10" />
 
-            {/* View all articles at blogs.tirup.in link */}
-            <TextWithBlur delay={posts.length * 35 + 40}>
+            {/* Read all blogs — sends readers to the main blogs site */}
+            <TextWithBlur delay={120}>
               <div className="pt-8 pb-2 flex justify-start">
                 <a
                   href="https://blogs.tirup.in"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-1 text-xs sm:text-sm text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white transition-colors duration-200"
+                  className="group inline-flex items-center gap-1.5 pl-4 pr-3 h-9 text-xs font-medium tracking-wide rounded-full border bg-transparent transition-all duration-150 select-none cursor-pointer active:scale-[0.97] border-[rgba(18,19,20,0.15)] hover:border-[rgba(18,19,20,0.3)] hover:bg-[rgba(18,19,20,0.05)] text-[rgba(18,19,20,0.7)] hover:text-black dark:border-[rgba(255,255,255,0.07)] dark:hover:border-[rgba(255,255,255,0.16)] dark:hover:bg-[rgba(255,255,255,0.05)] dark:text-[rgba(244,244,245,0.7)] dark:hover:text-white"
                 >
-                  <span className="link-hover pb-0.5">View all articles on Tirup Mehta Blogs</span>
-                  <ArrowUpRight size={13} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
+                  <span className="leading-none select-none">Read all blogs</span>
+                  <ArrowUpRight size={13} className="icon-arrow-hover opacity-70" />
                 </a>
               </div>
             </TextWithBlur>
@@ -129,8 +136,8 @@ export default async function BlogsPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-6 px-6 text-center border-t border-black/10 dark:border-white/10">
-        <p className="text-black/50 dark:text-white/50">© {currentYear} Tirup Mehta. All rights reserved.</p>
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
       </footer>
     </main>
   )
