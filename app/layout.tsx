@@ -257,7 +257,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#100f0d] text-[#111111] dark:text-[#ece8e1] transition-colors duration-300 relative`} suppressHydrationWarning>
+      <body className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#0a0a0b] text-[#111111] dark:text-[#fafafa] transition-colors duration-300 relative`} suppressHydrationWarning>
         <AmbientShader />
         <GoogleAnalytics />
         <UtmTracker />

@@ -26,16 +26,16 @@
 }
 
 html.dark {
-  /* Warm charcoal system — one deliberate black, not flat cool gray */
-  --bg: #100f0d;
-  --fg: #ece8e1;
-  --surface: #171512;
-  --surface-deep: #131110;
-  --surface-hover: #1e1b17;
-  --border-color: rgba(236, 232, 225, 0.09);
-  --text-muted: rgba(236, 232, 225, 0.42);
-  --text-secondary: rgba(236, 232, 225, 0.65);
-  --text-primary: rgba(236, 232, 225, 0.92);
+  /* TRY-4 neutral black system */
+  --bg: #0a0a0b;
+  --fg: #fafafa;
+  --surface: #131316;
+  --surface-deep: #060607;
+  --surface-hover: #1c1c20;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-muted: rgba(250, 250, 250, 0.44);
+  --text-secondary: rgba(250, 250, 250, 0.66);
+  --text-primary: rgba(250, 250, 250, 0.92);
   --accent: #818cf8;
   --tldr-accent: #38bdf8;
 }
@@ -55,12 +55,12 @@ html.dark {
 .dark .dark\:border-zinc-900 { border-color: var(--border-color); }
 
 html.dark ::selection {
-  color: #ece8e1;
-  background: #2e2a24;
+  color: #fafafa;
+  background: #27272a;
 }
 html.dark ::-moz-selection {
-  color: #ece8e1;
-  background: #2e2a24;
+  color: #fafafa;
+  background: #27272a;
 }
 
 /* Disable transitions on page load to prevent theme flash */
@@ -682,8 +682,8 @@ h1, h2, h3 {
 .dark .blog-content pre {
   background-color: var(--surface);
   border: 1px solid var(--border-color);
-  box-shadow: inset 0 1px 0 0 rgba(236, 232, 225, 0.05);
-  color: #e8e4dc;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  color: #e4e4e7;
 }
 
 /* Copy code icon button in top right of code box */
@@ -717,7 +717,7 @@ h1, h2, h3 {
 }
 
 .dark .code-copy-btn {
-  color: rgba(236, 232, 225, 0.5);
+  color: rgba(250, 250, 250, 0.5);
   background-color: color-mix(in srgb, var(--surface) 78%, transparent);
   border-color: var(--border-color);
 }
@@ -731,9 +731,9 @@ h1, h2, h3 {
 }
 
 .dark .code-copy-btn:hover {
-  color: #ece8e1;
+  color: #fafafa;
   background-color: var(--surface-hover);
-  border-color: rgba(236, 232, 225, 0.22);
+  border-color: rgba(255, 255, 255, 0.24);
   transform: scale(1.05);
   opacity: 1;
 }
@@ -786,8 +786,8 @@ h1, h2, h3 {
   font-weight: 400;
 }
 .dark .blog-content code {
-  background-color: rgba(236, 232, 225, 0.07);
-  border-color: rgba(236, 232, 225, 0.09);
+  background-color: rgba(250, 250, 250, 0.07);
+  border-color: rgba(250, 250, 250, 0.1);
 }
 .blog-content pre code {
   padding: 0;

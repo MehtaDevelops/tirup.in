@@ -274,7 +274,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         style={{ transitionDuration: `${closing ? EXIT_MS : ENTER_MS}ms` }}
         className={[
           "relative flex flex-col w-full max-w-4xl h-[85dvh] max-h-[860px] overflow-hidden",
-          "rounded-xl bg-[#fdfdfc] dark:bg-[#100f0d] border border-black/10 dark:border-white/10 shadow-lg",
+          "rounded-xl bg-[#fdfdfc] dark:bg-[#0a0a0b] border border-black/10 dark:border-white/10 shadow-lg",
           // Opacity + translate only: scaling forces the embedded PDF surface
           // to repaint every frame, which reads as a stutter. transform-gpu
           // keeps the slide on the compositor.
@@ -343,7 +343,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
 
           {error && !loading && (
             <div className="absolute inset-0 flex items-center justify-center p-6">
-              <div className="max-w-sm w-full text-center rounded-xl border border-black/10 dark:border-white/10 bg-[#fdfdfc] dark:bg-[#100f0d] px-6 py-8 shadow-sm">
+              <div className="max-w-sm w-full text-center rounded-xl border border-black/10 dark:border-white/10 bg-[#fdfdfc] dark:bg-[#0a0a0b] px-6 py-8 shadow-sm">
                 <span className="mx-auto mb-4 flex items-center justify-center w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 text-black/60 dark:text-white/60">
                   <TriangleAlert size={18} />
                 </span>
