@@ -26,14 +26,41 @@
 }
 
 html.dark {
-  --bg: #090a0d;
-  --fg: #f4f4f5;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --text-muted: rgba(244, 244, 245, 0.42);
-  --text-secondary: rgba(244, 244, 245, 0.65);
-  --text-primary: rgba(244, 244, 245, 0.92);
+  /* Warm charcoal system — one deliberate black, not flat cool gray */
+  --bg: #100f0d;
+  --fg: #ece8e1;
+  --surface: #171512;
+  --surface-deep: #131110;
+  --surface-hover: #1e1b17;
+  --border-color: rgba(236, 232, 225, 0.09);
+  --text-muted: rgba(236, 232, 225, 0.42);
+  --text-secondary: rgba(236, 232, 225, 0.65);
+  --text-primary: rgba(236, 232, 225, 0.92);
   --accent: #818cf8;
   --tldr-accent: #38bdf8;
+}
+
+/* Dark surface warming — remaps cool zinc surfaces to the warm charcoal
+   system so every card, input, avatar and modal shares one deliberate
+   black. Unlayered CSS wins over Tailwind's layered utilities. */
+.dark .dark\:bg-zinc-900 { background-color: var(--surface); }
+.dark .dark\:bg-zinc-900\/70 { background-color: color-mix(in srgb, var(--surface) 70%, transparent); }
+.dark .dark\:bg-zinc-900\/80 { background-color: color-mix(in srgb, var(--surface) 80%, transparent); }
+.dark .dark\:bg-zinc-900\/60 { background-color: color-mix(in srgb, var(--surface) 60%, transparent); }
+.dark .dark\:bg-zinc-900\/50 { background-color: color-mix(in srgb, var(--surface) 50%, transparent); }
+.dark .dark\:bg-zinc-950 { background-color: var(--surface-deep); }
+.dark .dark\:bg-zinc-950\/50 { background-color: color-mix(in srgb, var(--surface-deep) 50%, transparent); }
+.dark .dark\:bg-black\/80 { background-color: color-mix(in srgb, var(--bg) 82%, transparent); }
+.dark .dark\:border-zinc-800,
+.dark .dark\:border-zinc-900 { border-color: var(--border-color); }
+
+html.dark ::selection {
+  color: #ece8e1;
+  background: #2e2a24;
+}
+html.dark ::-moz-selection {
+  color: #ece8e1;
+  background: #2e2a24;
 }
 
 /* Disable transitions on page load to prevent theme flash */
@@ -471,7 +498,7 @@ h1, h2, h3 {
 /* Dark mode border for social buttons */
 .dark .border-black\/10.rounded-full {
   border-color: var(--border-color) !important;
-  background-color: #1a1a1a !important;
+  background-color: var(--surface) !important;
 }
 
 /* Theme toggle button */
@@ -653,10 +680,10 @@ h1, h2, h3 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 .dark .blog-content pre {
-  background-color: #0b0b0d;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-  color: #f3f4f6;
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 1px 0 0 rgba(236, 232, 225, 0.05);
+  color: #e8e4dc;
 }
 
 /* Copy code icon button in top right of code box */
@@ -690,9 +717,9 @@ h1, h2, h3 {
 }
 
 .dark .code-copy-btn {
-  color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(24, 24, 27, 0.75);
-  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(236, 232, 225, 0.5);
+  background-color: color-mix(in srgb, var(--surface) 78%, transparent);
+  border-color: var(--border-color);
 }
 
 .code-copy-btn:hover {
@@ -704,9 +731,9 @@ h1, h2, h3 {
 }
 
 .dark .code-copy-btn:hover {
-  color: #ffffff;
-  background-color: rgba(39, 39, 42, 0.95);
-  border-color: rgba(255, 255, 255, 0.22);
+  color: #ece8e1;
+  background-color: var(--surface-hover);
+  border-color: rgba(236, 232, 225, 0.22);
   transform: scale(1.05);
   opacity: 1;
 }
@@ -759,8 +786,8 @@ h1, h2, h3 {
   font-weight: 400;
 }
 .dark .blog-content code {
-  background-color: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(236, 232, 225, 0.07);
+  border-color: rgba(236, 232, 225, 0.09);
 }
 .blog-content pre code {
   padding: 0;
