@@ -184,11 +184,11 @@ body {
 /* benji.org selection */
 ::selection {
   color: #111;
-  background: #ededed;
+  background: #d4d4d4;
 }
 ::-moz-selection {
   color: #111;
-  background: #ededed;
+  background: #d4d4d4;
 }
 
 /* Running text inherits the body Inter voice (family/weight/spacing/color).
