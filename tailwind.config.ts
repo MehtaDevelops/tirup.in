@@ -70,9 +70,9 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
+        sans: ["var(--font-inter)", '"__Inter_Fallback"', '"Inter"', "system-ui", "-apple-system", "BlinkMacSystemFont", '"Segoe UI"', "Roboto", '"Helvetica Neue"', "Arial", "sans-serif"],
         serif: ["ui-serif", "Georgia", "Cambria", '"Times New Roman"', "Times", "serif"],
-        mono: ["var(--font-jetbrains-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        mono: ["var(--font-jetbrains-mono)", '"SF Mono"', "SFMono-Regular", "Consolas", '"Liberation Mono"', "Menlo", "monospace"],
       },
       keyframes: {
         "accordion-down": {

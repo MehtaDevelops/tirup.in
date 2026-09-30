@@ -11,13 +11,18 @@
   --transition-slow: 0.45s var(--ease-spring);
   --transition-medium: 0.22s var(--ease-spring);
   --transition-fast: 0.14s var(--ease-spring);
-  --bg: #fafaf9;
-  --fg: #121314;
+  /* benji.org tokens: warm paper bg, near-black #111 body color */
+  --bg: #fdfdfc;
+  --fg: #111111;
   --border-color: rgba(0, 0, 0, 0.07);
-  --text-muted: rgba(18, 19, 20, 0.45);
-  --text-secondary: rgba(18, 19, 20, 0.68);
-  --text-primary: rgba(18, 19, 20, 0.88);
+  --text-muted: rgba(17, 17, 17, 0.4);
+  --text-secondary: rgba(17, 17, 17, 0.65);
+  --text-primary: rgba(17, 17, 17, 0.88);
   --tldr-accent: #0284c7;
+  /* benji.org type voice: Inter variable 100-900, 400 middle weight, -0.00563rem spacing (sizes untouched) */
+  --font-body: var(--font-inter), "__Inter_Fallback", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --body-font-weight: 400;
+  --body-letter-spacing: -0.00563rem;
 }
 
 html.dark {
@@ -140,8 +145,63 @@ body {
   background-color: var(--bg);
   color: var(--fg);
   transition: background-color 0s, color 0s;
+  font-family: var(--font-body);
+  /* benji.org copy voice: Inter 400 / rgb(17,17,17) — sizes untouched */
+  font-weight: var(--body-font-weight);
+  letter-spacing: var(--body-letter-spacing);
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* benji.org selection */
+::selection {
+  color: #111;
+  background: #ededed;
+}
+::-moz-selection {
+  color: #111;
+  background: #ededed;
+}
+
+/* Running text inherits the body Inter voice (family/weight/spacing/color).
+   No per-element overrides here, so bio paragraphs keep inheriting their
+   parent utilities exactly like the rest of the site —
+   one uniform style everywhere. Serif titles (.font-serif) and code
+   (.font-mono) are untouched since they set their own font-family. */
+
+/* Middle-ground weight: map Tailwind's light (300) to normal (400) so all
+   body copy — bio, about, project pages — renders one uniform in-between
+   weight. Unlayered author CSS wins over Tailwind's layered utilities, so no
+   !important needed. Medium/semibold headings are untouched. */
+.font-light {
+  font-weight: 400;
+}
+
+/* benji.org basic-link: hairline underline, darkens on hover */
+.basic-link {
+  position: relative;
+  display: inline;
+  color: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  transition: all 0.2s ease;
+}
+.basic-link::before {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  border-radius: 2px;
+  background: #d9d9d9;
+  opacity: 1;
+  transition: inherit;
+}
+.basic-link:hover::before {
+  background: #666;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -466,12 +526,14 @@ h1, h2, h3 {
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Blog post typography & table styles matching blogs.tirup.in quality */
+/* Blog post typography — Inter 400 voice, original sizes kept */
 .blog-content {
-  font-weight: 350;
+  font-family: var(--font-body);
+  font-weight: 400;
   line-height: 1.84;
   font-size: 16.5px;
-  color: rgba(0, 0, 0, 0.86);
+  letter-spacing: -0.00563rem;
+  color: #111111;
   overflow-wrap: break-word;
   word-break: break-word;
   max-width: 100%;
@@ -489,6 +551,7 @@ h1, h2, h3 {
   color: var(--fg);
   letter-spacing: -0.022em;
   overflow-wrap: break-word;
+  text-wrap: balance;
 }
 .blog-content h1 {
   font-size: 1.85rem;
@@ -521,7 +584,7 @@ h1, h2, h3 {
 
 .blog-content p {
   margin-bottom: 1.65rem;
-  color: rgba(0, 0, 0, 0.85);
+  color: #111111;
 }
 .dark .blog-content p {
   color: rgba(255, 255, 255, 0.84);
@@ -556,7 +619,7 @@ h1, h2, h3 {
 .blog-content li {
   margin-bottom: 0.55rem;
   padding-left: 0.25rem;
-  color: rgba(0, 0, 0, 0.85);
+  color: #111111;
 }
 .dark .blog-content li {
   color: rgba(255, 255, 255, 0.83);
