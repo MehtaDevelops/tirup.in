@@ -200,7 +200,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         <TextWithBlur>
           <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-5 sm:mb-7 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
-              <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shrink-0">
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 shrink-0">
                 <Image
                   src="/profile.png"
                   alt="Tirup Mehta"

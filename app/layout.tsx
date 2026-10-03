@@ -271,7 +271,7 @@ export default function RootLayout({
         {/* Theme init — prevents flash of wrong theme */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}window.setTimeout(function(){document.documentElement.classList.remove('no-transitions')},100)})()`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}try{var u=localStorage.getItem('tirup-tint');if(u&&/^#([0-9a-f]{6})$/i.test(u)){u=u.toLowerCase();document.documentElement.style.setProperty('--user',u);document.documentElement.setAttribute('data-tint',u);var n=parseInt(u.slice(1),16),rr=(n>>16)&255,gg=(n>>8)&255,bb=n&255,yy=(0.2126*rr+0.7152*gg+0.0722*bb)/255;if(yy>=0.72){document.documentElement.classList.remove('dark')}else if(yy<=0.58){document.documentElement.classList.add('dark')}}}catch(e){}window.setTimeout(function(){document.documentElement.classList.remove('no-transitions')},100)})()`,
           }}
         />
         <GoogleTagManagerNoscript />

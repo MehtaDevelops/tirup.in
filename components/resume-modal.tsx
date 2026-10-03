@@ -327,7 +327,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         </div>
 
         {/* ── PDF preview — pages rendered in our own themed scroll container ── */}
-        <div className="relative flex-1 min-h-0 bg-zinc-100 dark:bg-zinc-900">
+          <div className="relative flex-1 min-h-0 bg-[var(--bg)] dark:bg-zinc-900">
           {/* Scroll container always mounted so the render effect has a target */}
           <div
             ref={scrollerRef}

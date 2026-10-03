@@ -4,11 +4,13 @@ import { useEffect, useRef } from "react"
 
 /**
  * AmbientShader Component
- * 
- * An ultra-subtle, monochrome ambient light field — pure light and shadow,
+ *
+ * An ultra-subtle ambient light field — pure light and shadow by default,
  * zero color tint.
  * - In Dark Mode: A faint top-down white glow over deep charcoal.
  * - In Light Mode: Whisper-soft gray shading over warm paper for depth.
+ * - With the red-dot theme tint active: the glow takes on the user's
+ *   color (reacts to `--user` / `data-tint` on <html>).
  * - Zero performance overhead: throttled render loop, pauses when tab is inactive.
  */
 export default function AmbientShader() {
@@ -25,9 +27,36 @@ export default function AmbientShader() {
     let width = 0
     let height = 0
     let isDark = false
+    let tint: [number, number, number] | null = null
 
     const updateTheme = () => {
       isDark = document.documentElement.classList.contains("dark")
+      const raw =
+        document.documentElement.style.getPropertyValue("--user") ||
+        document.documentElement.getAttribute("data-tint") ||
+        ""
+      const m = /^#([0-9a-f]{6})$/i.exec(raw.trim())
+      tint = m
+        ? [
+            parseInt(m[1].slice(0, 2), 16),
+            parseInt(m[1].slice(2, 4), 16),
+            parseInt(m[1].slice(4, 6), 16),
+          ] as [number, number, number]
+        : null
+    }
+
+    // Ambient glow color: the red-dot tint when active (alpha boosted so
+    // the hue reads at these whisper levels), else monochrome as before.
+    const glow = (alpha: number) => {
+      if (alpha <= 0) return "rgba(0, 0, 0, 0)"
+      if (!tint)
+        return isDark
+          ? `rgba(255, 255, 255, ${alpha})`
+          : `rgba(0, 0, 0, ${alpha})`
+      const boost = isDark
+        ? Math.min(alpha * 1.8, 0.14)
+        : Math.min(alpha * 1.6, 0.09)
+      return `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, ${+boost.toFixed(3)})`
     }
 
     const resize = () => {
@@ -50,7 +79,7 @@ export default function AmbientShader() {
     })
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["class", "style", "data-tint"],
     })
 
     let t = 0
@@ -76,7 +105,7 @@ export default function AmbientShader() {
       ctx.clearRect(0, 0, width, height)
 
       if (isDark) {
-        // --- Monochrome Dark: faint white top-glow over charcoal ---
+        // --- Tinted Dark: faint tinted top-glow over charcoal ---
 
         // 1. Top primary studio spotlight (breathing apex glow)
         const topX = width * 0.5 + width * 0.08 * Math.sin(t * 0.4)
@@ -84,10 +113,10 @@ export default function AmbientShader() {
         const topRadius = Math.max(width, height) * 0.75
 
         const gTop = ctx.createRadialGradient(topX, topY, 0, topX, topY, topRadius)
-        gTop.addColorStop(0, "rgba(255, 255, 255, 0.055)")
-        gTop.addColorStop(0.35, "rgba(255, 255, 255, 0.022)")
-        gTop.addColorStop(0.7, "rgba(255, 255, 255, 0.008)")
-        gTop.addColorStop(1, "rgba(255, 255, 255, 0)")
+        gTop.addColorStop(0, glow(0.055))
+        gTop.addColorStop(0.35, glow(0.022))
+        gTop.addColorStop(0.7, glow(0.008))
+        gTop.addColorStop(1, glow(0))
         ctx.fillStyle = gTop
         ctx.fillRect(0, 0, width, height)
 
@@ -97,9 +126,9 @@ export default function AmbientShader() {
         const crRadius = Math.max(width, height) * 0.55
 
         const gCR = ctx.createRadialGradient(crX, crY, 0, crX, crY, crRadius)
-        gCR.addColorStop(0, "rgba(255, 255, 255, 0.03)")
-        gCR.addColorStop(0.5, "rgba(255, 255, 255, 0.012)")
-        gCR.addColorStop(1, "rgba(255, 255, 255, 0)")
+        gCR.addColorStop(0, glow(0.03))
+        gCR.addColorStop(0.5, glow(0.012))
+        gCR.addColorStop(1, glow(0))
         ctx.fillStyle = gCR
         ctx.fillRect(0, 0, width, height)
 
@@ -109,22 +138,22 @@ export default function AmbientShader() {
         const blRadius = Math.max(width, height) * 0.6
 
         const gBL = ctx.createRadialGradient(blX, blY, 0, blX, blY, blRadius)
-        gBL.addColorStop(0, "rgba(255, 255, 255, 0.022)")
-        gBL.addColorStop(0.6, "rgba(255, 255, 255, 0.008)")
-        gBL.addColorStop(1, "rgba(255, 255, 255, 0)")
+        gBL.addColorStop(0, glow(0.022))
+        gBL.addColorStop(0.6, glow(0.008))
+        gBL.addColorStop(1, glow(0))
         ctx.fillStyle = gBL
         ctx.fillRect(0, 0, width, height)
 
       } else {
-        // --- Monochrome Light: whisper-soft gray shading over paper ---
+        // --- Tinted Light: whisper-soft tinted shading over paper ---
         const x1 = width * (0.25 + 0.15 * Math.sin(t * 0.6))
         const y1 = height * (0.15 + 0.12 * Math.cos(t * 0.5))
         const r1 = Math.max(width, height) * 0.6
 
         const g1 = ctx.createRadialGradient(x1, y1, 0, x1, y1, r1)
-        g1.addColorStop(0, "rgba(0, 0, 0, 0.035)")
-        g1.addColorStop(0.5, "rgba(0, 0, 0, 0.015)")
-        g1.addColorStop(1, "rgba(0, 0, 0, 0)")
+        g1.addColorStop(0, glow(0.035))
+        g1.addColorStop(0.5, glow(0.015))
+        g1.addColorStop(1, glow(0))
         ctx.fillStyle = g1
         ctx.fillRect(0, 0, width, height)
 
@@ -133,9 +162,9 @@ export default function AmbientShader() {
         const r2 = Math.max(width, height) * 0.65
 
         const g2 = ctx.createRadialGradient(x2, y2, 0, x2, y2, r2)
-        g2.addColorStop(0, "rgba(0, 0, 0, 0.028)")
-        g2.addColorStop(0.5, "rgba(0, 0, 0, 0.012)")
-        g2.addColorStop(1, "rgba(0, 0, 0, 0)")
+        g2.addColorStop(0, glow(0.028))
+        g2.addColorStop(0.5, glow(0.012))
+        g2.addColorStop(1, glow(0))
         ctx.fillStyle = g2
         ctx.fillRect(0, 0, width, height)
 
@@ -144,9 +173,9 @@ export default function AmbientShader() {
         const r3 = Math.max(width, height) * 0.55
 
         const g3 = ctx.createRadialGradient(x3, y3, 0, x3, y3, r3)
-        g3.addColorStop(0, "rgba(0, 0, 0, 0.022)")
-        g3.addColorStop(0.5, "rgba(0, 0, 0, 0.01)")
-        g3.addColorStop(1, "rgba(0, 0, 0, 0)")
+        g3.addColorStop(0, glow(0.022))
+        g3.addColorStop(0.5, glow(0.01))
+        g3.addColorStop(1, glow(0))
         ctx.fillStyle = g3
         ctx.fillRect(0, 0, width, height)
       }

@@ -253,7 +253,7 @@ export const AnimatedThemeToggler = ({
       type="button"
       ref={buttonRef}
       onClick={toggleTheme}
-      className={cn("group active:scale-90 transition-all", className)}
+      className={cn("group active:scale-90 transition-all theme-toggle", className)}
       {...props}
     >
       {isDark ? (

@@ -192,7 +192,7 @@ export default function Header() {
           <div className="flex items-center justify-between gap-x-4 gap-y-3 mb-4 md:mb-6 flex-wrap">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <div className="relative shrink-0 select-none group">
-              <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900">
+              <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900">
                 <Image
                   src="/profile.png"
                   alt="Tirup Mehta avatar"

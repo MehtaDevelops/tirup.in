@@ -70,7 +70,7 @@ export default function QrCodeModal({ isOpen, onClose, url, title }: QrCodeModal
         )}
 
         {/* QR Image Display */}
-        <div className="p-3 bg-white rounded-none border border-black/10 flex items-center justify-center mb-3">
+          <div className="qr-paper p-3 bg-white rounded-none border border-black/10 flex items-center justify-center mb-3">
           {dataUrl ? (
             <img src={dataUrl} alt="Campaign QR Code" className="w-56 h-56 object-contain" />
           ) : (
