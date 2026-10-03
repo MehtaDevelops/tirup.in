@@ -1,8 +1,20 @@
 "use client"
 
 import { useState, useMemo, useRef, useEffect } from "react"
+import dynamic from "next/dynamic"
 import type { MergedContributionsData, ContributionDay } from "@/lib/github-contributions"
+import type { GraphView } from "@/components/github-activity-3d"
 import TextWithBlur from "@/components/text-with-blur"
+
+const GithubActivity3D = dynamic(() => import("@/components/github-activity-3d"), {
+  ssr: false,
+  loading: () => (
+    <div
+      aria-hidden="true"
+      className="h-[340px] sm:h-[420px] w-full rounded-lg bg-black/[0.03] dark:bg-white/[0.04] animate-pulse"
+    />
+  ),
+})
 
 interface GitHubCalendarViewProps {
   data: MergedContributionsData
@@ -17,6 +29,17 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
   const [hoveredDay, setHoveredDay] = useState<ContributionDay | null>(null)
   const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [view, setView] = useState<GraphView>("top")
+  const [dark, setDark] = useState(false)
+
+  // Track light/dark so the card and scene follow the theme.
+  useEffect(() => {
+    const sync = () => setDark(document.documentElement.classList.contains("dark"))
+    sync()
+    const obs = new MutationObserver(sync)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+    return () => obs.disconnect()
+  }, [])
 
   // Default to 6-month view on mobile screens for optimal sizing and zero-scroll fit
   useEffect(() => {
@@ -25,12 +48,12 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
     }
   }, [])
 
-  // Auto-scroll calendar matrix to the current date (right) when in 1y mode on small viewports
+  // Auto-scroll the flat matrix to the current date (right) in 1y mode on small viewports
   useEffect(() => {
-    if (scrollContainerRef.current && timeRange === "1y") {
+    if (scrollContainerRef.current && view === "top" && timeRange === "1y") {
       scrollContainerRef.current.scrollLeft = scrollContainerRef.current.scrollWidth
     }
-  }, [activeTab, timeRange])
+  }, [activeTab, timeRange, view])
 
   const activeData = useMemo(() => {
     switch (activeTab) {
@@ -137,7 +160,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
     return labels
   }, [weeks])
 
-  // Unified color scale using emerald opacities and site border tokens
+  // Classic flat-matrix color scale: emerald opacities on site border tokens.
   const getCellColor = (level: number, isSelected: boolean) => {
     let base = ""
     switch (level) {
@@ -163,6 +186,20 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
 
     return base
   }
+
+
+  // Range subtitle for the 3D header: volume + covered span.
+  const rangeSummary = useMemo(() => {
+    if (filteredDays.length === 0) return ""
+    const total = filteredDays.reduce((acc, d) => acc + (d.count || 0), 0)
+    const first = new Date(filteredDays[0].date)
+    const last = new Date(filteredDays[filteredDays.length - 1].date)
+    const fmt = (d: Date) =>
+      isNaN(d.getTime())
+        ? ""
+        : d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" })
+    return `${total} contribution${total === 1 ? "" : "s"} · ${fmt(first)} – ${fmt(last)}`
+  }, [filteredDays])
 
   const formatTooltipDate = (dateStr: string) => {
     if (!dateStr) return ""
@@ -349,7 +386,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
       <TextWithBlur delay={200}>
         <div className="flex flex-col gap-3.5 py-6 border-t border-black/10 dark:border-white/10">
           {/* Active Hover / Tap Readout */}
-          <div className="min-h-[26px] flex items-center justify-between text-xs sm:text-sm text-black/70 dark:text-white/70 font-light">
+          <div className="min-h-[26px] flex items-center justify-between text-xs sm:text-sm text-black/70 dark:text-white/70 font-light" aria-live="polite">
             {activeInspectedDay ? (
               <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                 <span className="text-black dark:text-white font-normal">
@@ -365,126 +402,225 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
               </div>
             ) : (
               <span className="text-black/40 dark:text-white/40 text-xs">
-                Hover or tap days to inspect contribution volume.
+                {view === "top"
+                  ? "Hover or tap days to inspect contribution volume."
+                  : "Hover a bar — or tap one — to inspect contribution volume."}
               </span>
             )}
           </div>
 
-          {/* Grid Container */}
+          {/* Top view (classic flat graph) / 3D view */}
           <div className="w-full select-none">
-            <div
-              ref={scrollContainerRef}
-              className="w-full overflow-x-auto overflow-y-hidden py-1 px-1.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            >
-              <div
-                className={`flex gap-2 ${
-                  timeRange === "1y" ? "min-w-[660px] sm:min-w-0 w-full" : "w-full"
-                }`}
-              >
-                {/* Weekday indicators on the left */}
-                <div className="flex flex-col justify-between pt-5 pb-0.5 text-[9px] text-black/40 dark:text-white/40 font-mono select-none pr-0.5 shrink-0">
-                  <span className="opacity-0">Sun</span>
-                  <span>Mon</span>
-                  <span className="opacity-0">Tue</span>
-                  <span>Wed</span>
-                  <span className="opacity-0">Thu</span>
-                  <span>Fri</span>
-                  <span className="opacity-0">Sat</span>
-                </div>
-
-                {/* Columns & Month Headers */}
-                <div className="flex-1 flex flex-col">
-                  {/* Month Labels positioned proportionally across columns */}
-                  <div className="relative w-full h-5 mb-1.5 text-[11px] text-black/40 dark:text-white/40 font-light">
-                    {monthLabels.map(({ month, colIndex }) => (
-                      <span
-                        key={`${month}-${colIndex}`}
-                        className="absolute top-0 whitespace-nowrap transform -translate-x-1/2 first:translate-x-0"
-                        style={{
-                          left: `${((colIndex + 0.5) / Math.max(weeks.length, 1)) * 100}%`,
-                        }}
-                      >
-                        {month}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Matrix Columns */}
-                  <div className="flex gap-[2.5px] sm:gap-[3px] w-full items-stretch">
-                    {weeks.map((week, colIdx) => {
-                      const isFirstCol = colIdx === 0
-                      const isLastCol = colIdx === weeks.length - 1
-                      const originClass = isLastCol
-                        ? "hover:origin-right"
-                        : isFirstCol
-                        ? "hover:origin-left"
-                        : "hover:origin-center"
-
-                      return (
-                        <div key={colIdx} className="flex flex-col gap-[2.5px] sm:gap-[3px] flex-1">
-                          {week.map((day, rowIdx) => {
-                            if (!day.date) {
-                              return <div key={rowIdx} className="w-full aspect-square opacity-0 pointer-events-none" />
-                            }
-
-                            const isSelected = selectedDay?.date === day.date
-
-                            return (
-                              <div
-                                key={day.date}
-                                onMouseEnter={() => setHoveredDay(day)}
-                                onMouseLeave={() => setHoveredDay(null)}
-                                onClick={() => setSelectedDay((prev) => (prev?.date === day.date ? null : day))}
-                                className={`w-full aspect-square rounded-[2px] border transition-transform duration-100 cursor-pointer ${originClass} ${getCellColor(
-                                  day.level,
-                                  isSelected
-                                )} hover:scale-135 hover:z-20`}
-                                title={`${day.count} contributions on ${formatTooltipDate(day.date)}`}
-                              />
-                            )
-                          })}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+            <div className="flex items-end justify-between gap-3 pb-3">
+              <div className="min-w-0">
+                <h3 className="text-sm md:text-base font-medium text-black dark:text-white leading-snug">
+                  The shape of your {timeRange === "1y" ? "year" : timeRange === "6m" ? "half-year" : "quarter"}
+                </h3>
+                <p className="text-[11px] sm:text-xs text-black/40 dark:text-white/40 font-light tabular-nums">
+                  {rangeSummary}
+                </p>
               </div>
-            </div>
-          </div>
-
-          {/* Legend & Minimalist Range Switcher */}
-          <div className="flex items-center justify-between gap-2 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs">Range:</span>
-              <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
-                {(["3m", "6m", "1y"] as const).map((r) => (
+              <div
+                className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded shrink-0"
+                role="group"
+                aria-label="Graph camera view"
+              >
+                {(
+                  [
+                    { id: "top", label: "Top view" },
+                    { id: "perspective", label: "3D view" },
+                  ] as const
+                ).map(({ id, label }) => (
                   <button
-                    key={r}
-                    onClick={() => {
-                      setTimeRange(r)
-                      setSelectedDay(null)
-                    }}
-                    className={`px-1.5 py-0.5 text-[11px] rounded transition-colors uppercase cursor-pointer ${
-                      timeRange === r
+                    key={id}
+                    onClick={() => setView(id)}
+                    aria-pressed={view === id}
+                    className={`px-2.5 py-1 text-[11px] rounded transition-colors cursor-pointer ${
+                      view === id
                         ? "bg-black/[0.08] dark:bg-white/[0.15] text-black dark:text-white font-medium"
                         : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
                     }`}
                   >
-                    {r}
+                    {label}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
-              <span className="text-[11px] sm:text-xs">Less</span>
-              <div className="w-2.5 h-2.5 rounded-[1px] bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10" />
-              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/25 border border-emerald-500/35" />
-              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/50 border border-emerald-500/60" />
-              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/75 border border-emerald-500/80" />
-              <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500 border border-emerald-400" />
-              <span className="text-[11px] sm:text-xs">More</span>
-            </div>
+            {view === "top" ? (
+              <>
+                {/* Classic flat matrix — static, exactly as before */}
+                <div
+                  ref={scrollContainerRef}
+                  className="w-full overflow-x-auto overflow-y-hidden py-1 px-1.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                >
+                  <div
+                    className={`flex gap-2 ${
+                      timeRange === "1y" ? "min-w-[660px] sm:min-w-0 w-full" : "w-full"
+                    }`}
+                  >
+                    {/* Weekday indicators on the left */}
+                    <div className="flex flex-col justify-between pt-5 pb-0.5 text-[9px] text-black/40 dark:text-white/40 font-mono select-none pr-0.5 shrink-0">
+                      <span className="opacity-0">Sun</span>
+                      <span>Mon</span>
+                      <span className="opacity-0">Tue</span>
+                      <span>Wed</span>
+                      <span className="opacity-0">Thu</span>
+                      <span>Fri</span>
+                      <span className="opacity-0">Sat</span>
+                    </div>
+
+                    {/* Columns & Month Headers */}
+                    <div className="flex-1 flex flex-col">
+                      {/* Month Labels positioned proportionally across columns */}
+                      <div className="relative w-full h-5 mb-1.5 text-[11px] text-black/40 dark:text-white/40 font-light">
+                        {monthLabels.map(({ month, colIndex }) => (
+                          <span
+                            key={`${month}-${colIndex}`}
+                            className="absolute top-0 whitespace-nowrap transform -translate-x-1/2 first:translate-x-0"
+                            style={{
+                              left: `${((colIndex + 0.5) / Math.max(weeks.length, 1)) * 100}%`,
+                            }}
+                          >
+                            {month}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Matrix Columns */}
+                      <div className="flex gap-[2.5px] sm:gap-[3px] w-full items-stretch">
+                        {weeks.map((week, colIdx) => {
+                          const isFirstCol = colIdx === 0
+                          const isLastCol = colIdx === weeks.length - 1
+                          const originClass = isLastCol
+                            ? "hover:origin-right"
+                            : isFirstCol
+                            ? "hover:origin-left"
+                            : "hover:origin-center"
+
+                          return (
+                            <div key={colIdx} className="flex flex-col gap-[2.5px] sm:gap-[3px] flex-1">
+                              {week.map((day, rowIdx) => {
+                                if (!day.date) {
+                                  return <div key={rowIdx} className="w-full aspect-square opacity-0 pointer-events-none" />
+                                }
+
+                                const isSelected = selectedDay?.date === day.date
+
+                                return (
+                                  <div
+                                    key={day.date}
+                                    onMouseEnter={() => setHoveredDay(day)}
+                                    onMouseLeave={() => setHoveredDay(null)}
+                                    onClick={() => setSelectedDay((prev) => (prev?.date === day.date ? null : day))}
+                                    className={`w-full aspect-square rounded-[2px] border transition-transform duration-100 cursor-pointer ${originClass} ${getCellColor(
+                                      day.level,
+                                      isSelected
+                                    )} hover:scale-135 hover:z-20`}
+                                    title={`${day.count} contributions on ${formatTooltipDate(day.date)}`}
+                                  />
+                                )
+                              })}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legend & Minimalist Range Switcher */}
+                <div className="flex items-center justify-between gap-2 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs">Range:</span>
+                    <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
+                      {(["3m", "6m", "1y"] as const).map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => {
+                            setTimeRange(r)
+                            setSelectedDay(null)
+                          }}
+                          className={`px-1.5 py-0.5 text-[11px] rounded transition-colors uppercase cursor-pointer ${
+                            timeRange === r
+                              ? "bg-black/[0.08] dark:bg-white/[0.15] text-black dark:text-white font-medium"
+                              : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+                          }`}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                    <span className="text-[11px] sm:text-xs">Less</span>
+                    <div className="w-2.5 h-2.5 rounded-[1px] bg-black/[0.025] dark:bg-white/[0.025] border border-black/10 dark:border-white/10" />
+                    <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/25 border border-emerald-500/35" />
+                    <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/50 border border-emerald-500/60" />
+                    <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500/75 border border-emerald-500/80" />
+                    <div className="w-2.5 h-2.5 rounded-[1px] bg-emerald-500 border border-emerald-400" />
+                    <span className="text-[11px] sm:text-xs">More</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10 bg-white dark:bg-[#0d1117] shadow-sm">
+                  <GithubActivity3D
+                    weeks={weeks}
+                    monthLabels={monthLabels}
+                    view={view}
+                    dark={dark}
+                    selectedDate={selectedDay?.date ?? null}
+                    onInspect={(day) => setHoveredDay(day)}
+                    onSelect={(day) => setSelectedDay((prev) => (prev?.date === day.date ? null : day))}
+                    onEmptyClick={() => setSelectedDay(null)}
+                  />
+
+                  <div className="flex items-center justify-between gap-2 px-4 sm:px-5 py-3.5 border-t border-black/10 dark:border-white/10">
+                    <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                      <span className="text-[11px] sm:text-xs font-light text-black/50 dark:text-white/50">Less</span>
+                      <div className="w-2.5 h-2.5 rounded-[1px] bg-[#e3e4e0] dark:bg-white/[0.04] border border-black/10 dark:border-white/10" />
+                      <div className="w-2.5 h-2.5 rounded-[1px] bg-[#86e3b8] dark:bg-[#0e4429] border border-black/10 dark:border-white/10" />
+                      <div className="w-2.5 h-2.5 rounded-[1px] bg-[#34d399] dark:bg-[#006d32] border border-black/10 dark:border-white/10" />
+                      <div className="w-2.5 h-2.5 rounded-[1px] bg-[#10b981] dark:bg-[#26a641] border border-black/10 dark:border-white/10" />
+                      <div className="w-2.5 h-2.5 rounded-[1px] bg-[#047857] dark:bg-[#39d353] border border-black/10 dark:border-white/10" />
+                      <span className="text-[11px] sm:text-xs font-light text-black/50 dark:text-white/50">More</span>
+                    </div>
+                    <p className="text-[11px] text-black/35 dark:text-white/35 font-light text-right">
+                      <span className="hidden sm:inline">Drag to orbit · Scroll to zoom · Right-drag to pan · Click a bar to fly in</span>
+                      <span className="sm:hidden">Drag to orbit · Pinch to zoom · Tap a bar</span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Range Switcher */}
+                <div className="flex items-center gap-2 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs">Range:</span>
+                    <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
+                      {(["3m", "6m", "1y"] as const).map((r) => (
+                        <button
+                          key={r}
+                          onClick={() => {
+                            setTimeRange(r)
+                            setSelectedDay(null)
+                          }}
+                          className={`px-1.5 py-0.5 text-[11px] rounded transition-colors uppercase cursor-pointer ${
+                            timeRange === r
+                              ? "bg-black/[0.08] dark:bg-white/[0.15] text-black dark:text-white font-medium"
+                              : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
+                          }`}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </TextWithBlur>
