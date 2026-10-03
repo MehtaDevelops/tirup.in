@@ -99,6 +99,14 @@ html[data-tint] .hover\:text-black:hover { color: var(--fg) !important; }
 html[data-tint] .group:hover .group-hover\:text-black\/80 { color: var(--text-primary) !important; }
 html[data-tint] .group:hover .group-hover\:text-black\/70,
 html[data-tint] .group:hover .group-hover\:text-black\/60 { color: var(--text-secondary) !important; }
+/* Accent-ink links: raw accent melts into saturated grounds, so interactive
+   text and underlines resolve through the foreground token while tinted. */
+html[data-tint] .text-accent { color: var(--fg) !important; }
+html[data-tint] .hover\:text-accent:hover { color: var(--fg) !important; }
+html[data-tint] .group:hover .group-hover\:text-accent { color: var(--fg) !important; }
+html[data-tint] .link-hover { background-image: linear-gradient(var(--fg), var(--fg)); }
+html[data-tint] .focus\:border-accent:focus { border-color: var(--fg) !important; }
+html[data-tint] .accent-black { accent-color: var(--fg); }
 html[data-tint] .border-black\/5,
 html[data-tint] .border-black\/10 { border-color: var(--border-color) !important; }
 html[data-tint] .bg-white { background-color: var(--card) !important; }
@@ -108,7 +116,6 @@ html[data-tint] .text-\[rgba\(18\,19\,20\,0\.7\)\] { color: var(--text-secondary
 
 /* Hardcoded accents follow the tint. */
 html[data-tint] .text-\[\#646DBB\] { color: var(--fg) !important; }
-html[data-tint] .accent-black { accent-color: var(--accent); }
 html[data-tint] .bg-\[\#fdfdfc\] { background-color: var(--bg) !important; }
 
 /* Selection + code-copy selection follow the tint. */
