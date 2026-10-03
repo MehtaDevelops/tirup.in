@@ -178,7 +178,7 @@ export default function ThemeTintPicker({
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex items-center gap-1 rounded-md bg-black px-3 py-1.5 text-[11px] font-medium text-white transition-opacity hover:opacity-85 dark:bg-white dark:text-black"
+          className="inline-flex items-center gap-1 rounded-full bg-black px-3 py-1.5 text-[11px] font-medium text-white transition-opacity hover:opacity-85 dark:bg-white dark:text-black"
         >
           <Check size={12} /> Done
         </button>

@@ -107,7 +107,7 @@ html[data-tint] .qr-paper { background-color: #ffffff !important; }
 html[data-tint] .text-\[rgba\(18\,19\,20\,0\.7\)\] { color: var(--text-secondary) !important; }
 
 /* Hardcoded accents follow the tint. */
-html[data-tint] .text-\[\#646DBB\] { color: var(--accent) !important; }
+html[data-tint] .text-\[\#646DBB\] { color: var(--fg) !important; }
 html[data-tint] .accent-black { accent-color: var(--accent); }
 html[data-tint] .bg-\[\#fdfdfc\] { background-color: var(--bg) !important; }
 
