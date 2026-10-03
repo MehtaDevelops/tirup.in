@@ -3,16 +3,19 @@
 /**
  * theme-tint — red-dot easter egg.
  *
- * One user-chosen color re-themes the whole site. Every call paints the full
- * palette as custom properties on <html> (`--user` + derived tokens), each a
- * continuous function of the pick — no thresholds, no mode flips, so drags
- * morph smoothly and releasing changes nothing. Near-white/black picks ease
- * into complete readable themes via an extremeness blend. The light/dark
- * class is never touched. app/globals.css holds equivalent color-mix rules
- * as a pre-hydration fallback only.
+ * One user-chosen color re-themes the whole site — always with the light
+ * treatment, even from dark mode (picking forces light; Reset restores).
+ * Every call paints the full palette as custom properties on <html>, each a
+ * continuous function of the pick, so drags morph smoothly and releasing
+ * changes nothing. Near-black picks ease into a complete dark readable
+ * theme via an extremeness blend. app/globals.css holds equivalent
+ * color-mix rules as a pre-hydration fallback only.
  */
 
 export const TINT_STORAGE_KEY = "tirup-tint"
+
+/** The mode from before the tint, so Reset restores it (tint implies light). */
+const PREV_MODE_KEY = "tirup-tint-prev-mode"
 
 /** Relative luminance 0–1. White ≈ 1, black ≈ 0, pure red ≈ 0.21. */
 function luminance(hex: string): number {
@@ -226,23 +229,33 @@ export function getStoredTint(): string | null {
  * function of the color, so there is no line to cross, no mode flip, and
  * releasing the pointer changes nothing visible. Extremes (white/black)
  * resolve to complete readable themes via a smooth extremeness blend.
- * The light/dark class is never touched; Reset restores the stored mode
- * simply by clearing. Passing null clears (see clearTint).
+ * Tinting always uses the light treatment (dark class removed on set);
+ * Reset clears back and restores the pre-tint mode. Passing null clears
+ * (see clearTint).
  */
 export function applyTint(hex: string | null) {
   const root = document.documentElement
   const next = hex ? normalizeHex(hex) : null
   if (!next) return clearTint()
+  // First tint of the session: remember the mode, then switch to the single
+  // light treatment — tinted theming has no dark variant by design.
+  try {
+    if (!localStorage.getItem(PREV_MODE_KEY)) {
+      localStorage.setItem(PREV_MODE_KEY, root.classList.contains("dark") ? "dark" : "light")
+    }
+  } catch {
+    /* storage unavailable — Reset will leave the mode as-is */
+  }
+  root.classList.remove("dark")
   const [r, g, b] = hexToRgb(next)
   const u = rgba(r, g, b)
-  const isDark = root.classList.contains("dark")
   const y = luminance(next)
-  // 0 for ordinary colors, easing to 1 at the extremes. Bands are narrow
-  // and hug the poles, so mid-tones never sit in a muddy halfway blend.
-  // C1-continuous, so dragging through it morphs instead of snapping.
-  const e = isDark ? smooth(0.7, 0.95, y) : 1 - smooth(0.02, 0.1, y)
-  const normal = normalTokens(u, isDark, y)
-  const extreme = isDark ? extremeLightTokens(u) : extremeDarkTokens(u)
+  // 0 for ordinary colors, easing to 1 near black. Narrow and hugging the
+  // pole, so mid-tones never sit in a muddy halfway blend. C1-continuous,
+  // so dragging through it morphs instead of snapping.
+  const e = 1 - smooth(0.02, 0.1, y)
+  const normal = normalTokens(u, false, y)
+  const extreme = extremeDarkTokens(u)
   for (const key of TINT_VARS) {
     root.style.setProperty(`--${key}`, cssRgba(mixRgba(extreme[key], normal[key], e)))
   }
@@ -256,7 +269,7 @@ export function applyTint(hex: string | null) {
   return next
 }
 
-/** Clear back to the default theme. The stored mode was never touched. */
+/** Clear back to the default theme, restoring the pre-tint mode. */
 export function clearTint() {
   const root = document.documentElement
   root.removeAttribute("data-tint")
@@ -265,6 +278,15 @@ export function clearTint() {
     localStorage.removeItem(TINT_STORAGE_KEY)
   } catch {
     /* storage unavailable — theming still works for this session */
+  }
+  try {
+    const prev = localStorage.getItem(PREV_MODE_KEY)
+    localStorage.removeItem(PREV_MODE_KEY)
+    if (prev === "dark") root.classList.add("dark")
+    else if (prev === "light") root.classList.remove("dark")
+    if (prev === "dark" || prev === "light") localStorage.setItem("theme", prev)
+  } catch {
+    /* storage unavailable — mode simply stays as-is */
   }
   return null
 }

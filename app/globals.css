@@ -55,12 +55,10 @@ html.dark {
 .dark .dark\:border-zinc-900 { border-color: var(--border-color); }
 
 /* ------------------------------------------------------------------
-   Red-dot theme tint — one user color re-themes the whole site.
-   JS only sets `--user` + `data-tint` on <html>; every derived shade
-   is mixed here. Light mode gets a whisper of the color on paper;
-   dark mode gets a slightly dark, near-black tinted variant so
-   surfaces stay deep and text stays readable. The dark accent is
-   mixed toward white so links/rings keep contrast on dark surfaces.
+   Red-dot theme tint — one user color re-themes the whole site, always with
+   the light treatment (even from dark mode — picking a tint switches to it,
+   Reset restores). JS paints the full palette; the color-mix rules below are
+   the pre-hydration fallback only.
 ------------------------------------------------------------------- */
 html[data-tint] {
   --accent: var(--user);
@@ -71,21 +69,6 @@ html[data-tint] {
   --text-muted: color-mix(in srgb, var(--user) 26%, rgba(17, 17, 17, 0.4));
   --text-secondary: color-mix(in srgb, var(--user) 26%, rgba(17, 17, 17, 0.65));
   --text-primary: color-mix(in srgb, var(--user) 26%, rgba(17, 17, 17, 0.88));
-}
-
-html.dark[data-tint] {
-  --accent: color-mix(in srgb, var(--user) 68%, white);
-  --tldr-accent: color-mix(in srgb, var(--user) 62%, white);
-  /* Rich dark color: the user's hue sunk into near-black, but loud enough to read. */
-  --bg: color-mix(in srgb, var(--user) 28%, #0a0a0b);
-  --fg: color-mix(in srgb, var(--user) 12%, #fafafa);
-  --surface: color-mix(in srgb, var(--user) 24%, #131316);
-  --surface-deep: color-mix(in srgb, var(--user) 30%, #060607);
-  --surface-hover: color-mix(in srgb, var(--user) 22%, #1c1c20);
-  --border-color: color-mix(in srgb, var(--user) 34%, rgba(255, 255, 255, 0.1));
-  --text-muted: color-mix(in srgb, var(--user) 20%, rgba(250, 250, 250, 0.44));
-  --text-secondary: color-mix(in srgb, var(--user) 20%, rgba(250, 250, 250, 0.66));
-  --text-primary: color-mix(in srgb, var(--user) 20%, rgba(250, 250, 250, 0.92));
 }
 
 /* GitHub 3D showcase card follows the tint through --card (see engine). */
@@ -120,42 +103,17 @@ html[data-tint] .border-black\/5,
 html[data-tint] .border-black\/10 { border-color: var(--border-color) !important; }
 html[data-tint] .bg-white { background-color: var(--card) !important; }
 /* QR code paper must stay pure white to remain scannable. */
-html[data-tint] .qr-paper,
-html.dark[data-tint] .qr-paper { background-color: #ffffff !important; }
+html[data-tint] .qr-paper { background-color: #ffffff !important; }
 html[data-tint] .text-\[rgba\(18\,19\,20\,0\.7\)\] { color: var(--text-secondary) !important; }
-
-html.dark[data-tint] .dark\:text-white { color: var(--fg) !important; }
-html.dark[data-tint] .dark\:text-white\/80 { color: var(--text-primary) !important; }
-html.dark[data-tint] .dark\:text-white\/70,
-html.dark[data-tint] .dark\:text-white\/65,
-html.dark[data-tint] .dark\:text-white\/60 { color: var(--text-secondary) !important; }
-html.dark[data-tint] .dark\:text-white\/55,
-html.dark[data-tint] .dark\:text-white\/50,
-html.dark[data-tint] .dark\:text-white\/45,
-html.dark[data-tint] .dark\:text-white\/40,
-html.dark[data-tint] .dark\:text-white\/35,
-html.dark[data-tint] .dark\:text-white\/30,
-html.dark[data-tint] .dark\:text-white\/20 { color: var(--text-muted) !important; }
-html.dark[data-tint] .dark\:hover\:text-white:hover { color: var(--fg) !important; }
-html.dark[data-tint] .group:hover .dark\:group-hover\:text-white\/80 { color: var(--text-primary) !important; }
-html.dark[data-tint] .group:hover .dark\:group-hover\:text-white\/70,
-html.dark[data-tint] .group:hover .dark\:group-hover\:text-white\/60 { color: var(--text-secondary) !important; }
-html.dark[data-tint] .dark\:text-\[rgba\(244\,244\,245\,0\.7\)\] { color: var(--text-secondary) !important; }
 
 /* Hardcoded accents follow the tint. */
 html[data-tint] .text-\[\#646DBB\] { color: var(--accent) !important; }
 html[data-tint] .accent-black { accent-color: var(--accent); }
-html.dark[data-tint] .dark\:accent-white { accent-color: var(--accent); }
 html[data-tint] .bg-\[\#fdfdfc\] { background-color: var(--bg) !important; }
-html.dark[data-tint] .bg-accent\/10 { background-color: color-mix(in srgb, var(--user) 22%, transparent) !important; }
 
 /* Selection + code-copy selection follow the tint. */
 html[data-tint] ::selection {
   background: color-mix(in srgb, var(--user) 45%, #d4d4d4);
-}
-html.dark[data-tint] ::selection {
-  color: #fafafa;
-  background: color-mix(in srgb, var(--user) 60%, #27272a);
 }
 html[data-tint] .resume-pdf-page .textLayer ::selection {
   background: color-mix(in srgb, var(--user) 45%, transparent);
@@ -165,20 +123,12 @@ html[data-tint] .resume-pdf-page .textLayer ::selection {
 html[data-tint] .blog-content blockquote {
   background: color-mix(in srgb, var(--user) 10%, transparent);
 }
-html.dark[data-tint] .blog-content blockquote {
-  background: color-mix(in srgb, var(--user) 16%, transparent);
-}
 
 /* TL;DR card follows the tint (replaces the hardcoded sky-blue wash). */
 html[data-tint] .tldr-box {
   background: linear-gradient(135deg, color-mix(in srgb, var(--user) 16%, transparent) 0%, color-mix(in srgb, var(--user) 5%, transparent) 100%);
   border-color: color-mix(in srgb, var(--user) 42%, transparent);
   box-shadow: 0 4px 20px -2px color-mix(in srgb, var(--user) 18%, transparent);
-}
-html.dark[data-tint] .tldr-box {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--user) 20%, transparent) 0%, color-mix(in srgb, var(--user) 6%, transparent) 100%);
-  border-color: color-mix(in srgb, var(--user) 38%, transparent);
-  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
 }
 
 html.dark ::selection {
