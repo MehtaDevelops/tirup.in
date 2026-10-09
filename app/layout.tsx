@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s | Tirup Mehta"
   },
   description:
-    "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+    "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   keywords: [
     "Tirup Mehta",
     "Tirup",
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://tirup.in",
     title: "Tirup Mehta",
-    description: "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+    description: "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
     siteName: "Tirup Mehta Portfolio",
     images: [
       {
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Tirup Mehta",
-    description: "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+    description: "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
     creator: "@TirupMehta",
     images: ["/profile.png"]
   },
@@ -94,7 +94,7 @@ const profilePageSchema = {
   "@id": "https://tirup.in/",
   "url": "https://tirup.in",
   "name": "Tirup Mehta - Profile & Portfolio",
-  "description": "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+  "description": "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "mainEntity": {
     "@id": "https://tirup.in/about"
   },
@@ -111,7 +111,7 @@ const personSchema = {
   "name": "Tirup Mehta",
   "url": "https://tirup.in",
   "image": "https://tirup.in/profile.png",
-  "description": "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+  "description": "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "jobTitle": "Student Software Engineer",
   "knowsAbout": [
     "Software Engineering",
@@ -159,7 +159,7 @@ const websiteSchema = {
   "@type": "WebSite",
   "name": "Tirup Mehta Portfolio",
   "url": "https://tirup.in",
-  "description": "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+  "description": "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "about": {
     "@id": "https://tirup.in/about"
   },

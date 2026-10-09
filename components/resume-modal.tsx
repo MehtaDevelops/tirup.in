@@ -293,7 +293,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
                 Resume
               </p>
               <p className="mt-1 text-[11px] font-light tracking-wide text-black/50 dark:text-white/50 leading-none truncate">
-                Tirup Mehta — preview
+                Tirup Mehta resume preview
               </p>
             </div>
           </div>

@@ -34,7 +34,7 @@ export const projectsData = {
   "trace-guard": {
     title: "Trace Guard",
     description: "Production-grade behavioral security engine to block sophisticated AI agents and Vision-Language Model (VLM) bots.",
-    fullDescription: "Trace Guard silently intercepts HTTP requests to inject behavioral telemetry and block bots—specifically targeting agentic browsers driven by VLMs (Claude Computer Use, Playwright, Puppeteer). It relies on physical truths that cannot be spoofed.",
+    fullDescription: "Trace Guard silently intercepts HTTP requests to inject behavioral telemetry and block bots, specifically targeting agentic browsers driven by VLMs (Claude Computer Use, Playwright, Puppeteer). It relies on physical truths that cannot be spoofed.",
     liveUrl: "https://www.npmjs.com/package/trace-guard",
     github: "github.com/tirupmehta/trace-guard",
     techStack: ["Node.js", "TypeScript", "Edge Runtime", "CDP Detection"],
@@ -51,7 +51,7 @@ export const projectsData = {
       },
       {
         title: "The Solution",
-        content: "Implemented 'Pre-Flight Teleport Traps' and physiological analysis like Acceleration Asymmetry—detecting the biomechanical difference in how humans push upward vs. downward.",
+        content: "Implemented 'Pre-Flight Teleport Traps' and physiological analysis like Acceleration Asymmetry, detecting the biomechanical difference in how humans push upward vs. downward.",
       },
       {
         title: "Key Innovations",
@@ -110,8 +110,8 @@ export const projectsData = {
   },
   "quott": {
     title: "QUOTT",
-    description: "Daily inspiration Android app with hand-picked quotes on life, success, and love—beautifully presented and shareable.",
-    fullDescription: "Get inspired every day with QUOTT. Now available as an Android app, discover hand-picked quotes on life, success, love, and more—beautifully presented and easy to share.",
+    description: "Daily inspiration Android app with hand-picked quotes on life, success, and love, beautifully presented and shareable.",
+    fullDescription: "Get inspired every day with QUOTT. Now available as an Android app, discover hand-picked quotes on life, success, love, and more, beautifully presented and easy to share.",
     github: "github.com/TirupMehta/QUOTT",
     liveUrl: "https://quott.tirup.in",
     techStack: ["Android SDK", "Kotlin", "Java", "Firebase"],
@@ -178,7 +178,7 @@ export const projectsData = {
   "archive": {
     title: "Archive",
     description: "Minimalist writing app with AI formatting and real-time cloud sync.",
-    fullDescription: "Archive is a keyboard-first writing environment that stays out of your way. Write as a guest and everything saves locally, or sign in with Google to sync projects across devices. Hit the AI button and Gemini restructures and formats the document in one click — grammar, structure, code blocks, and spacing handled automatically.",
+    fullDescription: "Archive is a keyboard-first writing environment that stays out of your way. Write as a guest and everything saves locally, or sign in with Google to sync projects across devices. Hit the AI button and Gemini restructures and formats the document in one click: grammar, structure, code blocks, and spacing handled automatically.",
     liveUrl: "https://archive.tirup.in",
     github: "github.com/TirupMehta/archive",
     techStack: ["Next.js", "TypeScript", "TipTap", "Firebase", "Gemini AI"],
@@ -194,7 +194,7 @@ export const projectsData = {
       },
       {
         title: "The Solution",
-        content: "Archive pairs a distraction-free TipTap editor — bold, headings, lists, links, code blocks with copy button, multiple projects, voice typing, export, and word counter — with one-click Gemini formatting and Firestore sync that falls back to localStorage without an account.",
+        content: "Archive pairs a distraction-free TipTap editor with bold, headings, lists, links, code blocks with copy button, multiple projects, voice typing, export, and word counter, plus one-click Gemini formatting and Firestore sync that falls back to localStorage without an account.",
       },
     ],
   },
@@ -290,7 +290,7 @@ export const projectsData = {
   "localvault": {
     title: "LocalVault",
     description: "Secure, browser-based file storage solution that prioritizes privacy with local IndexedDB storage.",
-    fullDescription: "LocalVault is a secure, browser-based file storage solution that prioritizes privacy. It stores your files locally in the browser using IndexedDB—no cloud, no tracking.",
+    fullDescription: "LocalVault is a secure, browser-based file storage solution that prioritizes privacy. It stores your files locally in the browser using IndexedDB. No cloud, no tracking.",
     github: "github.com/TirupMehta/LocalVault",
     techStack: ["IndexedDB", "React", "File API", "CSS Grid"],
     stats: {
@@ -468,7 +468,7 @@ export const projectsList: WorkProject[] = [
   },
   {
     title: "Vectorize AI API",
-    description: "Free AI API for small companies — powerful capabilities, zero setup.",
+    description: "Free AI API for small companies with powerful capabilities and zero setup.",
     slug: "vectorize-ai-api",
     liveUrl: "https://vectorize.in",
     isPrivate: true,
@@ -508,7 +508,7 @@ export const projectsList: WorkProject[] = [
   },
   {
     title: "Aperture",
-    description: "Cryptographic challenge — decrypt the message to prove your skills.",
+    description: "Cryptographic challenge: decrypt the message to prove your skills.",
     slug: "aperture",
     liveUrl: "https://aperture.tirup.in",
     isPrivate: true,

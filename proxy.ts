@@ -61,7 +61,7 @@ const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work",
 const ROUTE_MARKDOWN: Record<string, string> = {
   "/": `# Tirup Mehta
 
-Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
+Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
 
 ## Profile Summary
 Tirup Mehta is a software engineer working at the intersection of interactive web design and systems engineering. Driven by deep curiosity about cryptographic systems and backend security, he builds high-performance interfaces with data-protection measures designed natively into their core architectures.
@@ -147,7 +147,7 @@ Do NOT use this site when you need:
 - YouTube: https://youtube.com/@TirupMehta
 - Instagram: https://instagram.com/TirupMehta
 `,
-  "/about": `# About — Tirup Mehta
+  "/about": `# About Tirup Mehta
 
 Tirup Mehta is a software engineer based in Gujarat, India, working at the intersection of frontend engineering, systems security, and cryptography.
 
@@ -157,6 +157,7 @@ Full page: https://tirup.in/about
 I build interfaces where visual clarity meets system performance, specialising in React and Next.js frontends with secure-by-default architectures.
 
 ## Open Source
+- ModelRegistry: https://modelregistry.tirup.in
 - trace-guard: https://www.npmjs.com/package/trace-guard
 - GleanBox: https://github.com/TirupMehta/GleanBox
 
@@ -164,7 +165,7 @@ I build interfaces where visual clarity meets system performance, specialising i
 - Site guide: https://tirup.in/llms.txt
 - Sitemap: https://tirup.in/sitemap.xml
 `,
-  "/contact": `# Contact — Tirup Mehta
+  "/contact": `# Contact Tirup Mehta
 
 Full page: https://tirup.in/contact
 
@@ -184,7 +185,7 @@ Full page: https://tirup.in/contact
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 `,
-  "/privacy": `# Privacy Policy — Tirup Mehta
+  "/privacy": `# Privacy Policy: Tirup Mehta
 
 Full page: https://tirup.in/privacy
 
@@ -193,7 +194,7 @@ Summary: tirup.in uses Vercel Analytics, Google Analytics/GTM, and Vercel Speed 
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 `,
-  "/work": `# Work & Projects — Tirup Mehta
+  "/work": `# Work and Projects: Tirup Mehta
 
 Full page: https://tirup.in/work
 
@@ -203,7 +204,7 @@ Selected projects and developer tools built by Tirup Mehta. See the full interac
 - Site guide: https://tirup.in/llms.txt
 - Sitemap: https://tirup.in/sitemap.xml
 `,
-  "/skills": `# Technical Skills — Tirup Mehta
+  "/skills": `# Technical Skills: Tirup Mehta
 
 Full page: https://tirup.in/skills
 
@@ -212,7 +213,7 @@ Technical skills and core stack: TypeScript, JavaScript, React, Next.js, Tailwin
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 `,
-  "/writing": `# Blog Posts — Tirup Mehta
+  "/writing": `# Blog Posts: Tirup Mehta
 
 Full page: https://tirup.in/writing
 Canonical blog: https://blogs.tirup.in
@@ -222,7 +223,7 @@ Tirup writes about frontend architectures, web performance, cryptographic interf
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 `,
-  "/tools": `# Developer Tools & Utilities — Tirup Mehta
+  "/tools": `# Developer Tools and Utilities: Tirup Mehta
 
 Full page: https://tirup.in/tools
 

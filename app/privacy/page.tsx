@@ -3,7 +3,7 @@ import Header from "@/components/header"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Privacy policy for tirup.in — what data is collected, how it is used, and how to contact Tirup Mehta with data questions.",
+  description: "Privacy policy for tirup.in: what data is collected, how it is used, and how to contact Tirup Mehta with data questions.",
   alternates: { canonical: "/privacy" },
   openGraph: { url: "/privacy" },
   robots: { index: false, follow: false },
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
             </p>
             <ul className="mt-3 space-y-2 list-disc list-inside">
               <li>
-                <strong>Vercel Analytics</strong> — page view counts, device type, browser,
+                <strong>Vercel Analytics</strong>: page view counts, device type, browser,
                 operating system, and country-level geolocation. Vercel does not collect
                 personally identifiable information. Data is processed by Vercel Inc. under
                 their{" "}
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                 .
               </li>
               <li>
-                <strong>Google Analytics / Google Tag Manager</strong> — page views, session
+                <strong>Google Analytics / Google Tag Manager</strong>: page views, session
                 duration, traffic source, and device type. Google Analytics uses cookies to
                 distinguish visitors. IP addresses are anonymised. Data is processed by
                 Google LLC under their{" "}
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
                 .
               </li>
               <li>
-                <strong>Vercel Speed Insights</strong> — Core Web Vitals and performance
+                <strong>Vercel Speed Insights</strong>: Core Web Vitals and performance
                 metrics aggregated at the page level. No user identifiers are stored.
               </li>
             </ul>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
             <p>
               This site uses cookies set by Google Analytics to distinguish returning visitors
               and measure session duration. A theme preference (light/dark mode) is stored in
-              your browser&apos;s localStorage — this data never leaves your device.
+              your browser&apos;s localStorage. This data never leaves your device.
               No first-party session cookies, login cookies, or tracking pixels beyond the
               analytics services listed above are set.
             </p>
@@ -95,8 +95,8 @@ export default function PrivacyPage() {
             <h2 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">Data not collected</h2>
             <p>This site does not collect:</p>
             <ul className="mt-3 space-y-1 list-disc list-inside">
-              <li>Account registration data — there is no user authentication on this site.</li>
-              <li>Form submissions or contact form data — contact happens via external platforms.</li>
+              <li>Account registration data: there is no user authentication on this site.</li>
+              <li>Form submissions or contact form data: contact happens via external platforms.</li>
               <li>Payment or billing information.</li>
               <li>Precise geolocation beyond country level.</li>
             </ul>

@@ -42,7 +42,7 @@ export default function NotFound() {
         data-agent-recovery="true"
       >
         {/* markdown
-# 404 — Page Not Found
+# 404: Page Not Found
 
 The requested path does not exist on tirup.in.
 

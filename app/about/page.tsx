@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn about Tirup Mehta — software engineer, open-source author, and cryptography enthusiast based in Gujarat, India.",
+  description: "Learn about Tirup Mehta, software engineer, open-source author, and cryptography enthusiast based in Gujarat, India.",
   alternates: { canonical: "/about" },
   openGraph: { url: "/about" },
 }
@@ -42,7 +42,7 @@ export default function AboutPage() {
               experience.
             </p>
             <p className="mt-4">
-              On the security side, I have shipped trace-guard — a production-grade
+              On the security side, I have shipped trace-guard, a production-grade
               behavioural security engine that detects and blocks AI agents and Vision-Language
               Model (VLM) bots at the edge. It is available as an npm package and is actively
               maintained. I have also built GleanBox, an open-source structured data harvesting
@@ -55,6 +55,17 @@ export default function AboutPage() {
             <ul className="space-y-2">
               <li>
                 <a
+                  href="https://modelregistry.tirup.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 hover:text-black dark:hover:text-white transition-colors"
+                >
+                  ModelRegistry <ArrowUpRight size={13} className="opacity-40" />
+                </a>
+                {": "}Open frontier AI model registry with free REST API.
+              </li>
+              <li>
+                <a
                   href="https://www.npmjs.com/package/trace-guard"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -62,7 +73,7 @@ export default function AboutPage() {
                 >
                   trace-guard (npm) <ArrowUpRight size={13} className="opacity-40" />
                 </a>
-                {" "}— Behavioural security engine, blocks AI/VLM bots at the edge. v3.7.0+.
+                {": "}Behavioural security engine, blocks AI/VLM bots at the edge. v3.7.0+.
               </li>
               <li>
                 <a
@@ -73,7 +84,7 @@ export default function AboutPage() {
                 >
                   GleanBox (GitHub) <ArrowUpRight size={13} className="opacity-40" />
                 </a>
-                {" "}— Structured data harvesting and intelligence toolkit.
+                {": "}Structured data harvesting and intelligence toolkit.
               </li>
             </ul>
           </div>
@@ -102,7 +113,7 @@ export default function AboutPage() {
           <div>
             <h2 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">Values</h2>
             <p>
-              I believe good software is an act of craft — every decision, from type signatures
+              I believe good software is an act of craft. Every decision, from type signatures
               to HTTP headers, carries responsibility. Security and privacy should be
               first-class design constraints, not afterthoughts. I am drawn to systems where
               correct behaviour is enforced by structure rather than discipline alone.
@@ -141,6 +152,9 @@ export default function AboutPage() {
       <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
         <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>
           © {currentYear} Tirup Mehta. All rights reserved.
+        </p>
+        <p data-nosnippet className="mt-1 text-[11px] font-light text-black/30 dark:text-white/30">
+          Son of Jayrambhai Mehta and Purviben Mehta, with love and gratitude.
         </p>
       </footer>
     </main>

@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with Tirup Mehta — available for collaboration, freelance engineering work, and conversations about systems security and frontend architecture.",
+  description: "Get in touch with Tirup Mehta for collaboration, freelance engineering work, and conversations about systems security and frontend architecture.",
   alternates: { canonical: "/contact" },
   openGraph: { url: "/contact" },
 }
@@ -21,7 +21,7 @@ const channels = [
     name: "Peerlist",
     handle: "peerlist.io/tirupmehta",
     href: "https://peerlist.io/tirupmehta",
-    note: "Developer community profile — good for peer-to-peer technical conversations.",
+    note: "Developer community profile. Good for peer-to-peer technical conversations.",
   },
   {
     name: "GitHub",

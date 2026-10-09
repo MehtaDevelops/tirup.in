@@ -133,7 +133,7 @@ export default function ThemeTintPicker({
           (the look is frozen then); a hint explains where it went. */}
       {tintActive ? (
         <p className="mt-2.5 border-t border-black/5 pt-2.5 text-[11px] font-light text-black/40 dark:border-white/10 dark:text-white/40">
-          Light/Dark is paused while a theme color is set — Reset brings it back.
+          Light/Dark is paused while a theme color is set. Reset brings it back.
         </p>
       ) : (
       <div className="mt-2.5 border-t border-black/5 pt-2.5 dark:border-white/10">

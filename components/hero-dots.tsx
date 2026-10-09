@@ -177,7 +177,7 @@ export default function HeroDots() {
               aria-haspopup="dialog"
               aria-pressed={tintOpen}
               aria-expanded={tintOpen}
-              title={tint ? `theme: ${tint} — click to change` : "psst… click me"}
+              title={tint ? `theme: ${tint} (click to change)` : "psst… click me"}
               className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-3 after:content-['']"
               style={{
                 width: 10,

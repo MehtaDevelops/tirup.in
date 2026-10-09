@@ -404,7 +404,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
               <span className="text-black/40 dark:text-white/40 text-xs">
                 {view === "top"
                   ? "Hover or tap days to inspect contribution volume."
-                  : "Hover a bar — or tap one — to inspect contribution volume."}
+                  : "Hover a bar or tap one to inspect contribution volume."}
               </span>
             )}
           </div>
@@ -643,7 +643,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
                 </span>
                 <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
                 <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/70 dark:group-hover:text-white/70 [transition:color_80ms_ease-out] text-sm">
-                  Primary profile — systems security research, cryptographic tools, and technical essays.
+                  Primary profile: systems security research, cryptographic tools, and technical essays.
                 </span>
               </div>
               <span className="font-mono tabular-nums text-xs md:text-sm text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out]">
@@ -668,7 +668,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
                 </span>
                 <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
                 <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/70 dark:group-hover:text-white/70 [transition:color_80ms_ease-out] text-sm">
-                  Development organization — open-source libraries, trace utilities, and client systems.
+                  Development organization: open-source libraries, trace utilities, and client systems.
                 </span>
               </div>
               <span className="font-mono tabular-nums text-xs md:text-sm text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out]">

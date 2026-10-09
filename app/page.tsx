@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: {
     absolute: "Tirup Mehta",
   },
-  description: "Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
+  description: "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   alternates: {
     canonical: "https://tirup.in"
   }
@@ -27,9 +27,9 @@ export default function Home() {
       */}
       <noscript>
         <article style={{ maxWidth: "48rem", margin: "0 auto", padding: "2rem 1.5rem", fontFamily: "sans-serif", lineHeight: 1.7, color: "#111" }}>
-          <h2>Tirup Mehta — Software Engineer</h2>
+          <h2>Tirup Mehta, Software Engineer</h2>
           <p>
-            Tirup Mehta — software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
+            Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.
           </p>
 
           <h2>About</h2>
@@ -71,7 +71,7 @@ export default function Home() {
           </ul>
 
           <p>
-            Agent resources: <a href="/llms.txt">llms.txt</a> — <a href="/sitemap.xml">sitemap.xml</a>
+            Agent resources: <a href="/llms.txt">llms.txt</a>, <a href="/sitemap.xml">sitemap.xml</a>
           </p>
         </article>
       </noscript>
