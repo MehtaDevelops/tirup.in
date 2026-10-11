@@ -59,7 +59,7 @@ const SRC: Record<Expr, string> = {
 
 // Likely faces, warmed only once the browser is idle so first paint never
 // competes with them. Anything else loads on demand via Next's optimizer.
-const WARM: Expr[] = ["smile", "waving", "laugh", "lookup", "drinking"]
+const WARM: Expr[] = ["cool", "smile", "waving", "laugh", "lookup", "drinking"]
 
 // Faces 06+ have a slightly cut bottom edge in the source art — shifting
 // them down a few pixels tucks the cut behind the circle's bottom edge.
@@ -91,7 +91,7 @@ function baseForPath(pathname: string | null, hour: number | null): Expr {
   if (p.startsWith("/contact")) return "waving"
   if (p.startsWith("/about")) return "smile"
   if (p.startsWith("/github")) return "excited"
-  return "neutral"
+  return "cool" // home default: sunglasses face
 }
 
 function preload(list: Expr[]) {
