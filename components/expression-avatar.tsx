@@ -189,8 +189,17 @@ export default function ExpressionAvatar({
     const h = new Date().getHours()
     hourRef.current = h
     setHour(h)
+    // Greet only once per session: the landing page says hi, later route
+    // changes (/work, /skills, …) mount a fresh avatar that stays quiet.
+    let greeted = false
+    try {
+      greeted = sessionStorage.getItem("avatar-greeted") === "1"
+    } catch { /* ignore */ }
     const greetTimer = setTimeout(() => {
-      if (reactionId.current === 0) show(isMorningHour(h) ? "drinking" : "waving", 2200)
+      if (reactionId.current === 0 && !greeted) {
+        try { sessionStorage.setItem("avatar-greeted", "1") } catch { /* ignore */ }
+        show(isMorningHour(h) ? "drinking" : "waving", 2200)
+      }
     }, 900)
     const warm = () => preload(WARM)
     const w = window as unknown as {
