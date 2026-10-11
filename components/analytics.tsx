@@ -7,7 +7,8 @@ export default function GoogleAnalytics() {
   return (
     <>
       <Script id="analytics-queue" strategy="beforeInteractive">
-        {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};`}
+        {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
+        try{if(navigator&&navigator.doNotTrack==='1'){window.__DNT='1';}}catch(e){}`}
       </Script>
       {/* Tracking starts only after the page has loaded; queued dataLayer events are retained. */}
       <Script id="google-tag-manager" strategy="lazyOnload">
@@ -18,17 +19,17 @@ export default function GoogleAnalytics() {
         })(window,document,'script','dataLayer','${gtmId}');`}
       </Script>
 
-      {/* Google Analytics (gtag.js) */}
+      {/* Google Analytics (gtag.js) — skipped when DNT=1 or consent denied */}
       <Script
         async
         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
         strategy="lazyOnload"
       />
       <Script id="google-analytics" strategy="lazyOnload">
-        {`window.dataLayer = window.dataLayer || [];
+        {`try{if(navigator.doNotTrack==='1'||localStorage.getItem('analytics-consent')==='denied'){/* respect privacy */}else{window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '${gaId}');`}
+        gtag('config', '${gaId}', { anonymize_ip: true });}}catch(e){}`}
       </Script>
     </>
   )

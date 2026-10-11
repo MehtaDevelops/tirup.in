@@ -289,8 +289,9 @@ export default function UtmBuilderPage() {
     if (autoLowercase) {
       formatted = formatted.toLowerCase()
     }
-    // Replace spaces with configured separator
-    formatted = formatted.replace(/\s+/g, spaceSeparator)
+    // Use "+" as the space placeholder — URLSearchParams encodes it correctly.
+    // The "%20" display option is applied after serialization (see singleFinalUrl).
+    formatted = formatted.replace(/\s+/g, spaceSeparator === "%20" ? "+" : spaceSeparator)
     return formatted
   }, [autoLowercase, spaceSeparator])
 
@@ -329,8 +330,9 @@ export default function UtmBuilderPage() {
     })
 
     const queryString = params.toString()
-    return `${cleanBaseUrl}${cleanPath}${queryString ? `?${queryString}` : ""}`
-  }, [cleanBaseUrl, cleanPath, source, medium, campaign, content, term, customParams, formatParamValue])
+    const finalQuery = spaceSeparator === "%20" ? queryString.replace(/\+/g, "%20") : queryString
+    return `${cleanBaseUrl}${cleanPath}${finalQuery ? `?${finalQuery}` : ""}`
+  }, [cleanBaseUrl, cleanPath, source, medium, campaign, content, term, customParams, formatParamValue, spaceSeparator])
 
   // Real-Time GA4 Channel Grouping Prediction
   const ga4ChannelPrediction = useMemo(() => {
@@ -591,6 +593,7 @@ export default function UtmBuilderPage() {
   }
 
   const exportBulkCsv = () => {
+    const escCell = (c: unknown) => `"${String(c ?? "").replace(/"/g, '""')}"`
     const rows = [
       ["Channel", "Category", "Source", "Medium", "Campaign", "Predicted GA4 Channel", "Tagged URL"],
       ...bulkUrls.map((b) => [
@@ -603,14 +606,16 @@ export default function UtmBuilderPage() {
         b.url,
       ]),
     ]
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.map((cell) => `"${cell}"`).join(",")).join("\n")
-    const encodedUri = encodeURI(csvContent)
+    const csvText = rows.map((e) => e.map(escCell).join(",")).join("\r\n")
+    const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" })
+    const blobUrl = URL.createObjectURL(blob)
     const link = document.createElement("a")
-    link.setAttribute("href", encodedUri)
+    link.setAttribute("href", blobUrl)
     link.setAttribute("download", `utm_campaign_${cleanBulkCamp}.csv`)
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
     setBulkExportMessage("CSV exported successfully!")
     setTimeout(() => setBulkExportMessage(null), 3000)
   }
@@ -722,8 +727,8 @@ export default function UtmBuilderPage() {
       searchP.forEach((val, key) => {
         const lowerKey = key.toLowerCase()
         if (!TRACKING_JUNK_PARAMS.includes(lowerKey)) {
-          // Normalize casing and trim
-          cleanParams.set(lowerKey, val.toLowerCase().trim())
+          // Normalize keys only — values stay case-sensitive (tokens, base64)
+          cleanParams.set(lowerKey, val.trim())
         }
       })
 
@@ -745,12 +750,13 @@ export default function UtmBuilderPage() {
     setContent(inspectedData.content)
     setTerm(inspectedData.term)
 
+    const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`)
     const extra: CustomParam[] = []
     Object.entries(inspectedData.utmExtra).forEach(([k, v]) => {
-      extra.push({ id: Math.random().toString(), key: k, value: v })
+      extra.push({ id: newId(), key: k, value: v })
     })
     Object.entries(inspectedData.otherParams).forEach(([k, v]) => {
-      extra.push({ id: Math.random().toString(), key: k, value: v })
+      extra.push({ id: newId(), key: k, value: v })
     })
     setCustomParams(extra)
 

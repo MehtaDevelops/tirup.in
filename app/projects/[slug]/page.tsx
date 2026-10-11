@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import Image from "next/image"
 import TextWithBlur from "@/components/text-with-blur"
+import ExpressionAvatar from "@/components/expression-avatar"
 import { ArrowUpRight } from "lucide-react"
 import { projectsData } from "@/lib/projects-data"
 import { notFound } from "next/navigation"
@@ -17,12 +17,14 @@ function isValidSlug(slug: string): boolean {
   return SAFE_SLUG_RE.test(slug)
 }
 
-/** Validate that a URL uses https or http only — blocks javascript: and data: */
+/** Validate that a URL uses https only (http allowed for localhost) — blocks javascript: and data: */
 function isSafeUrl(url: string | undefined): boolean {
   if (!url) return false
   try {
     const u = new URL(url.startsWith("//") ? `https:${url}` : url)
-    return u.protocol === "https:" || u.protocol === "http:"
+    if (u.protocol === "https:") return true
+    if (u.protocol === "http:" && (u.hostname === "localhost" || u.hostname === "127.0.0.1")) return true
+    return false
   } catch {
     return false
   }
@@ -44,6 +46,11 @@ interface Project {
   engine?: string
   stats: Record<string, string>
   details?: { title: string; content: string }[]
+}
+
+// Pre-render all known projects at build time (data is static)
+export function generateStaticParams() {
+  return Object.keys(projectsData).map((slug) => ({ slug }))
 }
 
 // Generate dynamic SEO metadata
@@ -113,14 +120,8 @@ export default async function ProjectPage({ params }: PageProps) {
         <TextWithBlur>
           <div className="flex items-center gap-2 text-xs md:text-sm text-black/45 dark:text-white/45 mb-10 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
-              <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 shrink-0">
-                <Image
-                  src="/profile.png"
-                  alt="Tirup Mehta"
-                  width={32}
-                  height={32}
-                  className="w-full h-full object-cover"
-                />
+              <div className="shrink-0">
+                <ExpressionAvatar size={20} interactive={false} face="laugh" />
               </div>
               <span className="font-light">Tirup Mehta</span>
             </Link>

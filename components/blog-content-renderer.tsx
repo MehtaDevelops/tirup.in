@@ -45,6 +45,7 @@ export function BlogContentRenderer({ html }: BlogContentRendererProps) {
       if (lang && !pre.querySelector(".code-lang-label")) {
         const langBadge = document.createElement("span")
         langBadge.className = "code-lang-label"
+        langBadge.setAttribute("aria-hidden", "true")
         langBadge.textContent = lang.toLowerCase()
         pre.appendChild(langBadge)
         cleanups.push(() => langBadge.remove())
@@ -58,14 +59,26 @@ export function BlogContentRenderer({ html }: BlogContentRendererProps) {
       button.setAttribute("title", "Copy code")
 
       button.innerHTML = `
-        <svg class="copy-icon transition-transform duration-150" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg aria-hidden="true" class="copy-icon transition-transform duration-150" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
           <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
         </svg>
-        <svg class="check-icon hidden text-emerald-500 dark:text-emerald-400 transition-transform duration-150" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg aria-hidden="true" class="check-icon hidden text-emerald-500 dark:text-emerald-400 transition-transform duration-150" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       `
+
+      const copyFallback = (text: string) => {
+        const ta = document.createElement("textarea")
+        ta.value = text
+        ta.setAttribute("readonly", "")
+        ta.style.position = "absolute"
+        ta.style.left = "-9999px"
+        document.body.appendChild(ta)
+        ta.select()
+        try { document.execCommand("copy") } catch { /* ignore */ }
+        document.body.removeChild(ta)
+      }
 
       let timeoutId: ReturnType<typeof setTimeout> | null = null
 
@@ -73,10 +86,15 @@ export function BlogContentRenderer({ html }: BlogContentRendererProps) {
         e.preventDefault()
         e.stopPropagation()
 
-        const textToCopy = codeElement ? codeElement.innerText : pre.innerText
+        // Copy from <code> only — pre.innerText would include badge text
+        const textToCopy = codeElement ? codeElement.innerText : pre.textContent || ""
 
         try {
-          await navigator.clipboard.writeText(textToCopy)
+          if (navigator.clipboard?.writeText && window.isSecureContext) {
+            await navigator.clipboard.writeText(textToCopy)
+          } else {
+            copyFallback(textToCopy)
+          }
 
           const copyIcon = button.querySelector(".copy-icon")
           const checkIcon = button.querySelector(".check-icon")

@@ -175,11 +175,10 @@ export function trackLeadSubmission(data: {
   inquiryType?: string
   messageLength?: number
 }) {
-  const emailDomain = data.email && data.email.includes("@") ? data.email.split("@")[1] : "unknown"
-
+  // Privacy: never send email or domain to analytics — only aggregate shape
   trackEvent("lead_form_submit", {
     inquiry_type: data.inquiryType || "general",
-    email_domain: emailDomain,
+    has_email: data.email ? "yes" : "no",
     message_length: data.messageLength || 0,
     conversion_type: "lead_inquiry",
   })
