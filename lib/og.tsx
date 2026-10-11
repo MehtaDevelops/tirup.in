@@ -2,9 +2,9 @@
 import fs from "fs";
 import path from "path";
 
-/* Shared premium OG building blocks: brand fonts, avatar, and the card shell.
-   Every opengraph-image / twitter-image route on tirup.in composes these so
-   all share previews feel like one system: dark, minimal, serif-led. */
+/* Shared OG building blocks for tirup.in: flat paper-white editorial cards.
+   Matches the site's light theme exactly (paper #fdfdfc, ink #111111).
+   No gradients, no glows, no glass — print-minimal. */
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
@@ -17,18 +17,35 @@ type OgFont = {
 
 let cachedFonts: OgFont[] | null = null;
 
-async function fetchFont(url: string): Promise<ArrayBuffer> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`OG font fetch failed: ${res.status}`);
-  return await res.arrayBuffer();
+/* Satori cannot parse woff2 (brotli). Plain css2 fetch from Node sends a
+   non-browser UA, so Google answers with truetype URLs — exactly what we need. */
+async function googleFontTTF(family: string, weight: number, italic: boolean): Promise<ArrayBuffer> {
+  const axis = italic ? `ital,wght@1,${weight}` : `wght@${weight}`;
+  const res = await fetch(
+    `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:${axis}&display=swap`
+  );
+  if (!res.ok) throw new Error(`OG font CSS failed: ${res.status}`);
+  const css = await res.text();
+  const blocks = css.split("@font-face").slice(1);
+  const latin =
+    [...blocks].reverse().find((b) => {
+      const comment = b.match(/\/\*\s*([\w-]+)\s*\*\//)?.[1];
+      return comment === "latin";
+    }) ?? blocks[blocks.length - 1];
+  const url =
+    latin?.match(/url\((https:[^)]+?\.ttf)\)/)?.[1] ?? latin?.match(/url\((https:[^)]+)\)/)?.[1];
+  if (!url) throw new Error(`OG font not found: ${family} ${weight}`);
+  const font = await fetch(url);
+  if (!font.ok) throw new Error(`OG font download failed: ${font.status}`);
+  return await font.arrayBuffer();
 }
 
 export async function loadOgFonts(): Promise<OgFont[]> {
   if (cachedFonts) return cachedFonts;
   const [inter400, inter600, playfairItalic] = await Promise.all([
-    fetchFont("https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.woff2"),
-    fetchFont("https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.woff2"),
-    fetchFont("https://cdn.jsdelivr.net/fontsource/fonts/playfair-display@latest/latin-500-italic.woff2"),
+    googleFontTTF("Inter", 400, false),
+    googleFontTTF("Inter", 600, false),
+    googleFontTTF("Playfair Display", 500, true),
   ]);
   cachedFonts = [
     { name: "Inter", data: inter400, weight: 400, style: "normal" },
@@ -40,12 +57,12 @@ export async function loadOgFonts(): Promise<OgFont[]> {
 
 let cachedAvatar: string | null = null;
 
-/** Default pixel face as a data URL (transparent webp on the dark card). */
+/** Default pixel face as a data URL. PNG only: Satori cannot decode webp. */
 export function getOgAvatar(): string {
   if (cachedAvatar !== null) return cachedAvatar;
   try {
-    const p = path.join(process.cwd(), "public", "expressions", "19-adjusting-glasses.webp");
-    cachedAvatar = `data:image/webp;base64,${fs.readFileSync(p).toString("base64")}`;
+    const p = path.join(process.cwd(), "public", "og-avatar.png");
+    cachedAvatar = `data:image/png;base64,${fs.readFileSync(p).toString("base64")}`;
   } catch {
     cachedAvatar = "";
   }
@@ -53,9 +70,9 @@ export function getOgAvatar(): string {
 }
 
 export function ogTitleSize(title: string): string {
-  if (title.length > 72) return "52px";
-  if (title.length > 44) return "62px";
-  return "76px";
+  if (title.length > 64) return "54px";
+  if (title.length > 38) return "62px";
+  return "80px";
 }
 
 export interface OgShellProps {
@@ -66,6 +83,8 @@ export interface OgShellProps {
   section?: string;
   domain?: string;
 }
+
+const INK = "#111111";
 
 export function OgShell({
   kicker,
@@ -83,37 +102,13 @@ export function OgShell({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#0a0a0b",
-        padding: "28px",
-        fontFamily: 'Inter, sans-serif',
+        backgroundColor: "#fdfdfc",
+        padding: "26px",
+        fontFamily: "Inter, sans-serif",
         position: "relative",
       }}
     >
-      {/* Ambient glows */}
-      <div
-        style={{
-          position: "absolute",
-          top: "-110px",
-          right: "-90px",
-          width: "620px",
-          height: "620px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(129, 140, 248, 0.13) 0%, transparent 70%)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: "-130px",
-          left: "-70px",
-          width: "520px",
-          height: "520px",
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(56, 189, 248, 0.07) 0%, transparent 70%)",
-        }}
-      />
-
-      {/* Hairline frame */}
+      {/* Double hairline frame */}
       <div
         style={{
           width: "100%",
@@ -121,89 +116,69 @@ export function OgShell({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
-          borderRadius: "24px",
-          backgroundColor: "rgba(13, 14, 17, 0.88)",
-          padding: "36px 44px",
+          border: "1.5px solid rgba(17, 17, 17, 0.85)",
+          borderRadius: "20px",
+          backgroundColor: "#fdfdfc",
+          padding: "34px 42px",
         }}
       >
-        {/* Top row: identity + section */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            {avatar && (
-              <img
-                src={avatar}
-                alt=""
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  marginRight: "14px",
-                  border: "1px solid rgba(255, 255, 255, 0.22)",
-                  backgroundColor: "#101013",
-                }}
-              />
-            )}
-            <span style={{ fontSize: "19px", fontWeight: 600, color: "#fafafa", letterSpacing: "-0.01em" }}>
-              Tirup Mehta
-            </span>
-            {section && (
-              <span style={{ display: "flex", alignItems: "center" }}>
-                <span style={{ margin: "0 12px", fontSize: "18px", color: "rgba(255, 255, 255, 0.28)" }}>›</span>
-                <span style={{ fontSize: "18px", color: "rgba(255, 255, 255, 0.55)" }}>{section}</span>
-              </span>
-            )}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "9999px",
-              padding: "6px 14px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
-            }}
-          >
-            <div style={{ width: "7px", height: "7px", borderRadius: "50%", backgroundColor: "#34d399", marginRight: "8px" }} />
-            <span style={{ fontSize: "12px", fontWeight: 600, letterSpacing: "0.14em", color: "rgba(244, 244, 245, 0.72)" }}>
-              {kicker}
-            </span>
-          </div>
-        </div>
-
-        {/* Headline block */}
-        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", margin: "20px 0" }}>
-          <div
-            style={{
-              fontFamily: '"Playfair Display", serif',
-              fontStyle: "italic",
-              fontWeight: 500,
-              fontSize: ogTitleSize(title),
-              color: "#ffffff",
-              lineHeight: 1.12,
-              letterSpacing: "-0.01em",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {title}
-          </div>
-          {excerpt && (
+        {/* Middle: headline + hero avatar (top row removed — breathing room up top) */}
+        <div style={{ display: "flex", alignItems: "center", width: "100%", margin: "6px 0 16px 0", flex: 1 }}>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", flex: "1 1 0", minWidth: 0, paddingRight: "36px", paddingTop: "8px" }}>
             <div
               style={{
-                fontSize: "21px",
-                lineHeight: 1.45,
-                color: "rgba(244, 244, 245, 0.62)",
-                marginTop: "14px",
+                fontFamily: '"Playfair Display", serif',
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: ogTitleSize(title),
+                color: INK,
+                lineHeight: 1.08,
+                letterSpacing: "-0.01em",
                 display: "-webkit-box",
-                WebkitLineClamp: 2,
+                WebkitLineClamp: 3,
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
               }}
             >
-              {excerpt}
+              {title}
+            </div>
+            {excerpt && (
+              <div
+                style={{
+                  fontSize: "21px",
+                  lineHeight: 1.45,
+                  color: "rgba(17, 17, 17, 0.6)",
+                  marginTop: "14px",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {excerpt}
+              </div>
+            )}
+          </div>
+          {avatar && (
+            <div
+              style={{
+                width: "330px",
+                height: "360px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#efede7",
+                border: "1.5px solid rgba(17, 17, 17, 0.8)",
+                borderRadius: "18px",
+                overflow: "hidden",
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={avatar}
+                alt=""
+                style={{ width: "330px", height: "330px", objectFit: "cover", objectPosition: "50% 20%", transform: "translateY(50px)" }}
+              />
             </div>
           )}
         </div>
@@ -214,22 +189,30 @@ export function OgShell({
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "1px solid rgba(17, 17, 17, 0.14)",
             paddingTop: "18px",
             width: "100%",
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
+            {section && (
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <span style={{ fontSize: "15px", fontWeight: 600, color: "rgba(17, 17, 17, 0.8)" }}>{section}</span>
+                {meta.length > 0 && (
+                  <span style={{ margin: "0 10px", color: "rgba(17, 17, 17, 0.25)", fontSize: "15px" }}>/</span>
+                )}
+              </span>
+            )}
             {meta.map((m, i) => (
               <span key={i} style={{ display: "flex", alignItems: "center" }}>
                 {i > 0 && (
-                  <span style={{ margin: "0 10px", color: "rgba(255, 255, 255, 0.2)", fontSize: "15px" }}>/</span>
+                  <span style={{ margin: "0 10px", color: "rgba(17, 17, 17, 0.25)", fontSize: "15px" }}>/</span>
                 )}
-                <span style={{ fontSize: "15px", color: "rgba(244, 244, 245, 0.5)" }}>{m}</span>
+                <span style={{ fontSize: "15px", color: "rgba(17, 17, 17, 0.55)" }}>{m}</span>
               </span>
             ))}
           </div>
-          <span style={{ fontSize: "16px", fontWeight: 600, color: "rgba(244, 244, 245, 0.78)", letterSpacing: "0.01em" }}>
+          <span style={{ fontSize: "16px", fontWeight: 600, color: "rgba(17, 17, 17, 0.8)", letterSpacing: "0.01em" }}>
             {domain} ↗
           </span>
         </div>
