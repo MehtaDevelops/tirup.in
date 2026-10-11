@@ -421,7 +421,7 @@ export default function ExpressionAvatar({
     reactionId.current += 1
     clearRevert()
     sticky.current = true
-    setExpr("smile")
+    setExpr("waving")
   }
   const onAvatarLeave = () => {
     if (!interactive || !sticky.current) return
