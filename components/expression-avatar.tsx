@@ -454,8 +454,10 @@ export default function ExpressionAvatar({
         className="rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 aspect-square"
       >
         <div className={nudged ? "h-full w-full scale-[1.05] translate-y-[2px]" : "h-full w-full"}>
+        {/* No key on purpose: the same <img> element swaps src, so the old
+            face stays painted until the new one decodes — never a blank gap.
+            (key={expr} unmounted first = the disappear-reappear glitch.) */}
         <Image
-          key={expr}
           ref={imgRef}
           src={SRC[expr]}
           alt={size >= 40 ? "Tirup Mehta avatar" : ""}
@@ -470,6 +472,27 @@ export default function ExpressionAvatar({
         />
         </div>
       </div>
+      {/* Background warm-up (interactive instance only): hidden Next Images
+          with byte-identical props, so the exact optimizer URLs face swaps
+          use are already browser-cached before first paint settles.
+          Raw `new Image()` preloads can't do this (different URLs). */}
+      {interactive && (
+        <div aria-hidden="true" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
+          {WARM.map((f) => (
+            <Image
+              key={f}
+              src={SRC[f]}
+              alt=""
+              width={size * 2}
+              height={size * 2}
+              sizes={`${size}px`}
+              quality={90}
+              priority
+              draggable={false}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
