@@ -91,7 +91,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
     setObjectUrl(null)
     setPdfData(null)
 
-    fetch(src, { cache: "no-store" })
+    fetch(src, { cache: "force-cache" })
       .then((res) => {
         if (!res.ok) throw new Error(`Server responded with ${res.status}`)
         const type = res.headers.get("content-type") ?? ""

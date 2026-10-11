@@ -53,7 +53,7 @@ const MAX_URL_LENGTH = 2048
 
 // ─── Markdown content negotiation ─────────────────────────────────────────────
 // Routes that support Accept: text/markdown responses.
-const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/writing", "/tools"])
+const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/writing", "/tools", "/tools/utm-builder", "/tool/qr", "/github"])
 
 // Inline content for each markdown route.
 // This is kept inline because proxy.ts runs at the edge where filesystem access

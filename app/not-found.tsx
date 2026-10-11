@@ -38,6 +38,8 @@ export default function NotFound() {
       */}
       <section
         aria-hidden="true"
+        // @ts-expect-error inert is valid HTML but not yet in React types
+        inert=""
         style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}
         data-agent-recovery="true"
       >

@@ -181,7 +181,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
     }
 
     if (isSelected) {
-      return `${base} ring-2 ring-accent ring-offset-1 ring-offset-background scale-125 z-10`
+      return `${base} ring-2 ring-accent ring-offset-1 ring-offset-white dark:ring-offset-black scale-125 z-10`
     }
 
     return base
@@ -516,7 +516,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
                                     className={`w-full aspect-square rounded-[2px] border transition-transform duration-100 cursor-pointer ${originClass} ${getCellColor(
                                       day.level,
                                       isSelected
-                                    )} hover:scale-135 hover:z-20`}
+                                    )} hover:scale-[1.35] hover:z-20`}
                                     title={`${day.count} contributions on ${formatTooltipDate(day.date)}`}
                                   />
                                 )
@@ -633,7 +633,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
             href="https://github.com/TirupMehta"
             target="_blank"
             rel="noopener noreferrer"
-            className="group block py-5 -mx-3 px-3 rounded-lg hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
+            className="group block py-5 rounded-lg hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
           >
             <div className="flex items-baseline justify-between gap-4">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
@@ -659,7 +659,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
             href="https://github.com/MehtaDevelops"
             target="_blank"
             rel="noopener noreferrer"
-            className="group block py-5 -mx-3 px-3 rounded-lg border-t border-black/10 dark:border-white/10 hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
+            className="group block py-5 rounded-lg border-t border-black/10 dark:border-white/10 hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
           >
             <div className="flex items-baseline justify-between gap-4">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">

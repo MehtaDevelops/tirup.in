@@ -38,7 +38,11 @@ export default async function BlogsPage() {
           .sort((a, b) => {
             const ta = new Date(a.createdAt).getTime()
             const tb = new Date(b.createdAt).getTime()
-            if (isNaN(ta) || isNaN(tb)) return 0
+            const aBad = isNaN(ta)
+            const bBad = isNaN(tb)
+            if (aBad && bBad) return 0
+            if (aBad) return 1
+            if (bBad) return -1
             return tb - ta
           })
           .slice(0, 10)
@@ -56,18 +60,18 @@ export default async function BlogsPage() {
   const formatDate = (dateStr: string) => {
     try {
       const date = new Date(dateStr)
-      if (isNaN(date.getTime())) return dateStr
-      const day = String(date.getDate()).padStart(2, "0")
+      if (isNaN(date.getTime())) return ""
+      const day = String(date.getUTCDate()).padStart(2, "0")
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-      const month = months[date.getMonth()]
-      const year = date.getFullYear()
+      const month = months[date.getUTCMonth()]
+      const year = date.getUTCFullYear()
       return `${day}.${month}.${year}`
     } catch {
-      return dateStr
+      return ""
     }
   }
 
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getUTCFullYear()
 
   return (
     <main className="relative min-h-screen">
@@ -92,7 +96,7 @@ export default async function BlogsPage() {
                   <Link
                     href={`/writing/${post.slug}`}
                     className={[
-                      "group block -mx-3 px-3 rounded-lg",
+                      "group block rounded-lg",
                       index === 0 ? "pb-5 pt-1" : "py-5",
                       index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
                       "hover:bg-black/[0.025] dark:hover:bg-white/[0.025]",

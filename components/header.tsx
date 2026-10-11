@@ -1,10 +1,10 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
+import ExpressionAvatar from "@/components/expression-avatar"
 import ResumeModal from "@/components/resume-modal"
 import { X, ArrowUpRight } from "lucide-react"
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
@@ -39,11 +39,14 @@ function NavLinks({ pathname }: { pathname: string }) {
 
   function isLinkActive(href: string) {
     if (href === "/writing") return pathname === "/writing" || pathname?.startsWith("/writing/")
+    if (href === "/work") return pathname === "/work" || pathname?.startsWith("/projects/")
     return pathname === href
   }
 
-  const activeHref = NAV_ITEMS.find((n) => isLinkActive(n.href))?.href ?? "/"
-  const targetHref = hoverHref ?? activeHref
+  const activeHref: string | undefined = NAV_ITEMS.find((n) => isLinkActive(n.href))?.href
+  // Pill needs a concrete anchor; fall back to "/" for positioning only
+  // (no active styling when undefined — see isActive below).
+  const targetHref = hoverHref ?? activeHref ?? "/"
 
   function positionPill(href: string, animate: boolean) {
     const nav  = navRef.current
@@ -68,11 +71,17 @@ function NavLinks({ pathname }: { pathname: string }) {
     pill.style.transform = `translateX(${aRect.left - nRect.left}px)`
   }
 
-  // Mount: snap to active position with zero transition
+  // Mount: snap to active position with zero transition.
+  // When no nav item matches (e.g. /github, /tools/*), hide the pill.
   useEffect(() => {
     // rAF ensures the browser has laid out the nav anchors before we measure
     const id = requestAnimationFrame(() => {
-      positionPill(activeHref, false)
+      if (activeHref) {
+        if (pillRef.current) pillRef.current.style.opacity = "1"
+        positionPill(activeHref, false)
+      } else if (pillRef.current) {
+        pillRef.current.style.opacity = "0"
+      }
       // After the snap frame commits, re-enable transitions for interactions
       requestAnimationFrame(() => { ready.current = true })
     })
@@ -83,6 +92,11 @@ function NavLinks({ pathname }: { pathname: string }) {
   // Subsequent moves (hover / route change): animate
   useEffect(() => {
     if (!ready.current) return
+    if (!hoverHref && !activeHref) {
+      if (pillRef.current) pillRef.current.style.opacity = "0"
+      return
+    }
+    if (pillRef.current) pillRef.current.style.opacity = "1"
     positionPill(targetHref, true)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetHref])
@@ -90,7 +104,7 @@ function NavLinks({ pathname }: { pathname: string }) {
   // Keep pill aligned if the container resizes (font-load, viewport change)
   useEffect(() => {
     const ro = new ResizeObserver(() => {
-      positionPill(ready.current ? targetHref : activeHref, false)
+      positionPill(ready.current ? targetHref : (activeHref ?? targetHref), false)
     })
     if (navRef.current) ro.observe(navRef.current)
     return () => ro.disconnect()
@@ -191,35 +205,7 @@ export default function Header() {
         <TextWithBlur>
           <div className="flex items-center justify-between gap-x-4 gap-y-3 mb-4 md:mb-6 flex-wrap">
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-            <div className="relative shrink-0 select-none group">
-              <div className="w-14 h-14 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900">
-                <Image
-                  src="/profile.png"
-                  alt="Tirup Mehta avatar"
-                  width={112}
-                  height={112}
-                  className="w-full h-full object-cover"
-                  priority
-                />
-              </div>
-              {/* Waving hand — hover-triggered */}
-              <div className="absolute -bottom-1 -left-1.5 w-6 h-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-waving-hand origin-[70%_75%] pointer-events-none">
-                <Image
-                  src="/waving-hand.png"
-                  alt="Waving Hand Emoji (Yellow)"
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-contain dark:hidden"
-                />
-                <Image
-                  src="/waving-hand-white.png"
-                  alt="Waving Hand Emoji (White)"
-                  width={48}
-                  height={48}
-                  className="w-full h-full object-contain hidden dark:block"
-                />
-              </div>
-            </div>
+            <ExpressionAvatar size={56} />
 
             <div className="min-w-0">
               {isHome ? (

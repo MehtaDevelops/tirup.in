@@ -101,6 +101,22 @@ const config: Config = {
           "60%": { transform: "rotate(0.0deg)" },
           "100%": { transform: "rotate(0.0deg)" },
         },
+        "expression-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        // Slow dissolve for route changes — opacity only, so the resting
+        // geometry stays put through the whole fade. Calm, senior-dev.
+        "expression-slow": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        // Kept (unused) so old class names never break; opacity-only like
+        // expression-in — never scale, or the pfp pops small→big on swaps.
+        "expression-in-nudged": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -108,6 +124,9 @@ const config: Config = {
         glow: "glow 1.5s infinite",
         pulse: "pulse 1.5s infinite",
         "waving-hand": "waving-hand 2.5s infinite",
+        "expression-in": "expression-in 0.22s ease-out",
+        "expression-in-nudged": "expression-in-nudged 0.22s ease-out",
+        "expression-slow": "expression-slow 0.7s ease-in-out",
       },
       transitionTimingFunction: {
         "smooth-out": "cubic-bezier(0.25, 0.1, 0.25, 1)",

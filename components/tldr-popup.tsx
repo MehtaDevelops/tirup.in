@@ -8,8 +8,14 @@ interface TldrPopupProps {
 
 export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
   const [showTldr, setShowTldr] = useState(false)
-  const [isDismissed, setIsDismissed] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('tldr-dismissed') === '1'
+    } catch {
+      return false
+    }
+  })
 
   useEffect(() => {
     if (!safeTldrHtml || isDismissed) return
@@ -26,14 +32,26 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
     setTimeout(() => {
       setShowTldr(false)
       setIsDismissed(true)
+      try { sessionStorage.setItem('tldr-dismissed', '1') } catch { /* ignore */ }
     }, 350)
   }
+
+  useEffect(() => {
+    if (!showTldr) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleDismiss()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [showTldr])
 
   if (!showTldr) return null
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-50 max-w-[340px] w-[calc(100vw-3rem)] hidden md:block select-none ${
+      role="dialog"
+      aria-label="TL;DR summary"
+      className={`fixed bottom-6 right-6 z-50 max-w-[340px] w-[calc(100vw-3rem)] hidden md:block ${
         isClosing ? "animate-spring-slide-down" : "animate-spring-slide-up"
       }`}
     >
@@ -45,9 +63,9 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
           <button
             onClick={handleDismiss}
             aria-label="Dismiss summary"
-            className="text-[13px] text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors p-1 -mr-1 cursor-pointer leading-none"
+            className="text-[13px] text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors p-1 -mr-1 cursor-pointer leading-none focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            ✕
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
         <div
