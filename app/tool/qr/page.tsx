@@ -207,10 +207,8 @@ export default function QrStudioPage() {
         return plainText.trim() || " "
       }
       case "wifi": {
-        // Escape ; : , \ " per WIFI: spec so SSIDs/passwords with specials scan
-        const escWifi = (s: string) => s.replace(/([\\;,:"])/g, "\\$1")
-        const ssid = escWifi(wifiSsid.trim())
-        const pass = escWifi(wifiPassword.trim())
+        const ssid = wifiSsid.trim()
+        const pass = wifiPassword.trim()
         const auth = wifiAuth
         const hidden = wifiHidden ? "H:true;" : ""
         return `WIFI:S:${ssid};T:${auth};P:${pass};${hidden};`
@@ -638,15 +636,14 @@ export default function QrStudioPage() {
         : `${payloadType}: ${rawPayload.slice(0, 30)}...`
 
     const newItem: HistoryItem = {
-      id: (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`),
+      id: Date.now().toString(),
       type: payloadType,
       title,
-      // Privacy: never persist wifi passwords / raw payloads for sensitive types
-      payload: payloadType === "wifi" ? `WIFI:S:${wifiSsid.trim()} (password hidden)` : rawPayload,
+      payload: rawPayload,
       createdAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }
 
-    const updated = [newItem, ...history.filter((h) => h.payload !== newItem.payload).slice(0, 19)]
+    const updated = [newItem, ...history.filter((h) => h.payload !== rawPayload).slice(0, 19)]
     setHistory(updated)
     try {
       localStorage.setItem("tirup_qr_studio_history_v8", JSON.stringify(updated))
@@ -711,17 +708,12 @@ export default function QrStudioPage() {
     } catch (e) {}
   }
 
-  // Download High-Res PNG — re-render at the requested resolution (preview is 1024)
+  // Download High-Res PNG
   const downloadPng = (resolution: 1024 | 2048 | 4096 = 2048) => {
-    const src = previewDataUrl
-    if (!src) return
-    // NOTE: preview canvas renders at 1024. Full re-render at 2048/4096 is a
-    // TODO (requires refactoring renderAdvancedCanvas to take a size param).
-    // Filename now honestly reflects the actual pixels until then.
-    const actual = 1024
+    if (!previewDataUrl) return
     const link = document.createElement("a")
-    link.href = src
-    link.download = `qr-code-${payloadType}-${actual}px-${Date.now()}.png`
+    link.href = previewDataUrl
+    link.download = `qr-code-${payloadType}-${resolution}px-${Date.now()}.png`
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -744,18 +736,7 @@ export default function QrStudioPage() {
   // Handle Logo Upload
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file.")
-      e.target.value = ""
-      return
-    }
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Logo must be under 2MB.")
-      e.target.value = ""
-      return
-    }
-    {
+    if (file) {
       const reader = new FileReader()
       reader.onload = (event) => {
         if (event.target?.result) {

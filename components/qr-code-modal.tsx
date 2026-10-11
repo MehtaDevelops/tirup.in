@@ -36,19 +36,6 @@ export default function QrCodeModal({ isOpen, onClose, url, title }: QrCodeModal
     )
   }, [isOpen, url])
 
-  useEffect(() => {
-    if (!isOpen) {
-      setDataUrl("")
-      setCopied(false)
-      return
-    }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose()
-    }
-    document.addEventListener("keydown", onKey)
-    return () => document.removeEventListener("keydown", onKey)
-  }, [isOpen, onClose])
-
   if (!isOpen) return null
 
   const handleCopyUrl = async () => {
@@ -60,8 +47,8 @@ export default function QrCodeModal({ isOpen, onClose, url, title }: QrCodeModal
   }
 
   return (
-    <div onClick={onClose} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Campaign QR code" className="relative w-full max-w-sm p-6 bg-white dark:bg-zinc-950 rounded-none border border-black/10 dark:border-white/10 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="relative w-full max-w-sm p-6 bg-white dark:bg-zinc-950 rounded-none border border-black/10 dark:border-white/10 shadow-xl">
         
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
@@ -70,10 +57,9 @@ export default function QrCodeModal({ isOpen, onClose, url, title }: QrCodeModal
           </h3>
           <button
             onClick={onClose}
-            aria-label="Close QR code"
             className="p-1 rounded-none text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           >
-            <X size={16} aria-hidden="true" />
+            <X size={16} />
           </button>
         </div>
 
@@ -112,7 +98,7 @@ export default function QrCodeModal({ isOpen, onClose, url, title }: QrCodeModal
           {dataUrl && (
             <a
               href={dataUrl}
-              download={`campaign-qr-code-${Date.now()}.png`}
+              download="campaign-qr-code.png"
               className="flex-1 py-2 px-3 rounded-none bg-black text-white dark:bg-white dark:text-black font-medium text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors flex items-center justify-center gap-1.5 shadow-sm"
             >
               <Download size={14} /> Download PNG

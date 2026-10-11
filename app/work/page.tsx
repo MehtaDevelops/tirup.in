@@ -24,11 +24,11 @@ export default function WorkPage() {
         <div className="flex flex-col list-hover-group">
           {projects.map((project, index) => {
             return (
-              <TextWithBlur key={project.slug} delay={Math.min(index * 35, 140)}>
+              <TextWithBlur key={index} delay={index * 50}>
                 <Link
                   href={`/projects/${project.slug}`}
                   className={[
-                      "group block rounded-lg",
+                      "group block -mx-3 px-3 rounded-lg",
                       index === 0 ? "pb-5 pt-1" : "py-5",
                       index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
                     "[transition:background-color_120ms_ease-out]",

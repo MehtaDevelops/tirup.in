@@ -5,15 +5,18 @@ A modern, responsive portfolio website built with cutting-edge web technologies.
 ## 🚀 Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) - React framework for production
-- **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript (`npm run lint` = `tsc --noEmit`)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) - Unstyled, accessible component library
+- **Form Management**: [React Hook Form](https://react-hook-form.com/) - Performant forms with easy validation
+- **Validation**: [Zod](https://zod.dev/) - TypeScript-first schema validation
 - **Icons**: [Lucide React](https://lucide.dev/) - Beautiful, consistent SVG icons
 - **Analytics**: [Vercel Analytics](https://vercel.com/analytics) - Web performance monitoring
-- **Blog source**: Convex (read-only mirror of blogs.tirup.in, `CONVEX_API_URL`, ISR 60s)
-
-> NOTE: Radix / react-hook-form / zod / recharts / sonner / date-fns / embla /
-> vaul / cmdk / next-themes remain in `package.json` as unused deps (cleanup
-> pending — see `npm ls`). Do not import them in new code.
+- **Theme Support**: [Next Themes](https://github.com/pacocoursey/next-themes) - Dark/light mode support
+- **UI Library**: [Shadcn/ui](https://ui.shadcn.com/) - High-quality React components
+- **Charts**: [Recharts](https://recharts.org/) - Composable charting library
+- **Notifications**: [Sonner](https://sonner.emilkowal.ski/) - Toast notifications
+- **Dates**: [Date-fns](https://date-fns.org/) - Modern date utility library
 
 ## 📁 Project Structure
 

@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
-import ExpressionAvatar from "@/components/expression-avatar"
 import TldrPopup from "@/components/tldr-popup"
 import { BlogContentRenderer } from "@/components/blog-content-renderer"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
@@ -28,20 +28,7 @@ const SAFE_SLUG_RE = /^[a-zA-Z0-9_.-]{1,300}$/
 
 function isValidSlug(slug: string): boolean {
   if (!slug || typeof slug !== "string") return false
-  if (!SAFE_SLUG_RE.test(slug)) return false
-  if (/^\.+$/.test(slug) || slug.startsWith(".")) return false
-  return true
-}
-
-function isPublishedPost(data: unknown): data is BlogPost {
-  if (!data || typeof data !== "object") return false
-  const d = data as Record<string, unknown>
-  if (d.error) return false
-  if (typeof d.title !== "string" || !d.title) return false
-  // Defense-in-depth: Convex /api/post now filters drafts, but never render
-  // a non-published post even if the backend ever regresses.
-  if ("status" in d && d.status !== undefined && d.status !== "published") return false
-  return true
+  return SAFE_SLUG_RE.test(slug)
 }
 
 // ─── API base URL ─────────────────────────────────────────────────────────────
@@ -92,15 +79,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (!res.ok) return { title: "Article Not Found" }
 
     const data = await res.json()
-    if (isPublishedPost(data)) {
-      const rawTldr = String(data.tldr ?? "")
-        // Strip lightweight markdown so <meta> never leaks **, [](), or backticks
-        .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-        .replace(/[*_`>#]/g, "")
-        .replace(/\s+/g, " ")
-        .trim()
+    if (data && !data.error && data.title) {
       const title = String(data.title).slice(0, 200)
-      const description = rawTldr.slice(0, 300)
+      const description = String(data.tldr ?? "").slice(0, 300)
       const originalUrl = `https://blogs.tirup.in/${encodeURIComponent(slug)}`
       return {
         title,
@@ -153,7 +134,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
     if (res.ok) {
       const data = await res.json()
-      if (isPublishedPost(data)) {
+      if (data && !data.error && data.title) {
         post = data
       }
     }
@@ -169,21 +150,19 @@ export default async function BlogPostPage({ params }: PageProps) {
     try {
       const date = new Date(dateStr)
       if (isNaN(date.getTime())) return ""
-      // UTC getters so Vercel regions render the identical day string (parity with blogs)
-      const day = String(date.getUTCDate()).padStart(2, "0")
+      const day = String(date.getDate()).padStart(2, "0")
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-      const month = months[date.getUTCMonth()]
-      const year = date.getUTCFullYear()
+      const month = months[date.getMonth()]
+      const year = date.getFullYear()
       return `${day}.${month}.${year}`
     } catch {
       return ""
     }
   }
 
-  const currentYear = new Date().getUTCFullYear()
+  const currentYear = new Date().getFullYear()
 
   // ── Sanitize ALL content from the external API before rendering ─────────────
-  // Fail CLOSED: never render raw HTML if the sanitizer throws.
   let safeContentHtml = ""
   let safeTldrHtml = ""
   try {
@@ -191,8 +170,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     safeTldrHtml = renderMarkdownSafe(post.tldr ?? "")
   } catch (e) {
     console.error("[blog/page] Error sanitizing post content:", e)
-    safeContentHtml = ""
-    safeTldrHtml = ""
+    safeContentHtml = post.contentHtml ?? ""
+    safeTldrHtml = post.tldr ?? ""
   }
 
   const safeTitle = String(post.title ?? "").slice(0, 300)
@@ -221,8 +200,14 @@ export default async function BlogPostPage({ params }: PageProps) {
         <TextWithBlur>
           <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-5 sm:mb-7 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
-              <div className="shrink-0">
-                <ExpressionAvatar size={20} interactive={false} face="laugh" />
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 shrink-0">
+                <Image
+                  src="/profile.png"
+                  alt="Tirup Mehta"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <span className="font-light">Tirup Mehta</span>
             </Link>
@@ -237,7 +222,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Title */}
         <TextWithBlur delay={50}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-serif italic text-black dark:text-white mb-5 leading-[1.18] lg:leading-none max-w-3xl font-medium break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-serif italic text-black dark:text-white mb-5 leading-[1.18] max-w-3xl font-medium break-words">
             {safeTitle}
           </h1>
         </TextWithBlur>

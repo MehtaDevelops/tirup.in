@@ -56,9 +56,6 @@ const nextConfig = {
     ],
     // Allowed output formats — limit to modern, safe formats only
     formats: ["image/avif", "image/webp"],
-    // Allowed quality levels: default 75 everywhere, 90 for the small
-    // pixel avatar where compression artefacts are visible.
-    qualities: [75, 90],
     // Minimise dangling image cache
     minimumCacheTTL: 3600,
     dangerouslyAllowSVG: false,

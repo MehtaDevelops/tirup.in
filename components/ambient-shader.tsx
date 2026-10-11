@@ -20,10 +20,6 @@ export default function AmbientShader() {
     const canvas = canvasRef.current
     if (!canvas) return
 
-    try {
-      if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
-    } catch { /* ignore */ }
-
     const ctx = canvas.getContext("2d", { alpha: true })
     if (!ctx) return
 
