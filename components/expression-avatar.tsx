@@ -61,7 +61,7 @@ const SRC: Record<Expr, string> = {
 
 // Likely faces, warmed only once the browser is idle so first paint never
 // competes with them. Anything else loads on demand via Next's optimizer.
-const WARM: Expr[] = ["headphones", "smile", "waving", "laugh", "lookup", "drinking"]
+const WARM: Expr[] = ["adjusting", "smile", "waving", "laugh", "lookup", "drinking"]
 
 // Faces 06+ have a slightly cut bottom edge in the source art — shifting
 // them down a few pixels tucks the cut behind the circle's bottom edge.
@@ -94,7 +94,7 @@ function baseForPath(pathname: string | null, hour: number | null): Expr {
   if (p.startsWith("/contact")) return "waving"
   if (p.startsWith("/about")) return "smile"
   if (p.startsWith("/github")) return "excited"
-  return "headphones" // home default
+  return "adjusting" // home default
 }
 
 function preload(list: Expr[]) {
@@ -428,11 +428,11 @@ export default function ExpressionAvatar({
   // All faces share identical geometry: same box, same scale, no per-face
   // zoom. Nudged faces (06+ cut bottom edge) only shift the crop window via
   // object-position — never transform scale — so swaps can't pop small→big.
-  // Geometry is static per face from first paint: every face renders a
-  // touch larger (1.05), 06+ faces sit 2px lower to tuck the cut bottom.
-  // It lives on this wrapper (never the img: the blink effect animates the
-  // img's own transform), so nothing shifts after the image is visible.
-  // 01–05 are otherwise untouched.
+  // Geometry is static per face from first paint. 01–05 render exactly
+  // as-is. Only 06+ faces render a touch larger (1.05) and sit 2px lower
+  // to tuck the cut bottom. It lives on this wrapper (never the img: the
+  // blink effect animates the img's own transform), so nothing shifts
+  // after the image is visible.
   const nudged = NUDGE_DOWN.has(expr)
   const slow = slowNext.current
 
@@ -453,7 +453,7 @@ export default function ExpressionAvatar({
         style={{ width: size, height: size }}
         className="rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 aspect-square"
       >
-        <div className={nudged ? "h-full w-full scale-[1.05] translate-y-[2px]" : "h-full w-full scale-[1.05]"}>
+        <div className={nudged ? "h-full w-full scale-[1.05] translate-y-[2px]" : "h-full w-full"}>
         <Image
           key={expr}
           ref={imgRef}
