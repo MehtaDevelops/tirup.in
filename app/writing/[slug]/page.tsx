@@ -112,13 +112,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           description,
           type: "article",
           url: originalUrl,
-          images: ["/profile.png"],
+          // Share image comes from ./opengraph-image.tsx
         },
         twitter: {
           card: "summary_large_image",
           title,
           description,
-          images: ["/profile.png"],
+          // Share image comes from ./twitter-image.tsx
         },
       }
     }

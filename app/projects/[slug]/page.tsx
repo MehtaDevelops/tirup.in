@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description: project.description,
         type: "website",
         url: canonicalUrl,
-        images: ["/profile.png"],
+        // Share image comes from ./opengraph-image.tsx
       },
     }
   }

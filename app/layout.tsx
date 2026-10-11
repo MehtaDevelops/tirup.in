@@ -64,21 +64,14 @@ export const metadata: Metadata = {
     title: "Tirup Mehta",
     description: "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
     siteName: "Tirup Mehta Portfolio",
-    images: [
-      {
-        url: "/profile.png",
-        width: 512,
-        height: 512,
-        alt: "Tirup Mehta"
-      }
-    ]
+    // Share image comes from app/opengraph-image.tsx (per-route files override)
   },
   twitter: {
     card: "summary_large_image",
     title: "Tirup Mehta",
     description: "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
     creator: "@TirupMehta",
-    images: ["/profile.png"]
+    // Share image comes from app/twitter-image.tsx (per-route files override)
   },
   alternates: {
     canonical: "https://tirup.in"
