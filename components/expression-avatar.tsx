@@ -38,28 +38,30 @@ type Expr =
   | "adjusting"
   | "lookup"
   | "drinking"
+  | "headphones"
 
 const SRC: Record<Expr, string> = {
-  neutral: "/expressions/01-neutral.png",
-  smile: "/expressions/02-smile.png",
-  laugh: "/expressions/03-laugh.png",
-  polished: "/expressions/04-polished.png",
-  cool: "/expressions/05-cool-sunglasses.png",
-  thinking: "/expressions/06-thinking.png",
-  confused: "/expressions/07-confused.png",
-  surprised: "/expressions/09-surprised.png",
-  sleepy: "/expressions/11-sleepy.png",
-  working: "/expressions/14-working-laptop.png",
-  excited: "/expressions/15-excited.png",
-  waving: "/expressions/20-waving.png",
-  adjusting: "/expressions/19-adjusting-glasses.png",
-  lookup: "/expressions/16-looking-up.png",
-  drinking: "/expressions/13-drinking.png",
+  neutral: "/expressions/01-neutral.webp",
+  smile: "/expressions/02-smile.webp",
+  laugh: "/expressions/03-laugh.webp",
+  polished: "/expressions/04-polished.webp",
+  cool: "/expressions/05-cool-sunglasses.webp",
+  thinking: "/expressions/06-thinking.webp",
+  confused: "/expressions/07-confused.webp",
+  surprised: "/expressions/09-surprised.webp",
+  sleepy: "/expressions/11-sleepy.webp",
+  working: "/expressions/14-working-laptop.webp",
+  excited: "/expressions/15-excited.webp",
+  waving: "/expressions/20-waving.webp",
+  adjusting: "/expressions/19-adjusting-glasses.webp",
+  lookup: "/expressions/16-looking-up.webp",
+  drinking: "/expressions/13-drinking.webp",
+  headphones: "/expressions/17-headphones.webp",
 }
 
 // Likely faces, warmed only once the browser is idle so first paint never
 // competes with them. Anything else loads on demand via Next's optimizer.
-const WARM: Expr[] = ["cool", "smile", "waving", "laugh", "lookup", "drinking"]
+const WARM: Expr[] = ["headphones", "smile", "waving", "laugh", "lookup", "drinking"]
 
 // Faces 06+ have a slightly cut bottom edge in the source art — shifting
 // them down a few pixels tucks the cut behind the circle's bottom edge.
@@ -75,6 +77,7 @@ const NUDGE_DOWN: ReadonlySet<Expr> = new Set([
   "adjusting",
   "lookup",
   "drinking",
+  "headphones",
 ])
 
 const isNightHour = (h: number) => h >= 23 || h < 5
@@ -91,7 +94,7 @@ function baseForPath(pathname: string | null, hour: number | null): Expr {
   if (p.startsWith("/contact")) return "waving"
   if (p.startsWith("/about")) return "smile"
   if (p.startsWith("/github")) return "excited"
-  return "cool" // home default: sunglasses face
+  return "headphones" // home default
 }
 
 function preload(list: Expr[]) {
@@ -425,6 +428,11 @@ export default function ExpressionAvatar({
   // All faces share identical geometry: same box, same scale, no per-face
   // zoom. Nudged faces (06+ cut bottom edge) only shift the crop window via
   // object-position — never transform scale — so swaps can't pop small→big.
+  // Geometry is static per face from first paint: every face renders a
+  // touch larger (1.05), 06+ faces sit 2px lower to tuck the cut bottom.
+  // It lives on this wrapper (never the img: the blink effect animates the
+  // img's own transform), so nothing shifts after the image is visible.
+  // 01–05 are otherwise untouched.
   const nudged = NUDGE_DOWN.has(expr)
   const slow = slowNext.current
 
@@ -445,6 +453,7 @@ export default function ExpressionAvatar({
         style={{ width: size, height: size }}
         className="rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 aspect-square"
       >
+        <div className={nudged ? "h-full w-full scale-[1.05] translate-y-[2px]" : "h-full w-full scale-[1.05]"}>
         <Image
           key={expr}
           ref={imgRef}
@@ -457,8 +466,9 @@ export default function ExpressionAvatar({
           priority={interactive && size >= 40}
           draggable={false}
           style={nudged ? { objectPosition: "50% 62%" } : undefined}
-          className={`w-full h-full object-cover [image-rendering:pixelated] motion-reduce:animate-none${slow ? " animate-expression-slow" : " animate-expression-in"}`}
+          className={`h-full w-full object-cover [image-rendering:pixelated] motion-reduce:animate-none${slow ? " animate-expression-slow" : " animate-expression-in"}`}
         />
+        </div>
       </div>
     </div>
   )
