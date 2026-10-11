@@ -40,42 +40,26 @@ type Expr =
   | "drinking"
 
 const SRC: Record<Expr, string> = {
-  neutral: "/expressions/01-neutral.png",
-  smile: "/expressions/02-smile.png",
-  laugh: "/expressions/03-laugh.png",
-  polished: "/expressions/04-polished.png",
-  cool: "/expressions/05-cool-sunglasses.png",
-  thinking: "/expressions/06-thinking.png",
-  confused: "/expressions/07-confused.png",
-  surprised: "/expressions/09-surprised.png",
-  sleepy: "/expressions/11-sleepy.png",
-  working: "/expressions/14-working-laptop.png",
-  excited: "/expressions/15-excited.png",
-  waving: "/expressions/20-waving.png",
-  adjusting: "/expressions/19-adjusting-glasses.png",
-  lookup: "/expressions/16-looking-up.png",
-  drinking: "/expressions/13-drinking.png",
+  neutral: "/expressions/sm/01-neutral.png",
+  smile: "/expressions/sm/02-smile.png",
+  laugh: "/expressions/sm/03-laugh.png",
+  polished: "/expressions/sm/04-polished.png",
+  cool: "/expressions/sm/05-cool-sunglasses.png",
+  thinking: "/expressions/sm/06-thinking.png",
+  confused: "/expressions/sm/07-confused.png",
+  surprised: "/expressions/sm/09-surprised.png",
+  sleepy: "/expressions/sm/11-sleepy.png",
+  working: "/expressions/sm/14-working-laptop.png",
+  excited: "/expressions/sm/15-excited.png",
+  waving: "/expressions/sm/20-waving.png",
+  adjusting: "/expressions/sm/19-adjusting-glasses.png",
+  lookup: "/expressions/sm/16-looking-up.png",
+  drinking: "/expressions/sm/13-drinking.png",
 }
 
 // Likely faces, warmed only once the browser is idle so first paint never
 // competes with them. Anything else loads on demand via Next's optimizer.
 const WARM: Expr[] = ["smile", "waving", "laugh", "lookup", "drinking"]
-
-// Faces 06+ have a slightly cut bottom edge in the source art — shifting
-// them down a few pixels tucks the cut behind the circle's bottom edge.
-// 01–05 (neutral, smile, laugh, polished, cool) sit flush already.
-const NUDGE_DOWN: ReadonlySet<Expr> = new Set([
-  "thinking",
-  "confused",
-  "surprised",
-  "sleepy",
-  "working",
-  "excited",
-  "waving",
-  "adjusting",
-  "lookup",
-  "drinking",
-])
 
 const isNightHour = (h: number) => h >= 23 || h < 5
 const isMorningHour = (h: number) => h >= 5 && h < 11
@@ -91,7 +75,7 @@ function baseForPath(pathname: string | null, hour: number | null): Expr {
   if (p.startsWith("/contact")) return "waving"
   if (p.startsWith("/about")) return "smile"
   if (p.startsWith("/github")) return "excited"
-  return "neutral"
+  return "smile" // home: front-facing and friendly, never the side-glance
 }
 
 function preload(list: Expr[]) {
@@ -186,8 +170,17 @@ export default function ExpressionAvatar({
     const h = new Date().getHours()
     hourRef.current = h
     setHour(h)
+    // Greet only once per session: the first page the visitor lands on says
+    // hi, route changes (/work, /skills, …) never greet again.
+    let greeted = false
+    try {
+      greeted = sessionStorage.getItem('avatar-greeted') === '1'
+    } catch { /* ignore */ }
     const greetTimer = setTimeout(() => {
-      if (reactionId.current === 0) show(isMorningHour(h) ? "drinking" : "waving", 2200)
+      if (reactionId.current === 0 && !greeted) {
+        try { sessionStorage.setItem('avatar-greeted', '1') } catch { /* ignore */ }
+        show(isMorningHour(h) ? "drinking" : "waving", 2200)
+      }
     }, 900)
     const warm = () => preload(WARM)
     const w = window as unknown as {
@@ -422,10 +415,10 @@ export default function ExpressionAvatar({
     show(clickCount.current % 3 === 0 ? "excited" : "laugh", 1400)
   }
 
-  // All faces share identical geometry: same box, same scale, no per-face
-  // zoom. Nudged faces (06+ cut bottom edge) only shift the crop window via
-  // object-position — never transform scale — so swaps can't pop small→big.
-  const nudged = NUDGE_DOWN.has(expr)
+  // Framing is baked into the files: public/expressions/sm/* are cropped
+  // to the opaque art and normalized to identical fill, so every face fills
+  // the circle with zero CSS differences between faces (no pop possible).
+  // The disc stays dark (the art is transparent).
   const slow = slowNext.current
 
   return (
@@ -443,21 +436,20 @@ export default function ExpressionAvatar({
     >
       <div
         style={{ width: size, height: size }}
-        className="rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 aspect-square"
+        className="rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[#101013] aspect-square"
       >
         <Image
           key={expr}
           ref={imgRef}
           src={SRC[expr]}
           alt={size >= 40 ? "Tirup Mehta avatar" : ""}
-          width={size * 2}
-          height={size * 2}
+          width={192}
+          height={168}
           sizes={`${size}px`}
           quality={90}
           priority={interactive && size >= 40}
           draggable={false}
-          style={nudged ? { objectPosition: "50% 62%" } : undefined}
-          className={`w-full h-full object-cover [image-rendering:pixelated] motion-reduce:animate-none${slow ? " animate-expression-slow" : " animate-expression-in"}`}
+          className={`h-full w-full object-cover [image-rendering:pixelated] motion-reduce:animate-none${slow ? " animate-expression-slow" : " animate-expression-in"}`}
         />
       </div>
     </div>
