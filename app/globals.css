@@ -918,6 +918,11 @@ h1, h2, h3 {
   font-weight: 600;
 }
 
+/* Takeaway closing box: slight breathing room under the title */
+.blog-content .findings-title {
+  margin-bottom: 0.4rem;
+}
+
 /* Tables — Responsive, Spaced, Professional Layout */
 .blog-content .table-wrapper,
 .blog-content figure.table {
