@@ -257,9 +257,11 @@ export function proxy(request: NextRequest) {
 
   // ── 3. Block requests with dangerous HTTP methods ─────────────────────────
   // This portfolio site only needs GET and HEAD. Block everything else to
-  // reduce the attack surface.
+  // reduce the attack surface — except the AI editor endpoint, which accepts
+  // same-origin POST requests with a capped JSON body (see app/api/ai-editor).
   const method = request.method.toUpperCase()
-  if (!["GET", "HEAD"].includes(method)) {
+  const isAiEditorPost = method === "POST" && pathname === "/api/ai-editor"
+  if (!["GET", "HEAD"].includes(method) && !isAiEditorPost) {
     return new NextResponse("Method Not Allowed", {
       status: 405,
       headers: { Allow: "GET, HEAD" },

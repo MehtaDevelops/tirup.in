@@ -1146,3 +1146,321 @@ html.dark .tldr-box p {
 .animate-spring-slide-down {
   animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ------------------------------------------------------------------
+   AI Editor — floating Ask AI + format toolbar (additive, scoped to
+   .ai-* classes so no existing surface is affected).
+------------------------------------------------------------------- */
+.ai-editor-prose {
+  caret-color: var(--accent);
+}
+.ai-editor-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--fg);
+}
+.ai-editor-body {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+.ai-editor-body-spaced {
+  margin-top: 1rem;
+}
+.ai-editor-prose ::selection {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* Toolbar shell — pairs with the site paper/charcoal surfaces */
+.ai-toolbar {
+  background: var(--bg);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+  /* Locked chrome metrics + capped popup width so the toolbar renders
+     byte-identical on every page it is embedded in. */
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.25rem;
+  letter-spacing: 0;
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 3rem));
+  animation: ai-toolbar-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.dark .ai-toolbar {
+  background: var(--surface);
+}
+.ai-toolbar button {
+  color: inherit;
+}
+.ai-toolbar button:hover {
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+}
+.ai-toolbar button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  color: var(--fg);
+}
+.ai-format-btn svg {
+  pointer-events: none;
+}
+.ai-toolbar input {
+  color: var(--fg);
+}
+.ai-toolbar input::placeholder {
+  color: var(--text-muted);
+}
+.ai-send-btn {
+  background: var(--fg) !important;
+  color: var(--bg) !important;
+}
+.ai-answer-panel {
+  border-color: var(--border-color);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  color: var(--fg);
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.ai-retry-btn {
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+  color: var(--fg);
+}
+.ai-retry-btn:hover {
+  background: color-mix(in srgb, var(--fg) 14%, transparent) !important;
+}
+
+@keyframes ai-toolbar-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.ai-toolbar-swap {
+  animation: ai-swap-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes ai-swap-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.ai-source-icon {
+  background: var(--bg);
+  box-shadow: 0 0 0 2px var(--bg);
+  animation: ai-source-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes ai-source-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--ai-from-x, 10px)) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.ai-streaming-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  animation: ai-caret-blink 0.9s steps(2, start) infinite;
+}
+@keyframes ai-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes ai-editor-shimmer {
+  0% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* Orb — loading lattice */
+.orb {
+  position: relative;
+  display: block;
+  flex: none;
+  overflow: hidden;
+}
+.orb-lattice {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  transform-origin: 0 0;
+  transform: scale(var(--orb-k, 1)) translate(6.5px, 6.5px);
+  --orb-rest: 0.14;
+  --orb-dim: 0.07;
+}
+.dark .orb-lattice {
+  --orb-rest: 0.2;
+  --orb-dim: 0.1;
+}
+.orb-cell {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: var(--orb-rest);
+  animation: orb-wave 1.7s cubic-bezier(0.66, 0, 0.34, 1) infinite both;
+}
+.orb-cell[data-still] {
+  opacity: var(--orb-dim);
+  animation: none;
+}
+@keyframes orb-wave {
+  0% {
+    opacity: var(--orb-rest);
+    scale: 1;
+  }
+  28% {
+    opacity: 1;
+    scale: 1.18;
+  }
+  56% {
+    opacity: var(--orb-rest);
+    scale: 1;
+  }
+  100% {
+    opacity: var(--orb-rest);
+    scale: 1;
+  }
+}
+
+/* Editor orb dot on the Ask AI button */
+.editor-orb {
+  border-radius: 9999px;
+  background: radial-gradient(60% 60% at 30% 28%, oklch(0.88 0.11 225), transparent 70%),
+    radial-gradient(65% 65% at 72% 68%, oklch(0.62 0.22 288), transparent 70%),
+    linear-gradient(oklch(0.62 0.19 258), oklch(0.72 0.15 238));
+}
+.editor-orb[data-stirring] {
+  animation: editor-orb-stir 2.4s linear infinite;
+}
+@keyframes editor-orb-stir {
+  to {
+    rotate: 1turn;
+  }
+}
+
+/* Animated format marks */
+.editor-mark {
+  --editor-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  transition-property: background-size, background-color, padding, letter-spacing,
+    -webkit-text-stroke-color;
+  transition-duration: 220ms;
+  transition-timing-function: var(--editor-ease);
+}
+.editor-mark[data-leaving] {
+  transition-duration: 160ms;
+}
+.editor-mark[data-format="underline"],
+.editor-mark[data-format="strikethrough"] {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition-duration: 260ms;
+}
+.editor-mark[data-format="underline"][data-leaving],
+.editor-mark[data-format="strikethrough"][data-leaving] {
+  transition-duration: 180ms;
+}
+.editor-mark[data-format="underline"] {
+  background-position: 0 92%;
+}
+.editor-mark[data-format="strikethrough"] {
+  background-position: 0 58%;
+}
+.editor-mark[data-format="underline"]:dir(rtl),
+.editor-mark[data-format="strikethrough"]:dir(rtl) {
+  background-position-x: 100%;
+}
+.editor-mark[data-format="underline"][data-on],
+.editor-mark[data-format="strikethrough"][data-on] {
+  background-size: 100% 1px;
+}
+.editor-mark[data-format="bold"] {
+  letter-spacing: 0;
+  -webkit-text-stroke: 0.03em transparent;
+}
+.editor-mark[data-format="bold"][data-on] {
+  letter-spacing: var(--editor-bold-spacing, 0);
+  -webkit-text-stroke-color: currentColor;
+}
+.editor-word {
+  display: inline-block;
+  transform-origin: 0 78%;
+  transition: transform 220ms var(--editor-ease);
+}
+.editor-mark[data-leaving] .editor-word {
+  transition-duration: 160ms;
+}
+.editor-mark[data-format="italic"][data-on] .editor-word {
+  transform: skewX(-12deg);
+}
+.editor-mark[data-format="code"] {
+  border-radius: 0.3em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.editor-mark[data-format="code"][data-on] {
+  background-color: color-mix(in oklab, currentColor 14%, transparent);
+  padding-inline: 0.3em;
+}
+.editor-mark[data-format="code"][data-mono] {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.editor-mark[data-instant],
+.editor-mark[data-instant] .editor-word {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-toolbar,
+  .ai-toolbar-swap,
+  .ai-source-icon {
+    animation: none;
+  }
+  .editor-orb[data-stirring] {
+    animation: none;
+  }
+  .editor-mark,
+  .editor-word {
+    transition: none;
+  }
+  .orb-cell {
+    animation: none;
+  }
+  .orb-cell[data-mid] {
+    opacity: 0.55;
+  }
+  .ai-streaming-caret {
+    animation: none;
+  }
+}

@@ -5,6 +5,7 @@ import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
 import TldrPopup from "@/components/tldr-popup"
 import { BlogContentRenderer } from "@/components/blog-content-renderer"
+import { ArticleAiToolbar } from "@/components/ui/article-ai-toolbar"
 import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
 import { formatCategory } from "@/lib/category"
 import { CONVEX_API_URL } from "@/lib/utils"
@@ -302,9 +303,11 @@ export default async function BlogPostPage({ params }: PageProps) {
           </TextWithBlur>
         )}
 
-        {/* Article Content — sanitized and enhanced with copy buttons */}
+        {/* Article Content — sanitized and enhanced with copy buttons + AI selection toolbar */}
         <TextWithBlur delay={120}>
-          <BlogContentRenderer html={processBlogHtml(safeContentHtml)} />
+          <ArticleAiToolbar articleTitle={safeTitle}>
+            <BlogContentRenderer html={processBlogHtml(safeContentHtml)} />
+          </ArticleAiToolbar>
         </TextWithBlur>
 
         {/* Footer */}
