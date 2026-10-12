@@ -1264,6 +1264,12 @@ html.dark .tldr-box p {
   }
 }
 
+/* Article wrapper: kill iOS's native callout menu so our bar is the only UI.
+   No-op on Android/desktop — Chrome/Brave always show their selection bar. */
+.article-ai-wrap {
+  -webkit-touch-callout: none;
+}
+
 /* Touch bottom bar — docked above the keyboard, never fights the OS menu */
 .ai-touch-bar {
   position: fixed;

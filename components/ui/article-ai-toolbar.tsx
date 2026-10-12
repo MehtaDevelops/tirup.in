@@ -32,6 +32,7 @@ export function ArticleAiToolbar({
   const body = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
   const asking = useRef(false)
+  const isTouchRef = useRef(false)
 
   const [at, setAt] = useState<{ x: number; y: number } | null>(null)
   const [askMode, setAskMode] = useState(false)
@@ -66,7 +67,10 @@ export function ArticleAiToolbar({
 
   useEffect(() => {
     const mq = window.matchMedia("(pointer: coarse) and (hover: none)")
-    const syncTouch = () => setIsTouch(mq.matches)
+    const syncTouch = () => {
+      isTouchRef.current = mq.matches
+      setIsTouch(mq.matches)
+    }
     syncTouch()
     mq.addEventListener("change", syncTouch)
     return () => mq.removeEventListener("change", syncTouch)
@@ -122,7 +126,11 @@ export function ArticleAiToolbar({
       if (asking.current || wasRecentlyRewritten(bodyEl)) return
       window.clearTimeout(timer)
       setAt(null)
-      if (!dragging.current) timer = window.setTimeout(show, SETTLE)
+      // Desktop waits for the drag gesture to end; on touch the OS owns the
+      // gesture stream (long-press may never deliver pointerup), so any
+      // settled selection summons the bar. The debounce keeps it stable
+      // while handles are still being dragged.
+      if (!dragging.current || isTouchRef.current) timer = window.setTimeout(show, SETTLE)
     }
 
     const onPointerDown = (event: PointerEvent) => {
