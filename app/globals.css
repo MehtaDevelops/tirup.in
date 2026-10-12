@@ -1078,6 +1078,27 @@ html.dark .tldr-box p {
   color: rgba(255, 255, 255, 0.85);
 }
 
+/* Compact TL;DR on small screens: tighter padding, smaller type */
+@media (max-width: 767px) {
+  .tldr-box {
+    padding: 0.9rem 1rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.75rem;
+    border-radius: 10px;
+  }
+  .tldr-box .tldr-header {
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .tldr-box .tldr-label {
+    font-size: 0.78rem;
+  }
+  .tldr-box p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+}
+
 /* Hide embedded TL;DR cards inside blog HTML on desktop so only the popup displays it */
 @media (min-width: 768px) {
   .blog-content .tldr-box {
@@ -1241,6 +1262,34 @@ html.dark .tldr-box p {
     transform: scale(1) translateY(0);
     filter: blur(0);
   }
+}
+
+/* Touch bottom bar — docked above the keyboard, never fights the OS menu */
+.ai-touch-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  width: max-content;
+  max-width: min(26rem, calc(100vw - 1.5rem));
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: ai-touch-bar-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes ai-touch-bar-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    filter: blur(0);
+  }
+}
+.ai-touch-bar .ai-answer-panel {
+  max-height: 38vh;
+  overflow-y: auto;
 }
 
 .ai-toolbar-swap {
@@ -1444,6 +1493,7 @@ html.dark .tldr-box p {
 @media (prefers-reduced-motion: reduce) {
   .ai-toolbar,
   .ai-toolbar-swap,
+  .ai-touch-bar,
   .ai-source-icon {
     animation: none;
   }

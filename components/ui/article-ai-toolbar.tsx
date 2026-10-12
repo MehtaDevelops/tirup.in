@@ -37,6 +37,8 @@ export function ArticleAiToolbar({
   const [askMode, setAskMode] = useState(false)
   const [selection, setSelection] = useState("")
   const [formats, setFormats] = useState<ReadonlySet<Format>>(new Set())
+  const [isTouch, setIsTouch] = useState(false)
+  const [kbGap, setKbGap] = useState(0)
 
   const onFormat = useCallback((format: Format) => {
     const root = body.current
@@ -63,6 +65,28 @@ export function ArticleAiToolbar({
   }, [])
 
   useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse) and (hover: none)")
+    const syncTouch = () => setIsTouch(mq.matches)
+    syncTouch()
+    mq.addEventListener("change", syncTouch)
+    return () => mq.removeEventListener("change", syncTouch)
+  }, [])
+
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const syncGap = () =>
+      setKbGap(Math.max(0, window.innerHeight - (vv.height + vv.offsetTop)))
+    syncGap()
+    vv.addEventListener("resize", syncGap)
+    vv.addEventListener("scroll", syncGap)
+    return () => {
+      vv.removeEventListener("resize", syncGap)
+      vv.removeEventListener("scroll", syncGap)
+    }
+  }, [])
+
+  useEffect(() => {
     let timer = 0
 
     const show = () => {
@@ -82,7 +106,14 @@ export function ArticleAiToolbar({
       }
       const box = sel.getRangeAt(0).getBoundingClientRect()
       const origin = wrapEl.getBoundingClientRect()
-      setAt({ x: box.left + box.width / 2 - origin.left, y: box.top - origin.top })
+      const rawX = box.left + box.width / 2 - origin.left
+      // Clamp the floating anchor so the toolbar never leaves the article.
+      const MARGIN = 180
+      const x =
+        origin.width > MARGIN * 2
+          ? Math.min(Math.max(rawX, MARGIN), origin.width - MARGIN)
+          : origin.width / 2
+      setAt({ x, y: box.top - origin.top })
       setFormats(formatsOf(sel.getRangeAt(0), bodyEl))
     }
 
@@ -116,6 +147,22 @@ export function ArticleAiToolbar({
       show()
     }
 
+    // Touch: long-press selections materialize after the gesture ends, so
+    // re-run show on a delay instead of relying on the desktop drag flow.
+    const onTouchEnd = () => {
+      if (asking.current) return
+      dragging.current = false
+      window.clearTimeout(timer)
+      timer = window.setTimeout(show, 300)
+    }
+
+    const onPointerCancel = () => {
+      if (asking.current) return
+      dragging.current = false
+      window.clearTimeout(timer)
+      timer = window.setTimeout(show, 300)
+    }
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         asking.current = false
@@ -127,33 +174,42 @@ export function ArticleAiToolbar({
     document.addEventListener("selectionchange", onSelectionChange)
     document.addEventListener("pointerdown", onPointerDown)
     document.addEventListener("pointerup", onPointerUp)
-    document.addEventListener("pointercancel", onPointerUp)
+    document.addEventListener("pointercancel", onPointerCancel)
+    document.addEventListener("touchend", onTouchEnd)
     document.addEventListener("keydown", onKeyDown)
     return () => {
       window.clearTimeout(timer)
       document.removeEventListener("selectionchange", onSelectionChange)
       document.removeEventListener("pointerdown", onPointerDown)
       document.removeEventListener("pointerup", onPointerUp)
-      document.removeEventListener("pointercancel", onPointerUp)
+      document.removeEventListener("pointercancel", onPointerCancel)
+      document.removeEventListener("touchend", onTouchEnd)
       document.removeEventListener("keydown", onKeyDown)
     }
   }, [])
 
+  const toolbarEl = (
+    <SelectionToolbar
+      askMode={askMode}
+      selection={selection}
+      docTitle={articleTitle}
+      onAsk={enterAskMode}
+      formats={formats}
+      onFormat={onFormat}
+    />
+  )
+
   return (
     <div ref={wrap} className={cn("article-ai-wrap relative", className)}>
       <div ref={body}>{children}</div>
-      {at && (
+      {at && !isTouch && (
         <div className="ai-toolbar-anchor absolute z-50" style={{ left: at.x, top: at.y }}>
-          <div className="absolute bottom-1.5 left-0 -translate-x-1/2">
-            <SelectionToolbar
-              askMode={askMode}
-              selection={selection}
-              docTitle={articleTitle}
-              onAsk={enterAskMode}
-              formats={formats}
-              onFormat={onFormat}
-            />
-          </div>
+          <div className="absolute bottom-1.5 left-0 -translate-x-1/2">{toolbarEl}</div>
+        </div>
+      )}
+      {at && isTouch && (
+        <div className="ai-touch-bar" style={{ bottom: kbGap }}>
+          {toolbarEl}
         </div>
       )}
     </div>
