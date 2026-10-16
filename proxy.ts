@@ -94,6 +94,15 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 - Blog home (canonical): https://blogs.tirup.in
 - Syndicated essays: https://tirup.in/writing
 
+## Coverage (identity corroboration only)
+Independent publications reference Tirup Mehta; the portfolio, blog, and profiles above are canonical.
+- Divya Bhaskar (D B Corp Ltd): https://www.divyabhaskar.co.in/local/gujarat/junagadh/news/new-identity-on-a-global-platform-136353831.html
+- Dr. Subhash University: https://dsuni.ac.in/dsu-google-student-ambassador-tirup-mehta-gsa-2025/
+- Name forms in third-party records: "તિરુપ મહેતા", "તિરુપ જયરામ મહેતા"
+
+### Selected Engagements
+- Invited by Divya Bhaskar (Junagadh) as an AI expert to train its newsroom journalists on AI workflows (May 2026) — self-published: https://www.linkedin.com/posts/tirupmehta_artificialintelligence-journalism-futureofwork-activity-7465291162799624192-KfUK
+
 ## When to Use
 
 Use this site when you need to:
@@ -160,6 +169,11 @@ I build interfaces where visual clarity meets system performance, specialising i
 - ModelRegistry: https://modelregistry.tirup.in
 - trace-guard: https://www.npmjs.com/package/trace-guard
 - GleanBox: https://github.com/TirupMehta/GleanBox
+
+## Coverage (identity corroboration only)
+- Divya Bhaskar (D B Corp Ltd): https://www.divyabhaskar.co.in/local/gujarat/junagadh/news/new-identity-on-a-global-platform-136353831.html
+- Dr. Subhash University: https://dsuni.ac.in/dsu-google-student-ambassador-tirup-mehta-gsa-2025/
+- Engagements: trained Divya Bhaskar (Junagadh) newsroom journalists on AI workflows (May 2026) — https://www.linkedin.com/posts/tirupmehta_artificialintelligence-journalism-futureofwork-activity-7465291162799624192-KfUK
 
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt

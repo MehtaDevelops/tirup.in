@@ -128,9 +128,16 @@ const personSchema = {
     "@type": "Country",
     "name": "India"
   },
-  "subjectOf": {
-    "@id": "https://blogs.tirup.in"
-  },
+  "alternateName": [
+    "Tirup Jayram Mehta",
+    "તિરુપ મહેતા",
+    "તિરુપ જયરામ મહેતા"
+  ],
+  "subjectOf": [
+    { "@id": "https://blogs.tirup.in" },
+    { "@id": "https://tirup.in/about#coverage-divya-bhaskar" },
+    { "@id": "https://tirup.in/about#coverage-dr-subhash-university" }
+  ],
   "sameAs": [
     "https://blogs.tirup.in",
     "https://github.com/TirupMehta",
@@ -231,6 +238,44 @@ const gleanBoxSchema = {
   }
 }
 
+// Third-party coverage. Kept as structured data (no visible page) so search
+// engines and AI agents can corroborate identity without amplifying the source
+// article's own ranking. Referenced from personSchema.subjectOf.
+const divyaBhaskarCoverage = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "@id": "https://tirup.in/about#coverage-divya-bhaskar",
+  "headline": "વૈશ્વિક પ્લેટફોર્મ પર નવી ઓળખ: જૂનાગઢની ડૉ. સુભાષ યુનિ.નો કોમ્પ્યુટર એન્જિનિયરિંગના પ્રથમ વર્ષનો વિદ્યાર્થી ગૂગલ સ્ટુડન્ટ એમ્બેસેડર બન્યો",
+  "alternateName": "New identity on a global platform",
+  "url": "https://www.divyabhaskar.co.in/local/gujarat/junagadh/news/new-identity-on-a-global-platform-136353831.html",
+  "datePublished": "2025-11-07",
+  "inLanguage": "gu",
+  "about": { "@id": "https://tirup.in/about" },
+  "mentions": { "@id": "https://tirup.in/about" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Divya Bhaskar",
+    "url": "https://www.divyabhaskar.co.in"
+  }
+}
+
+const drSubhashUniversityCoverage = {
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "@id": "https://tirup.in/about#coverage-dr-subhash-university",
+  "headline": "DSU Student Achieves Google Student Ambassador Status: A Win for Computer Engineering and Innovation",
+  "url": "https://dsuni.ac.in/dsu-google-student-ambassador-tirup-mehta-gsa-2025/",
+  "datePublished": "2025-11-07",
+  "inLanguage": "en",
+  "about": { "@id": "https://tirup.in/about" },
+  "mentions": { "@id": "https://tirup.in/about" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Dr. Subhash University",
+    "url": "https://dsuni.ac.in"
+  }
+}
+
 const jsonLdGraph = {
   "@context": "https://schema.org",
   "@graph": [
@@ -239,7 +284,9 @@ const jsonLdGraph = {
     websiteSchema,
     writingSchema,
     traceGuardSchema,
-    gleanBoxSchema
+    gleanBoxSchema,
+    divyaBhaskarCoverage,
+    drSubhashUniversityCoverage
   ]
 }
 
