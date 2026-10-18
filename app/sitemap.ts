@@ -26,5 +26,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   // Articles are syndicated copies. Their canonical URLs and sitemap live on blogs.tirup.in.
-  return [...staticPages, ...projectPages]
+
+  // 3. Components library — served by the standalone components project and
+  //    proxied under /components via the rewrite in next.config.mjs (env:
+  //    COMPONENTS_APP_URL). Canonical URLs are tirup.in/components/*, so list
+  //    them here for direct discovery alongside the app's own sitemap at
+  //    tirup.in/components/sitemap.xml.
+  const componentsApp = [
+    { route: "", priority: 0.9, frequency: "weekly" as const },
+    { route: "/all", priority: 0.8, frequency: "weekly" as const },
+    { route: "/liquid-ascii", priority: 0.9, frequency: "weekly" as const },
+    { route: "/docs", priority: 0.6, frequency: "monthly" as const },
+  ]
+  const componentsPages = componentsApp.map(({ route, priority, frequency }) => ({
+    url: `${baseUrl}/components${route}`,
+    lastModified: buildDate,
+    changeFrequency: frequency,
+    priority,
+  }))
+
+  return [...staticPages, ...projectPages, ...componentsPages]
 }

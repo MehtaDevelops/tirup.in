@@ -5,6 +5,20 @@
 // only added when NODE_ENV=development to keep the deployed policy tight.
 const isDev = process.env.NODE_ENV === "development"
 
+// ─── Components subpath proxy ────────────────────────────────────────────────
+// tirup.in/components is served by the standalone components project
+// (github.com/TirupMehta/components, its own Next.js app with basePath
+// "/components"). This rewrite proxies every path under /components to that
+// project so all its traffic, links and SEO equity land on the main domain.
+//
+// COMPONENTS_APP_URL is the components project's raw production deployment
+// URL (e.g. https://lib-xyz.vercel.app). Never point it at
+// components.tirup.in — that host is a 308 redirector now, so proxying to it
+// would loop. If the variable is unset the rewrite disappears and nothing
+// else changes. Canonical URLs inside the components app already point at
+// tirup.in/components, so proxies/mirrors never outrank the canonical.
+const COMPONENTS_APP_URL = process.env.COMPONENTS_APP_URL
+
 const cspScriptSrc = [
   "'self'",
   "'unsafe-inline'",
@@ -207,12 +221,24 @@ const nextConfig = {
   // /.well-known/api-catalog with the route's application/linkset+json
   // Content-Type preserved.
   async rewrites() {
-    return [
-      {
-        source: "/.well-known/api-catalog",
-        destination: "/api/catalog",
-      },
-    ]
+    return {
+      // beforeFiles: checked before the filesystem, so /components/* is always
+      // proxied even if a main-site route ever claims the prefix.
+      beforeFiles: [
+        ...(COMPONENTS_APP_URL
+          ? [
+              {
+                source: "/components/:path*",
+                destination: `${COMPONENTS_APP_URL}/components/:path*`,
+              },
+            ]
+          : []),
+        {
+          source: "/.well-known/api-catalog",
+          destination: "/api/catalog",
+        },
+      ],
+    }
   },
 }
 
