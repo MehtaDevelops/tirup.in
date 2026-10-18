@@ -212,26 +212,6 @@ const nextConfig = {
         destination: "/writing/:path*",
         permanent: true,
       },
-      // Graceful degradation for the components subpath: when the proxy is
-      // not wired (COMPONENTS_APP_URL unset — e.g. lost after a project
-      // rename), send visitors straight to the app's own serving subdomain
-      // (components.tirup.in serves the app via its vercel.json edge
-      // rewrite) instead of serving them a 404. Never active when the
-      // proxy env is present — redirect sources run before rewrites.
-      ...(COMPONENTS_APP_URL
-        ? []
-        : [
-            {
-              source: "/components",
-              destination: "https://components.tirup.in/components",
-              permanent: true,
-            },
-            {
-              source: "/components/:path*",
-              destination: "https://components.tirup.in/components/:path*",
-              permanent: true,
-            },
-          ]),
     ]
   },
 
