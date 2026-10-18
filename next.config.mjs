@@ -11,12 +11,11 @@ const isDev = process.env.NODE_ENV === "development"
 // "/components"). This rewrite proxies every path under /components to that
 // project so all its traffic, links and SEO equity land on the main domain.
 //
-// COMPONENTS_APP_URL is the components project's raw production deployment
-// URL (e.g. https://lib-xyz.vercel.app). Never point it at
-// components.tirup.in — that host is a 308 redirector now, so proxying to it
-// would loop. If the variable is unset the rewrite disappears and nothing
-// else changes. Canonical URLs inside the components app already point at
-// tirup.in/components, so proxies/mirrors never outrank the canonical.
+// COMPONENTS_APP_URL is that project's raw production deployment URL (see
+// its Vercel dashboard — Settings → Domains). If the project is ever
+// renamed there, this env must be updated to the new URL in the same
+// sitting. No subdomain exists for this site: tirup.in/components is the
+// one and only home.
 const COMPONENTS_APP_URL = process.env.COMPONENTS_APP_URL
 
 const cspScriptSrc = [
