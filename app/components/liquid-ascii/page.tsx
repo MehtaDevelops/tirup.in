@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Courier_Prime, IBM_Plex_Mono, Space_Mono, VT323 } from "next/font/google"
+import { Courier_Prime, Inter, Space_Mono, VT323 } from "next/font/google"
 import { LiquidAsciiDoc } from "./doc-client"
 import { JsonLd } from "@/components/library/json-ld"
 import { SITE, AUTHOR, installCommand } from "@/lib/components-site"
@@ -8,8 +8,10 @@ import { SITE, AUTHOR, installCommand } from "@/lib/components-site"
 // visitor gets exactly the face they pick and the canvas can never silently
 // fall back to something else. The woff2 bytes only download when a face is
 // first selected; shipping a page costs four @font-face declarations, not
-// four fonts. JetBrains Mono (the default) is already the site-wide face.
-const plex = IBM_Plex_Mono({ weight: "400", subsets: ["latin"] })
+// four fonts. Faces were chosen for visual contrast on the glyph grid:
+// strict mono default, proportional sans, quirky mono, pixel, typewriter.
+// JetBrains Mono (the default) is already the site-wide face.
+const inter = Inter({ subsets: ["latin"] })
 const space = Space_Mono({ weight: "400", subsets: ["latin"] })
 const vt = VT323({ weight: "400", subsets: ["latin"] })
 const courier = Courier_Prime({ weight: "400", subsets: ["latin"] })
@@ -17,7 +19,7 @@ const courier = Courier_Prime({ weight: "400", subsets: ["latin"] })
 // family: "" means "the host page's own mono", resolved by the component.
 const FONTS = [
   { label: "JetBrains", family: "" },
-  { label: "Plex Mono", family: plex.style.fontFamily },
+  { label: "Inter", family: inter.style.fontFamily },
   { label: "Space Mono", family: space.style.fontFamily },
   { label: "VT323", family: vt.style.fontFamily },
   { label: "Courier", family: courier.style.fontFamily },
@@ -67,7 +69,7 @@ const FAQ = [
   },
   {
     q: "Can I change the glyph font?",
-    a: 'Yes. Pass fontFamily={"Space Mono"} — any installed or loaded CSS mono face — to the component, or pick one of the bundled faces in the Customise panel on this page. The panel options are self-hosted so they render identically for everyone.',
+    a: 'Yes — any font you want. Pass fontFamily={"Inter"} and the component renders any CSS font face your app loads or the system has, monospace or not (proportional faces look great as fluid ink). Load the face in your own app however you like — next/font, a stylesheet link, or a system font — the component renders whatever family string it receives and falls back to your system mono if the face is missing. On this page the Customise panel bundles self-hosted faces so the picker renders identically for everyone.',
   },
   {
     q: "How does the ASCII liquid effect actually work?",

@@ -21,7 +21,7 @@ const PROPS = [
   { name: "cursorForce", type: "number", defaultValue: "66", description: "Strength of the cursor push force (0–200)." },
   { name: "autoWave", type: "boolean", defaultValue: "true", description: "Gentle idle waves when untouched. Motion is input-driven otherwise." },
   { name: "className", type: "string", defaultValue: '""', description: "Additional classes for the canvas element." },
-  { name: "fontFamily", type: "string", defaultValue: "site mono", description: "CSS font-family for the glyphs, e.g. an installed mono face. Defaults to the host site's mono." },
+  { name: "fontFamily", type: "string", defaultValue: "site mono", description: "CSS font-family for the glyphs — any face your app loads or the system has, mono or not. Defaults to the host page's mono." },
 ]
 
 const STAGES = [
