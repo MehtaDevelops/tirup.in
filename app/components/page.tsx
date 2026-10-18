@@ -2,8 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
-import CopyCommand from "@/components/library/copy-command"
-import { SITE, installCommand } from "@/lib/components-site"
+import { SITE } from "@/lib/components-site"
 
 export const metadata: Metadata = {
   title: "Components",
@@ -80,16 +79,6 @@ export default function ComponentsPage() {
               ))}
               <div className="border-t border-black/10 dark:border-white/10" />
             </div>
-          </div>
-        </TextWithBlur>
-
-        {/* Quick install: same pill treatment as "Read all blogs" */}
-        <TextWithBlur delay={280}>
-          <div className="pt-8 pb-2 flex flex-wrap items-center gap-3">
-            <CopyCommand command={installCommand("<name>")} label="Quick install" />
-            <span className="text-xs font-light text-black/35 dark:text-white/35">
-              replaces <span className="font-mono">&lt;name&gt;</span> with any component
-            </span>
           </div>
         </TextWithBlur>
 
