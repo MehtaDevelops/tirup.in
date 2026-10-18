@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen flex flex-col">
       <div className="section px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-16 max-w-4xl mx-auto w-full">
         
         {/* Breadcrumb Header */}
@@ -309,12 +309,11 @@ export default async function BlogPostPage({ params }: PageProps) {
             <BlogContentRenderer html={processBlogHtml(safeContentHtml)} />
           </ArticleAiToolbar>
         </TextWithBlur>
-
-        {/* Footer */}
-        <footer className="py-4 text-center border-t border-black/10 dark:border-white/10 mt-8">
-          <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
-        </footer>
       </div>
+
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
+      </footer>
 
       {/* TL;DR Animated Summary Popup: rendered as direct child of main to align on viewport edge on desktop */}
       <TldrPopup safeTldrHtml={safeTldrHtml} />

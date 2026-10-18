@@ -13,7 +13,7 @@ export default function PrivacyPage() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen flex flex-col">
       <Header />
 
       <section className="section px-6 md:px-20 pb-20 max-w-4xl mx-auto w-full">
@@ -168,7 +168,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
         <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>
           © {currentYear} Tirup Mehta. All rights reserved.
         </p>

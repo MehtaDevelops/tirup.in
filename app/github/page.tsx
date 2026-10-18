@@ -26,7 +26,7 @@ export default async function GitHubActivityPage() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen flex flex-col">
       <Header />
 
       {/* GitHub Activity Section */}
@@ -35,7 +35,7 @@ export default async function GitHubActivityPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
         <p className="text-black/40 dark:text-white/40 text-xs md:text-sm" suppressHydrationWarning>
           © {currentYear} Tirup Mehta. All rights reserved.
         </p>

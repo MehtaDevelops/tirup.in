@@ -181,7 +181,7 @@ export function LiquidAsciiDoc({
   }
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative min-h-screen flex flex-col">
       <div className="section px-6 md:px-20 pt-10 md:pt-28 pb-20 max-w-4xl mx-auto w-full">
 
         {/* Breadcrumb: same as project detail pages */}
@@ -476,12 +476,11 @@ export function LiquidAsciiDoc({
           </div>
         </TextWithBlur>
 
-        {/* Footer: same as project detail pages */}
-        <footer className="py-4 text-center border-t border-black/10 dark:border-white/10 mt-4">
-          <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
-        </footer>
-
       </div>
+
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
+      </footer>
     </main>
   )
 }
