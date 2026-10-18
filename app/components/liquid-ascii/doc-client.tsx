@@ -39,11 +39,11 @@ const STAGES = [
   ],
   [
     "Return",
-    "Motion flows back to the particles as a 28/72 blend: a little of the smooth face velocity (stable, mushy) and a lot of the FLIP delta versus the snapshot (lively, detailed), sampled from interior faces only so the strict-zero wall faces steady the solve without ever damping a particle. Speeds clamp at 1500, particles advect, walls stop only the head-on component while sideways slide survives with light friction, with a 0.35-cell gap so liquid reaches the edges. Overfull cells get hash-jittered apart and up to 200 lost particles reseed per frame.",
+    "Motion flows back to the particles as a 28/72 blend: a little of the smooth face velocity (stable, mushy) and a lot of the FLIP delta versus the snapshot (lively, detailed), sampled from interior faces only so the strict-zero wall faces steady the solve without ever damping a particle. Speeds clamp at 1150, particles advect, walls stop only the head-on component while sideways slide survives with light friction, with a 0.35-cell gap so liquid reaches the edges. Overfull cells get hash-jittered apart and up to 200 lost particles reseed per frame.",
   ],
   [
     "Touch",
-    "Your cursor is a spoon, not a magnet. Pointer velocity is smoothed and a 3×3 neighbourhood is checked first. Moving through empty air does nothing; only contact pushes, with strength falling off quadratically inside your cursor radius. Leave it alone for 2 seconds and a slow wandering column nudges the surface so the showcase stays breathing.",
+    "Your cursor is a spoon, not a magnet. Pointer velocity is smoothed and a 3×3 neighbourhood is checked first. Moving through empty air does nothing; only contact pushes, with strength falling off quadratically inside your cursor radius and at most one impulse per frame no matter how fast the pointer fires, so a gaming mouse, a touch screen and a laptop trackpad all push with the same energy. Vertical drags carry extra weight, because gravity is already fighting every upward push — bottom-to-top strokes used to feel dead next to sideways slaps. Leave it alone for 2 seconds and a slow wandering column nudges the surface so the showcase stays breathing.",
   ],
   [
     "Ink",

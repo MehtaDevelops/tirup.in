@@ -112,6 +112,7 @@ export function LiquidAsciiDemo({
     let cvx = 0
     let cvy = 0
     let lastInput = 0
+    let lastApply = 0
     let prevMaxS = 999
     let frame = 0
     let visible = true
@@ -442,9 +443,11 @@ export function LiquidAsciiDemo({
         let nu = (1 - FLIP) * picU + FLIP * flipU
         let nv = (1 - FLIP) * picV + FLIP * flipV
         const sp = Math.sqrt(nu * nu + nv * nv)
-        if (sp > 1500) {
-          nu *= 1500 / sp
-          nv *= 1500 / sp
+        // 1150, not 1500: the old cap let a fast lateral slap keep enough
+        // energy for the walls to convert into a ceiling jet every time.
+        if (sp > 1150) {
+          nu *= 1150 / sp
+          nv *= 1150 / sp
         }
         pu[p] = nu
         pv[p] = nv
@@ -454,16 +457,18 @@ export function LiquidAsciiDemo({
         const wg = wallGap()
         if (px[p] < wg) {
           px[p] = wg
-          if (pu[p] < 0) pu[p] = pu[p] < -150 ? -pu[p] * 0.45 : 0
+          if (pu[p] < 0) pu[p] = pu[p] < -150 ? -pu[p] * 0.35 : 0
           pv[p] *= WALL_FRICTION
         } else if (px[p] > W - wg) {
           px[p] = W - wg
-          if (pu[p] > 0) pu[p] = pu[p] > 150 ? -pu[p] * 0.45 : 0
+          if (pu[p] > 0) pu[p] = pu[p] > 150 ? -pu[p] * 0.35 : 0
           pv[p] *= WALL_FRICTION
         }
         if (py[p] < wg) {
+          // Ceiling absorbs: lowest restitution in the box. Bouncing spray
+          // off the roof is exactly the "happy to hit the top" energy.
           py[p] = wg
-          if (pv[p] < 0) pv[p] = pv[p] < -150 ? -pv[p] * 0.45 : 0
+          if (pv[p] < 0) pv[p] = pv[p] < -150 ? -pv[p] * 0.22 : 0
           pu[p] *= WALL_FRICTION
         } else if (py[p] > H - wg) {
           py[p] = H - wg
@@ -774,6 +779,11 @@ export function LiquidAsciiDemo({
       lastMY = y
       if (!touching(x, y)) return
       lastInput = now
+      // One impulse per frame at most, independent of event rate: gaming
+      // mice and touch digitizers fire 120–240Hz pointermove events, and
+      // stacking an impulse on each one makes the fluid hyper-excitable.
+      if (now - lastApply < 16) return
+      lastApply = now
       const R = c.cursorRadius * Math.min(W, H)
       const fscale = c.cursorForce / 66
       const spd = Math.sqrt(cvx * cvx + cvy * cvy)
@@ -785,8 +795,13 @@ export function LiquidAsciiDemo({
         const d = Math.sqrt(d2)
         let f = 1 - d / R
         f *= f
-        pu[p] += (cvx * 0.3 + (dx / (d + 1)) * spd * 0.3) * f * fscale * FORCE
-        pv[p] += (cvy * 0.3 + (dy / (d + 1)) * spd * 0.3) * f * fscale * FORCE
+        // Direct drag moves the fluid; the radial term is deliberately the
+        // lighter half (it is what threw spray toward the ceiling). The
+        // vertical component carries extra weight because gravity is
+        // already fighting every upward push — bottom-to-top drags felt
+        // dead relative to sideways slaps.
+        pu[p] += (cvx * 0.3 + (dx / (d + 1)) * spd * 0.22) * f * fscale * FORCE
+        pv[p] += (cvy * 0.42 + (dy / (d + 1)) * spd * 0.22) * f * fscale * FORCE
       }
       wake()
     }
