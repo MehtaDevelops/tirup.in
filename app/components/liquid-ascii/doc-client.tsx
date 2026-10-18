@@ -314,7 +314,7 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
         {/* Numbered sections — same corridor system as project detail pages */}
         <div className="flex flex-col">
 
-          <DetailBlock index={next()} title="Install">
+          <DetailBlock index={next()} title="Install" wide>
             <CodeDemo
               blocks={[
                 { lang: "bash", code: installCommand("liquid-ascii") },
@@ -331,7 +331,7 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
             </p>
           </DetailBlock>
 
-          <DetailBlock index={next()} title="Props">
+          <DetailBlock index={next()} title="Props" wide>
             <div className="blog-content">
               <table>
                 <thead>
