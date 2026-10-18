@@ -449,7 +449,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
 
             {view === "top" ? (
               <>
-                {/* Classic flat matrix — static, exactly as before */}
+                {/* Classic flat matrix: static, exactly as before */}
                 <div
                   ref={scrollContainerRef}
                   className="w-full overflow-x-auto overflow-y-hidden py-1 px-1.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"

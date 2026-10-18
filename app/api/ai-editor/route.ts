@@ -90,7 +90,7 @@ async function liveSnippets(query: string): Promise<{ text: string; sources: str
 }
 
 // Two-tier per-IP spend budget: burst + hourly quota. In-memory (per instance,
-// best-effort on serverless) — the binding spend control is Groq's own key
+// best-effort on serverless): the binding spend control is Groq's own key
 // limits. Rotate the key if abuse is ever suspected.
 const BURST_MAX = 10
 const BURST_WINDOW_MS = 60 * 1000
@@ -125,7 +125,7 @@ function clientIp(request: NextRequest): string {
 
 // Defense-in-depth: only accept browser requests originating from this same
 // host (the article pages fetch same-origin, which always sends Origin on
-// POST). Spoofable by design — the spend budget above is the real control.
+// POST). Spoofable by design: the spend budget above is the real control.
 function isSameOrigin(request: NextRequest): boolean {
   const host = (request.headers.get("x-forwarded-host") || request.headers.get("host") || "")
     .split(",")[0]

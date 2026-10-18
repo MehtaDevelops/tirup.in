@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react"
 /**
  * AmbientShader Component
  *
- * An ultra-subtle ambient light field — pure light and shadow by default,
+ * An ultra-subtle ambient light field: pure light and shadow by default,
  * zero color tint.
  * - In Dark Mode: A faint top-down white glow over deep charcoal.
  * - In Light Mode: Whisper-soft gray shading over warm paper for depth.

@@ -42,7 +42,7 @@ export default function WorkPage() {
                     <span className="font-mono tabular-nums text-xs md:text-sm text-black/40 dark:text-white/40 select-none w-6 shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    {/* Content Row — stable, no translate */}
+                    {/* Content Row: stable, no translate */}
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
                       <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out]">
                         {project.title}

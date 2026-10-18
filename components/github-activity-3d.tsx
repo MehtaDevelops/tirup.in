@@ -95,7 +95,7 @@ function makeLabel(text: string, color: string): THREE.Sprite {
 }
 
 /**
- * GithubActivity3D — the contribution graph as a 3D bar field, in the
+ * GithubActivity3D: the contribution graph as a 3D bar field, in the
  * spirit of "the shape of your week" panels: weeks run along X, weekdays
  * along Z, bar height is volume. One InstancedMesh = one draw call.
  * Drag to orbit, scroll/pinch to zoom, right-drag to pan, click a bar to
@@ -204,7 +204,7 @@ export default function GithubActivity3D({
       renderer.setSize(w, h, false)
       camera.aspect = w / h
       camera.updateProjectionMatrix()
-      // Refit after rotation/window changes — unless the user has manually
+      // Refit after rotation/window changes: unless the user has manually
       // moved the camera, in which case their framing wins.
       if (api.cols > 0 && !api.interacted) flyPreset(propsRef.current.view)
     }
@@ -415,7 +415,7 @@ export default function GithubActivity3D({
       // Exact top-down: reads like the classic flat calendar.
       flyTo(new THREE.Vector3(0, fitFull * 1.0, 0.6), new THREE.Vector3(0, 0, 0.6), 0.9)
     } else {
-      // Open framed on the recent window (~3 months), low and close — the
+      // Open framed on the recent window (~3 months), low and close: the
       // full range is one zoom-out away. maxDistance always covers everything.
       const span = Math.min(api.cols, RECENT_COLS)
       const fitRecent = computeFit(span)

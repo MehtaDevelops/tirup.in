@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
 
 /**
- * LiquidAscii — self-owned FLIP fluid (Zhu & Bridson style), mapped onto
+ * LiquidAscii: self-owned FLIP fluid (Zhu & Bridson style), mapped onto
  * the React Bits Pro prop spec. No Pro dependency, no license, no registry.
  *
  * | Pro prop        | Pro default | Ours                                             |
@@ -15,12 +15,12 @@ import { createPortal } from "react-dom"
  * | fillHeight      | 0.4         | 0.4                                              |
  * | cursorRadius    | 0.25        | 0.25 × short side                                |
  * | cursorForce     | 66          | 66-equivalent                                    |
- * | flipRatio       | 0.3         | 0.7 PIC/FLIP blend — seiche survives, far side answers |
- * | pressureIters   | 30          | 30 Gauss-Seidel iterations — the real thing      |
- * | overRelaxation  | 1.5         | 1.5 — the real thing                             |
- * | separationIters | 3           | 3 density passes — the real thing                |
+ * | flipRatio       | 0.3         | 0.7 PIC/FLIP blend: seiche survives, far side answers |
+ * | pressureIters   | 30          | 30 Gauss-Seidel iterations: the real thing      |
+ * | overRelaxation  | 1.5         | 1.5: the real thing                             |
+ * | separationIters | 3           | 3 density passes: the real thing                |
  * | characters      | 11 glyphs   | 70-step ramp (variety request)                   |
- * | autoWave        | true        | false — input only, loop sleeps when settled     |
+ * | autoWave        | true        | false: input only, loop sleeps when settled     |
  *
  * Pipeline per step: cursor → particles → grid (bilinear) → gravity →
  * pressure projection (divergence-free) → grid → particles (PIC/FLIP
@@ -47,7 +47,7 @@ const P = {
   fillHeight: 0.4,
   cursorRadius: 0.25,
   cursorForce: 66,
-  flipRatio: 0.7, // Pro default 0.3; raised — less numerical dissipation,
+  flipRatio: 0.7, // Pro default 0.3; raised: less numerical dissipation,
   // piles collapse into far-side seiche instead of dying on the spot
   pressureIters: 30,
   overRelaxation: 1.5,
@@ -82,7 +82,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     let raf = 0
     let W = 0
     let H = 0
-    // sim grid (coarse — solver lives here)
+    // sim grid (coarse: solver lives here)
     let nx = 0
     let ny = 0
     let h: number = P.simCellD
@@ -115,9 +115,9 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     let cvx = 0
     let cvy = 0
     let lastInput = 0
-    let prevMaxS = 999 // peak speed last step — separation only runs while
+    let prevMaxS = 999 // peak speed last step: separation only runs while
     // violent; jittering calm piles feeds fake velocity back forever
-    let frame = 0 // advances every step — separation jitter varies per
+    let frame = 0 // advances every step: separation jitter varies per
     // frame so it averages to zero instead of drifting the pile thin
     let visible = true
     let inView = true
@@ -160,7 +160,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       ctx.font = `${Math.round(rcell * 0.95)}px ui-monospace, SFMono-Regular, Menlo, monospace`
       const n = GLYPHS.length
       // fluid top per column: first row with neighborhood support (≥3 in
-      // a 3-wide window) — lone stuck dots can't fake a surface.
+      // a 3-wide window): lone stuck dots can't fake a surface.
       // Near side walls the bar is higher (≥6): thin climbs must not
       // render the heavy $@$ line, only genuinely deep wall piles do.
       const edge = Math.max(2, Math.round((2 * h) / (W / rcols)))
@@ -186,7 +186,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
           let idx: number
           let alpha: number
           if (depth < -0.5) {
-            // air: only fast spray renders — stuck dots stay invisible
+            // air: only fast spray renders: stuck dots stay invisible
             if (c < 1) continue
             const asp = rspd[i] / c
             if (asp < 160) continue
@@ -253,7 +253,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
 
     const step = (paint: boolean) => {
       frame++
-      // gravity on particles (all of them — lone spray falls back too)
+      // gravity on particles (all of them: lone spray falls back too)
       for (let p = 0; p < active; p++) pv[p] += P.gravityPx * dtCur
       // --- particles → grid (bilinear splat) ---
       u.fill(0)
@@ -599,7 +599,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       lastT = now
       lastMX = clientX
       lastMY = clientY
-      // Air does nothing — only a cursor ON fluid stirs it.
+      // Air does nothing: only a cursor ON fluid stirs it.
       if (!touching(x, y)) return
       lastInput = now
       const R = P.cursorRadius * Math.min(W, H)
@@ -664,7 +664,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     }
   }, [])
 
-  // Portal to body: escapes transformed ancestors — truly viewport-fixed,
+  // Portal to body: escapes transformed ancestors: truly viewport-fixed,
   // whole website, no top limit. Transparent + click-through.
   return createPortal(
     <canvas

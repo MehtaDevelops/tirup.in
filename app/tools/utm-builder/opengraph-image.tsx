@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { OgShell, OG_SIZE, loadOgFonts } from "@/lib/og";
 
 export const runtime = "nodejs";
-export const alt = "UTM Builder — Tirup Mehta";
+export const alt = "UTM Builder · Tirup Mehta";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

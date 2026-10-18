@@ -28,7 +28,7 @@ export function formatCategory(tags?: string[]): string {
     .map((word) => {
       const lower = word.toLowerCase()
       if (acronyms[lower]) return acronyms[lower]
-      // Preserve internal capitals (OAuth, WebSecurity) — only fix all-lower/upper words
+      // Preserve internal capitals (OAuth, WebSecurity): only fix all-lower/upper words
       if (word.length > 1 && word.slice(1).match(/[A-Z]/)) return word
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
     })

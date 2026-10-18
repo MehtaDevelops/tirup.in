@@ -86,7 +86,7 @@ export function BlogContentRenderer({ html }: BlogContentRendererProps) {
         e.preventDefault()
         e.stopPropagation()
 
-        // Copy from <code> only — pre.innerText would include badge text
+        // Copy from <code> only: pre.innerText would include badge text
         const textToCopy = codeElement ? codeElement.innerText : pre.textContent || ""
 
         try {

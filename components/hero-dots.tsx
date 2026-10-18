@@ -27,8 +27,8 @@ function YellowDot() {
 }
 
 /**
- * HeroDots — dots row + two easter eggs.
- * Green dot: fluid ASCII (desktop only — mobile stays inert, zero cost,
+ * HeroDots: dots row + two easter eggs.
+ * Green dot: fluid ASCII (desktop only: mobile stays inert, zero cost,
  * canvas portals to body so it adds zero space).
  * Red dot: site-wide theme color picker. The pick re-tints the whole
  * website (light surfaces + darker dark-mode surfaces, derived in CSS),
@@ -52,7 +52,7 @@ export default function HeroDots() {
   const tintPanelRef = useRef<HTMLDivElement>(null)
 
   // Re-apply the persisted tint (pre-paint script in layout already did the
-  // DOM part — this just syncs the dot's state with it).
+  // DOM part: this just syncs the dot's state with it).
   useEffect(() => {
     setTint(applyTint(getStoredTint()))
   }, [])

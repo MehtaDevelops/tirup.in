@@ -36,7 +36,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
 
   // Enter transition: mount hidden, then animate in just after paint.
   // A small timeout (instead of rAF) guarantees the browser commits the
-  // hidden frame first, so the transition always plays — no open glitch.
+  // hidden frame first, so the transition always plays: no open glitch.
   useEffect(() => {
     if (!isOpen) return
     setClosing(false)
@@ -53,7 +53,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
 
   // Lock body scroll + close on Escape while open.
   // Hiding the page scrollbar would shift centered content sideways by the
-  // scrollbar width — compensate with an exact padding-right so the layout
+  // scrollbar width: compensate with an exact padding-right so the layout
   // stays pixel-identical behind the popup (open and close).
   useEffect(() => {
     if (!isOpen) return
@@ -123,7 +123,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
   //
   // Sizing is done by CSS construction, not JS measurement: each canvas
   // is styled width:100%/height:auto so it always fills the container by
-  // definition — a wrong measurement can never shrink it again. Only the
+  // definition: a wrong measurement can never shrink it again. Only the
   // invisible text-selection overlay needs a post-layout read.
   useEffect(() => {
     if (!isOpen || !entered || !pdfData) return
@@ -151,7 +151,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         if (cancelled) return
         pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs"
 
-        // getDocument detaches the buffer — copy it so re-renders work.
+        // getDocument detaches the buffer: copy it so re-renders work.
         const pdf = await pdfjs.getDocument({ data: pdfData!.slice(0) }).promise
         if (cancelled) {
           pdf.cleanup()
@@ -176,7 +176,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           pageDiv.appendChild(textDiv)
           container.appendChild(pageDiv)
 
-          // Displayed width is final once appended — render the backing
+          // Displayed width is final once appended: render the backing
           // store at displayed-size × DPR so pages stay crisp on DPR-1
           // wide screens instead of upscaling a small raster.
           const displayWidth =
@@ -189,7 +189,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           })
           canvas.width = Math.floor(renderViewport.width)
           canvas.height = Math.floor(renderViewport.height)
-          // Fill by construction — immune to measurement timing.
+          // Fill by construction: immune to measurement timing.
           canvas.style.width = "100%"
           canvas.style.height = "auto"
 
@@ -209,7 +209,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
 
         if (!cancelled) setLoading(false)
         rendering = false
-        // A resize arrived mid-render — do one trailing pass at the new width.
+        // A resize arrived mid-render: do one trailing pass at the new width.
         if (dirty && !cancelled && container) {
           dirty = false
           lastWidth = container.clientWidth
@@ -282,7 +282,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
         ].join(" ")}
       >
-        {/* ── Header — matches site banner / nav row styling ── */}
+        {/* ── Header: matches site banner / nav row styling ── */}
         <div className="flex items-center justify-between gap-2 sm:gap-3 px-4 sm:px-5 py-3.5 border-b border-black/5 dark:border-white/5 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-black/60 dark:text-white/60 shrink-0">
@@ -326,7 +326,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           </div>
         </div>
 
-        {/* ── PDF preview — pages rendered in our own themed scroll container ── */}
+        {/* ── PDF preview: pages rendered in our own themed scroll container ── */}
           <div className="relative flex-1 min-h-0 bg-[var(--bg)] dark:bg-zinc-900">
           {/* Scroll container always mounted so the render effect has a target */}
           <div
@@ -377,7 +377,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           )}
         </div>
 
-        {/* ── Footer — fallback + subtle hint ── */}
+        {/* ── Footer: fallback + subtle hint ── */}
         <div className="flex items-center justify-between gap-3 px-5 py-3 border-t border-black/5 dark:border-white/5 shrink-0">
           <p className="text-[11px] font-light text-black/40 dark:text-white/40 truncate">
             <span className="hidden sm:inline">Having trouble viewing? Open in a new tab or download.</span>

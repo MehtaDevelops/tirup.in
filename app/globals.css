@@ -6,7 +6,7 @@
   --accent: #7c88e8;
   --black: #121314;
   --white: #ffffff;
-  /* Spring curve: fast start, soft land — matches Benji Taylor / Family style */
+  /* Spring curve: fast start, soft land: matches Benji Taylor / Family style */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --transition-slow: 0.45s var(--ease-spring);
   --transition-medium: 0.22s var(--ease-spring);
@@ -40,7 +40,7 @@ html.dark {
   --tldr-accent: #38bdf8;
 }
 
-/* Dark surface warming — remaps cool zinc surfaces to the warm charcoal
+/* Dark surface warming: remaps cool zinc surfaces to the warm charcoal
    system so every card, input, avatar and modal shares one deliberate
    black. Unlayered CSS wins over Tailwind's layered utilities. */
 .dark .dark\:bg-zinc-900 { background-color: var(--surface); }
@@ -55,8 +55,8 @@ html.dark {
 .dark .dark\:border-zinc-900 { border-color: var(--border-color); }
 
 /* ------------------------------------------------------------------
-   Red-dot theme tint — one user color re-themes the whole site, always with
-   the light treatment (even from dark mode — picking a tint switches to it,
+   Red-dot theme tint: one user color re-themes the whole site, always with
+   the light treatment (even from dark mode: picking a tint switches to it,
    Reset restores). JS paints the full palette; the color-mix rules below are
    the pre-hydration fallback only.
 ------------------------------------------------------------------- */
@@ -73,7 +73,7 @@ html[data-tint] {
 
 /* GitHub 3D showcase card follows the tint through --card (see engine). */
 
-/* While a custom theme color is set, the look is frozen — the Light/Dark
+/* While a custom theme color is set, the look is frozen: the Light/Dark
    switches (header toggle + picker Mode row) are removed until Reset. */
 html[data-tint] .theme-toggle { display: none !important; }
 
@@ -161,7 +161,7 @@ html.tint-drag *::after {
   transition: none !important;
 }
 
-/* Custom scrollbar — thin, rounded, theme-aware (replaces the default bulky bar) */
+/* Custom scrollbar: thin, rounded, theme-aware (replaces the default bulky bar) */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(128, 128, 128, 0.25) transparent;
@@ -190,7 +190,7 @@ html.tint-drag *::after {
   background: transparent;
 }
 
-/* Resume PDF viewer — pages are rendered by PDF.js into our own scroll
+/* Resume PDF viewer: pages are rendered by PDF.js into our own scroll
    container. The scrollbar is hidden here (scroll still works via wheel /
    touch / keyboard); the reserved gutter keeps the width stable so pages
    never re-render in a loop when content overflows. */
@@ -265,7 +265,7 @@ body {
   color: var(--fg);
   transition: background-color 0s, color 0s;
   font-family: var(--font-body);
-  /* benji.org copy voice: Inter 400 / rgb(17,17,17) — sizes untouched */
+  /* benji.org copy voice: Inter 400 / rgb(17,17,17): sizes untouched */
   font-weight: var(--body-font-weight);
   letter-spacing: var(--body-letter-spacing);
   text-rendering: optimizeLegibility;
@@ -285,12 +285,12 @@ body {
 
 /* Running text inherits the body Inter voice (family/weight/spacing/color).
    No per-element overrides here, so bio paragraphs keep inheriting their
-   parent utilities exactly like the rest of the site —
+   parent utilities exactly like the rest of the site :
    one uniform style everywhere. Serif titles (.font-serif) and code
    (.font-mono) are untouched since they set their own font-family. */
 
 /* Middle-ground weight: map Tailwind's light (300) to normal (400) so all
-   body copy — bio, about, project pages — renders one uniform in-between
+   body copy: bio, about, project pages: renders one uniform in-between
    weight. Unlayered author CSS wins over Tailwind's layered utilities, so no
    !important needed. Medium/semibold headings are untouched. */
 .font-light {
@@ -411,7 +411,7 @@ p {
 }
 
 /*
-  Fade-up reveal — avoids blur compositing cost and the mid-frame
+  Fade-up reveal: avoids blur compositing cost and the mid-frame
   smear that blur+translate together cause on low-dpi displays.
   translateY(6px) is subtle enough to feel like natural settling.
 */
@@ -432,7 +432,7 @@ p {
 }
 
 /*
-  Sibling dimming — learned from benji.org.
+  Sibling dimming: learned from benji.org.
   When any row in a list is hovered, all *other* rows fade to 40% opacity.
   The active row stays at full opacity. This makes the hovered item feel
   spotlit and makes the list read like one cohesive, interactive object
@@ -493,7 +493,7 @@ h1, h2, h3 {
 
 /*
   Desktop: subtle cross-fade + 4px vertical settle.
-  Nothing moves laterally — the content just breathes in.
+  Nothing moves laterally: the content just breathes in.
   Duration is short (180ms) so it never feels sluggish.
 */
 @media (min-width: 768px) {
@@ -547,7 +547,7 @@ h1, h2, h3 {
   opacity: 1 !important;
 }
 
-/* Link hover effect — animated slide-in underline that covers every line.
+/* Link hover effect: animated slide-in underline that covers every line.
    A positioned ::after bar only ever hits the last line box on wrapped
    links; a background gradient is painted per line fragment instead, so
    all lines underline with the same left-to-right animation. */
@@ -645,7 +645,7 @@ h1, h2, h3 {
   animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Blog post typography — Inter 400 voice, original sizes kept */
+/* Blog post typography: Inter 400 voice, original sizes kept */
 .blog-content {
   font-family: var(--font-body);
   font-weight: 400;
@@ -891,7 +891,7 @@ h1, h2, h3 {
   font-weight: inherit;
 }
 
-/* Blockquotes & Callout Annotations — Senior Minimalist Style */
+/* Blockquotes & Callout Annotations: Senior Minimalist Style */
 .blog-content blockquote {
   border-left: 2px solid var(--accent);
   padding: 0.85rem 1.25rem;
@@ -923,7 +923,7 @@ h1, h2, h3 {
   margin-bottom: 0.4rem;
 }
 
-/* Tables — Responsive, Spaced, Professional Layout */
+/* Tables: Responsive, Spaced, Professional Layout */
 .blog-content .table-wrapper,
 .blog-content figure.table {
   width: 100%;
@@ -1038,7 +1038,7 @@ h1, h2, h3 {
   background: rgba(128, 128, 128, 0.45);
 }
 
-/* Mobile TL;DR Card — Sleek Ambient Box with Pulse Glow */
+/* Mobile TL;DR Card: Sleek Ambient Box with Pulse Glow */
 .tldr-box {
   position: relative;
   background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(2, 132, 199, 0.02) 100%);
@@ -1174,7 +1174,7 @@ html.dark .tldr-box p {
 }
 
 /* ------------------------------------------------------------------
-   AI Editor — floating Ask AI + format toolbar (additive, scoped to
+   AI Editor: floating Ask AI + format toolbar (additive, scoped to
    .ai-* classes so no existing surface is affected).
 ------------------------------------------------------------------- */
 .ai-editor-prose {
@@ -1199,7 +1199,7 @@ html.dark .tldr-box p {
   background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
-/* Toolbar shell — pairs with the site paper/charcoal surfaces */
+/* Toolbar shell: pairs with the site paper/charcoal surfaces */
 .ai-toolbar {
   background: var(--bg);
   border-color: var(--border-color);
@@ -1270,12 +1270,12 @@ html.dark .tldr-box p {
 }
 
 /* Article wrapper: kill iOS's native callout menu so our bar is the only UI.
-   No-op on Android/desktop — Chrome/Brave always show their selection bar. */
+   No-op on Android/desktop: Chrome/Brave always show their selection bar. */
 .article-ai-wrap {
   -webkit-touch-callout: none;
 }
 
-/* Touch bottom bar — docked above the keyboard, never fights the OS menu */
+/* Touch bottom bar: docked above the keyboard, never fights the OS menu */
 .ai-touch-bar {
   position: fixed;
   left: 50%;
@@ -1359,7 +1359,7 @@ html.dark .tldr-box p {
   }
 }
 
-/* Orb — loading lattice */
+/* Orb: loading lattice */
 .orb {
   position: relative;
   display: block;

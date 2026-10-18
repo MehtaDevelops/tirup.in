@@ -1,9 +1,9 @@
 "use client"
 
 /**
- * theme-tint — red-dot easter egg.
+ * theme-tint: red-dot easter egg.
  *
- * One user-chosen color re-themes the whole site — always with the light
+ * One user-chosen color re-themes the whole site: always with the light
  * treatment, even from dark mode (picking forces light; Reset restores).
  * Every call paints the full palette as custom properties on <html>, each a
  * continuous function of the pick, so drags morph smoothly and releasing
@@ -29,7 +29,7 @@ function luminance(hex: string): number {
 type Rgba = { r: number; g: number; b: number; a: number }
 const rgba = (r: number, g: number, b: number, a = 1): Rgba => ({ r, g, b, a })
 
-/** Premultiplied sRGB lerp — matches `color-mix(in srgb, …)` exactly. */
+/** Premultiplied sRGB lerp: matches `color-mix(in srgb, …)` exactly. */
 function mixRgba(c1: Rgba, c2: Rgba, w: number): Rgba {
   const a = w * c1.a + (1 - w) * c2.a
   if (a < 1e-6) return rgba(0, 0, 0, 0)
@@ -77,12 +77,12 @@ const WHITE = rgba(255, 255, 255)
 const INKDARK = rgba(17, 17, 17)
 const SNOW = rgba(250, 250, 250)
 
-/** The everyday derivation — mirrors the pre-hydration CSS exactly. */
+/** The everyday derivation: mirrors the pre-hydration CSS exactly. */
 function normalTokens(u: Rgba, isDark: boolean, y: number): TintPalette {
   if (!isDark) {
     // Light ground: a clear wash of the pick (full strength only for
     // near-black picks). Text polarity follows the background's own
-    // luminance, so contrast is automatic in both directions — no flips,
+    // luminance, so contrast is automatic in both directions: no flips,
     // no jumps, just a continuous morph while dragging.
     //
     // Convention used below: mixRgba(LIGHT, DARK, white_) so white_=0 gives
@@ -138,7 +138,7 @@ function normalTokens(u: Rgba, isDark: boolean, y: number): TintPalette {
 }
 
 /** Near-complete light theme for very light picks (white reads white). */
-/* NOTE on weights: mixRgba(user, target, w) keeps w parts USER — so readable
+/* NOTE on weights: mixRgba(user, target, w) keeps w parts USER: so readable
    dark-on-white tokens need SMALL w (almost all target). */
 function extremeLightTokens(u: Rgba): TintPalette {
   const tx = (a: number) => {
@@ -163,7 +163,7 @@ function extremeLightTokens(u: Rgba): TintPalette {
 }
 
 /** Near-complete dark theme for very dark picks (black reads black). */
-/* Same weight rule: w is the USER fraction — light readable tokens need
+/* Same weight rule: w is the USER fraction: light readable tokens need
    SMALL w so the light target dominates. */
 function extremeDarkTokens(u: Rgba): TintPalette {
   const tx = (a: number) => {
@@ -187,7 +187,7 @@ function extremeDarkTokens(u: Rgba): TintPalette {
   }
 }
 
-/* Eight soft pastels in one row — easy on the eyes full-bleed, one per hue
+/* Eight soft pastels in one row: easy on the eyes full-bleed, one per hue
    family. Muted enough to live with, saturated enough to feel tinted. */
 export const TINT_PRESETS = [
   "#fca5a5",
@@ -225,7 +225,7 @@ export function getStoredTint(): string | null {
 
 /**
  * Live paint, safe to call on every drag tick. Derives the full palette from
- * the pick and writes it as custom properties — every token is a continuous
+ * the pick and writes it as custom properties: every token is a continuous
  * function of the color, so there is no line to cross, no mode flip, and
  * releasing the pointer changes nothing visible. Extremes (white/black)
  * resolve to complete readable themes via a smooth extremeness blend.
@@ -238,13 +238,13 @@ export function applyTint(hex: string | null) {
   const next = hex ? normalizeHex(hex) : null
   if (!next) return clearTint()
   // First tint of the session: remember the mode, then switch to the single
-  // light treatment — tinted theming has no dark variant by design.
+  // light treatment: tinted theming has no dark variant by design.
   try {
     if (!localStorage.getItem(PREV_MODE_KEY)) {
       localStorage.setItem(PREV_MODE_KEY, root.classList.contains("dark") ? "dark" : "light")
     }
   } catch {
-    /* storage unavailable — Reset will leave the mode as-is */
+    /* storage unavailable: Reset will leave the mode as-is */
   }
   root.classList.remove("dark")
   const [r, g, b] = hexToRgb(next)
@@ -264,7 +264,7 @@ export function applyTint(hex: string | null) {
   try {
     localStorage.setItem(TINT_STORAGE_KEY, next)
   } catch {
-    /* storage unavailable — theming still works for this session */
+    /* storage unavailable: theming still works for this session */
   }
   return next
 }
@@ -277,7 +277,7 @@ export function clearTint() {
   try {
     localStorage.removeItem(TINT_STORAGE_KEY)
   } catch {
-    /* storage unavailable — theming still works for this session */
+    /* storage unavailable: theming still works for this session */
   }
   try {
     const prev = localStorage.getItem(PREV_MODE_KEY)
@@ -286,7 +286,7 @@ export function clearTint() {
     else if (prev === "light") root.classList.remove("dark")
     if (prev === "dark" || prev === "light") localStorage.setItem("theme", prev)
   } catch {
-    /* storage unavailable — mode simply stays as-is */
+    /* storage unavailable: mode simply stays as-is */
   }
   return null
 }

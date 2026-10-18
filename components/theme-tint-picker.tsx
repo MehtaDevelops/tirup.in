@@ -17,7 +17,7 @@ interface ThemeTintPickerProps {
 }
 
 /**
- * ThemeTintPicker — preset theme colors for the red-dot easter egg. No
+ * ThemeTintPicker: preset theme colors for the red-dot easter egg. No
  * custom picking, just options: a row of curated swatches, a Light/Dark
  * mode switch, Reset and Done. Tab cycles inside the panel while open.
  */
@@ -30,7 +30,7 @@ export default function ThemeTintPicker({
 }: ThemeTintPickerProps) {
   const [isDark, setIsDark] = useState(false)
 
-  // Light / dark mode lives here too, next to the tints — same mechanism as
+  // Light / dark mode lives here too, next to the tints: same mechanism as
   // the header toggle (html.dark class + localStorage), so the two never fight.
   useEffect(() => {
     const sync = () => setIsDark(document.documentElement.classList.contains("dark"))
@@ -47,7 +47,7 @@ export default function ThemeTintPicker({
     try {
       localStorage.setItem("theme", darkMode ? "dark" : "light")
     } catch {
-      /* storage unavailable — theme still applies for this session */
+      /* storage unavailable: theme still applies for this session */
     }
   }
 
@@ -129,7 +129,7 @@ export default function ThemeTintPicker({
         })}
       </div>
 
-      {/* Appearance — light/dark mode. Removed while a theme color is set
+      {/* Appearance: light/dark mode. Removed while a theme color is set
           (the look is frozen then); a hint explains where it went. */}
       {tintActive ? (
         <p className="mt-2.5 border-t border-black/5 pt-2.5 text-[11px] font-light text-black/40 dark:border-white/10 dark:text-white/40">

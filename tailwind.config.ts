@@ -105,14 +105,14 @@ const config: Config = {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
-        // Slow dissolve for route changes — opacity only, so the resting
+        // Slow dissolve for route changes: opacity only, so the resting
         // geometry stays put through the whole fade. Calm, senior-dev.
         "expression-slow": {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
         // Kept (unused) so old class names never break; opacity-only like
-        // expression-in — never scale, or the pfp pops small→big on swaps.
+        // expression-in: never scale, or the pfp pops small→big on swaps.
         "expression-in-nudged": {
           from: { opacity: "0" },
           to: { opacity: "1" },

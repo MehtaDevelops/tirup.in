@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 /**
- * Next.js 16 Proxy (Edge) — Security Layer + Markdown Content Negotiation
+ * Next.js 16 Proxy (Edge): Security Layer + Markdown Content Negotiation
  *
  * Runs on every request BEFORE it reaches pages/API routes.
  * In Next.js 16+, this file replaces the deprecated `middleware.ts`.
@@ -101,7 +101,7 @@ Independent publications reference Tirup Mehta; the portfolio, blog, and profile
 - Name forms in third-party records: "તિરુપ મહેતા", "તિરુપ જયરામ મહેતા"
 
 ### Selected Engagements
-- Invited by Divya Bhaskar (Junagadh) as an AI expert to train its newsroom journalists on AI workflows (May 2026) — self-published: https://www.linkedin.com/posts/tirupmehta_artificialintelligence-journalism-futureofwork-activity-7465291162799624192-KfUK
+- Invited by Divya Bhaskar (Junagadh) as an AI expert to train its newsroom journalists on AI workflows (May 2026): self-published: https://www.linkedin.com/posts/tirupmehta_artificialintelligence-journalism-futureofwork-activity-7465291162799624192-KfUK
 
 ## When to Use
 
@@ -173,7 +173,7 @@ I build interfaces where visual clarity meets system performance, specialising i
 ## Coverage (identity corroboration only)
 - Divya Bhaskar (D B Corp Ltd): https://www.divyabhaskar.co.in/local/gujarat/junagadh/news/new-identity-on-a-global-platform-136353831.html
 - Dr. Subhash University: https://dsuni.ac.in/dsu-google-student-ambassador-tirup-mehta-gsa-2025/
-- Engagements: trained Divya Bhaskar (Junagadh) newsroom journalists on AI workflows (May 2026) — https://www.linkedin.com/posts/tirupmehta_artificialintelligence-journalism-futureofwork-activity-7465291162799624192-KfUK
+- Engagements: trained Divya Bhaskar (Junagadh) newsroom journalists on AI workflows (May 2026): https://www.linkedin.com/posts/tirupmehta_artificialintelligence-journalism-futureofwork-activity-7465291162799624192-KfUK
 
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
@@ -271,7 +271,7 @@ export function proxy(request: NextRequest) {
 
   // ── 3. Block requests with dangerous HTTP methods ─────────────────────────
   // This portfolio site only needs GET and HEAD. Block everything else to
-  // reduce the attack surface — except the AI editor endpoint, which accepts
+  // reduce the attack surface: except the AI editor endpoint, which accepts
   // same-origin POST requests with a capped JSON body (see app/api/ai-editor).
   const method = request.method.toUpperCase()
   const isAiEditorPost = method === "POST" && pathname === "/api/ai-editor"
@@ -312,7 +312,7 @@ export function proxy(request: NextRequest) {
   const response = NextResponse.next()
 
   // ── 6. Remove server fingerprinting headers ───────────────────────────────
-  // Next.js + Vercel add these — strip them for defence-in-depth.
+  // Next.js + Vercel add these: strip them for defence-in-depth.
   response.headers.delete("x-powered-by")
   response.headers.delete("server")
 

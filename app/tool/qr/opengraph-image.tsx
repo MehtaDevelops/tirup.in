@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { OgShell, OG_SIZE, loadOgFonts } from "@/lib/og";
 
 export const runtime = "nodejs";
-export const alt = "QR Studio — Tirup Mehta";
+export const alt = "QR Studio · Tirup Mehta";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 
@@ -14,7 +14,7 @@ export default async function Image() {
         kicker="QR Studio"
         section="Tools"
         title="Beautiful QR codes"
-        excerpt="Private by design — everything runs in your browser, nothing uploads."
+        excerpt="Private by design: everything runs in your browser, nothing uploads."
         meta={["Free", "No sign-up"]}
       />
     ),

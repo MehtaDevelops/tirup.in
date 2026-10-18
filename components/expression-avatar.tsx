@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 // ---------------------------------------------------------------------------
-// ExpressionAvatar — pixel avatar that reacts to visitor behaviour.
+// ExpressionAvatar: pixel avatar that reacts to visitor behaviour.
 //
 // Design goals: professional, well-behaved, eye-pleasing.
 //  - One steady "base" expression per route (context-aware, never random),
@@ -63,7 +63,7 @@ const SRC: Record<Expr, string> = {
 // competes with them. Anything else loads on demand via Next's optimizer.
 const WARM: Expr[] = ["adjusting", "smile", "waving", "laugh", "lookup", "drinking"]
 
-// Faces 06+ have a slightly cut bottom edge in the source art — shifting
+// Faces 06+ have a slightly cut bottom edge in the source art: shifting
 // them down a few pixels tucks the cut behind the circle's bottom edge.
 // 01–05 (neutral, smile, laugh, polished, cool) sit flush already.
 const NUDGE_DOWN: ReadonlySet<Expr> = new Set([
@@ -86,7 +86,7 @@ const isMorningHour = (h: number) => h >= 5 && h < 11
 function baseForPath(pathname: string | null, hour: number | null): Expr {
   const p = pathname ?? "/"
   // Late-night override: the home face gets sleepy. Everywhere else the
-  // section context wins — work stays working, even at 2am.
+  // section context wins: work stays working, even at 2am.
   if (hour !== null && isNightHour(hour) && p === "/") return "sleepy"
   if (p.startsWith("/work") || p.startsWith("/projects")) return "working"
   if (p.startsWith("/writing")) return "thinking"
@@ -118,7 +118,7 @@ export default function ExpressionAvatar({
 }: {
   /** Circle diameter in px. Header uses 56; breadcrumbs use 20. */
   size?: number
-  /** Only the header instance is interactive — minis are quiet faces that
+  /** Only the header instance is interactive: minis are quiet faces that
       still follow the route, so document listeners never double-register. */
   interactive?: boolean
   /** Fixed expression (e.g. "laugh" on article pages). Overrides the
@@ -180,7 +180,7 @@ export default function ExpressionAvatar({
   // ── Greeting + clock + idle warm ─────────────────────────────────────
   // Nothing extra is fetched during initial load: the base face renders
   // through Next's optimizer first. The wave waits 900ms so LCP settles
-  // and only one image is ever in flight at startup — and it is skipped
+  // and only one image is ever in flight at startup: and it is skipped
   // entirely if the visitor already interacted. Likely faces warm up only
   // when the browser reports idle (or 5s fallback).
   // Minis skip all of this; the interactive instance owns it.
@@ -275,7 +275,7 @@ export default function ExpressionAvatar({
     const wake = () => {
       armIdle()
       if (sticky.current && expr === "sleepy") {
-        // Visitor is back — a quick surprised blink, then base.
+        // Visitor is back: a quick surprised blink, then base.
         show("surprised", 1000)
       }
     }
@@ -325,7 +325,7 @@ export default function ExpressionAvatar({
     }
     if (ambient) scheduleBlink()
 
-    // Same-app link clicks hand off to the route dissolve — reacting here
+    // Same-app link clicks hand off to the route dissolve: reacting here
     // too would flash a face for a microsecond before navigation swaps it.
     const willNavigate = (t: HTMLElement | null) => {
       const anchor = t?.closest?.("a") as HTMLAnchorElement | null
@@ -436,7 +436,7 @@ export default function ExpressionAvatar({
 
   // All faces share identical geometry: same box, same scale, no per-face
   // zoom. Nudged faces (06+ cut bottom edge) only shift the crop window via
-  // object-position — never transform scale — so swaps can't pop small→big.
+  // object-position: never transform scale: so swaps can't pop small→big.
   // Geometry is static per face from first paint. 01–05 render exactly
   // as-is. Only 06+ faces render a touch larger (1.05) and sit 2px lower
   // to tuck the cut bottom. It lives on this wrapper (never the img: the
@@ -454,7 +454,7 @@ export default function ExpressionAvatar({
       onKeyDown={interactive ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onAvatarClick() } } : undefined}
       role={interactive ? "button" : undefined}
       tabIndex={interactive ? 0 : undefined}
-      aria-label={interactive ? "Tirup Mehta avatar — activate to say hi" : undefined}
+      aria-label={interactive ? "Tirup Mehta avatar: activate to say hi" : undefined}
       title={interactive ? "Say hi" : undefined}
       className={`relative shrink-0 flex-none select-none${interactive ? " cursor-pointer" : ""}`}
     >
@@ -464,7 +464,7 @@ export default function ExpressionAvatar({
       >
         <div className={nudged ? "h-full w-full scale-[1.05] translate-y-[2px]" : "h-full w-full"}>
         {/* No key on purpose: the same <img> element swaps src, so the old
-            face stays painted until the new one decodes — never a blank gap.
+            face stays painted until the new one decodes: never a blank gap.
             (key={expr} unmounted first = the disappear-reappear glitch.) */}
         <Image
           ref={imgRef}

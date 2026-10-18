@@ -4,7 +4,7 @@ import path from "path";
 
 /* Shared OG building blocks for tirup.in: flat paper-white editorial cards.
    Matches the site's light theme exactly (paper #fdfdfc, ink #111111).
-   No gradients, no glows, no glass — print-minimal. */
+   No gradients, no glows, no glass: print-minimal. */
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
@@ -18,7 +18,7 @@ type OgFont = {
 let cachedFonts: OgFont[] | null = null;
 
 /* Satori cannot parse woff2 (brotli). Plain css2 fetch from Node sends a
-   non-browser UA, so Google answers with truetype URLs — exactly what we need. */
+   non-browser UA, so Google answers with truetype URLs: exactly what we need. */
 async function googleFontTTF(family: string, weight: number, italic: boolean): Promise<ArrayBuffer> {
   const axis = italic ? `ital,wght@1,${weight}` : `wght@${weight}`;
   const res = await fetch(
@@ -122,7 +122,7 @@ export function OgShell({
           padding: "34px 42px",
         }}
       >
-        {/* Middle: headline + hero avatar (top row removed — breathing room up top) */}
+        {/* Middle: headline + hero avatar (top row removed: breathing room up top) */}
         <div style={{ display: "flex", alignItems: "center", width: "100%", margin: "6px 0 16px 0", flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", flex: "1 1 0", minWidth: 0, paddingRight: "36px", paddingTop: "8px" }}>
             <div

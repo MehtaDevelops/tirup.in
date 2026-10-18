@@ -711,7 +711,7 @@ export default function QrStudioPage() {
     } catch (e) {}
   }
 
-  // Download High-Res PNG — re-render at the requested resolution (preview is 1024)
+  // Download High-Res PNG: re-render at the requested resolution (preview is 1024)
   const downloadPng = (resolution: 1024 | 2048 | 4096 = 2048) => {
     const src = previewDataUrl
     if (!src) return

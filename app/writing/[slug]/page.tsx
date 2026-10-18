@@ -282,7 +282,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </TextWithBlur>
 
-        {/* TL;DR inline on mobile only — hidden on desktop */}
+        {/* TL;DR inline on mobile only: hidden on desktop */}
         {safeTldrHtml && !safeContentHtml.includes("tldr-box") && (
           <TextWithBlur delay={90}>
             <div className="tldr-box max-w-3xl mb-8 block md:hidden">
@@ -303,7 +303,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </TextWithBlur>
         )}
 
-        {/* Article Content — sanitized and enhanced with copy buttons + AI selection toolbar */}
+        {/* Article Content: sanitized and enhanced with copy buttons + AI selection toolbar */}
         <TextWithBlur delay={120}>
           <ArticleAiToolbar articleTitle={safeTitle}>
             <BlogContentRenderer html={processBlogHtml(safeContentHtml)} />
@@ -316,7 +316,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </footer>
       </div>
 
-      {/* TL;DR Animated Summary Popup — rendered as direct child of main to align on viewport edge on desktop */}
+      {/* TL;DR Animated Summary Popup: rendered as direct child of main to align on viewport edge on desktop */}
       <TldrPopup safeTldrHtml={safeTldrHtml} />
     </main>
   )

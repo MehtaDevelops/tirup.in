@@ -40,7 +40,7 @@ const contentSecurityPolicy = [
 
 const nextConfig = {
   // ─── Build Quality ────────────────────────────────────────────────────────
-  // In Next.js 16, ESLint is run via `next lint` CLI — the `eslint` config key
+  // In Next.js 16, ESLint is run via `next lint` CLI: the `eslint` config key
   // is no longer supported. TypeScript checking is still enforced (ignoreBuildErrors
   // defaults to false). Any TS errors will fail the build.
   typescript: {
@@ -60,7 +60,7 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    // Allowed output formats — limit to modern, safe formats only
+    // Allowed output formats: limit to modern, safe formats only
     formats: ["image/avif", "image/webp"],
     // Allowed quality levels: default 75 everywhere, 90 for the small
     // pixel avatar where compression artefacts are visible.
@@ -118,7 +118,7 @@ const nextConfig = {
           // analytics; connect-src allows Convex API + analytics beacons +
           // GitHub contributions API; img-src allows data:/blob: for QR tool,
           // shader noise SVG, and PDF blob previews.
-          // (`unsafe-eval` is auto-included in dev only — see top of file.)
+          // (`unsafe-eval` is auto-included in dev only: see top of file.)
           {
             key: "Content-Security-Policy",
             value: contentSecurityPolicy,
@@ -193,7 +193,7 @@ const nextConfig = {
   // Vercel handles this at the edge, but belt-and-suspenders for self-hosted.
   async redirects() {
     return [
-      // /blogs renamed to /writing — keep old indexed/shared links working
+      // /blogs renamed to /writing: keep old indexed/shared links working
       {
         source: "/blogs",
         destination: "/writing",

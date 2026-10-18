@@ -62,7 +62,7 @@ export default function ContactPage() {
           </div>
         </TextWithBlur>
 
-        {/* Channels — same row pattern as /work */}
+        {/* Channels: same row pattern as /work */}
         <TextWithBlur delay={100}>
           <div className="flex flex-col">
             {channels.map((ch, index) => (

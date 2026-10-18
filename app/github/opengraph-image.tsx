@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { OgShell, OG_SIZE, loadOgFonts } from "@/lib/og";
 
 export const runtime = "nodejs";
-export const alt = "GitHub activity — Tirup Mehta";
+export const alt = "GitHub activity · Tirup Mehta";
 export const size = OG_SIZE;
 export const contentType = "image/png";
 
@@ -14,7 +14,7 @@ export default async function Image() {
         kicker="GitHub"
         section="GitHub"
         title="Activity & contributions"
-        excerpt="Commits, streaks, and the 3D contribution wall — live from GitHub."
+        excerpt="Commits, streaks, and the 3D contribution wall: live from GitHub."
         meta={["Updated hourly"]}
       />
     ),

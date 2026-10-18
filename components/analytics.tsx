@@ -19,7 +19,7 @@ export default function GoogleAnalytics() {
         })(window,document,'script','dataLayer','${gtmId}');`}
       </Script>
 
-      {/* Google Analytics (gtag.js) — skipped when DNT=1 or consent denied */}
+      {/* Google Analytics (gtag.js): skipped when DNT=1 or consent denied */}
       <Script
         async
         src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}

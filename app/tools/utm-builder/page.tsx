@@ -289,7 +289,7 @@ export default function UtmBuilderPage() {
     if (autoLowercase) {
       formatted = formatted.toLowerCase()
     }
-    // Use "+" as the space placeholder — URLSearchParams encodes it correctly.
+    // Use "+" as the space placeholder: URLSearchParams encodes it correctly.
     // The "%20" display option is applied after serialization (see singleFinalUrl).
     formatted = formatted.replace(/\s+/g, spaceSeparator === "%20" ? "+" : spaceSeparator)
     return formatted
@@ -727,7 +727,7 @@ export default function UtmBuilderPage() {
       searchP.forEach((val, key) => {
         const lowerKey = key.toLowerCase()
         if (!TRACKING_JUNK_PARAMS.includes(lowerKey)) {
-          // Normalize keys only — values stay case-sensitive (tokens, base64)
+          // Normalize keys only: values stay case-sensitive (tokens, base64)
           cleanParams.set(lowerKey, val.trim())
         }
       })

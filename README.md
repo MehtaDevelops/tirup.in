@@ -13,7 +13,7 @@ A modern, responsive portfolio website built with cutting-edge web technologies.
 
 > NOTE: Radix / react-hook-form / zod / recharts / sonner / date-fns / embla /
 > vaul / cmdk / next-themes remain in `package.json` as unused deps (cleanup
-> pending — see `npm ls`). Do not import them in new code.
+> pending: see `npm ls`). Do not import them in new code.
 
 ## 📁 Project Structure
 

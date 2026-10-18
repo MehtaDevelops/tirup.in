@@ -17,7 +17,7 @@ function isValidSlug(slug: string): boolean {
   return SAFE_SLUG_RE.test(slug)
 }
 
-/** Validate that a URL uses https only (http allowed for localhost) — blocks javascript: and data: */
+/** Validate that a URL uses https only (http allowed for localhost): blocks javascript: and data: */
 function isSafeUrl(url: string | undefined): boolean {
   if (!url) return false
   try {
@@ -87,7 +87,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function ProjectPage({ params }: PageProps) {
   const { slug } = await params
 
-  // Validate slug strictly — prevents path traversal and injection via URL params
+  // Validate slug strictly: prevents path traversal and injection via URL params
   if (!isValidSlug(slug)) {
     notFound()
   }

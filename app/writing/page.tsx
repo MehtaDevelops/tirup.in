@@ -77,7 +77,7 @@ export default async function BlogsPage() {
     <main className="relative min-h-screen">
       <Header />
 
-      {/* Blogs list Section — latest 10 titles only. Full essays live on blogs.tirup.in */}
+      {/* Blogs list Section: latest 10 titles only. Full essays live on blogs.tirup.in */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         <h1 className="sr-only">Writing</h1>
         {error ? (
@@ -121,7 +121,7 @@ export default async function BlogsPage() {
             {/* End border */}
             <div className="border-t border-black/10 dark:border-white/10" />
 
-            {/* Read all blogs — sends readers to the main blogs site */}
+            {/* Read all blogs: sends readers to the main blogs site */}
             <TextWithBlur delay={120}>
               <div className="pt-8 pb-2 flex justify-start">
                 <a

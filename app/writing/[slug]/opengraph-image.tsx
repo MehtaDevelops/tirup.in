@@ -63,7 +63,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       });
       if (res.ok) {
         const post = await res.json();
-        // Published only — drafts never get share cards.
+        // Published only: drafts never get share cards.
         if (post && !post.error && post.title && (post.status === "published" || post.status === undefined)) {
           title = String(post.title).slice(0, 140);
           excerpt = plainTldr(post.tldr ?? "");

@@ -16,7 +16,7 @@ export default async function Image() {
         kicker="Selected Work"
         section="Work"
         title="Things I've built"
-        excerpt="Projects, developer tools, and security libraries — shipped, not slideware."
+        excerpt="Projects, developer tools, and security libraries: shipped, not slideware."
         meta={[`${count} projects`]}
       />
     ),

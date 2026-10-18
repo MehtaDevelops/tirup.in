@@ -10,7 +10,7 @@ import { X, ArrowUpRight } from "lucide-react"
 import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 
 // ---------------------------------------------------------------------------
-// Nav items — single source of truth
+// Nav items: single source of truth
 // ---------------------------------------------------------------------------
 const NAV_ITEMS = [
   { label: "Home",    href: "/" },
@@ -20,15 +20,15 @@ const NAV_ITEMS = [
 ] as const
 
 // ---------------------------------------------------------------------------
-// NavLinks — sliding background pill follows cursor & active route.
+// NavLinks: sliding background pill follows cursor & active route.
 //
 // Key correctness details:
-//  1. The pill has NO transition on first render — it snaps to the active
+//  1. The pill has NO transition on first render: it snaps to the active
 //     link position silently. The transition class is added after the initial
 //     paint via the `ready` ref so the pill never slides in from x=0.
-//  2. Only `transform` and `width` are transitioned — both are GPU-composited
+//  2. Only `transform` and `width` are transitioned: both are GPU-composited
 //     so the animation never triggers a layout or paint step.
-//  3. Text color changes in 80ms — fast enough to feel instant, slow enough
+//  3. Text color changes in 80ms: fast enough to feel instant, slow enough
 //     to not look like a hard toggle.
 // ---------------------------------------------------------------------------
 function NavLinks({ pathname }: { pathname: string }) {
@@ -45,7 +45,7 @@ function NavLinks({ pathname }: { pathname: string }) {
 
   const activeHref: string | undefined = NAV_ITEMS.find((n) => isLinkActive(n.href))?.href
   // Pill needs a concrete anchor; fall back to "/" for positioning only
-  // (no active styling when undefined — see isActive below).
+  // (no active styling when undefined: see isActive below).
   const targetHref = hoverHref ?? activeHref ?? "/"
 
   function positionPill(href: string, animate: boolean) {
@@ -113,7 +113,7 @@ function NavLinks({ pathname }: { pathname: string }) {
 
   return (
     <nav ref={navRef} className="relative flex items-center gap-4 sm:gap-6">
-      {/* Sliding background pill — purely presentational, GPU-composited */}
+      {/* Sliding background pill: purely presentational, GPU-composited */}
       <div
         ref={pillRef}
         aria-hidden="true"
@@ -132,7 +132,7 @@ function NavLinks({ pathname }: { pathname: string }) {
           className={[
             "relative z-10 py-1 px-2 rounded-md",
             "text-sm sm:text-base md:text-lg font-light select-none cursor-pointer",
-            // Press scale only on transform — no `transition-all` bloat
+            // Press scale only on transform: no `transition-all` bloat
             "[transition:color_80ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
             "active:scale-[0.97]",
             isLinkActive(href)

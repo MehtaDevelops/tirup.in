@@ -136,7 +136,7 @@ export function renderMarkdownSafe(text: string): string {
     // Italics: *text* only (avoid snake_case corruption); require non-space boundaries
     html = html.replace(/(^|\W)\*([^*\n]+?)\*(?=\W|$)/g, "$1<em>$2</em>");
 
-    // Links: [label](url) — strict validation
+    // Links: [label](url): strict validation
     html = html.replace(/\[(.*?)\]\((.*?)\)/g, (_match, label, rawUrl) => {
       const trimmed = String(rawUrl).trim();
       const safeUrl = SAFE_URL_SCHEMES.test(trimmed) ? trimmed : "#";

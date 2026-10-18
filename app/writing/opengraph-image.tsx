@@ -14,7 +14,7 @@ export default async function Image() {
         kicker="Writing"
         section="Writing"
         title="Essays & notes"
-        excerpt="On interfaces, security, and systems — mirrored from blogs.tirup.in."
+        excerpt="On interfaces, security, and systems: mirrored from blogs.tirup.in."
         meta={["Newest first"]}
       />
     ),
