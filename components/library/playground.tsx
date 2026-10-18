@@ -16,7 +16,7 @@ export type PlaygroundConfig = {
 
 export const DEFAULTS: PlaygroundConfig = {
   speed: 1,
-  cellSize: 12,
+  cellSize: 10,
   gravity: -25,
   fillHeight: 0.5,
   cursorRadius: 0.25,

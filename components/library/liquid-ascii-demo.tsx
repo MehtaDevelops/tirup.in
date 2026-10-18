@@ -45,7 +45,7 @@ const styleFor = (alpha: number, dark: boolean) => {
 
 export function LiquidAsciiDemo({
   speed = 1,
-  cellSize = 12,
+  cellSize = 10,
   gravity = -25,
   fillHeight = 0.5,
   cursorRadius = 0.25,
@@ -84,6 +84,10 @@ export function LiquidAsciiDemo({
     let fluid = new Uint8Array(0)
     let rspd = new Float32Array(0)
     let surfRow = new Float32Array(0)
+    // Display-only state: temporally smoothed density (anti-flicker) and the
+    // raw surface target per column. Physics never reads these.
+    let dcnt = new Float32Array(0)
+    let surfT = new Float32Array(0)
     const PMAX = 20000
     const px = new Float32Array(PMAX)
     const py = new Float32Array(PMAX)
@@ -206,39 +210,58 @@ export function LiquidAsciiDemo({
       ctx.textBaseline = "middle"
       ctx.font = `${Math.round(h * 0.95)}px ${resolveMonoFamily()}`
       const n = GLYPHS.length
+      // Temporal anti-alias: blend the displayed density toward the physical
+      // one. Display-only — bin() keeps exact counts for physics, solver and
+      // touch detection; this only decouples ink from single-frame spikes.
+      // While the loop is paused (settled theme switch, resize re-draw) there
+      // is no next frame to converge on, so snap instead of blend.
+      if (running) {
+        for (let i = 0; i < dcnt.length; i++) dcnt[i] += (cnt[i] - dcnt[i]) * 0.34
+      } else {
+        dcnt.set(cnt)
+      }
+      // Smoothed waterline: raw per-column surface into surfT, then an
+      // asymmetric EMA into the rendered line — rising water snaps, receding
+      // water settles calm, so waves read as surface motion instead of
+      // per-frame row flicker below the surface glyph band.
       for (let x = 0; x < nx; x++) {
         let s = ny
         for (let y = 0; y < ny; y++) {
-          let sup = cnt[y * nx + x]
-          if (x > 0) sup += cnt[y * nx + x - 1]
-          if (x < nx - 1) sup += cnt[y * nx + x + 1]
-          if (sup >= 3) {
+          let sup = dcnt[y * nx + x]
+          if (x > 0) sup += dcnt[y * nx + x - 1]
+          if (x < nx - 1) sup += dcnt[y * nx + x + 1]
+          if (sup >= 2.4) {
             s = y
             break
           }
         }
-        surfRow[x] = s
+        surfT[x] = s
+        const prev = surfRow[x]
+        surfRow[x] = running
+          ? prev + (s - prev) * (s < prev ? 0.55 : 0.14)
+          : s
       }
       for (let y = 0; y < ny; y++) {
         for (let x = 0; x < nx; x++) {
           const i = y * nx + x
-          const c = cnt[i]
+          const c = dcnt[i]
           const depth = y - surfRow[x]
           let idx: number
           let alpha: number
           if (depth < -0.5) {
-            // air: only fast spray renders
+            // air: only fast spray renders — a high bar keeps the air clean
+            // instead of a faint static band, so clouds read as real spit
             if (c < 1) continue
             const asp = rspd[i] / c
-            if (asp < 140) continue
+            if (asp < 190) continue
             idx = Math.max(
               1,
               Math.min(n - 2, Math.floor(n * 0.55 + Math.min(1, asp / 1200) * n * 0.4))
             )
-            alpha = Math.min(0.7, 0.3 + asp * 0.0006)
+            alpha = Math.min(0.62, 0.24 + asp * 0.00042)
           } else if (depth < 0.9) {
-            idx = n - 1 - Math.floor(hash1(x + 1) * 2)
-            alpha = 0.85
+            idx = n - 1 - Math.floor(hash1(x + 1) * 3)
+            alpha = 0.9
           } else {
             if (c < 0.5) continue
             const fade = Math.max(0, 1 - depth / depthDenom)
@@ -246,7 +269,7 @@ export function LiquidAsciiDemo({
             const w = hh * fade + Math.min(1.2, (rspd[i] / Math.max(1, c)) * 0.0007 + c * 0.06)
             if (w < 0.15) continue
             idx = Math.max(1, Math.min(n - 2, Math.floor(w * n)))
-            alpha = Math.min(0.85, 0.25 + w * 0.45)
+            alpha = Math.min(0.92, 0.3 + w * 0.48)
           }
           ctx.fillStyle = styleFor(alpha, dark)
           ctx.fillText(GLYPHS[idx], x * cw + cw / 2, y * chh + chh / 2)
@@ -584,7 +607,11 @@ export function LiquidAsciiDemo({
       cnt = new Uint16Array(n)
       fluid = new Uint8Array(n)
       rspd = new Float32Array(n)
+      dcnt = new Float32Array(n)
       surfRow = new Float32Array(nx)
+      surfT = new Float32Array(nx)
+      surfRow.fill(ny)
+      surfT.fill(ny)
     }
 
     const resize = () => {
@@ -622,6 +649,16 @@ export function LiquidAsciiDemo({
     const ro = new ResizeObserver(queueResize)
     ro.observe(canvas)
     resize()
+
+    // Kick the self-hosted mono font into loading before the first settled
+    // draw, so sleeping/reduced-motion canvases never render in a fallback
+    // face and then swap glyphs later.
+    if (typeof document !== "undefined" && document.fonts) {
+      void document.fonts
+        .load(`16px ${resolveMonoFamily()}`)
+        .then(() => draw())
+        .catch(() => {})
+    }
 
     const io = new IntersectionObserver(([e]) => {
       const was = inView

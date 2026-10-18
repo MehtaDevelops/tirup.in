@@ -157,17 +157,19 @@ export default function DocsPage() {
           </div>
         </TextWithBlur>
 
-        {/* Numbered sections — same corridor system as everywhere else */}
+        {/* Numbered sections — same corridor system as everywhere else.
+            Code takes the full-width row: the corridor's content column is
+            sized for prose, and commands only read right at article width. */}
         <div className="flex flex-col">
           <TextWithBlur>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
-              <div className="col-span-1 flex items-baseline gap-2">
+            <div className="border-t border-black/10 dark:border-white/10 py-10 md:py-12">
+              <div className="flex items-baseline gap-2">
                 <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">
                   {String(++blockIndex).padStart(2, "0")}
                 </span>
                 <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">Install</h2>
               </div>
-              <div className="col-span-1 md:col-span-2">
+              <div className="mt-6 min-w-0">
                 <CodeDemo
                   blocks={[
                     { lang: "bash", code: installCommand("<name>") },

@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { ArrowUpRight, Check, Copy, Maximize2, X } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
@@ -13,7 +14,7 @@ import { SITE, installCommand } from "@/lib/components-site"
 
 const PROPS = [
   { name: "speed", type: "number", defaultValue: "1", description: "Simulation timestep multiplier (0.1–3)." },
-  { name: "cellSize", type: "number", defaultValue: "12", description: "Character cell size in pixels (6–30). Drives sim + render together." },
+  { name: "cellSize", type: "number", defaultValue: "10", description: "Character cell size in pixels (6–30). Drives sim + render together." },
   { name: "gravity", type: "number", defaultValue: "-25", description: "Gravity strength, negative = downward (−50–0)." },
   { name: "fillHeight", type: "number", defaultValue: "0.5", description: "Fill fraction of the tank (0–1)." },
   { name: "cursorRadius", type: "number", defaultValue: "0.25", description: "Mouse influence as a fraction of the short side (0–0.5)." },
@@ -80,28 +81,44 @@ function aiSummary(c: PlaygroundConfig) {
   return `# Liquid Ascii (${SITE.name})\n\nFluid simulation rendered as ASCII characters. Self-owned single-file React component I built from scratch, zero dependencies. Inspired by React Bits' Liquid ASCII (https://pro.reactbits.dev/docs/components/liquid-ascii).\n\n## Install\n\n\`\`\`bash\n${installCommand("liquid-ascii")}\n\`\`\`\n\n## Usage\n\n\`\`\`tsx\n${usageSnippet(c)}\n\`\`\`\n\n## Props\n\n${PROPS.map((p) => `- \`${p.name}\` (${p.type}, default \`${p.defaultValue}\`): ${p.description}`).join("\n")}\n\n## Notes\n\n- Touch-only cursor: moving through air does nothing; force applies on fluid contact.\n- Theme-aware (reads the \`dark\` class), respects prefers-reduced-motion, sleeps when settled.\n- Desktop-first; gate mounting behind a pointer/media check on mobile.\n`
 }
 
-/* Detail block — identical anatomy to the project detail page sections:
-   numbered corridor: index + uppercase title in the left column, content in
-   the two right columns, a full-width top border, generous py spacing. */
+/* Detail block — the numbered corridor from the project detail pages.
+   Prose flows through the standard 3-column split; wide content (code
+   blocks, tables) needs the full width of the article box, so `wide` puts
+   the index + title label on its own row with the content below, same
+   borders and rhythm. */
 function DetailBlock({
   index,
   title,
   children,
   delay = 0,
+  wide = false,
 }: {
   index: string
   title: string
   children: React.ReactNode
   delay?: number
+  wide?: boolean
 }) {
+  const label = (
+    <div className="flex items-baseline gap-2">
+      <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">{index}</span>
+      <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">{title}</h2>
+    </div>
+  )
   return (
     <TextWithBlur delay={delay}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 border-t border-black/10 dark:border-white/10 py-10 md:py-12">
-        <div className="col-span-1 flex items-baseline gap-2">
-          <span className="font-mono tabular-nums text-xs text-black/45 dark:text-white/45 select-none">{index}</span>
-          <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">{title}</h2>
-        </div>
-        <div className="col-span-1 md:col-span-2">{children}</div>
+      <div className="border-t border-black/10 dark:border-white/10 py-10 md:py-12">
+        {wide ? (
+          <>
+            {label}
+            <div className="mt-6 min-w-0">{children}</div>
+          </>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div className="col-span-1 flex items-baseline gap-2 min-w-0">{label}</div>
+            <div className="col-span-1 md:col-span-2 min-w-0">{children}</div>
+          </div>
+        )}
       </div>
     </TextWithBlur>
   )
@@ -115,18 +132,38 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
   let blockIndex = 0
   const next = () => String(++blockIndex).padStart(2, "0")
 
+  const closeFull = () => {
+    setFull(false)
+    try {
+      const doc = document as Document & { webkitFullscreenElement?: Element }
+      if (document.fullscreenElement ?? doc.webkitFullscreenElement) {
+        void document.exitFullscreen().catch(() => {})
+      }
+    } catch {
+      /* overlay alone still fills the viewport */
+    }
+  }
+
   useEffect(() => {
     if (!full) return
     const prev = document.body.style.overflow
     document.body.style.overflow = "hidden"
     closeRef.current?.focus()
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setFull(false)
+      if (e.key === "Escape") closeFull()
+    }
+    // Native fullscreen: the browser consumes Esc and fires this event
+    // instead, so leaving fullscreen must dismiss the overlay too.
+    const onFsChange = () => {
+      const doc = document as Document & { webkitFullscreenElement?: Element }
+      if (!(document.fullscreenElement ?? doc.webkitFullscreenElement)) setFull(false)
     }
     window.addEventListener("keydown", onKey)
+    document.addEventListener("fullscreenchange", onFsChange)
     return () => {
       document.body.style.overflow = prev
       window.removeEventListener("keydown", onKey)
+      document.removeEventListener("fullscreenchange", onFsChange)
     }
   }, [full])
 
@@ -181,7 +218,23 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
             </button>
             <button
               type="button"
-              onClick={() => setFull(true)}
+              onClick={() => {
+                setFull(true)
+                // Real fullscreen where the browser allows it (user gesture),
+                // degrading to a viewport overlay where it does not (iOS).
+                try {
+                  const root = document.documentElement as HTMLElement & {
+                    webkitRequestFullscreen?: () => Promise<void> | void
+                  }
+                  if (typeof root.requestFullscreen === "function") {
+                    void root.requestFullscreen().catch(() => {})
+                  } else if (typeof root.webkitRequestFullscreen === "function") {
+                    root.webkitRequestFullscreen()
+                  }
+                } catch {
+                  /* viewport overlay only */
+                }
+              }}
               aria-haspopup="dialog"
               aria-expanded={full}
               className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 cursor-pointer"
@@ -208,39 +261,44 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
           </div>
         </TextWithBlur>
 
-        {/* Fullscreen overlay */}
-        {full && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label="Liquid ASCII fullscreen demo"
-            className="fixed inset-0 z-[90] bg-white dark:bg-[#09090b]"
-          >
-            <div className="absolute inset-0">
-              <LiquidAsciiDemo
-                speed={cfg.speed}
-                cellSize={cfg.cellSize}
-                gravity={cfg.gravity}
-                fillHeight={cfg.fillHeight}
-                cursorRadius={cfg.cursorRadius}
-                cursorForce={cfg.cursorForce}
-                autoWave={cfg.autoWave}
-              />
-            </div>
-            <p className="pointer-events-none absolute top-5 left-5 rounded-full bg-black/70 dark:bg-black/60 text-white/90 backdrop-blur px-4 py-1.5 text-xs font-mono">
-              drag through the fluid (esc to exit)
-            </p>
-            <button
-              ref={closeRef}
-              type="button"
-              onClick={() => setFull(false)}
-              aria-label="Exit fullscreen demo"
-              className="absolute top-4 right-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/5 dark:bg-white/10 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/20 active:scale-95 transition-all"
+        {/* Fullscreen overlay — portalled to document.body. The site's
+            `.section` wrapper carries a transform, which makes any fixed
+            descendant position against the content column instead of the
+            viewport; a portal is the only way to break out of it. */}
+        {full &&
+          createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Liquid ASCII fullscreen demo"
+              className="fixed inset-0 z-[90] bg-white dark:bg-[#09090b]"
             >
-              <X size={16} />
-            </button>
-          </div>
-        )}
+              <div className="absolute inset-0">
+                <LiquidAsciiDemo
+                  speed={cfg.speed}
+                  cellSize={cfg.cellSize}
+                  gravity={cfg.gravity}
+                  fillHeight={cfg.fillHeight}
+                  cursorRadius={cfg.cursorRadius}
+                  cursorForce={cfg.cursorForce}
+                  autoWave={cfg.autoWave}
+                />
+              </div>
+              <p className="pointer-events-none absolute top-5 left-5 rounded-full bg-black/70 dark:bg-black/60 text-white/90 backdrop-blur px-4 py-1.5 text-xs font-mono">
+                drag through the fluid (esc to exit)
+              </p>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={closeFull}
+                aria-label="Exit fullscreen demo"
+                className="absolute top-4 right-4 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/5 dark:bg-white/10 text-black dark:text-white hover:bg-black/10 dark:hover:bg-white/20 active:scale-95 transition-all"
+              >
+                <X size={16} />
+              </button>
+            </div>,
+            document.body
+          )}
 
         {/* Live playground */}
         <TextWithBlur delay={120}>
