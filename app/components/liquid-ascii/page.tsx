@@ -4,7 +4,7 @@ import { LiquidAsciiDoc } from "./doc-client"
 import { JsonLd } from "@/components/library/json-ld"
 import { SITE, AUTHOR, installCommand } from "@/lib/components-site"
 
-// Glyph-face picker — faces are self-hosted here via next/font, so every
+// Glyph-face picker: faces are self-hosted here via next/font, so every
 // visitor gets exactly the face they pick and the canvas can never silently
 // fall back to something else. The woff2 bytes only download when a face is
 // first selected; shipping a page costs four @font-face declarations, not
@@ -69,7 +69,7 @@ const FAQ = [
   },
   {
     q: "Can I change the glyph font?",
-    a: 'Yes — any font you want. Pass fontFamily={"Inter"} and the component renders any CSS font face your app loads or the system has, monospace or not (proportional faces look great as fluid ink). Load the face in your own app however you like — next/font, a stylesheet link, or a system font — the component renders whatever family string it receives and falls back to your system mono if the face is missing. On this page the Customise panel bundles self-hosted faces so the picker renders identically for everyone.',
+    a: 'Yes, any font you want. Pass fontFamily={"Inter"} and the component renders any CSS font face your app loads or the system has, monospace or not (proportional faces look great as fluid ink). Load the face in your own app however you like: next/font, a stylesheet link, or a system font. The component renders whatever family string it receives and falls back to your system mono if the face is missing. On this page the Customise panel bundles self-hosted faces so the picker renders identically for everyone.',
   },
   {
     q: "How does the ASCII liquid effect actually work?",

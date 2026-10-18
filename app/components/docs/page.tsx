@@ -92,7 +92,7 @@ export default function DocsPage() {
     <main className="relative min-h-screen">
       <div className="section px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-16 max-w-4xl mx-auto w-full">
 
-        {/* Breadcrumb — same as writing detail pages */}
+        {/* Breadcrumb: same as writing detail pages */}
         <TextWithBlur>
           <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-5 sm:mb-7 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
@@ -110,14 +110,14 @@ export default function DocsPage() {
           </div>
         </TextWithBlur>
 
-        {/* Title — same serif treatment as writing detail pages */}
+        {/* Title: same serif treatment as writing detail pages */}
         <TextWithBlur delay={50}>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-serif italic text-black dark:text-white mb-5 leading-[1.18] lg:leading-none max-w-3xl font-medium break-words">
             Installing my components
           </h1>
         </TextWithBlur>
 
-        {/* Meta row — same as writing detail pages */}
+        {/* Meta row: same as writing detail pages */}
         <TextWithBlur delay={50}>
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm text-black/40 dark:text-white/40 mb-3">
             <span>Components</span>
@@ -128,7 +128,7 @@ export default function DocsPage() {
           </div>
         </TextWithBlur>
 
-        {/* Separator line — same as writing detail pages */}
+        {/* Separator line: same as writing detail pages */}
         <TextWithBlur delay={80}>
           <div className="border-b border-black/5 dark:border-white/5 mb-8 sm:mb-10 pb-2 flex justify-between items-center max-w-3xl">
             <div className="flex flex-wrap gap-2">
@@ -147,17 +147,17 @@ export default function DocsPage() {
           </div>
         </TextWithBlur>
 
-        {/* Intro — prose in the article voice */}
+        {/* Intro: prose in the article voice */}
         <TextWithBlur delay={100}>
           <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-16">
             <p>
               From zero to a running component in under a minute. No setup, no
-              config — one command per component.
+              config, one command per component.
             </p>
           </div>
         </TextWithBlur>
 
-        {/* Numbered sections — same corridor system as everywhere else.
+        {/* Numbered sections: same corridor system as everywhere else.
             Code takes the full-width row: the corridor's content column is
             sized for prose, and commands only read right at article width. */}
         <div className="flex flex-col">

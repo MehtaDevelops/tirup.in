@@ -25,7 +25,7 @@ export default function AllComponentsPage() {
     <main className="relative min-h-screen">
       <Header />
 
-      {/* Components index — same row system as the tools page */}
+      {/* Components index: same row system as the tools page */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         <h1 className="sr-only">All Components</h1>
         <div className="flex flex-col">

@@ -92,7 +92,7 @@ export function LiquidAsciiDemo({
     let surfT = new Float32Array(0)
     // Glyph atlas: every character stamped once per quantized alpha into a
     // single offscreen sheet. A frame then costs one drawImage per inked cell
-    // instead of font shaping + fillText per glyph — fillText is what blew up
+    // instead of font shaping + fillText per glyph, and fillText is what blew up
     // fullscreen renders with thousands of cells. Rebuilt on theme, font,
     // cell-size or DPR change only.
     let atlas: HTMLCanvasElement | null = null
@@ -127,7 +127,7 @@ export function LiquidAsciiDemo({
     // Mono under a hashed family name exposed as --font-jetbrains-mono, and a
     // canvas never sees CSS font stacks alone. Falls back to system mono.
     let monoFamily: string | null = null
-    // One load() attempt per face — browsers disagree whether system families
+    // One load() attempt per face: browsers disagree whether system families
     // ever "check" true, and a retry loop would hot-redraw forever.
     const loadedFamilies = new Set<string>()
     const resolveMonoFamily = () =>
@@ -254,7 +254,7 @@ export function LiquidAsciiDemo({
         if (g) {
           const cellW = sheet.width / n
           const cellH = sheet.height / 19
-          // Row q holds alpha q*0.05 — identical mapping to the legacy
+          // Row q holds alpha q*0.05, identical mapping to the legacy
           // styleFor() palette. 0.95 matches the old per-frame font string,
           // so glyph metrics are unchanged across this refactor.
           g.font = `${Math.round(h * 0.95)}px ${family}`
@@ -280,7 +280,7 @@ export function LiquidAsciiDemo({
         ctx.font = `${Math.round(h * 0.95)}px ${family}`
       }
       // Temporal anti-alias: blend the displayed density toward the physical
-      // one. Display-only — bin() keeps exact counts for physics, solver and
+      // one. Display-only: bin() keeps exact counts for physics, solver and
       // touch detection; this only decouples ink from single-frame spikes.
       // While the loop is paused (settled theme switch, resize re-draw) there
       // is no next frame to converge on, so snap instead of blend.
@@ -290,7 +290,7 @@ export function LiquidAsciiDemo({
         dcnt.set(cnt)
       }
       // Smoothed waterline: raw per-column surface into surfT, then an
-      // asymmetric EMA into the rendered line — rising water snaps, receding
+      // asymmetric EMA into the rendered line: rising water snaps, receding
       // water settles calm, so waves read as surface motion instead of
       // per-frame row flicker below the surface glyph band.
       for (let x = 0; x < nx; x++) {
@@ -318,7 +318,7 @@ export function LiquidAsciiDemo({
           let idx: number
           let alpha: number
           if (depth < -0.5) {
-            // air: only fast spray renders — a high bar keeps the air clean
+            // air: only fast spray renders. A high bar keeps the air clean
             // instead of a faint static band, so clouds read as real spit
             if (c < 1) continue
             const asp = rspd[i] / c
@@ -341,7 +341,7 @@ export function LiquidAsciiDemo({
             alpha = Math.min(0.92, 0.3 + w * 0.48)
           }
           if (atlas) {
-            // Row q holds alpha q*0.05, col gi the glyph — same 0.05
+            // Row q holds alpha q*0.05, col gi the glyph, the same 0.05
             // quantization the color palette used, just baked once.
             ctx.drawImage(
               atlas,
@@ -682,7 +682,7 @@ export function LiquidAsciiDemo({
       // Frame budget: solver passes and glyph draws both scale with cell
       // count, and a fullscreen viewport would multiply both by 5–10. Once
       // the grid would blow past ~6,000 cells, the cell size rises so
-      // physics and ink stay at the same cost as a mid-size box — the look
+      // physics and ink stay at the same cost as a mid-size box. The look
       // stays proportional to the screen instead of thinning out.
       const budget = 6000
       h = Math.max(lastCell, Math.sqrt((W * H) / budget))
@@ -806,7 +806,7 @@ export function LiquidAsciiDemo({
         // Direct drag moves the fluid; the radial term is deliberately the
         // lighter half (it is what threw spray toward the ceiling). The
         // vertical component carries extra weight because gravity is
-        // already fighting every upward push — bottom-to-top drags felt
+        // already fighting every upward push, so bottom-to-top drags felt
         // dead relative to sideways slaps.
         pu[p] += (cvx * 0.3 + (dx / (d + 1)) * spd * 0.22) * f * fscale * FORCE
         pv[p] += (cvy * 0.42 + (dy / (d + 1)) * spd * 0.22) * f * fscale * FORCE

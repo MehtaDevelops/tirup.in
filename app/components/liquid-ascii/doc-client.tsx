@@ -21,7 +21,7 @@ const PROPS = [
   { name: "cursorForce", type: "number", defaultValue: "66", description: "Strength of the cursor push force (0–200)." },
   { name: "autoWave", type: "boolean", defaultValue: "true", description: "Gentle idle waves when untouched. Motion is input-driven otherwise." },
   { name: "className", type: "string", defaultValue: '""', description: "Additional classes for the canvas element." },
-  { name: "fontFamily", type: "string", defaultValue: "site mono", description: "CSS font-family for the glyphs — any face your app loads or the system has, mono or not. Defaults to the host page's mono." },
+  { name: "fontFamily", type: "string", defaultValue: "site mono", description: "CSS font-family for the glyphs. Any face your app loads or the system has, mono or not. Defaults to the host page's mono." },
 ]
 
 const STAGES = [
@@ -43,11 +43,11 @@ const STAGES = [
   ],
   [
     "Touch",
-    "Your cursor is a spoon, not a magnet. Pointer velocity is smoothed and a 3×3 neighbourhood is checked first. Moving through empty air does nothing; only contact pushes, with strength falling off quadratically inside your cursor radius and at most one impulse per frame no matter how fast the pointer fires, so a gaming mouse, a touch screen and a laptop trackpad all push with the same energy. Vertical drags carry extra weight, because gravity is already fighting every upward push — bottom-to-top strokes used to feel dead next to sideways slaps. Leave it alone for 2 seconds and a slow wandering column nudges the surface so the showcase stays breathing.",
+    "Your cursor is a spoon, not a magnet. Pointer velocity is smoothed and a 3×3 neighbourhood is checked first. Moving through empty air does nothing; only contact pushes, with strength falling off quadratically inside your cursor radius and at most one impulse per frame no matter how fast the pointer fires, so a gaming mouse, a touch screen and a laptop trackpad all push with the same energy. Vertical drags carry extra weight, because gravity is already fighting every upward push, so bottom-to-top strokes used to feel dead next to sideways slaps. Leave it alone for 2 seconds and a slow wandering column nudges the surface so the showcase stays breathing.",
   ],
   [
     "Ink",
-    "Each column's surface is the first row with real particle presence. Surface cells get the heaviest glyphs, fast spray above the surface gets mid-weight marks, and depth below fades through noise-weighted characters, with deliberately low cutoffs so hard stirring spreads the liquid instead of thinning it into nothing. Ink pulls from a pre-baked glyph atlas — every character at every quantized alpha held on one offscreen sheet — so a frame is a flat run of sprite blits: no font shaping, no string garbage, and the theme rebuilds the sheet the instant your dark class flips. fontFamily swaps the face; past ~6,000 cells the renderer raises the cell size itself, so fullscreen costs what a card costs.",
+    "Each column's surface is the first row with real particle presence. Surface cells get the heaviest glyphs, fast spray above the surface gets mid-weight marks, and depth below fades through noise-weighted characters, with deliberately low cutoffs so hard stirring spreads the liquid instead of thinning it into nothing. Ink pulls from a pre-baked glyph atlas: every character at every quantized alpha held on one offscreen sheet, so a frame is a flat run of sprite blits with no font shaping and no string garbage. The theme rebuilds the sheet the instant your dark class flips. fontFamily swaps the face; past ~6,000 cells the renderer raises the cell size itself, so fullscreen costs what a card costs.",
   ],
 ]
 
@@ -82,7 +82,7 @@ function aiSummary(c: PlaygroundConfig) {
   return `# Liquid Ascii (${SITE.name})\n\nFluid simulation rendered as ASCII characters. Self-owned single-file React component I built from scratch, zero dependencies. Inspired by React Bits' Liquid ASCII (https://pro.reactbits.dev/docs/components/liquid-ascii).\n\n## Install\n\n\`\`\`bash\n${installCommand("liquid-ascii")}\n\`\`\`\n\n## Usage\n\n\`\`\`tsx\n${usageSnippet(c)}\n\`\`\`\n\n## Props\n\n${PROPS.map((p) => `- \`${p.name}\` (${p.type}, default \`${p.defaultValue}\`): ${p.description}`).join("\n")}\n\n## Notes\n\n- Touch-only cursor: moving through air does nothing; force applies on fluid contact.\n- Theme-aware (reads the \`dark\` class), respects prefers-reduced-motion, sleeps when settled.\n- Desktop-first; gate mounting behind a pointer/media check on mobile.\n`
 }
 
-/* Detail block — the numbered corridor from the project detail pages.
+/* Detail block: the numbered corridor from the project detail pages.
    Prose flows through the standard 3-column split; wide content (code
    blocks, tables) needs the full width of the article box, so `wide` puts
    the index + title label on its own row with the content below, same
@@ -184,7 +184,7 @@ export function LiquidAsciiDoc({
     <main className="relative min-h-screen">
       <div className="section px-6 md:px-20 pt-10 md:pt-28 pb-20 max-w-4xl mx-auto w-full">
 
-        {/* Breadcrumb — same as project detail pages */}
+        {/* Breadcrumb: same as project detail pages */}
         <TextWithBlur>
           <div className="flex items-center gap-2 text-xs md:text-sm text-black/45 dark:text-white/45 mb-10 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
@@ -202,7 +202,7 @@ export function LiquidAsciiDoc({
           </div>
         </TextWithBlur>
 
-        {/* Label + title — same as project detail pages */}
+        {/* Label + title: same as project detail pages */}
         <TextWithBlur delay={50}>
           <p className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45 mb-4">
             Component
@@ -212,7 +212,7 @@ export function LiquidAsciiDoc({
           </h1>
         </TextWithBlur>
 
-        {/* Links row — same treatment as project detail pages */}
+        {/* Links row: same treatment as project detail pages */}
         <TextWithBlur delay={80}>
           <div className="flex flex-wrap gap-6 text-sm md:text-base font-light text-black/45 dark:text-white/45 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
             <button
@@ -256,19 +256,19 @@ export function LiquidAsciiDoc({
           </div>
         </TextWithBlur>
 
-        {/* Description — same as project detail pages */}
+        {/* Description: same as project detail pages */}
         <TextWithBlur delay={100}>
           <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-16">
             <p>
               A real FLIP fluid simulation rendered as ASCII characters. Every
-              drop is honest physics rendered in a grid of text — live on this
+              drop is honest physics rendered in a grid of text, live on this
               page, then one install command in your project. Zero dependencies,
               MIT licensed.
             </p>
           </div>
         </TextWithBlur>
 
-        {/* Fullscreen overlay — portalled to document.body. The site's
+        {/* Fullscreen overlay: portalled to document.body. The site's
             `.section` wrapper carries a transform, which makes any fixed
             descendant position against the content column instead of the
             viewport; a portal is the only way to break out of it. */}
@@ -319,7 +319,7 @@ export function LiquidAsciiDoc({
           </div>
         </TextWithBlur>
 
-        {/* Numbered sections — same corridor system as project detail pages */}
+        {/* Numbered sections: same corridor system as project detail pages */}
         <div className="flex flex-col">
 
           <DetailBlock index={next()} title="Install" wide>
@@ -433,7 +433,7 @@ export function LiquidAsciiDoc({
           <div className="border-t border-black/10 dark:border-white/10" />
         </div>
 
-        {/* Continue reading — same row system as the project "Next" block */}
+        {/* Continue reading: same row system as the project "Next" block */}
         <TextWithBlur>
           <div className="pt-16 pb-4">
             <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45 mb-8">
@@ -477,7 +477,7 @@ export function LiquidAsciiDoc({
           </div>
         </TextWithBlur>
 
-        {/* Footer — same as project detail pages */}
+        {/* Footer: same as project detail pages */}
         <footer className="py-4 text-center border-t border-black/10 dark:border-white/10 mt-4">
           <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
         </footer>

@@ -7,7 +7,7 @@ import { LiquidAsciiDemo } from "@/components/library/liquid-ascii-demo"
 export type PlaygroundFont = {
   label: string
   // CSS font-family for the canvas. The empty string means "the host
-  // page's own mono" — resolved by the component itself at runtime.
+  // page's own mono", resolved by the component itself at runtime.
   family: string
 }
 

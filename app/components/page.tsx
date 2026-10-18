@@ -30,11 +30,11 @@ export default function ComponentsPage() {
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         <h1 className="sr-only">Components</h1>
 
-        {/* Intro — same voice and rhythm as the homepage hero */}
+        {/* Intro: same voice and rhythm as the homepage hero */}
         <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <TextWithBlur delay={100}>
             <p>
-              Components I build and post here — each one ships as a single
+              Components I build and post here. Each one ships as a single
               file with zero third-party dependencies, a live playground, and
               an install command. <Link href="/components/docs" className="link-hover hover:text-accent transition-colors">Getting started.</Link>
             </p>
@@ -48,7 +48,7 @@ export default function ComponentsPage() {
           </TextWithBlur>
         </div>
 
-        {/* Index — identical row treatment to the tools page */}
+        {/* Index: identical row treatment to the tools page */}
         <TextWithBlur delay={220}>
           <div className="mt-12 border-t border-black/10 dark:border-white/10 pt-6">
             <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-6">
@@ -83,7 +83,7 @@ export default function ComponentsPage() {
           </div>
         </TextWithBlur>
 
-        {/* Quick install — same pill treatment as "Read all blogs" */}
+        {/* Quick install: same pill treatment as "Read all blogs" */}
         <TextWithBlur delay={280}>
           <div className="pt-8 pb-2 flex flex-wrap items-center gap-3">
             <CopyCommand command={installCommand("<name>")} label="Quick install" />
@@ -93,7 +93,7 @@ export default function ComponentsPage() {
           </div>
         </TextWithBlur>
 
-        {/* Where new components land — quiet note, list-page style */}
+        {/* Where new components land: quiet note, list-page style */}
         <TextWithBlur delay={320}>
           <div className="pt-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">
