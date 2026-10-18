@@ -4,6 +4,13 @@ import { useState } from "react"
 import { RotateCcw } from "lucide-react"
 import { LiquidAsciiDemo } from "@/components/library/liquid-ascii-demo"
 
+export type PlaygroundFont = {
+  label: string
+  // CSS font-family for the canvas. The empty string means "the host
+  // page's own mono" — resolved by the component itself at runtime.
+  family: string
+}
+
 export type PlaygroundConfig = {
   speed: number
   cellSize: number
@@ -12,6 +19,7 @@ export type PlaygroundConfig = {
   cursorRadius: number
   cursorForce: number
   autoWave: boolean
+  fontFamily: string
 }
 
 export const DEFAULTS: PlaygroundConfig = {
@@ -22,6 +30,7 @@ export const DEFAULTS: PlaygroundConfig = {
   cursorRadius: 0.25,
   cursorForce: 66,
   autoWave: true,
+  fontFamily: "",
 }
 
 function Slider({
@@ -64,8 +73,10 @@ function Slider({
 
 export function Playground({
   onConfig,
+  fonts,
 }: {
   onConfig: (c: PlaygroundConfig) => void
+  fonts: PlaygroundFont[]
 }) {
   const [cfg, setCfg] = useState<PlaygroundConfig>(DEFAULTS)
   const set = <K extends keyof PlaygroundConfig>(k: K, v: PlaygroundConfig[K]) => {
@@ -89,6 +100,7 @@ export function Playground({
           cursorRadius={cfg.cursorRadius}
           cursorForce={cfg.cursorForce}
           autoWave={cfg.autoWave}
+          fontFamily={cfg.fontFamily || undefined}
         />
         <p className="pointer-events-none absolute top-3 left-3 rounded-full bg-black/70 dark:bg-black/60 text-white/90 backdrop-blur px-3 py-1 text-[11px] font-mono">
           drag through the fluid
@@ -128,6 +140,29 @@ export function Playground({
                 className={`absolute top-0.5 w-4 h-4 rounded-full shadow transition-all ${cfg.autoWave ? "left-[18px] bg-white dark:bg-black" : "left-0.5 bg-white dark:bg-black"}`}
               />
             </button>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-black/45 dark:text-white/45 sm:col-span-2 lg:col-span-3">
+            <span className="font-light">Glyph face</span>
+            <div className="flex flex-wrap gap-1.5">
+              {fonts.map((f) => {
+                const on = cfg.fontFamily === f.family
+                return (
+                  <button
+                    key={f.label}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => set("fontFamily", f.family)}
+                    className={`rounded-full px-2.5 py-1 font-mono text-[11px] cursor-pointer border transition-colors ${
+                      on
+                        ? "bg-black dark:bg-white border-black dark:border-white text-white dark:text-black"
+                        : "border-black/10 dark:border-white/10 text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white hover:border-black/25 dark:hover:border-white/25"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>

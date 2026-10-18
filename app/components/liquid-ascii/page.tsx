@@ -1,7 +1,27 @@
 import type { Metadata } from "next"
+import { Courier_Prime, IBM_Plex_Mono, Space_Mono, VT323 } from "next/font/google"
 import { LiquidAsciiDoc } from "./doc-client"
 import { JsonLd } from "@/components/library/json-ld"
 import { SITE, AUTHOR, installCommand } from "@/lib/components-site"
+
+// Glyph-face picker — faces are self-hosted here via next/font, so every
+// visitor gets exactly the face they pick and the canvas can never silently
+// fall back to something else. The woff2 bytes only download when a face is
+// first selected; shipping a page costs four @font-face declarations, not
+// four fonts. JetBrains Mono (the default) is already the site-wide face.
+const plex = IBM_Plex_Mono({ weight: "400", subsets: ["latin"] })
+const space = Space_Mono({ weight: "400", subsets: ["latin"] })
+const vt = VT323({ weight: "400", subsets: ["latin"] })
+const courier = Courier_Prime({ weight: "400", subsets: ["latin"] })
+
+// family: "" means "the host page's own mono", resolved by the component.
+const FONTS = [
+  { label: "JetBrains", family: "" },
+  { label: "Plex Mono", family: plex.style.fontFamily },
+  { label: "Space Mono", family: space.style.fontFamily },
+  { label: "VT323", family: vt.style.fontFamily },
+  { label: "Courier", family: courier.style.fontFamily },
+]
 
 export const metadata: Metadata = {
   title: "Liquid Ascii",
@@ -44,6 +64,10 @@ const FAQ = [
   {
     q: "Does Liquid Ascii work on mobile?",
     a: "It is desktop-first: the cursor interaction needs a precise pointer. Gate mounting behind a pointer or screen-size check and skip it on small screens. It respects prefers-reduced-motion with a still frame.",
+  },
+  {
+    q: "Can I change the glyph font?",
+    a: 'Yes. Pass fontFamily={"Space Mono"} — any installed or loaded CSS mono face — to the component, or pick one of the bundled faces in the Customise panel on this page. The panel options are self-hosted so they render identically for everyone.',
   },
   {
     q: "How does the ASCII liquid effect actually work?",
@@ -105,7 +129,7 @@ export default function LiquidAsciiPage() {
           ],
         }}
       />
-      <LiquidAsciiDoc faqs={FAQ} />
+      <LiquidAsciiDoc faqs={FAQ} fonts={FONTS} />
     </>
   )
 }

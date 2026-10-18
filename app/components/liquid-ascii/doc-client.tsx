@@ -7,7 +7,7 @@ import { ArrowUpRight, Check, Copy, Maximize2, X } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
 import { LiquidAsciiDemo } from "@/components/library/liquid-ascii-demo"
-import { Playground, DEFAULTS, type PlaygroundConfig } from "@/components/library/playground"
+import { Playground, DEFAULTS, type PlaygroundConfig, type PlaygroundFont } from "@/components/library/playground"
 import { CodeDemo } from "@/components/library/code-demo"
 import { copyText } from "@/lib/utils"
 import { SITE, installCommand } from "@/lib/components-site"
@@ -71,7 +71,7 @@ export function Hero() {
         fillHeight={${c.fillHeight}}
         cursorRadius={${c.cursorRadius}}
         cursorForce={${c.cursorForce}}
-        autoWave={${c.autoWave}}
+        autoWave={${c.autoWave}}${c.fontFamily ? `\n        fontFamily={${JSON.stringify(c.fontFamily)}}` : ""}
       />
     </div>
   )
@@ -125,7 +125,13 @@ function DetailBlock({
   )
 }
 
-export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }> }) {
+export function LiquidAsciiDoc({
+  faqs,
+  fonts,
+}: {
+  faqs: Array<{ q: string; a: string }>
+  fonts: PlaygroundFont[]
+}) {
   const [cfg, setCfg] = useState<PlaygroundConfig>(DEFAULTS)
   const [aiCopied, setAiCopied] = useState(false)
   const [full, setFull] = useState(false)
@@ -283,6 +289,7 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
                   cursorRadius={cfg.cursorRadius}
                   cursorForce={cfg.cursorForce}
                   autoWave={cfg.autoWave}
+                  fontFamily={cfg.fontFamily || undefined}
                 />
               </div>
               <p className="pointer-events-none absolute top-5 left-5 rounded-full bg-black/70 dark:bg-black/60 text-white/90 backdrop-blur px-4 py-1.5 text-xs font-mono">
@@ -304,7 +311,7 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
         {/* Live playground */}
         <TextWithBlur delay={120}>
           <div className="mb-6">
-            <Playground onConfig={setCfg} />
+            <Playground onConfig={setCfg} fonts={fonts} />
             <p className="mt-3 text-xs font-light text-black/40 dark:text-white/40">
               Every number you set here flows straight into the install snippet
               below.

@@ -127,6 +127,9 @@ export function LiquidAsciiDemo({
     // Mono under a hashed family name exposed as --font-jetbrains-mono, and a
     // canvas never sees CSS font stacks alone. Falls back to system mono.
     let monoFamily: string | null = null
+    // One load() attempt per face — browsers disagree whether system families
+    // ever "check" true, and a retry loop would hot-redraw forever.
+    const loadedFamilies = new Set<string>()
     const resolveMonoFamily = () =>
       (monoFamily ??= getComputedStyle(document.documentElement)
         .getPropertyValue("--font-jetbrains-mono")
@@ -223,6 +226,21 @@ export function LiquidAsciiDemo({
       // The fallback branch keeps the old fillText path in case the atlas
       // canvas can't be built.
       const family = cfg().fontFamily || resolveMonoFamily()
+      // A chosen face may still be downloading when the atlas is first
+      // stamped, and the canvas would silently fall back for a while. Each
+      // family gets one load() attempt; a resolution invalidates the sheet
+      // so the very next frame re-stamps with the real face. This is what
+      // makes the on-page font picker render exactly what was picked.
+      if (typeof document !== "undefined" && document.fonts && !loadedFamilies.has(family)) {
+        loadedFamilies.add(family)
+        void document.fonts
+          .load(`16px ${family}`)
+          .then(() => {
+            atlasKey = ""
+            draw()
+          })
+          .catch(() => {})
+      }
       const aKey = `${dark}|${family}|${h}|${dpr()}|${Math.round(cw)}`
       if (atlasKey !== aKey) {
         atlas = null
@@ -726,16 +744,6 @@ export function LiquidAsciiDemo({
     const ro = new ResizeObserver(queueResize)
     ro.observe(canvas)
     resize()
-
-    // Kick the self-hosted mono font into loading before the first settled
-    // draw, so sleeping/reduced-motion canvases never render in a fallback
-    // face and then swap glyphs later.
-    if (typeof document !== "undefined" && document.fonts) {
-      void document.fonts
-        .load(`16px ${resolveMonoFamily()}`)
-        .then(() => draw())
-        .catch(() => {})
-    }
 
     const io = new IntersectionObserver(([e]) => {
       const was = inView
