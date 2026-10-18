@@ -146,7 +146,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
         {/* Links row */}
         <TextWithBlur delay={80}>
-          <div className="flex gap-6 text-sm md:text-base font-light text-black/45 dark:text-white/45 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
+          <div className="flex gap-6 text-sm md:text-base font-light text-black/45 dark:text-white/45 mb-6 border-b border-black/5 dark:border-white/5 pb-4">
             {project.liveUrl && isSafeUrl(project.liveUrl) && (
               <a
                 href={project.liveUrl}
@@ -188,7 +188,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
         {/* Description */}
         <TextWithBlur delay={100}>
-          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-6">
             <p>{project.fullDescription}</p>
           </div>
         </TextWithBlur>

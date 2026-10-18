@@ -130,7 +130,7 @@ export default function DocsPage() {
 
         {/* Separator line: same as writing detail pages */}
         <TextWithBlur delay={80}>
-          <div className="border-b border-black/5 dark:border-white/5 mb-8 sm:mb-10 pb-2 flex justify-between items-center max-w-3xl">
+          <div className="border-b border-black/5 dark:border-white/5 mb-4 sm:mb-5 pb-2 flex justify-between items-center max-w-3xl">
             <div className="flex flex-wrap gap-2">
               {["shadcn", "registry", "guide"].map((tag) => (
                 <span key={tag} className="text-xs font-light text-black/40 dark:text-white/40">
@@ -149,7 +149,7 @@ export default function DocsPage() {
 
         {/* Intro: prose in the article voice */}
         <TextWithBlur delay={100}>
-          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-4 sm:mb-5">
             <p>
               From zero to a running component in under a minute. No setup, no
               config, one command per component.

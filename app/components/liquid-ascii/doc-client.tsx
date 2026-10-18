@@ -214,7 +214,7 @@ export function LiquidAsciiDoc({
 
         {/* Links row: same treatment as project detail pages */}
         <TextWithBlur delay={80}>
-          <div className="flex flex-wrap gap-6 text-sm md:text-base font-light text-black/45 dark:text-white/45 mb-12 border-b border-black/5 dark:border-white/5 pb-4">
+          <div className="flex flex-wrap gap-6 text-sm md:text-base font-light text-black/45 dark:text-white/45 mb-6 border-b border-black/5 dark:border-white/5 pb-4">
             <button
               type="button"
               onClick={copyForAI}
@@ -258,7 +258,7 @@ export function LiquidAsciiDoc({
 
         {/* Description: same as project detail pages */}
         <TextWithBlur delay={100}>
-          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-6">
             <p>
               A real FLIP fluid simulation rendered as ASCII characters. Every
               drop is honest physics rendered in a grid of text, live on this
