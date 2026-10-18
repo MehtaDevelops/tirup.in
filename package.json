@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "prebuild": "node scripts/build-registry.mjs",
     "dev": "next dev",
     "lint": "tsc --noEmit",
     "postinstall": "node -e \"fs.copyFileSync('node_modules/pdfjs-dist/build/pdf.worker.min.mjs','public/pdf.worker.min.mjs')\"",

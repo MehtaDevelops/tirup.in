@@ -1,0 +1,9 @@
+[
+  {
+    "name": "liquid-ascii",
+    "title": "Liquid Ascii",
+    "description": "FLIP fluid simulation rendered as ASCII characters.",
+    "docs": "https://tirup.in/components/liquid-ascii",
+    "file": "liquid-ascii.json"
+  }
+]

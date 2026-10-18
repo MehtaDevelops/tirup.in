@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8,
   }))
 
-  // 2. Dynamic Projects (from lib/projects-data.ts — static data, rarely changes)
+  // 2. Dynamic Projects (from lib/projects-data.ts -- static data, rarely changes)
   const projectSlugs = Object.keys(projectsData)
   const projectPages = projectSlugs.map((slug) => ({
     url: `${baseUrl}/projects/${slug}`,
@@ -27,11 +27,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Articles are syndicated copies. Their canonical URLs and sitemap live on blogs.tirup.in.
 
-  // 3. Components library — served by the standalone components project and
-  //    proxied under /components via the rewrite in next.config.mjs (env:
-  //    COMPONENTS_APP_URL). Canonical URLs are tirup.in/components/*, so list
-  //    them here for direct discovery alongside the app's own sitemap at
-  //    tirup.in/components/sitemap.xml.
+  // 3. Components library -- served natively by this app at app/components/,
+  //    part of this same deployment and site. Listed here for direct discovery.
+  const libraryDate = new Date("2026-10-19T00:00:00Z")
   const componentsApp = [
     { route: "", priority: 0.9, frequency: "weekly" as const },
     { route: "/all", priority: 0.8, frequency: "weekly" as const },
@@ -40,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
   const componentsPages = componentsApp.map(({ route, priority, frequency }) => ({
     url: `${baseUrl}/components${route}`,
-    lastModified: buildDate,
+    lastModified: libraryDate,
     changeFrequency: frequency,
     priority,
   }))

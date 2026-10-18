@@ -1525,3 +1525,29 @@ html.dark .tldr-box p {
     animation: none;
   }
 }
+/* ─── Components library (/components) ───────────────────────────────────────
+   Kinetic hero type for the liquid-ascii landing + restrained card hover.
+   --ease-spring, .reveal-in, .link-hover and .icon-arrow-hover already exist
+   above (site-wide systems) — only what is library-specific lives here. */
+
+@keyframes heroChar {
+  from { opacity: 0; transform: translateY(112%) rotate(5deg); }
+  to { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-char { animation: heroChar 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
+}
+
+/* Skiper-style restrained card hover: border darkens, tiny lift, no glow */
+.card-hover {
+  transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.35s var(--ease-spring);
+}
+
+.card-hover:hover {
+  border-color: rgba(0, 0, 0, 0.22);
+}
+
+html.dark .card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}

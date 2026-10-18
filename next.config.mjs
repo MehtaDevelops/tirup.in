@@ -5,18 +5,11 @@
 // only added when NODE_ENV=development to keep the deployed policy tight.
 const isDev = process.env.NODE_ENV === "development"
 
-// ─── Components subpath proxy ────────────────────────────────────────────────
-// tirup.in/components is served by the standalone components project
-// (github.com/TirupMehta/components, its own Next.js app with basePath
-// "/components"). This rewrite proxies every path under /components to that
-// project so all its traffic, links and SEO equity land on the main domain.
-//
-// COMPONENTS_APP_URL is that project's raw production deployment URL (see
-// its Vercel dashboard — Settings → Domains). If the project is ever
-// renamed there, this env must be updated to the new URL in the same
-// sitting. No subdomain exists for this site: tirup.in/components is the
-// one and only home.
-const COMPONENTS_APP_URL = process.env.COMPONENTS_APP_URL
+// ─── Components subpath ──────────────────────────────────────────────────────
+// tirup.in/components is served NATIVELY by this app now (routes under
+// app/components/). The shadcn registry JSONs are generated at build time by
+// scripts/build-registry.mjs into public/components/r/. Keep
+// lib/components-site.ts in sync.
 
 const cspScriptSrc = [
   "'self'",
@@ -220,24 +213,12 @@ const nextConfig = {
   // /.well-known/api-catalog with the route's application/linkset+json
   // Content-Type preserved.
   async rewrites() {
-    return {
-      // beforeFiles: checked before the filesystem, so /components/* is always
-      // proxied even if a main-site route ever claims the prefix.
-      beforeFiles: [
-        ...(COMPONENTS_APP_URL
-          ? [
-              {
-                source: "/components/:path*",
-                destination: `${COMPONENTS_APP_URL}/components/:path*`,
-              },
-            ]
-          : []),
-        {
-          source: "/.well-known/api-catalog",
-          destination: "/api/catalog",
-        },
-      ],
-    }
+    return [
+      {
+        source: "/.well-known/api-catalog",
+        destination: "/api/catalog",
+      },
+    ]
   },
 }
 
