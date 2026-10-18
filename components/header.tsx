@@ -17,7 +17,6 @@ const NAV_ITEMS = [
   { label: "Work",    href: "/work" },
   { label: "Skills",  href: "/skills" },
   { label: "Writing", href: "/writing" },
-  { label: "Components", href: "/components" },
 ] as const
 
 // ---------------------------------------------------------------------------
@@ -41,7 +40,6 @@ function NavLinks({ pathname }: { pathname: string }) {
   function isLinkActive(href: string) {
     if (href === "/writing") return pathname === "/writing" || pathname?.startsWith("/writing/")
     if (href === "/work") return pathname === "/work" || pathname?.startsWith("/projects/")
-    if (href === "/components") return pathname === "/components" || pathname?.startsWith("/components/")
     return pathname === href
   }
 

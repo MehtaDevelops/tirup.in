@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
 import { LiquidAsciiDoc } from "./doc-client"
 import { JsonLd } from "@/components/library/json-ld"
-import { SITE, AUTHOR, installCommand, absoluteUrl } from "@/lib/components-site"
+import { SITE, AUTHOR, installCommand } from "@/lib/components-site"
 
 export const metadata: Metadata = {
-  title: "Liquid Ascii: ASCII Liquid Fluid Effect for React",
+  title: "Liquid Ascii",
   description:
     "Liquid Ascii (ascii liquid) is a free React component that renders a real-time FLIP fluid simulation as ASCII text. Live playground, props, install command, and copy-paste code. Zero dependencies, MIT licensed.",
   keywords: [
@@ -18,11 +18,13 @@ export const metadata: Metadata = {
     "shadcn ascii component",
     "FLIP fluid ASCII",
   ],
-  alternates: { canonical: absoluteUrl("/liquid-ascii") },
+  alternates: { canonical: "/components/liquid-ascii" },
   openGraph: {
-    title: "Liquid Ascii: ASCII Liquid Fluid Effect for React",
+    title: "Liquid Ascii | Tirup Mehta",
     description:
       "A free React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
+    type: "website",
+    url: "/components/liquid-ascii",
   },
 }
 

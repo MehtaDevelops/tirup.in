@@ -1,83 +1,75 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
-import { LiquidAsciiDemo } from "@/components/library/liquid-ascii-demo"
-import { Reveal } from "@/components/library/reveal"
-
-import { absoluteUrl } from "@/lib/components-site"
+import Header from "@/components/header"
+import TextWithBlur from "@/components/text-with-blur"
 
 export const metadata: Metadata = {
   title: "All components",
   description: "Unique React components I built. Live, self-owned, dependency-free.",
-  alternates: { canonical: absoluteUrl("/all") },
+  alternates: { canonical: "/components/all" },
+  openGraph: { url: "/components/all" },
 }
 
-export default function ComponentsPage() {
+const components = [
+  {
+    title: "Liquid Ascii",
+    description: "FLIP fluid simulation rendered as ASCII characters.",
+    slug: "/components/liquid-ascii",
+  },
+]
+
+export default function AllComponentsPage() {
+  const currentYear = new Date().getFullYear()
+
   return (
-    <>
-      <section className="px-5 md:px-8 pt-12 md:pt-20 pb-10 max-w-6xl mx-auto w-full">
-        <Reveal>
-          <p className="font-mono text-[11px] md:text-xs uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 mb-5">
-            Index — 01 live
-          </p>
-        </Reveal>
-        <Reveal delay={60}>
-        <h1 className="font-semibold tracking-[-0.04em] leading-[0.95] text-zinc-900 dark:text-zinc-50 text-[12vw] sm:text-7xl md:text-8xl">
-          all components
-        </h1>
-        </Reveal>
-        <Reveal delay={120}>
-          <p className="mt-7 text-base md:text-lg text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-md">
-            Uncommon components I build and post here. Self-owned single files.
-            Read the source, tune the playground, copy the code.
-          </p>
-        </Reveal>
-      </section>
+    <main className="relative min-h-screen">
+      <Header />
 
-      <section className="px-5 md:px-8 pb-6 max-w-6xl mx-auto w-full">
-        <Reveal>
-          <div className="flex items-end justify-between border-t border-zinc-900/10 dark:border-white/10 pt-6 mb-2">
-            <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-              01 — Outstanding component
-            </h2>
-          </div>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-            No extra packages — just one file per component. Use directly.
-          </p>
-        </Reveal>
-        <Reveal delay={80}>
-          <Link
-            href="/components/liquid-ascii"
-            className="card-hover group block rounded-2xl border border-zinc-900/10 dark:border-white/10 overflow-hidden bg-zinc-900/[0.015] dark:bg-white/[0.02]"
-          >
-            <div className="h-[280px] md:h-[360px] relative">
-              <LiquidAsciiDemo autoWave cellSize={10} />
-              <p className="pointer-events-none absolute top-3 left-3 rounded-full bg-zinc-900/80 dark:bg-black/60 text-white backdrop-blur px-3 py-1 text-[11px] font-mono">
-                drag to stir
+      {/* Components index — same row system as the tools page */}
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
+        <h1 className="sr-only">All Components</h1>
+        <div className="flex flex-col">
+          {components.map((component, index) => (
+            <TextWithBlur key={component.slug} delay={index * 50}>
+              <Link
+                href={component.slug}
+                className={`group block py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
+                suppressHydrationWarning
+              >
+                <div className="flex items-baseline gap-4 md:gap-6">
+                  <span className="font-mono tabular-nums text-xs md:text-sm text-black/45 dark:text-white/45 select-none w-6 shrink-0">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed group-hover:translate-x-1.5 transition-transform duration-300 ease-out">
+                    <span className="font-medium text-black dark:text-white group-hover:text-accent transition-colors duration-300">
+                      {component.title}
+                    </span>
+                    <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
+                    <span className="text-black/45 dark:text-white/45 font-light group-hover:text-black/70 dark:group-hover:text-white/70 transition-colors duration-300 text-sm">
+                      {component.description}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </TextWithBlur>
+          ))}
+          {/* End of list bottom border */}
+          <div className="border-t border-black/10 dark:border-white/10" />
+
+          <TextWithBlur delay={120}>
+            <div className="pt-8">
+              <p className="text-sm font-light text-black/40 dark:text-white/40">
+                New components land here as I build them. Each one ships with a
+                live playground and build notes.
               </p>
-              <span className="absolute top-3 right-3 rounded-full border border-zinc-900/10 dark:border-white/15 bg-white/85 dark:bg-zinc-900/85 backdrop-blur px-2.5 py-1 text-[11px] font-mono text-zinc-500 dark:text-zinc-400">
-                Free
-              </span>
             </div>
-            <div className="flex items-center justify-between px-5 py-4 border-t border-zinc-900/10 dark:border-white/10">
-              <div>
-                <p className="font-medium text-zinc-900 dark:text-zinc-50">Liquid Ascii</p>
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                  FLIP fluid simulation rendered as ASCII characters
-                </p>
-              </div>
-              <ArrowUpRight size={16} className="text-zinc-400 icon-arrow-hover" />
-            </div>
-          </Link>
-        </Reveal>
-
-        <Reveal delay={100}>
-          <p className="mt-8 text-sm text-zinc-400 dark:text-zinc-500">
-            New components land here as I build them. Each one ships with a
-            live playground and build notes.
-          </p>
-        </Reveal>
+          </TextWithBlur>
+        </div>
       </section>
-    </>
+
+      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10">
+        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
+      </footer>
+    </main>
   )
 }
