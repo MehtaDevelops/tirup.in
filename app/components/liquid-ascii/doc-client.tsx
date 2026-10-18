@@ -21,6 +21,7 @@ const PROPS = [
   { name: "cursorForce", type: "number", defaultValue: "66", description: "Strength of the cursor push force (0–200)." },
   { name: "autoWave", type: "boolean", defaultValue: "true", description: "Gentle idle waves when untouched. Motion is input-driven otherwise." },
   { name: "className", type: "string", defaultValue: '""', description: "Additional classes for the canvas element." },
+  { name: "fontFamily", type: "string", defaultValue: "site mono", description: "CSS font-family for the glyphs, e.g. an installed mono face. Defaults to the host site's mono." },
 ]
 
 const STAGES = [
@@ -46,7 +47,7 @@ const STAGES = [
   ],
   [
     "Ink",
-    "Each column's surface is the first row with real particle presence. Surface cells get the heaviest glyphs, fast spray above the surface gets mid-weight marks, and depth below fades through noise-weighted characters, with deliberately low cutoffs so hard stirring spreads the liquid instead of thinning it into nothing. Colors are pre-built per alpha step (zero string garbage per frame) and the theme follows your dark class live.",
+    "Each column's surface is the first row with real particle presence. Surface cells get the heaviest glyphs, fast spray above the surface gets mid-weight marks, and depth below fades through noise-weighted characters, with deliberately low cutoffs so hard stirring spreads the liquid instead of thinning it into nothing. Ink pulls from a pre-baked glyph atlas — every character at every quantized alpha held on one offscreen sheet — so a frame is a flat run of sprite blits: no font shaping, no string garbage, and the theme rebuilds the sheet the instant your dark class flips. fontFamily swaps the face; past ~6,000 cells the renderer raises the cell size itself, so fullscreen costs what a card costs.",
   ],
 ]
 
@@ -382,13 +383,15 @@ export function LiquidAsciiDoc({ faqs }: { faqs: Array<{ q: string; a: string }>
           <DetailBlock index={next()} title="Honest limits">
             <p className="text-sm md:text-base font-light text-black/70 dark:text-white/70 leading-relaxed">
               One tank, two dimensions, no obstacles, and cellSize is the whole
-              performance budget (6–30px drives sim, particles, and glyphs
-              together). The loop sleeps when settled, pauses offscreen and in
-              hidden tabs, draws one still frame for reduced-motion users, caps
-              pixel ratio at 2, and debounces rebuilds at 120ms. Resizing or
-              changing cell size holds exactly 4 particles per cell, adding or
-              randomly thinning as needed, so the quantity of liquid never
-              changes in any box, at any cell size.
+              performance budget (6–30px drives sim, particles, and glyphs;
+              past ~6,000 cells the renderer raises it automatically so a
+              fullscreen wall costs what a card costs). The loop sleeps when
+              settled, pauses offscreen and in hidden tabs, draws one still
+              frame for reduced-motion users, caps pixel ratio at 2, and
+              debounces rebuilds at 120ms. Resizing or changing cell size
+              holds exactly 4 particles per cell, adding or randomly thinning
+              as needed, so the quantity of liquid never changes in any box,
+              at any cell size.
             </p>
           </DetailBlock>
 

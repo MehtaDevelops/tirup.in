@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react"
  * Zero dependencies. Single grid: cellSize drives sim + render together.
  *
  * Props mirror the familiar spec: speed, cellSize, gravity (-50–0),
- * fillHeight, cursorRadius, cursorForce, autoWave.
+ * fillHeight, cursorRadius, cursorForce, autoWave, fontFamily.
  */
 
 export type LiquidAsciiDemoProps = {
@@ -19,6 +19,7 @@ export type LiquidAsciiDemoProps = {
   cursorForce?: number
   autoWave?: boolean
   className?: string
+  fontFamily?: string
 }
 
 const GLYPHS =
@@ -52,10 +53,11 @@ export function LiquidAsciiDemo({
   cursorForce = 66,
   autoWave = true,
   className = "",
+  fontFamily,
 }: LiquidAsciiDemoProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const cfgRef = useRef({ speed, cellSize, gravity, fillHeight, cursorRadius, cursorForce, autoWave })
-  cfgRef.current = { speed, cellSize, gravity, fillHeight, cursorRadius, cursorForce, autoWave }
+  const cfgRef = useRef({ speed, cellSize, gravity, fillHeight, cursorRadius, cursorForce, autoWave, fontFamily })
+  cfgRef.current = { speed, cellSize, gravity, fillHeight, cursorRadius, cursorForce, autoWave, fontFamily }
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -88,6 +90,15 @@ export function LiquidAsciiDemo({
     // raw surface target per column. Physics never reads these.
     let dcnt = new Float32Array(0)
     let surfT = new Float32Array(0)
+    // Glyph atlas: every character stamped once per quantized alpha into a
+    // single offscreen sheet. A frame then costs one drawImage per inked cell
+    // instead of font shaping + fillText per glyph — fillText is what blew up
+    // fullscreen renders with thousands of cells. Rebuilt on theme, font,
+    // cell-size or DPR change only.
+    let atlas: HTMLCanvasElement | null = null
+    let atlasCellW = 0
+    let atlasCellH = 0
+    let atlasKey = ""
     const PMAX = 20000
     const px = new Float32Array(PMAX)
     const py = new Float32Array(PMAX)
@@ -206,10 +217,49 @@ export function LiquidAsciiDemo({
       const dark = isDarkNow
       const fillH = cfg().fillHeight
       const depthDenom = ny * fillH + 2
-      ctx.textAlign = "center"
-      ctx.textBaseline = "middle"
-      ctx.font = `${Math.round(h * 0.95)}px ${resolveMonoFamily()}`
       const n = GLYPHS.length
+      // Resolve the glyph face once, then keep a sheet of pre-baked sprites.
+      // The fallback branch keeps the old fillText path in case the atlas
+      // canvas can't be built.
+      const family = cfg().fontFamily || resolveMonoFamily()
+      const aKey = `${dark}|${family}|${h}|${dpr()}|${Math.round(cw)}`
+      if (atlasKey !== aKey) {
+        atlas = null
+        atlasCellW = 0
+        atlasCellH = 0
+        const scale = dpr()
+        const sheet = document.createElement("canvas")
+        sheet.width = Math.max(1, Math.ceil(cw * scale)) * n
+        sheet.height = Math.max(1, Math.ceil(chh * scale)) * 19
+        const g = sheet.getContext("2d")
+        if (g) {
+          const cellW = sheet.width / n
+          const cellH = sheet.height / 19
+          // Row q holds alpha q*0.05 — identical mapping to the legacy
+          // styleFor() palette. 0.95 matches the old per-frame font string,
+          // so glyph metrics are unchanged across this refactor.
+          g.font = `${Math.round(h * 0.95)}px ${family}`
+          g.textAlign = "center"
+          g.textBaseline = "middle"
+          const rgb = dark ? "244,244,245" : "18,19,20"
+          for (let q = 1; q <= 18; q++) {
+            g.fillStyle = `rgba(${rgb},${(q * 0.05).toFixed(2)})`
+            // Index 0 is the blank spacer and never drawn; skip it.
+            for (let gi = 1; gi < n; gi++) {
+              g.fillText(GLYPHS[gi], (gi + 0.5) * cellW, (q + 0.5) * cellH)
+            }
+          }
+          atlas = sheet
+          atlasCellW = cellW
+          atlasCellH = cellH
+        }
+        atlasKey = aKey
+      }
+      if (!atlas) {
+        ctx.textAlign = "center"
+        ctx.textBaseline = "middle"
+        ctx.font = `${Math.round(h * 0.95)}px ${family}`
+      }
       // Temporal anti-alias: blend the displayed density toward the physical
       // one. Display-only — bin() keeps exact counts for physics, solver and
       // touch detection; this only decouples ink from single-frame spikes.
@@ -271,8 +321,24 @@ export function LiquidAsciiDemo({
             idx = Math.max(1, Math.min(n - 2, Math.floor(w * n)))
             alpha = Math.min(0.92, 0.3 + w * 0.48)
           }
-          ctx.fillStyle = styleFor(alpha, dark)
-          ctx.fillText(GLYPHS[idx], x * cw + cw / 2, y * chh + chh / 2)
+          if (atlas) {
+            // Row q holds alpha q*0.05, col gi the glyph — same 0.05
+            // quantization the color palette used, just baked once.
+            ctx.drawImage(
+              atlas,
+              idx * atlasCellW,
+              clamp(Math.round(alpha * 20), 1, 18) * atlasCellH,
+              atlasCellW,
+              atlasCellH,
+              x * cw,
+              y * chh,
+              cw,
+              chh,
+            )
+          } else {
+            ctx.fillStyle = styleFor(alpha, dark)
+            ctx.fillText(GLYPHS[idx], x * cw + cw / 2, y * chh + chh / 2)
+          }
         }
       }
     }
@@ -590,7 +656,13 @@ export function LiquidAsciiDemo({
       const r = canvas.getBoundingClientRect()
       W = Math.max(200, Math.floor(r.width))
       H = Math.max(200, Math.floor(r.height || 320))
-      h = lastCell
+      // Frame budget: solver passes and glyph draws both scale with cell
+      // count, and a fullscreen viewport would multiply both by 5–10. Once
+      // the grid would blow past ~6,000 cells, the cell size rises so
+      // physics and ink stay at the same cost as a mid-size box — the look
+      // stays proportional to the screen instead of thinning out.
+      const budget = 6000
+      h = Math.max(lastCell, Math.sqrt((W * H) / budget))
       const scale = dpr()
       canvas.width = Math.floor(W * scale)
       canvas.height = Math.floor(H * scale)
