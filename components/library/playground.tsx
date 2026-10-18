@@ -141,9 +141,18 @@ export function Playground({
               />
             </button>
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-black/45 dark:text-white/45 sm:col-span-2 lg:col-span-3">
-            <span className="font-light">Glyph face</span>
-            <div className="flex flex-wrap gap-1.5">
+          <div className="sm:col-span-2 lg:col-span-3">
+            <div className="flex items-center justify-between text-xs text-black/45 dark:text-white/45 mb-1.5">
+              <span className="uppercase tracking-[0.14em] font-light">Glyph face</span>
+              <span className="font-mono tabular-nums text-black/80 dark:text-white/80" aria-hidden="true">
+                {fonts.find((f) => f.family === cfg.fontFamily)?.label ?? "JetBrains"}
+              </span>
+            </div>
+            <div
+              role="group"
+              aria-label="Glyph face"
+              className="grid grid-cols-5 divide-x divide-black/5 dark:divide-white/5 rounded-lg border border-black/10 dark:border-white/10 p-0.5 min-w-0"
+            >
               {fonts.map((f) => {
                 const on = cfg.fontFamily === f.family
                 return (
@@ -152,11 +161,12 @@ export function Playground({
                     type="button"
                     aria-pressed={on}
                     onClick={() => set("fontFamily", f.family)}
-                    className={`rounded-full px-2.5 py-1 font-mono text-[11px] cursor-pointer border transition-colors ${
+                    style={f.family ? { fontFamily: f.family } : undefined}
+                    className={`h-7 min-w-0 flex items-center justify-center rounded-[6px] text-[12px] cursor-pointer transition-colors px-1 truncate ${
                       on
-                        ? "bg-black dark:bg-white border-black dark:border-white text-white dark:text-black"
-                        : "border-black/10 dark:border-white/10 text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white hover:border-black/25 dark:hover:border-white/25"
-                    }`}
+                        ? "bg-black dark:bg-white text-white dark:text-black"
+                        : "text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white"
+                    } ${f.family ? "" : "font-mono"}`}
                   >
                     {f.label}
                   </button>
