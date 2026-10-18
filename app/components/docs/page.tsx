@@ -149,7 +149,7 @@ export default function DocsPage() {
 
         {/* Intro: prose in the article voice */}
         <TextWithBlur delay={100}>
-          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-16">
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
             <p>
               From zero to a running component in under a minute. No setup, no
               config, one command per component.
@@ -208,8 +208,6 @@ export default function DocsPage() {
             </TextWithBlur>
           ))}
 
-          {/* End border */}
-          <div className="border-t border-black/10 dark:border-white/10" />
         </div>
 
         <footer className="py-4 text-center border-t border-black/10 dark:border-white/10 mt-8">

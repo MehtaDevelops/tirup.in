@@ -258,7 +258,7 @@ export function LiquidAsciiDoc({
 
         {/* Description: same as project detail pages */}
         <TextWithBlur delay={100}>
-          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-16">
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
             <p>
               A real FLIP fluid simulation rendered as ASCII characters. Every
               drop is honest physics rendered in a grid of text, live on this
@@ -473,7 +473,6 @@ export function LiquidAsciiDoc({
                 </div>
               </div>
             </Link>
-            <div className="border-t border-black/10 dark:border-white/10" />
           </div>
         </TextWithBlur>
 

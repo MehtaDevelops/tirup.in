@@ -188,7 +188,7 @@ export default async function ProjectPage({ params }: PageProps) {
 
         {/* Description */}
         <TextWithBlur delay={100}>
-          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-16">
+          <div className="space-y-4 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
             <p>{project.fullDescription}</p>
           </div>
         </TextWithBlur>
@@ -334,7 +334,6 @@ export default async function ProjectPage({ params }: PageProps) {
                   </div>
                 </div>
               </Link>
-              <div className="border-t border-black/10 dark:border-white/10" />
             </div>
           </TextWithBlur>
         )}
