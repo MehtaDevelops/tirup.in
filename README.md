@@ -88,7 +88,9 @@ Built and deployed with [Vercel](https://vercel.com) for optimal performance and
 
 ## 📝 License
 
-This project is private. All rights reserved.
+The website itself is private — all rights reserved. The React components
+distributed through the component registry are licensed under MIT; see
+[`LICENSE`](./LICENSE) for the exact scope.
 
 ## 👤 Author
 
