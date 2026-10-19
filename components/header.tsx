@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
 import ResumeModal from "@/components/resume-modal"
@@ -20,121 +20,29 @@ const NAV_ITEMS = [
 ] as const
 
 // ---------------------------------------------------------------------------
-// NavLinks: sliding background pill follows cursor & active route.
+// NavLinks: plain text links.
 //
-// Key correctness details:
-//  1. The pill has NO transition on first render: it snaps to the active
-//     link position silently. The transition class is added after the initial
-//     paint via the `ready` ref so the pill never slides in from x=0.
-//  2. Only `transform` and `width` are transitioned: both are GPU-composited
-//     so the animation never triggers a layout or paint step.
-//  3. Text color changes in 80ms: fast enough to feel instant, slow enough
-//     to not look like a hard toggle.
-// ---------------------------------------------------------------------------
+// Rule (ADR-0002): no sliding pill, no background wash on hover or active.
+// The active route is marked with color only (black vs zinc), and hover only
+// darkens the text. Backgrounds under nav links are what broke this site
+// before; do not reintroduce them.
+// --------------------------------------------------------------------------- 
 function NavLinks({ pathname }: { pathname: string }) {
-  const navRef   = useRef<HTMLElement>(null)
-  const pillRef  = useRef<HTMLDivElement>(null)
-  const ready    = useRef(false)           // true after first position is set
-  const [hoverHref, setHoverHref] = useState<string | null>(null)
-
   function isLinkActive(href: string) {
     if (href === "/writing") return pathname === "/writing" || pathname?.startsWith("/writing/")
     if (href === "/work") return pathname === "/work" || pathname?.startsWith("/projects/")
     return pathname === href
   }
 
-  const activeHref: string | undefined = NAV_ITEMS.find((n) => isLinkActive(n.href))?.href
-  // Pill needs a concrete anchor; fall back to "/" for positioning only
-  // (no active styling when undefined: see isActive below).
-  const targetHref = hoverHref ?? activeHref ?? "/"
-
-  function positionPill(href: string, animate: boolean) {
-    const nav  = navRef.current
-    const pill = pillRef.current
-    if (!nav || !pill) return
-
-    const anchor = nav.querySelector<HTMLElement>(`[data-navhref="${href}"]`)
-    if (!anchor) return
-
-    const nRect = nav.getBoundingClientRect()
-    const aRect = anchor.getBoundingClientRect()
-
-    // Enable transition only after the initial snap is committed
-    if (animate) {
-      pill.style.transition =
-        "transform 160ms cubic-bezier(0.16,1,0.3,1), width 160ms cubic-bezier(0.16,1,0.3,1)"
-    } else {
-      pill.style.transition = "none"
-    }
-
-    pill.style.width     = `${aRect.width}px`
-    pill.style.transform = `translateX(${aRect.left - nRect.left}px)`
-  }
-
-  // Mount: snap to active position with zero transition.
-  // When no nav item matches (e.g. /github, /tools/*), hide the pill.
-  useEffect(() => {
-    // rAF ensures the browser has laid out the nav anchors before we measure
-    const id = requestAnimationFrame(() => {
-      if (activeHref) {
-        if (pillRef.current) pillRef.current.style.opacity = "1"
-        positionPill(activeHref, false)
-      } else if (pillRef.current) {
-        pillRef.current.style.opacity = "0"
-      }
-      // After the snap frame commits, re-enable transitions for interactions
-      requestAnimationFrame(() => { ready.current = true })
-    })
-    return () => cancelAnimationFrame(id)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Subsequent moves (hover / route change): animate
-  useEffect(() => {
-    if (!ready.current) return
-    if (!hoverHref && !activeHref) {
-      if (pillRef.current) pillRef.current.style.opacity = "0"
-      return
-    }
-    if (pillRef.current) pillRef.current.style.opacity = "1"
-    positionPill(targetHref, true)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetHref])
-
-  // Keep pill aligned if the container resizes (font-load, viewport change)
-  useEffect(() => {
-    const ro = new ResizeObserver(() => {
-      positionPill(ready.current ? targetHref : (activeHref ?? targetHref), false)
-    })
-    if (navRef.current) ro.observe(navRef.current)
-    return () => ro.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetHref])
-
   return (
-    <nav ref={navRef} className="relative flex items-center gap-4 sm:gap-6">
-      {/* Sliding background pill: purely presentational, GPU-composited */}
-      <div
-        ref={pillRef}
-        aria-hidden="true"
-        className="absolute inset-y-0 rounded-md bg-black/[0.045] dark:bg-white/[0.055] pointer-events-none will-change-transform"
-        // Transition is set imperatively above to prevent mount-slide
-      />
-
+    <nav className="flex items-center gap-4 sm:gap-6">
       {NAV_ITEMS.map(({ label, href }) => (
         <Link
           key={href}
           href={href}
-          data-navhref={href}
-          onMouseEnter={() => setHoverHref(href)}
-          onMouseLeave={() => setHoverHref(null)}
           style={{ transition: "color 80ms ease-out" }}
           className={[
-            "relative z-10 py-1 px-2 rounded-md",
-            "text-sm sm:text-base md:text-lg font-light select-none cursor-pointer",
-            // Press scale only on transform: no `transition-all` bloat
-            "[transition:color_80ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
-            "active:scale-[0.97]",
+            "py-1 text-sm sm:text-base md:text-lg font-light select-none cursor-pointer",
             isLinkActive(href)
               ? "text-black dark:text-white"
               : "text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white",

@@ -633,7 +633,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
             href="https://github.com/TirupMehta"
             target="_blank"
             rel="noopener noreferrer"
-            className="group block py-5 rounded-lg hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
+            className="group block py-5 [transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
           >
             <div className="flex items-baseline justify-between gap-4">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
@@ -659,7 +659,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
             href="https://github.com/MehtaDevelops"
             target="_blank"
             rel="noopener noreferrer"
-            className="group block py-5 rounded-lg border-t border-black/10 dark:border-white/10 hover:bg-black/[0.025] dark:hover:bg-white/[0.025] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
+            className="group block py-5 border-t border-black/10 dark:border-white/10 [transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99]"
           >
             <div className="flex items-baseline justify-between gap-4">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">

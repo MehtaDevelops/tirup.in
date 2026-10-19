@@ -28,12 +28,14 @@ export default function WorkPage() {
                 <Link
                   href={`/projects/${project.slug}`}
                   className={[
-                      "group block rounded-lg",
+                      "group block",
                       index === 0 ? "pb-5 pt-1" : "py-5",
                       index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
-                    "[transition:background-color_120ms_ease-out]",
-                    "hover:bg-black/[0.025] dark:hover:bg-white/[0.025]",
-                    "active:scale-[0.99] [transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
+                    // Press feedback is transform-only: no background wash on
+                    // hover, ever (ADR-0002). Hover is spoken through the
+                    // group-hover text colors inside the row.
+                    "[transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
+                    "active:scale-[0.99]",
                   ].join(" ")}
                   suppressHydrationWarning
                 >

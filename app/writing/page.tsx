@@ -96,11 +96,11 @@ export default async function BlogsPage() {
                   <Link
                     href={`/writing/${post.slug}`}
                     className={[
-                      "group block rounded-lg",
+                      "group block",
                       index === 0 ? "pb-5 pt-1" : "py-5",
                       index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
-                      "hover:bg-black/[0.025] dark:hover:bg-white/[0.025]",
-                      "[transition:background-color_120ms_ease-out,transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
+                      // Hover is color-only here: no background wash (ADR-0002).
+                      "[transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
                       "active:scale-[0.99]",
                     ].join(" ")}
                   >
