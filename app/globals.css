@@ -4,8 +4,12 @@
 
 :root {
   --accent: #7c88e8;
-  --black: #121314;
-  --white: #ffffff;
+  /* Channel triplets, not hex: the Tailwind config wraps these with
+     rgb(var() / <alpha-value>), so every opacity modifier (bg-black/70,
+     text-black/45, border-black/10, ...) can actually generate CSS.
+     Hex values here made all of those utilities silently produce nothing. */
+  --black: 18 19 20;
+  --white: 255 255 255;
   /* Spring curve: fast start, soft land: matches Benji Taylor / Family style */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --transition-slow: 0.45s var(--ease-spring);

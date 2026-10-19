@@ -61,8 +61,10 @@ const config: Config = {
         },
         cyan: "#00FFFF",
         magenta: "#FF00FF",
-        black: "var(--black)",
-        white: "var(--white)",
+        // <alpha-value> is what makes /opacity modifiers (bg-black/70,
+        // text-black/45, ...) generate real CSS for these remapped colors.
+        black: "rgb(var(--black) / <alpha-value>)",
+        white: "rgb(var(--white) / <alpha-value>)",
       },
       borderRadius: {
         lg: "var(--radius)",
