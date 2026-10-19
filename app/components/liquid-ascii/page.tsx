@@ -14,7 +14,13 @@ import { SITE, AUTHOR, installCommand } from "@/lib/components-site"
 const inter = Inter({ subsets: ["latin"] })
 const space = Space_Mono({ weight: "400", subsets: ["latin"] })
 const vt = VT323({ weight: "400", subsets: ["latin"] })
-const courier = Courier_Prime({ weight: "400", subsets: ["latin"] })
+// Registered at 700 only: Courier Prime's 400 strokes wash out on the glyph
+// grid, and a family with a single face makes even a plain
+// `<size>px <family>` canvas request resolve to the bold cut.
+const courier = Courier_Prime({
+  weight: "700",
+  subsets: ["latin"],
+})
 
 // family: "" means "the host page's own mono", resolved by the component.
 const FONTS = [

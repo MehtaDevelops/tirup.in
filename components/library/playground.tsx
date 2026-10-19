@@ -102,9 +102,29 @@ export function Playground({
           autoWave={cfg.autoWave}
           fontFamily={cfg.fontFamily || undefined}
         />
-        <p className="pointer-events-none absolute top-3 left-3 rounded-full bg-black/70 dark:bg-black/60 text-white/90 backdrop-blur px-3 py-1 text-[11px] font-mono">
+        {/* Hint pill: the site's body style (Inter, 400, −0.09px, 70% ink)
+            at chip scale on light glass, not the 18px reading size. */}
+        <p className="pointer-events-none absolute top-3 left-3 rounded-full border border-black/[0.07] bg-white/80 dark:bg-white/10 dark:border-white/10 text-black/70 dark:text-white/70 backdrop-blur px-3 py-1 text-[11px] font-normal leading-4 tracking-[-0.09px]">
           drag through the fluid
         </p>
+        {/* Auto wave lives on the tank: same pill language as the hint,
+            driven by the same cfg the sliders use. Stacks under the hint
+            on small screens where they'd collide (top-12, sm restores). */}
+        <div className="absolute top-12 right-3 sm:top-3 flex items-center gap-1.5 rounded-full border border-black/[0.07] bg-white/80 dark:bg-white/10 dark:border-white/10 text-black/70 dark:text-white/70 backdrop-blur py-1 pl-2.5 pr-1.5 text-[11px] font-normal leading-4 tracking-[-0.09px]">
+          <span id="autowave-label" className="select-none">auto wave</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={cfg.autoWave}
+            aria-labelledby="autowave-label"
+            onClick={() => set("autoWave", !cfg.autoWave)}
+            className={`relative w-8 h-4 rounded-full transition-colors cursor-pointer ${cfg.autoWave ? "bg-black dark:bg-white" : "bg-black/15 dark:bg-white/25"}`}
+          >
+            <span
+              className={`absolute top-0.5 w-3 h-3 rounded-full shadow transition-all ${cfg.autoWave ? "left-[18px] bg-white dark:bg-black" : "left-0.5 bg-white dark:bg-black"}`}
+            />
+          </button>
+        </div>
       </div>
       <div className="border-t border-black/10 dark:border-white/10 px-4 py-4 md:px-5">
         <div className="flex items-center justify-between mb-3">
@@ -126,32 +146,17 @@ export function Playground({
           <Slider label="fill height" value={cfg.fillHeight} min={0} max={1} step={0.05} format={(v) => v.toFixed(2)} onChange={(v) => set("fillHeight", v)} />
           <Slider label="cursor radius" value={cfg.cursorRadius} min={0.05} max={0.5} step={0.01} format={(v) => v.toFixed(2)} onChange={(v) => set("cursorRadius", v)} />
           <Slider label="cursor force" value={cfg.cursorForce} min={0} max={200} step={1} format={(v) => `${v}`} onChange={(v) => set("cursorForce", v)} />
-          <div className="flex items-center justify-between text-xs text-black/45 dark:text-white/45">
-            <span id="autowave-label" className="font-light">Auto wave <span className="text-black/30 dark:text-white/30">(idle motion)</span></span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={cfg.autoWave}
-              aria-labelledby="autowave-label"
-              onClick={() => set("autoWave", !cfg.autoWave)}
-              className={`relative w-9 h-5 rounded-full transition-colors cursor-pointer ${cfg.autoWave ? "bg-black dark:bg-white" : "bg-black/15 dark:bg-white/15"}`}
-            >
-              <span
-                className={`absolute top-0.5 w-4 h-4 rounded-full shadow transition-all ${cfg.autoWave ? "left-[18px] bg-white dark:bg-black" : "left-0.5 bg-white dark:bg-black"}`}
-              />
-            </button>
-          </div>
-          <div className="sm:col-span-2 lg:col-span-3">
+          {/* Auto wave: lives on the canvas, top-right, mirroring the hint
+              pill. Keeps the sliders grid a clean 2×3 and puts the idle
+              motion switch next to the motion it drives. */}
+          <div className="sm:col-span-2 lg:col-span-3 mt-1 border-t border-black/10 dark:border-white/10 pt-4">
             <div className="flex items-center justify-between text-xs text-black/45 dark:text-white/45 mb-1.5">
               <span className="uppercase tracking-[0.14em] font-light">Glyph face</span>
-              <span className="font-mono tabular-nums text-black/80 dark:text-white/80" aria-hidden="true">
-                {fonts.find((f) => f.family === cfg.fontFamily)?.label ?? "JetBrains"}
-              </span>
             </div>
             <div
               role="group"
               aria-label="Glyph face"
-              className="grid grid-cols-5 divide-x divide-black/5 dark:divide-white/5 rounded-lg border border-black/10 dark:border-white/10 p-0.5 min-w-0"
+              className="grid grid-cols-3 gap-0.5 sm:grid-cols-5 rounded-lg border border-black/10 dark:border-white/10 p-0.5 min-w-0"
             >
               {fonts.map((f) => {
                 const on = cfg.fontFamily === f.family

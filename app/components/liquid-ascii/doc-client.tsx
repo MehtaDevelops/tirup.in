@@ -292,7 +292,7 @@ export function LiquidAsciiDoc({
                   fontFamily={cfg.fontFamily || undefined}
                 />
               </div>
-              <p className="pointer-events-none absolute top-5 left-5 rounded-full bg-black/70 dark:bg-black/60 text-white/90 backdrop-blur px-4 py-1.5 text-xs font-mono">
+              <p className="pointer-events-none absolute top-5 left-5 rounded-full border border-black/[0.07] bg-white/80 dark:bg-white/10 dark:border-white/10 text-black/70 dark:text-white/70 backdrop-blur px-3 py-1 text-[11px] font-normal leading-4 tracking-[-0.09px]">
                 drag through the fluid (esc to exit)
               </p>
               <button
@@ -310,7 +310,9 @@ export function LiquidAsciiDoc({
 
         {/* Live playground */}
         <TextWithBlur delay={120}>
-          <div className="mb-6">
+          {/* Equal air above and below the note (mt-3 inside, mb-3 out)
+              so it doesn't read as closer to one neighbour than the other. */}
+          <div className="mb-3">
             <Playground onConfig={setCfg} fonts={fonts} />
             <p className="mt-3 text-xs font-light text-black/40 dark:text-white/40">
               Every number you set here flows straight into the install snippet
