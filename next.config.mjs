@@ -8,7 +8,9 @@ const isDev = process.env.NODE_ENV === "development"
 // ─── Components subpath ──────────────────────────────────────────────────────
 // tirup.in/components is served NATIVELY by this app now (routes under
 // app/components/). The shadcn registry JSONs are generated at build time by
-// scripts/build-registry.mjs into public/components/r/. Keep
+// scripts/build-registry.mjs into generated/registry/, then served at
+// /components/r/<name>.json by app/components/r/[slug]/route.ts (which sends
+// browser navigation to the human-readable source viewer). Keep
 // lib/components-site.ts in sync.
 
 const cspScriptSrc = [

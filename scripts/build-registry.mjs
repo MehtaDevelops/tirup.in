@@ -2,11 +2,18 @@
  * Builds the shadcn-compatible component registry from source.
  *
  * Reads each component's single-file source and emits:
- *   public/components/r/<name>.json   : registry item the shadcn CLI installs from
- *                                     (served at tirup.in/components/r/<name>.json)
+ *   generated/registry/<name>.json  : registry item the shadcn CLI installs
+ *                                     from (served at
+ *                                     tirup.in/components/r/<name>.json by
+ *                                     app/components/r/[slug]/route.ts,
+ *                                     which forwards browser navigation to
+ *                                     the human-readable source viewer)
  *
- * Run automatically on `prebuild`, or manually with `node scripts/build-registry.mjs`.
- * Source of truth is components/library/. Never hand-edit public/components/r.
+ * The JSONs deliberately live OUTSIDE public/: a static copy would shadow
+ * the route handler and every URL would become a raw-dump page for humans
+ * again. Run automatically on `prebuild`, or manually with
+ * `node scripts/build-registry.mjs`.
+ * Source of truth is components/library/. Never hand-edit generated/registry.
  *
  * Install flow this enables (in the user's project, easiest first):
  *   1. npx shadcn@latest add https://tirup.in/components/r/liquid-ascii.json
@@ -20,7 +27,7 @@ import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
-const outDir = join(root, "public", "components", "r")
+const outDir = join(root, "generated", "registry")
 
 const BASE_URL = "https://tirup.in/components"
 
