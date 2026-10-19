@@ -6,7 +6,7 @@ import { SITE } from "@/lib/components-site"
    overrides the library-wide card for every route under this segment. */
 
 export const runtime = "nodejs"
-export const alt = "Liquid Ascii: free React component that renders a real-time FLIP fluid simulation as ASCII text, by Tirup Mehta"
+export const alt = "Liquid Ascii: React component that renders a real-time FLIP fluid simulation as ASCII text, by Tirup Mehta"
 export const size = OG_SIZE
 export const contentType = "image/png"
 
@@ -15,7 +15,7 @@ export default async function Image() {
   return new ImageResponse(
     (
       <OgShell
-        kicker="Free React Component"
+        kicker="React Component"
         title="Liquid Ascii"
         excerpt="A real-time FLIP fluid simulation rendered as ASCII text. Splash it with your cursor. Zero dependencies: one file you own forever."
         section="Liquid Ascii"

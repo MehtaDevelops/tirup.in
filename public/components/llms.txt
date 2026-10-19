@@ -2,14 +2,14 @@
 
 A components library by Tirup Mehta: unique, self-owned React
 components with live playgrounds. Copy the code, own it forever.
-Single files, zero third-party dependencies, MIT licensed (free forever).
+Single files, zero third-party dependencies, MIT licensed.
 
 Author: Tirup Mehta (https://tirup.in)
 
 ## Components
 
 ### Liquid Ascii (ascii liquid effect)
-Free React component that renders a real-time FLIP fluid simulation as
+React component that renders a real-time FLIP fluid simulation as
 ASCII text on a canvas. Move the cursor through it and the liquid splashes
 in characters. FLIP fluid simulation, staggered MAC grid, 30-iteration
 pressure solve, PIC/FLIP blend. Theme-aware, reduced-motion safe.

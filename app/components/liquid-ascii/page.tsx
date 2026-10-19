@@ -32,9 +32,9 @@ const FONTS = [
 ]
 
 export const metadata: Metadata = {
-  title: "Liquid Ascii — Free React ASCII Fluid Simulation Component",
+  title: "Liquid Ascii — React ASCII Fluid Simulation Component",
   description:
-    "Liquid Ascii (ascii liquid) is a free React component that renders a real-time FLIP fluid simulation as ASCII text. Live playground, props, install command, and copy-paste code. Zero dependencies, MIT licensed.",
+    "Liquid Ascii (ascii liquid) is a React component that renders a real-time FLIP fluid simulation as ASCII text. Live playground, props, install command, and copy-paste code. Zero dependencies, MIT licensed.",
   keywords: [
     "liquid ascii",
     "ascii liquid",
@@ -57,29 +57,29 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Liquid Ascii | Tirup Mehta",
     description:
-      "A free React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
+      "A React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
     type: "website",
     url: "/components/liquid-ascii",
   },
   twitter: {
-    title: "Liquid Ascii — Free React ASCII Fluid Simulation Component",
+    title: "Liquid Ascii — React ASCII Fluid Simulation Component",
     description:
-      "A free React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
+      "A React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
   },
 }
 
 const FAQ = [
   {
     q: "What is Liquid Ascii?",
-    a: "Liquid Ascii is a free, open-source React component that renders a real-time FLIP fluid simulation as ASCII text on a canvas. Move your cursor through it and the liquid splashes in characters. It has zero dependencies and ships as a single file you own forever.",
+    a: "Liquid Ascii is an open-source React component that renders a real-time FLIP fluid simulation as ASCII text on a canvas. Move your cursor through it and the liquid splashes in characters. It has zero dependencies and ships as a single file you own forever.",
   },
   {
     q: "How do I install Liquid Ascii?",
     a: `Run ${installCommand("liquid-ascii")} in your Next.js or React project, then render the component inside any sized container. It adapts to light and dark mode automatically.`,
   },
   {
-    q: "Is Liquid Ascii free for commercial use?",
-    a: "Yes. It is MIT licensed, free forever. Copy it, modify it, ship it in commercial projects. No keys, no lock-in, no paid core.",
+    q: "Can I use Liquid Ascii in commercial projects?",
+    a: "Yes. It is MIT licensed: copy it, modify it, ship it in commercial projects. No keys, no lock-in.",
   },
   {
     q: "Does Liquid Ascii work on mobile?",
@@ -107,7 +107,7 @@ export default function LiquidAsciiPage() {
               "@id": `${SITE.url}/liquid-ascii#software`,
               name: "Liquid Ascii",
               description:
-                "Free React component (ascii liquid effect) that renders a real-time FLIP fluid simulation as ASCII text. Zero dependencies, MIT licensed.",
+                "React component (ascii liquid effect) that renders a real-time FLIP fluid simulation as ASCII text. Zero dependencies, MIT licensed.",
               url: `${SITE.url}/liquid-ascii`,
               programmingLanguage: "TypeScript",
               runtimePlatform: "React",
@@ -125,7 +125,6 @@ export default function LiquidAsciiPage() {
               ],
               codeRepository: "https://github.com/MehtaDevelops/tirup.in",
               license: "https://opensource.org/licenses/MIT",
-              isAccessibleForFree: true,
               author: {
                 "@type": "Person",
                 "@id": "https://tirup.in/about",

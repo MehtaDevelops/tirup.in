@@ -6,30 +6,28 @@ import { JsonLd } from "@/components/library/json-ld"
 import { SITE } from "@/lib/components-site"
 
 export const metadata: Metadata = {
-  title: "Free React Components with Live Playgrounds",
+  title: "React Components with Live Playgrounds",
   description:
-    "Free, unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed, installed straight from the shadcn registry.",
+    "Unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed, installed straight from the shadcn registry.",
   keywords: [
-    "free react components",
     "react components copy paste",
     "single file react components",
     "zero dependency react components",
     "shadcn registry components",
-    "react component library free",
     "unique react components",
   ],
   alternates: { canonical: "/components" },
   openGraph: {
-    title: "Free React Components with Live Playgrounds",
+    title: "React Components with Live Playgrounds",
     description:
-      "Free, unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed.",
+      "Unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed.",
     type: "website",
     url: "/components",
   },
   twitter: {
-    title: "Free React Components with Live Playgrounds",
+    title: "React Components with Live Playgrounds",
     description:
-      "Free, unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed.",
+      "Unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed.",
   },
 }
 
@@ -79,13 +77,13 @@ export default function ComponentsPage() {
       <Header />
 
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <h1 className="sr-only">Free React components with live playgrounds</h1>
+        <h1 className="sr-only">React components with live playgrounds</h1>
 
         {/* Intro: same voice and rhythm as the homepage hero */}
         <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <TextWithBlur delay={100}>
             <p>
-              Free React components I build and post here. Each one ships as a
+              React components I build and post here. Each one ships as a
               single file with zero third-party dependencies, a live
               playground, and an install command.{" "}
               <Link href="/components/docs" className="link-hover hover:text-accent transition-colors">Getting started.</Link>
@@ -140,7 +138,7 @@ export default function ComponentsPage() {
           <div className="pt-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">
               New components land here as I build them. Everything is MIT
-              licensed, free forever.
+              licensed.
             </p>
           </div>
         </TextWithBlur>

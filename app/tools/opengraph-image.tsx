@@ -14,8 +14,8 @@ export default async function Image() {
         kicker="Tools"
         section="Tools"
         title="Small, sharp tools"
-        excerpt="QR Studio and the UTM builder: free, private, no sign-up."
-        meta={["Free forever"]}
+        excerpt="QR Studio and the UTM builder: private, no sign-up."
+        meta={["No sign-up"]}
       />
     ),
     { ...OG_SIZE, fonts }

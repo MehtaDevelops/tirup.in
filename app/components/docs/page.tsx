@@ -60,8 +60,8 @@ const STEPS: Array<{ title: string; body: React.ReactNode }> = [
     title: "License",
     body: (
       <>
-        MIT. Free forever. Every component is yours once installed: copy it,
-        modify it, ship it. No keys, no lock-in, no paid core.
+        MIT. Every component is yours once installed: copy it,
+        modify it, ship it. No keys, no lock-in.
       </>
     ),
   },
