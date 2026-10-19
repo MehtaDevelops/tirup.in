@@ -351,7 +351,9 @@ export default function ExpressionAvatar({
       const now = Date.now()
       if (now - lastClickReact.current < CLICK_DEBOUNCE_MS) return
       lastClickReact.current = now
-      if (!sticky.current) show("smile", 900)
+      if (!sticky.current) {
+        show(interactive.closest(".theme-toggle") ? "excited" : "smile", 900)
+      }
     }
 
     const onDblClick = (e: MouseEvent) => {
@@ -431,7 +433,7 @@ export default function ExpressionAvatar({
     if (!interactive) return
     clickCount.current += 1
     // Bounded playfulness: alternate laugh / excited, never a random face.
-    show(clickCount.current % 3 === 0 ? "excited" : "laugh", 1400)
+    show(clickCount.current % 2 === 1 ? "excited" : "laugh", 1400)
   }
 
   // All faces share identical geometry: same box, same scale, no per-face
