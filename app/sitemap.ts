@@ -34,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { route: "", priority: 0.9, frequency: "weekly" as const },
     { route: "/all", priority: 0.8, frequency: "weekly" as const },
     { route: "/liquid-ascii", priority: 0.9, frequency: "weekly" as const },
+    { route: "/r/liquid-ascii/source", priority: 0.4, frequency: "monthly" as const },
     { route: "/docs", priority: 0.6, frequency: "monthly" as const },
   ]
   const componentsPages = componentsApp.map(({ route, priority, frequency }) => ({

@@ -32,18 +32,25 @@ const FONTS = [
 ]
 
 export const metadata: Metadata = {
-  title: "Liquid Ascii",
+  title: "Liquid Ascii — Free React ASCII Fluid Simulation Component",
   description:
     "Liquid Ascii (ascii liquid) is a free React component that renders a real-time FLIP fluid simulation as ASCII text. Live playground, props, install command, and copy-paste code. Zero dependencies, MIT licensed.",
   keywords: [
-    "ascii liquid",
     "liquid ascii",
+    "ascii liquid",
+    "liquid ascii react",
+    "liquid ascii component",
     "ascii liquid effect",
     "ascii fluid simulation",
+    "ascii fluid react component",
+    "ascii water animation",
     "ascii art fluid animation",
+    "ascii art component",
     "text fluid simulation",
     "react ascii component",
     "shadcn ascii component",
+    "single file react component",
+    "zero dependency react component",
     "FLIP fluid ASCII",
   ],
   alternates: { canonical: "/components/liquid-ascii" },
@@ -53,6 +60,11 @@ export const metadata: Metadata = {
       "A free React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
     type: "website",
     url: "/components/liquid-ascii",
+  },
+  twitter: {
+    title: "Liquid Ascii — Free React ASCII Fluid Simulation Component",
+    description:
+      "A free React component that renders a real-time FLIP fluid simulation as ASCII text. Try it live, then copy the code.",
   },
 }
 
@@ -99,11 +111,24 @@ export default function LiquidAsciiPage() {
               url: `${SITE.url}/liquid-ascii`,
               programmingLanguage: "TypeScript",
               runtimePlatform: "React",
+              applicationCategory: "DeveloperApplication",
+              operatingSystem: "Web",
+              keywords: [
+                "liquid ascii",
+                "ascii liquid",
+                "ascii fluid simulation",
+                "ascii art fluid animation",
+                "text fluid simulation",
+                "react ascii component",
+                "shadcn component",
+                "FLIP fluid",
+              ],
+              codeRepository: "https://github.com/MehtaDevelops/tirup.in",
               license: "https://opensource.org/licenses/MIT",
               isAccessibleForFree: true,
               author: {
                 "@type": "Person",
-                "@id": `${SITE.url}/#person`,
+                "@id": "https://tirup.in/about",
                 name: AUTHOR.name,
                 url: AUTHOR.url,
               },

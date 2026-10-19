@@ -24,4 +24,5 @@ then: npx shadcn@latest add @mehta/liquid-ascii
 ## Links
 - Home: https://tirup.in/components
 - All components: https://tirup.in/components/all
+- Liquid Ascii source, file by file: https://tirup.in/components/r/liquid-ascii/source
 - Docs: https://tirup.in/components/docs

@@ -2,13 +2,35 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
+import { JsonLd } from "@/components/library/json-ld"
 import { SITE } from "@/lib/components-site"
 
 export const metadata: Metadata = {
-  title: "Components",
-  description: SITE.description,
+  title: "Free React Components with Live Playgrounds",
+  description:
+    "Free, unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed, installed straight from the shadcn registry.",
+  keywords: [
+    "free react components",
+    "react components copy paste",
+    "single file react components",
+    "zero dependency react components",
+    "shadcn registry components",
+    "react component library free",
+    "unique react components",
+  ],
   alternates: { canonical: "/components" },
-  openGraph: { url: "/components" },
+  openGraph: {
+    title: "Free React Components with Live Playgrounds",
+    description:
+      "Free, unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed.",
+    type: "website",
+    url: "/components",
+  },
+  twitter: {
+    title: "Free React Components with Live Playgrounds",
+    description:
+      "Free, unique single-file React components with live playgrounds: copy the code, own it forever. Zero dependencies, MIT licensed.",
+  },
 }
 
 const components = [
@@ -24,18 +46,49 @@ export default function ComponentsPage() {
 
   return (
     <main className="relative min-h-screen flex flex-col">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": `${SITE.url}#collection`,
+              url: SITE.url,
+              name: SITE.name,
+              description: SITE.description,
+              author: {
+                "@type": "Person",
+                "@id": "https://tirup.in/about",
+                name: "Tirup Mehta",
+                url: "https://tirup.in",
+              },
+            },
+            {
+              "@type": "ItemList",
+              name: "Components",
+              itemListElement: components.map((component, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                name: component.title,
+                url: `https://tirup.in${component.slug}`,
+              })),
+            },
+          ],
+        }}
+      />
       <Header />
 
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <h1 className="sr-only">Components</h1>
+        <h1 className="sr-only">Free React components with live playgrounds</h1>
 
         {/* Intro: same voice and rhythm as the homepage hero */}
         <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <TextWithBlur delay={100}>
             <p>
-              Components I build and post here. Each one ships as a single
-              file with zero third-party dependencies, a live playground, and
-              an install command. <Link href="/components/docs" className="link-hover hover:text-accent transition-colors">Getting started.</Link>
+              Free React components I build and post here. Each one ships as a
+              single file with zero third-party dependencies, a live
+              playground, and an install command.{" "}
+              <Link href="/components/docs" className="link-hover hover:text-accent transition-colors">Getting started.</Link>
             </p>
           </TextWithBlur>
           <TextWithBlur delay={180}>
