@@ -55,7 +55,15 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
         isClosing ? "animate-spring-slide-down" : "animate-spring-slide-up"
       }`}
     >
-      <div className="bg-white/85 dark:bg-[#131316]/90 backdrop-blur-xl backdrop-saturate-150 border border-black/10 dark:border-white/10 rounded-xl p-[18px] shadow-xl">
+      <div
+        className="backdrop-blur-xl backdrop-saturate-150 border border-black/10 dark:border-white/10 rounded-xl p-[18px] shadow-xl"
+        style={{
+          // Token surface: dark uses --surface, light/tint fall back to the
+          // paper bg, so a tinted page gives the popup a matching tinted
+          // glass (raw bg-white/85 stayed plain white on tinted grounds).
+          backgroundColor: "color-mix(in srgb, var(--surface, var(--bg)) 88%, transparent)",
+        }}
+      >
         <div className="flex items-center justify-between gap-2 mb-2">
           <span className="text-[13px] font-medium text-black/80 dark:text-white/80 tracking-tight">
             TL;DR Summary

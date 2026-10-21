@@ -91,10 +91,11 @@ function normalTokens(u: Rgba, isDark: boolean, y: number): TintPalette {
     // hue, never a heavy flood.
     const bg = mixRgba(u, PAPER, 0.45 + 0.55 * (1 - smooth(0, 0.12, y)))
     const white_ = 1 - smooth(0.1, 0.18, relLum(bg))
-    // Body copy in a strong version of the pick: saturated enough to read as
-    // the hue itself, dark enough for contrast. Near-black picks blend over
-    // to the light extreme via e, so this never strands dark-on-dark.
-    const deep = mixRgba(u, rgba(0, 0, 0, 1), 0.35)
+    // Text inks: near-opaque in a dark, pick-tinted ink (16% pick: a whisper
+    // of the hue, almost all black). This matches the default light ladder's
+    // rendered contrast over the tinted ground — muted rungs previously sat
+    // near 3:1 (washed mauve); now ≈5:1+ across the palette.
+    const deep = mixRgba(u, rgba(0, 0, 0, 1), 0.16)
     const tx = (a: number) => ({ ...deep, a })
     const hair = mixRgba(WHITE, INKDARK, white_)
     // Accent a step lighter than body copy so links pop; deepens toward
@@ -111,9 +112,9 @@ function normalTokens(u: Rgba, isDark: boolean, y: number): TintPalette {
       "surface-deep": mixRgba(rgba(11, 11, 13, 1), rgba(236, 236, 238, 1), white_),
       "surface-hover": mixRgba(rgba(32, 32, 36, 1), rgba(247, 247, 248, 1), white_),
       "border-color": { ...hair, a: 0.12 },
-      "text-muted": tx(0.4),
-      "text-secondary": tx(0.65),
-      "text-primary": tx(0.88),
+      "text-muted": tx(0.7),
+      "text-secondary": tx(0.84),
+      "text-primary": tx(0.93),
     }
   }
   const tx = (a: number) => mixRgba(u, rgba(250, 250, 250, a), 0.2)
@@ -142,7 +143,7 @@ function normalTokens(u: Rgba, isDark: boolean, y: number): TintPalette {
    dark-on-white tokens need SMALL w (almost all target). */
 function extremeLightTokens(u: Rgba): TintPalette {
   const tx = (a: number) => {
-    const m = mixRgba(u, rgba(24, 24, 24, 1), 0.3)
+    const m = mixRgba(u, rgba(24, 24, 24, 1), 0.16)
     return { ...m, a }
   }
   const dark = rgba(26, 26, 26)
@@ -156,9 +157,9 @@ function extremeLightTokens(u: Rgba): TintPalette {
     "surface-deep": mixRgba(u, rgba(228, 228, 229), 0.45),
     "surface-hover": mixRgba(u, rgba(233, 233, 234), 0.5),
     "border-color": mixRgba(u, rgba(0, 0, 0, 0.14), 0.1),
-    "text-muted": tx(0.44),
-    "text-secondary": tx(0.66),
-    "text-primary": tx(0.92),
+    "text-muted": tx(0.7),
+    "text-secondary": tx(0.84),
+    "text-primary": tx(0.93),
   }
 }
 
