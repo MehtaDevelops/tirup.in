@@ -22,6 +22,8 @@ const cspScriptSrc = [
   "https://www.google-analytics.com",
   "https://va.vercel-scripts.com",
   "https://vitals.vercel-insights.com",
+  "https://www.youtube.com",
+  "https://www.youtube-nocookie.com",
 ].join(" ")
 
 const contentSecurityPolicy = [
@@ -30,8 +32,8 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data: https://fonts.gstatic.com",
-  "connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://github-contributions-api.jogruber.de",
-  "frame-src 'self' https://www.googletagmanager.com",
+  "connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://github-contributions-api.jogruber.de https://www.youtube.com https://www.youtube-nocookie.com",
+  "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com https://www.youtube-nocookie.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -118,7 +120,8 @@ const nextConfig = {
           // (same-origin resume preview still works, other sites cannot frame).
           // script-src allows Next.js inline bootstraps + GTM/GA/Vercel
           // analytics; connect-src allows Convex API + analytics beacons +
-          // GitHub contributions API; img-src allows data:/blob: for QR tool,
+          // GitHub contributions API + YouTube oEmbed; frame-src allows the
+          // hidden YouTube player; img-src allows data:/blob: for QR tool,
           // shader noise SVG, and PDF blob previews.
           // (`unsafe-eval` is auto-included in dev only: see top of file.)
           {
@@ -129,7 +132,7 @@ const nextConfig = {
           {
             key: "Permissions-Policy",
             value:
-              "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), bluetooth=(), serial=(), speaker-selection=(), xr-spatial-tracking=(), ambient-light-sensor=(), autoplay=(self), fullscreen=(self)",
+              "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=(), bluetooth=(), serial=(), speaker-selection=(), xr-spatial-tracking=(), ambient-light-sensor=(), autoplay=(self \"https://www.youtube.com\" \"https://www.youtube-nocookie.com\"), fullscreen=(self)",
           },
           // ── Cross-Origin isolation ────────────────────────────────────────
           {
