@@ -253,6 +253,7 @@ export const AnimatedThemeToggler = ({
       type="button"
       ref={buttonRef}
       onClick={toggleTheme}
+      data-preserve-player=""
       aria-pressed={isDark}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
       className={cn("group active:scale-90 transition-all theme-toggle", className)}

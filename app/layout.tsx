@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
+import NotchPlayer from "@/components/notch-player"
 import AmbientShader from "@/components/ambient-shader"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
@@ -317,6 +318,7 @@ export default function RootLayout({
         <GoogleTagManagerNoscript />
 
         <PageTransition>{children}</PageTransition>
+        <NotchPlayer />
         <Analytics />
         <SpeedInsights />
       </body>

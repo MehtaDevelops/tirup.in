@@ -6,6 +6,11 @@ import { createPortal } from "react-dom"
 import TextWithBlur from "@/components/text-with-blur"
 import ThemeTintPicker from "@/components/theme-tint-picker"
 import { applyTint, clearTint, getStoredTint } from "@/lib/theme-tint"
+import {
+  closeSongBubble,
+  toggleSongBubble,
+  useSongBubbleOpen,
+} from "@/lib/song-bubble-store"
 
 const LiquidAscii = dynamic(() => import("@/components/liquid-ascii"), {
   ssr: false,
@@ -13,26 +18,20 @@ const LiquidAscii = dynamic(() => import("@/components/liquid-ascii"), {
 })
 
 const RED_DOT_DEFAULT = "#ff6b6b"
+const YELLOW_DOT_DEFAULT = "#feca57"
 const PANEL_GAP = 12
 const VIEWPORT_MARGIN = 8
 
-function YellowDot() {
-  return (
-    <span
-      title="coming soon"
-      aria-hidden="true"
-      style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: "#feca57", opacity: 0.6, flexShrink: 0, display: "block" }}
-    />
-  )
-}
-
 /**
- * HeroDots: dots row + two easter eggs.
- * Green dot: fluid ASCII (desktop only: mobile stays inert, zero cost,
- * canvas portals to body so it adds zero space).
+ * HeroDots: dots row + three easter eggs.
  * Red dot: site-wide theme color picker. The pick re-tints the whole
  * website (light surfaces + darker dark-mode surfaces, derived in CSS),
  * persists in localStorage, and applies on every page.
+ * Yellow dot: Spotify-style floating bubble song player. Paste a YouTube
+ * link and the hidden embed streams the audio; the gooey bubble morph is
+ * pure CSS, no new deps.
+ * Green dot: fluid ASCII (desktop only: mobile stays inert, zero cost,
+ * canvas portals to body so it adds zero space).
  *
  * The picker portals to body with viewport-clamped fixed positioning:
  * it flips above/below the dot based on available space, so it never
@@ -50,6 +49,11 @@ export default function HeroDots() {
   const tintAnchorRef = useRef<HTMLDivElement>(null)
   const tintTriggerRef = useRef<HTMLButtonElement>(null)
   const tintPanelRef = useRef<HTMLDivElement>(null)
+
+  // The song bubble is rendered once from the root layout, so it survives
+  // page navigation (music keeps playing between routes); this dot only
+  // toggles the store.
+  const musicOpen = useSongBubbleOpen()
 
   // Re-apply the persisted tint (pre-paint script in layout already did the
   // DOM part: this just syncs the dot's state with it).
@@ -71,6 +75,17 @@ export default function HeroDots() {
   const toggle = useCallback(() => {
     if (window.matchMedia("(max-width: 767px)").matches) return
     setOpen((v) => !v)
+    closeSongBubble()
+  }, [])
+
+  // Yellow dot: one easter egg at a time, so the ASCII canvas / tint panel
+  // never sits on top of the notch.
+  const toggleMusic = useCallback(() => {
+    toggleSongBubble()
+    setOpen(false)
+    setTintOpen(false)
+    setPanelPos(null)
+    setMeasured(false)
   }, [])
 
   const closePicker = useCallback((returnFocus: boolean) => {
@@ -172,7 +187,14 @@ export default function HeroDots() {
             <button
               ref={tintTriggerRef}
               type="button"
-              onClick={() => (tintOpen ? closePicker(false) : setTintOpen(true))}
+              onClick={() => {
+                if (tintOpen) {
+                  closePicker(false)
+                  return
+                }
+                setTintOpen(true)
+              }}
+              data-preserve-player=""
               aria-label={tint ? `Site theme color ${tint}. Choose another theme color` : "Choose a site theme color"}
               aria-haspopup="dialog"
               aria-pressed={tintOpen}
@@ -194,7 +216,29 @@ export default function HeroDots() {
               }}
             />
           </div>
-          <YellowDot />
+          <button
+            type="button"
+            data-notch-trigger=""
+            onClick={toggleMusic}
+            aria-label={musicOpen ? "Close notch music player" : "Open notch music player"}
+            aria-pressed={musicOpen}
+            aria-expanded={musicOpen}
+            title="psst… click me"
+            className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-3 after:content-['']"
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: 9999,
+              backgroundColor: YELLOW_DOT_DEFAULT,
+              opacity: musicOpen ? 1 : 0.6,
+              boxShadow: musicOpen ? `0 0 8px ${YELLOW_DOT_DEFAULT}` : "none",
+              flexShrink: 0,
+              display: "block",
+              padding: 0,
+              border: "none",
+              cursor: "pointer",
+            }}
+          />
           {isMobile ? (
             <span
               title="desktop only"
@@ -229,6 +273,7 @@ export default function HeroDots() {
         <div
           ref={tintPanelRef}
           className="animate-slide-up"
+          data-preserve-player=""
           style={{
             position: "fixed",
             top: panelPos?.top ?? -9999,
