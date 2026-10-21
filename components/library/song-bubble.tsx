@@ -193,6 +193,9 @@ export default function SongBubble({
   const pendingRef = useRef<PendingCommand[]>([])
   const volumeRailRef = useRef<HTMLDivElement | null>(null)
   const loadSeqRef = useRef(0)
+  const seekFreezeRef = useRef(0)
+  const scrubRef = useRef({ active: false, lastCommit: 0 })
+  const progressRef = useRef<HTMLDivElement | null>(null)
   const autoLoadedRef = useRef(false)
   const [dragging, setDragging] = useState(false)
   const dragStartRef = useRef({ px: 0, py: 0, baseX: 0, baseY: 0 })
@@ -376,7 +379,16 @@ export default function SongBubble({
 
       if (payload.event === "infoDelivery" && payload.info && typeof payload.info === "object") {
         const info = payload.info as PlayerInfo
-        if (typeof info.currentTime === "number" && Number.isFinite(info.currentTime)) {
+        // While a fresh seek is still settling (or the user is scrubbing the
+        // bar), ignore embed-reported currentTime: far seeks in long videos
+        // re-buffer for a while, and the next infoDelivery would otherwise
+        // yank the readout back to the pre-seek position mid-seek.
+        if (
+          typeof info.currentTime === "number" &&
+          Number.isFinite(info.currentTime) &&
+          Date.now() >= seekFreezeRef.current &&
+          !scrubRef.current.active
+        ) {
           setCurrent(info.currentTime)
         }
         if (typeof info.duration === "number" && info.duration > 0) {
@@ -397,16 +409,25 @@ export default function SongBubble({
     return () => window.removeEventListener("message", onMessage)
   }, [postCommand, flushWhenReady, volume])
 
-  // While audio is playing, ask the embed for a fresh currentTime/duration.
+  // Ask the embed for a fresh currentTime/duration while a video is loaded —
+  // not just while playing: during long re-buffers (far seeks in big videos)
+  // the state flaps between buffering and playing, and the readout must keep
+  // up when the dust settles instead of freezing at a stale tick.
   useEffect(() => {
-    if (!videoId || !playing) return
+    if (!videoId) return
     const tick = () => {
-      if (widgetReadyRef.current) postCommand("listening")
+      const frame = iframeRef.current
+      if (frame) {
+        frame.contentWindow?.postMessage(
+          JSON.stringify({ event: "listening", id: 1, channel: "widget" }),
+          "*"
+        )
+      }
     }
     tick()
     const interval = window.setInterval(tick, 500)
     return () => window.clearInterval(interval)
-  }, [videoId, playing, postCommand])
+  }, [videoId])
 
   // A new video navigates the frame: the old widget dies and a fresh one
   // boots, so our "widget said hello" state has to reset with it.
@@ -499,7 +520,11 @@ export default function SongBubble({
     (seconds: number) => {
       if (!videoId) return
       const upper = duration > 0 ? duration : 0
-      const next = Math.max(0, Math.min(seconds, upper || 0))
+      const next = Math.max(0, Math.min(seconds, upper))
+      // Freeze embed-driven readouts briefly: far seeks in long videos
+      // re-buffer, and without this the next infoDelivery snaps the bar
+      // back to the pre-seek position while the seek is still landing.
+      seekFreezeRef.current = Date.now() + 2000
       postCommand("seekTo", [next, true])
       setCurrent(next)
     },
@@ -510,6 +535,57 @@ export default function SongBubble({
     (seconds: number) => seekTo(currentRef.current + seconds),
     [seekTo]
   )
+
+  // Scrub the timeline like the volume rail: pointerdown seeks, dragging
+  // keeps seeking (throttled so long unbuffered jumps don't thrash the
+  // buffer), release commits. The readout previews every move instantly.
+  const commitScrub = useCallback(
+    (clientX: number, force: boolean) => {
+      const bar = progressRef.current
+      if (!bar || duration <= 0) return
+      const rect = bar.getBoundingClientRect()
+      if (rect.width <= 0) return
+      const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
+      const now = Date.now()
+      if (force || now - scrubRef.current.lastCommit > 120) {
+        scrubRef.current.lastCommit = now
+        seekFreezeRef.current = now + 2000
+        postCommand("seekTo", [ratio * duration, true])
+      }
+      setCurrent(ratio * duration)
+    },
+    [duration, postCommand]
+  )
+
+  useEffect(() => {
+    const onMove = (event: PointerEvent) => {
+      if (scrubRef.current.active) commitScrub(event.clientX, false)
+    }
+    const onEnd = (event: PointerEvent) => {
+      if (!scrubRef.current.active) return
+      commitScrub(event.clientX, true)
+      scrubRef.current.active = false
+      document.body.style.cursor = ""
+    }
+    window.addEventListener("pointermove", onMove)
+    window.addEventListener("pointerup", onEnd)
+    window.addEventListener("pointercancel", onEnd)
+    return () => {
+      window.removeEventListener("pointermove", onMove)
+      window.removeEventListener("pointerup", onEnd)
+      window.removeEventListener("pointercancel", onEnd)
+    }
+  }, [commitScrub])
+
+  const onProgressPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (!hasVideo || !duration) return
+    if (!event.isPrimary || event.button !== 0) return
+    event.preventDefault()
+    event.stopPropagation()
+    scrubRef.current = { active: true, lastCommit: 0 }
+    document.body.style.cursor = "col-resize"
+    commitScrub(event.clientX, true)
+  }
 
   const changeVolume = useCallback((next: number) => {
     setVolume(Math.max(0, Math.min(100, next)))
@@ -907,12 +983,9 @@ export default function SongBubble({
 
               <div className="song-bubble-progressblock">
                 <div
+                  ref={progressRef}
                   className="song-bubble-progress"
-                  onClick={(event) => {
-                    if (!duration) return
-                    const rect = event.currentTarget.getBoundingClientRect()
-                    seekTo(((event.clientX - rect.left) / rect.width) * duration)
-                  }}
+                  onPointerDown={onProgressPointerDown}
                   role="slider"
                   tabIndex={0}
                   aria-label="Track position"
