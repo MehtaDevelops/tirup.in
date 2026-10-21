@@ -16,6 +16,11 @@ const components = [
     description: "FLIP fluid simulation rendered as ASCII characters.",
     slug: "/components/liquid-ascii",
   },
+  {
+    title: "Song Bubble",
+    description: "Spotify-style floating mini player: a YouTube engine you can drag around.",
+    slug: "/components/song-bubble",
+  },
 ]
 
 export default function AllComponentsPage() {

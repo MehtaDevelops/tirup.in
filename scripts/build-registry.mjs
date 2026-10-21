@@ -41,6 +41,16 @@ const ITEMS = [
     description: "FLIP fluid simulation rendered as ASCII characters.",
     docs: `${BASE_URL}/liquid-ascii`,
   },
+  {
+    name: "song-bubble",
+    source: "components/library/song-bubble.tsx",
+    target: "components/song-bubble.tsx",
+    type: "registry:component",
+    title: "Song Bubble",
+    description:
+      "Spotify-style floating mini player: an orb that springs into a draggable song card with a real YouTube engine inside.",
+    docs: `${BASE_URL}/song-bubble`,
+  },
 ]
 
 mkdirSync(outDir, { recursive: true })

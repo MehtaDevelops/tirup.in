@@ -5,5 +5,12 @@
     "description": "FLIP fluid simulation rendered as ASCII characters.",
     "docs": "https://tirup.in/components/liquid-ascii",
     "file": "liquid-ascii.json"
+  },
+  {
+    "name": "song-bubble",
+    "title": "Song Bubble",
+    "description": "Spotify-style floating mini player: an orb that springs into a draggable song card with a real YouTube engine inside.",
+    "docs": "https://tirup.in/components/song-bubble",
+    "file": "song-bubble.json"
   }
 ]
