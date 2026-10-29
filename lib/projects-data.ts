@@ -478,7 +478,7 @@ export const projectsList: WorkProject[] = [
   },
   {
     title: "Draft",
-    description: "Private, on-device dictation for Windows. Hold Right Ctrl, speak, release, and Whisper writes the text at your cursor. No account, no audio upload, no telemetry.",
+    description: "Private, on-device dictation for Windows with Whisper.",
     slug: "draft",
     github: "github.com/TirupMehta/Draft-web",
     liveUrl: "https://draft.tirup.in",
