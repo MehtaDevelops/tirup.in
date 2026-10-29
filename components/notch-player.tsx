@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { usePathname } from "next/navigation"
 import type {
   KeyboardEvent as ReactKeyboardEvent,
   PointerEvent as ReactPointerEvent,
@@ -119,6 +120,7 @@ export default function NotchPlayer() {
   // changes and the audio keeps playing between routes. The store controls
   // when the card is actually shown (closed = behaves like an unmount).
   const open = useSongBubbleOpen()
+  const pathname = usePathname()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const currentRef = useRef(0)
@@ -214,25 +216,6 @@ export default function NotchPlayer() {
     }
   }, [])
 
-  // Official handshake: the YT api client never assumes the widget will talk
-  // first — it opens the session with a "listening" envelope. Some embed
-  // boots only start broadcasting once this lands, so send it on a short
-  // poll until the widget responds.
-  useEffect(() => {
-    if (!open || !videoId) return
-    const knock = () => {
-      const frame = iframeRef.current
-      if (!frame || widgetReadyRef.current) return
-      frame.contentWindow?.postMessage(
-        JSON.stringify({ event: "listening", id: 1, channel: "widget" }),
-        "*"
-      )
-    }
-    knock()
-    const interval = window.setInterval(knock, 1200)
-    return () => window.clearInterval(interval)
-  }, [open, videoId])
-
   // Open with the orb -> card expansion rather than a static fully-open
   // panel. One frame at the orb size is enough for CSS to animate.
   // Re-runs on every (re)open; page navigation leaves it untouched.
@@ -242,9 +225,8 @@ export default function NotchPlayer() {
     return () => window.clearTimeout(timer)
   }, [open])
 
-  // Opening the yellow-dot bubble is the user's playback gesture. Explicitly
-  // queue play as the YouTube iframe mounts, in addition to its autoplay URL,
-  // so the default track starts as soon as the widget handshake is ready.
+  // Opening the yellow-dot bubble is the user's playback gesture. Send play
+  // to the warmed iframe; autoplay stays disabled until this click.
   useEffect(() => {
     if (!open || videoId !== DEFAULT_VIDEO_ID) return
     playingRef.current = true
@@ -252,12 +234,12 @@ export default function NotchPlayer() {
     postCommand("playVideo")
   }, [open, postCommand, videoId])
 
-  // Closing the card mirrors the old unmount-forget behavior exactly: the
-  // song, its metadata and the widget session are discarded (the parked
-  // position is the one thing that survives). The component itself stays
-  // mounted in the layout engine across navigations.
+  // Closing resets the chosen song, while the hidden default player remains
+  // warm so the next click can start without booting a new YouTube iframe.
   useEffect(() => {
     if (open) return
+    playingRef.current = false
+    postCommand("pauseVideo")
     setExpanded(false)
     setEditing(false)
     setUrl("")
@@ -269,10 +251,12 @@ export default function NotchPlayer() {
     setPlaying(false)
     setCurrent(0)
     setDuration(0)
-    widgetReadyRef.current = false
-    pendingRef.current = []
-    loadSeqRef.current = 0
-  }, [open])
+    if (videoId !== DEFAULT_VIDEO_ID) {
+      widgetReadyRef.current = false
+      pendingRef.current = []
+    }
+    loadSeqRef.current += 1
+  }, [open, videoId, postCommand])
 
   useEffect(() => {
     setOrigin(window.location.origin)
@@ -345,15 +329,18 @@ export default function NotchPlayer() {
     return () => window.removeEventListener("message", onMessage)
   }, [postCommand, flushWhenReady, volume])
 
-  // Ask the embed for a fresh currentTime/duration while a video is loaded —
-  // not just while playing: during long re-buffers (far seeks in big videos)
-  // the state flaps between buffering and playing, and the readout must keep
-  // up when the dust settles instead of freezing at a stale tick.
+  // Keep the widget handshake alive before the first click, then ask for a
+  // fresh currentTime/duration during playback and long re-buffers.
   useEffect(() => {
     if (!videoId) return
     const tick = () => {
       const frame = iframeRef.current
-      if (frame) {
+      if (frame && !widgetReadyRef.current) {
+        frame.contentWindow?.postMessage(
+          JSON.stringify({ event: "listening", id: 1, channel: "widget" }),
+          "*"
+        )
+      } else if (frame && open) {
         frame.contentWindow?.postMessage(
           JSON.stringify({ event: "listening", id: 1, channel: "widget" }),
           "*"
@@ -363,7 +350,7 @@ export default function NotchPlayer() {
     tick()
     const interval = window.setInterval(tick, 500)
     return () => window.clearInterval(interval)
-  }, [videoId])
+  }, [open, videoId])
 
   // A new video navigates the frame: the old widget dies and a fresh one
   // boots, so our "widget said hello" state has to reset with it.
@@ -707,15 +694,37 @@ export default function NotchPlayer() {
   }
 
   const videoSrc =
-    videoId && origin
-      ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1&origin=${encodeURIComponent(
+    videoId && origin && (open || pathname === "/")
+      ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=0&origin=${encodeURIComponent(
           origin
         )}`
       : null
 
-  if (!open || typeof document === "undefined") return null
+  if (typeof document === "undefined") return null
 
-  return createPortal(
+  return (
+    <>
+      {videoSrc && (
+        <iframe
+          ref={iframeRef}
+          src={videoSrc}
+          loading="eager"
+          aria-hidden="true"
+          tabIndex={-1}
+          title="YouTube player"
+          allow="autoplay; encrypted-media"
+          style={{
+            position: "fixed",
+            top: -10000,
+            left: -10000,
+            width: 320,
+            height: 180,
+            border: 0,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+      {open && createPortal(
     <div
       ref={rootRef}
       role="region"
@@ -968,27 +977,6 @@ export default function NotchPlayer() {
           )}
         </div>
       </div>
-
-      {videoSrc && (
-        <iframe
-          ref={iframeRef}
-          src={videoSrc}
-          // Offscreen but unclipped: fully hidden/clipped frames can leave
-          // the embed player dormant; a 320x180 frame parked far offscreen
-          // keeps the widget fully alive and audio audible.
-          style={{
-            position: "fixed",
-            top: -10000,
-            left: -10000,
-            width: 320,
-            height: 180,
-            border: 0,
-            pointerEvents: "none",
-          }}
-          allow="autoplay; encrypted-media"
-          title="YouTube player"
-        />
-      )}
 
       <style>{`
         .song-bubble-root {
@@ -1419,5 +1407,7 @@ export default function NotchPlayer() {
       `}</style>
     </div>,
     document.body
+  )}
+    </>
   )
 }
