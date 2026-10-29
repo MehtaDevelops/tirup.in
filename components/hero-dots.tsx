@@ -30,8 +30,7 @@ const VIEWPORT_MARGIN = 8
  * Yellow dot: Spotify-style floating bubble song player. Paste a YouTube
  * link and the hidden embed streams the audio; the gooey bubble morph is
  * pure CSS, no new deps.
- * Green dot: fluid ASCII (desktop only: mobile stays inert, zero cost,
- * canvas portals to body so it adds zero space).
+ * Green dot: interactive fluid ASCII, tuned for touch and desktop input.
  *
  * The picker portals to body with viewport-clamped fixed positioning:
  * it flips above/below the dot based on available space, so it never
@@ -39,7 +38,6 @@ const VIEWPORT_MARGIN = 8
  */
 export default function HeroDots() {
   const [open, setOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const close = useCallback(() => setOpen(false), [])
 
   const [tintOpen, setTintOpen] = useState(false)
@@ -61,19 +59,7 @@ export default function HeroDots() {
     setTint(applyTint(getStoredTint()))
   }, [])
 
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)")
-    const sync = () => {
-      setIsMobile(mq.matches)
-      if (mq.matches) setOpen(false)
-    }
-    sync()
-    mq.addEventListener("change", sync)
-    return () => mq.removeEventListener("change", sync)
-  }, [])
-
   const toggle = useCallback(() => {
-    if (window.matchMedia("(max-width: 767px)").matches) return
     setOpen((v) => !v)
     closeSongBubble()
   }, [])
@@ -200,20 +186,8 @@ export default function HeroDots() {
               aria-pressed={tintOpen}
               aria-expanded={tintOpen}
               title={tint ? `theme: ${tint} (click to change)` : "psst… click me"}
-              className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-3 after:content-['']"
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 9999,
-                backgroundColor: tint ?? RED_DOT_DEFAULT,
-                opacity: redActive ? 1 : 0.6,
-                boxShadow: redActive ? `0 0 8px ${tint ?? RED_DOT_DEFAULT}` : "none",
-                flexShrink: 0,
-                display: "block",
-                padding: 0,
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
+              style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: RED_DOT_DEFAULT, opacity: redActive ? 1 : 0.6, boxShadow: redActive ? `0 0 8px ${RED_DOT_DEFAULT}` : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
             />
           </div>
           <button
@@ -224,49 +198,18 @@ export default function HeroDots() {
             aria-pressed={musicOpen}
             aria-expanded={musicOpen}
             title="psst… click me"
-            className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-3 after:content-['']"
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 9999,
-              backgroundColor: YELLOW_DOT_DEFAULT,
-              opacity: musicOpen ? 1 : 0.6,
-              boxShadow: musicOpen ? `0 0 8px ${YELLOW_DOT_DEFAULT}` : "none",
-              flexShrink: 0,
-              display: "block",
-              padding: 0,
-              border: "none",
-              cursor: "pointer",
-            }}
+            className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
+            style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: YELLOW_DOT_DEFAULT, opacity: musicOpen ? 1 : 0.6, boxShadow: musicOpen ? `0 0 8px ${YELLOW_DOT_DEFAULT}` : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
           />
-          {isMobile ? (
-            <span
-              title="desktop only"
-              aria-hidden="true"
-              style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: "#1dd1a1", opacity: 0.6, flexShrink: 0, display: "block" }}
-            />
-          ) : (
           <button
             type="button"
             onClick={toggle}
             aria-label="Toggle liquid ASCII easter egg"
             aria-pressed={open}
             title="psst… click me"
-            style={{
-              width: 10,
-              height: 10,
-              borderRadius: 9999,
-              backgroundColor: "#1dd1a1",
-              opacity: open ? 1 : 0.6,
-              boxShadow: open ? "0 0 8px #1dd1a1" : "none",
-              flexShrink: 0,
-              display: "block",
-              padding: 0,
-              border: "none",
-              cursor: "pointer",
-            }}
+            className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
+            style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: "#1dd1a1", opacity: open ? 1 : 0.6, boxShadow: open ? "0 0 8px #1dd1a1" : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
           />
-          )}
         </div>
       </TextWithBlur>
       {tintOpen && typeof document !== "undefined" && createPortal(
@@ -292,7 +235,7 @@ export default function HeroDots() {
         </div>,
         document.body
       )}
-      {open && !isMobile && <LiquidAscii onClose={close} />}
+      {open && <LiquidAscii onClose={close} />}
     </>
   )
 }

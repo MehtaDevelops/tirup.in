@@ -22,13 +22,14 @@ import {
  * No lyrics pane.
  *
  * Audio is a hidden YouTube embed driven through the iframe postMessage API.
- * Paste a youtube.com / youtu.be / shorts link into the card, press Enter,
- * and the oEmbed metadata + artwork are pulled in automatically.
+ * It starts with Rick Astley's "Never Gonna Give You Up"; visitors can replace
+ * it with any youtube.com / youtu.be / shorts link from the card.
  */
 
-const DEFAULT_THUMBNAIL = "/expressions/17-headphones.webp"
-const EMPTY_TITLE = "No song playing"
-const EMPTY_ARTIST = "Insert a YouTube link below"
+const DEFAULT_VIDEO_ID = "dQw4w9WgXcQ"
+const DEFAULT_TITLE = "Never Gonna Give You Up"
+const DEFAULT_ARTIST = "Rick Astley"
+const DEFAULT_THUMBNAIL = `https://img.youtube.com/vi/${DEFAULT_VIDEO_ID}/mqdefault.jpg`
 const DEFAULT_VOLUME = 100
 const URL_HELP = "Supports youtube.com/watch · youtu.be · youtube.com/shorts"
 const ACCENT = "#1ed760"
@@ -138,9 +139,9 @@ export default function NotchPlayer() {
   const [editing, setEditing] = useState(false)
   const [url, setUrl] = useState("")
   const [error, setError] = useState("")
-  const [videoId, setVideoId] = useState<string | null>(null)
-  const [title, setTitle] = useState(EMPTY_TITLE)
-  const [artist, setArtist] = useState(EMPTY_ARTIST)
+  const [videoId, setVideoId] = useState<string | null>(DEFAULT_VIDEO_ID)
+  const [title, setTitle] = useState(DEFAULT_TITLE)
+  const [artist, setArtist] = useState(DEFAULT_ARTIST)
   const [thumbnail, setThumbnail] = useState(DEFAULT_THUMBNAIL)
   const [playing, setPlaying] = useState(false)
   const [current, setCurrent] = useState(0)
@@ -218,7 +219,7 @@ export default function NotchPlayer() {
   // boots only start broadcasting once this lands, so send it on a short
   // poll until the widget responds.
   useEffect(() => {
-    if (!videoId) return
+    if (!open || !videoId) return
     const knock = () => {
       const frame = iframeRef.current
       if (!frame || widgetReadyRef.current) return
@@ -230,7 +231,7 @@ export default function NotchPlayer() {
     knock()
     const interval = window.setInterval(knock, 1200)
     return () => window.clearInterval(interval)
-  }, [videoId])
+  }, [open, videoId])
 
   // Open with the orb -> card expansion rather than a static fully-open
   // panel. One frame at the orb size is enough for CSS to animate.
@@ -240,6 +241,16 @@ export default function NotchPlayer() {
     const timer = window.setTimeout(() => setExpanded(true), 40)
     return () => window.clearTimeout(timer)
   }, [open])
+
+  // Opening the yellow-dot bubble is the user's playback gesture. Explicitly
+  // queue play as the YouTube iframe mounts, in addition to its autoplay URL,
+  // so the default track starts as soon as the widget handshake is ready.
+  useEffect(() => {
+    if (!open || videoId !== DEFAULT_VIDEO_ID) return
+    playingRef.current = true
+    setPlaying(true)
+    postCommand("playVideo")
+  }, [open, postCommand, videoId])
 
   // Closing the card mirrors the old unmount-forget behavior exactly: the
   // song, its metadata and the widget session are discarded (the parked
@@ -251,9 +262,9 @@ export default function NotchPlayer() {
     setEditing(false)
     setUrl("")
     setError("")
-    setVideoId(null)
-    setTitle(EMPTY_TITLE)
-    setArtist(EMPTY_ARTIST)
+    setVideoId(DEFAULT_VIDEO_ID)
+    setTitle(DEFAULT_TITLE)
+    setArtist(DEFAULT_ARTIST)
     setThumbnail(DEFAULT_THUMBNAIL)
     setPlaying(false)
     setCurrent(0)

@@ -10,7 +10,7 @@ import { createPortal } from "react-dom"
  * | Pro prop        | Pro default | Ours                                             |
  * |-----------------|-------------|--------------------------------------------------|
  * | speed           | 0.9         | 1.15                                             |
- * | cellSize        | 15 (6–30)   | 30 sim grid (12 render / 17 mobile, denser ask)  |
+ * | cellSize        | 15 (6–30)   | 30 sim grid (12 render / 18 mobile)             |
  * | gravity         | -25         | real gravity on particles, px/s²                |
  * | fillHeight      | 0.4         | 0.4                                              |
  * | cursorRadius    | 0.25        | 0.25 × short side                                |
@@ -19,7 +19,7 @@ import { createPortal } from "react-dom"
  * | pressureIters   | 30          | 30 Gauss-Seidel iterations: the real thing      |
  * | overRelaxation  | 1.5         | 1.5: the real thing                             |
  * | separationIters | 3           | 3 density passes: the real thing                |
- * | characters      | 11 glyphs   | 70-step ramp (variety request)                   |
+ * | characters      | 11 glyphs   | compact density ramp for a cleaner fluid shape   |
  * | autoWave        | true        | false: input only, loop sleeps when settled     |
  *
  * Pipeline per step: cursor → particles → grid (bilinear) → gravity →
@@ -28,18 +28,18 @@ import { createPortal } from "react-dom"
  *
  * Touch-only cursor: moving through air does nothing. Force applies
  * only while the cursor sits on fluid. No cursor ring, no chrome.
- * Desktop only (mobile never mounts it). Two substeps per frame.
+ * Responsive desktop and touch input. Mobile uses a coarser grid and glyph
+ * size to keep the fullscreen simulation within a phone-friendly frame budget.
  */
 
-const GLYPHS =
-  " .·'`^,:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
+const GLYPHS = " .,:;-=+*#@"
 
 const P = {
   speed: 1.15,
   simCellD: 30,
   simCellM: 32,
   renderCellD: 12,
-  renderCellM: 17,
+  renderCellM: 18,
   renderCap: 12000,
   ppc: 5, // particles per sim cell at seed (dense body)
   pmax: 8000,
@@ -78,6 +78,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     if (!canvas) return
     const ctx = canvas.getContext("2d")
     if (!ctx) return
+    const smoothFontFamily = getComputedStyle(document.body).fontFamily || "system-ui, sans-serif"
 
     let raf = 0
     let W = 0
@@ -85,7 +86,10 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     // sim grid (coarse: solver lives here)
     let nx = 0
     let ny = 0
+    let mobile = false
+    let fillHeight: number = P.fillHeight
     let h: number = P.simCellD
+    let pressureIters: number = P.pressureIters
     let u = new Float32Array(0)
     let v = new Float32Array(0)
     let u0 = new Float32Array(0)
@@ -157,7 +161,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       const chh = H / rrows
       ctx.textAlign = "center"
       ctx.textBaseline = "middle"
-      ctx.font = `${Math.round(rcell * 0.95)}px ui-monospace, SFMono-Regular, Menlo, monospace`
+      ctx.font = `${Math.round(rcell * 0.95)}px ${smoothFontFamily}`
       const n = GLYPHS.length
       // fluid top per column: first row with neighborhood support (≥3 in
       // a 3-wide window): lone stuck dots can't fake a surface.
@@ -200,8 +204,8 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
             alpha = Math.min(0.7, 0.3 + asp * 0.0006)
           } else if (depth < 0.9) {
             // dense surface line, like the old tank look
-            idx = n - 1 - Math.floor(hash1(x + 1) * 2)
-            alpha = 0.65
+            idx = n - 3 - Math.floor(hash1(x + 1) * 2)
+            alpha = mobile ? 0.36 : 0.65
           } else {
             if (c < 0.5) continue
             const fade = Math.max(0, 1 - depth / (rrows * 0.45))
@@ -213,8 +217,8 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
             alpha = Math.min(0.75, 0.2 + w * 0.4)
           }
           ctx.fillStyle = isDarkNow
-            ? `rgba(244,244,245,${alpha.toFixed(3)})`
-            : `rgba(18,19,20,${alpha.toFixed(3)})`
+            ? `rgba(244,244,245,${(alpha * (mobile ? 0.42 : 1)).toFixed(3)})`
+            : `rgba(18,19,20,${(alpha * (mobile ? 0.42 : 1)).toFixed(3)})`
           ctx.fillText(GLYPHS[idx], x * cw + cw / 2, y * chh + chh / 2)
         }
       }
@@ -303,7 +307,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       // Free surface: air neighbors are Dirichlet p=0. Solid neighbors
       // are excluded (Neumann: ghost value = center, cancels out).
       const h2dt = (h * h) / dtCur
-      for (let it = 0; it < P.pressureIters; it++) {
+      for (let it = 0; it < pressureIters; it++) {
         for (let j = 1; j < ny - 1; j++) {
           for (let i = 1; i < nx - 1; i++) {
             const k = j * nx + i
@@ -432,7 +436,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
         let need = Math.min(seeded - active, 200)
         while (need-- > 0 && active < P.pmax) {
           px[active] = h + Math.random() * (W - 2 * h)
-          py[active] = H * (1 - P.fillHeight) + Math.random() * (H * P.fillHeight - h)
+          py[active] = H * (1 - fillHeight) + Math.random() * (H * fillHeight - h)
           pu[active] = 0
           pv[active] = 0
           active++
@@ -504,7 +508,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
 
     const seed = () => {
       active = 0
-      const y0 = H * (1 - P.fillHeight)
+      const y0 = H * (1 - fillHeight)
       for (let j = 1; j < ny - 1 && active < P.pmax; j++) {
         for (let i = 1; i < nx - 1 && active < P.pmax; i++) {
           const cy = (j + 0.5) * h
@@ -526,8 +530,12 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     const resize = () => {
       W = window.innerWidth
       H = window.innerHeight
-      const mobile = W < 768
+      mobile = W < 768
+      fillHeight = mobile ? 0.48 : P.fillHeight
       h = mobile ? P.simCellM : P.simCellD
+      // The mobile grid is already coarser; trim solver work while keeping
+      // enough pressure iterations for a convincing, stable fluid surface.
+      pressureIters = mobile ? 20 : P.pressureIters
       canvas.width = W
       canvas.height = H
       nx = Math.max(8, Math.floor(W / h))
@@ -619,10 +627,21 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       }
       wake()
     }
-    const onPointerMove = (e: PointerEvent) => onPoint(e.clientX, e.clientY)
+    // Pointer Events also fire for touch, and the explicit touch handlers below
+    // provide the native touch stream, so use pointer input for mouse/pen only.
+    const onPointerMove = (e: PointerEvent) => {
+      if (e.pointerType !== "touch") onPoint(e.clientX, e.clientY)
+    }
     const onTouchMove = (e: TouchEvent) => {
       const t = e.touches[0]
-      if (t) onPoint(t.clientX, t.clientY)
+      if (!t) return
+      const r = canvas.getBoundingClientRect()
+      const x = t.clientX - r.left
+      const y = t.clientY - r.top
+      // Keep the page scrollable when the gesture starts in empty space, but
+      // reserve direct contact with the liquid for stirring it.
+      if (touching(x, y)) e.preventDefault()
+      onPoint(t.clientX, t.clientY)
     }
     const onLeave = () => {
       lastMX = -9999
@@ -631,7 +650,7 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
       cvy = 0
     }
     window.addEventListener("pointermove", onPointerMove, { passive: true })
-    window.addEventListener("touchmove", onTouchMove, { passive: true })
+    window.addEventListener("touchmove", onTouchMove, { passive: false })
     window.addEventListener("touchstart", onTouchMove as EventListener, {
       passive: true,
     } as AddEventListenerOptions)
