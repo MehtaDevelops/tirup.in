@@ -34,10 +34,10 @@ export const projectsData = {
   "draft": {
     title: "Draft",
     description: "Private, on-device dictation for Windows. Hold Right Ctrl, speak, release, and Whisper large-v3-turbo writes the text at your cursor. No account, no audio upload, no telemetry.",
-    fullDescription: "Draft is a free, MIT-licensed, on-device dictation app for Windows 10 and 11. Hold Right Ctrl, speak naturally, and release: Whisper large-v3-turbo transcribes your speech on your PC and pastes the text at the cursor in any app. Audio is captured only while the key is held, transcribed locally, and discarded. The Windows installer includes the F16 Whisper model, so dictation works offline after installation. No account, no telemetry, no cloud transcription, no audio upload. An early Apple Silicon macOS preview and a Rust/GPUI codebase are also available.",
+    fullDescription: "Draft is a free, MIT-licensed, on-device dictation app for Windows 10 and 11. Hold Right Ctrl, speak, and release: Whisper large-v3-turbo transcribes on your PC and pastes the text at the cursor in any app. Audio is captured only while the key is held and discarded. The installer includes the F16 model, so it works offline. No account, no telemetry, no cloud transcription. An early Apple Silicon macOS preview exists.",
     liveUrl: "https://draft.tirup.in",
     github: "github.com/TirupMehta/Draft-web",
-    techStack: ["Rust", "GPUI", "transcribe.cpp", "Whisper large-v3-turbo", "Vulkan", "Next.js", "TypeScript"],
+    techStack: ["Rust", "GPUI", "transcribe.cpp", "Whisper", "Vulkan", "Next.js"],
     stats: {
       platform: "Windows 10/11 x64",
       model: "Whisper large-v3-turbo (F16)",
@@ -48,23 +48,19 @@ export const projectsData = {
     details: [
       {
         title: "The Challenge",
-        content: "Most dictation tools upload audio to the cloud, require accounts, track usage, or lock you into subscriptions. Developers, writers, lawyers, doctors, and journalists handling sensitive text have no trustworthy local option on Windows, and cloud latency breaks the flow of dictation.",
+        content: "Most dictation tools upload audio to the cloud, require accounts, or track usage. Sensitive work has no trustworthy local option on Windows, and cloud latency breaks the flow.",
       },
       {
         title: "The Solution",
-        content: "Draft runs Whisper large-v3-turbo entirely on your PC through transcribe.cpp (Vulkan, with a CPU fallback). Hold Right Ctrl, speak, release, and the transcript is pasted at the cursor in any app, with paragraph breaks placed at real pauses learned from your own speech. Audio is captured only while the key is held and discarded after transcription.",
+        content: "Whisper runs entirely on your PC via transcribe.cpp (Vulkan, CPU fallback). Hold Right Ctrl, speak, release, and the transcript pastes at the cursor in any app, with paragraph breaks at real pauses learned from your speech.",
       },
       {
-        title: "Privacy by Construction",
-        content: "No account, no telemetry, no analytics, no crash reporting, no update ping, no cloud transcription, no audio upload. History stores text and duration only under %LOCALAPPDATA%\\Draft4. The installer is unsigned and the source is MIT-licensed and public, so the privacy model is verifiable rather than stated.",
-      },
-      {
-        title: "Performance",
-        content: "The model stays warm on the GPU between dictations. A three-second clip finishes in 239 ms at p95 and a sixty-second clip in 1.19 s at p95, 4.17 times faster than the previous build on the same clip. Without a GPU, the same F16 model runs on the CPU with the same text.",
+        title: "Privacy & Speed",
+        content: "No account, telemetry, analytics, crash reporting, update ping, cloud transcription, or audio upload. History stores text and duration only. A 3 s clip finishes in 239 ms p95 (1.19 s for 60 s), 4.17x faster than the previous build. The same F16 model runs on CPU with identical text.",
       },
       {
         title: "Open Source",
-        content: "Written in Rust with a GPUI interface and transcribe.cpp for inference. The desktop app lives at github.com/TirupMehta/draft-rs and the marketing site at github.com/TirupMehta/Draft-web. Contributions, issues, and audits are welcome.",
+        content: "Rust + GPUI + transcribe.cpp. Desktop app at github.com/TirupMehta/draft-rs, site at github.com/TirupMehta/Draft-web. MIT licensed and open to audit.",
       },
     ],
   },
