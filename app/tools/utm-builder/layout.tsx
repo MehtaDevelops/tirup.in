@@ -1,13 +1,13 @@
 import type { Metadata } from "next"
-import type { ReactNode } from "react"
 
 export const metadata: Metadata = {
   title: "UTM Builder",
-  description: "Create consistent campaign URLs for Google Analytics attribution.",
+  description:
+    "GA4 campaign URL generator and attribution studio. Build UTM-tagged links with live channel grouping diagnostics and 12-channel bulk exports.",
   alternates: { canonical: "/tools/utm-builder" },
-  openGraph: { url: "/tools/utm-builder" },
+  robots: { index: true, follow: true },
 }
 
-export default function UtmBuilderLayout({ children }: { children: ReactNode }) {
+export default function UtmBuilderLayout({ children }: { children: React.ReactNode }) {
   return children
 }

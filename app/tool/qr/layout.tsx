@@ -1,13 +1,13 @@
 import type { Metadata } from "next"
-import type { ReactNode } from "react"
 
 export const metadata: Metadata = {
-  title: "QR Studio",
-  description: "Generate customizable QR codes for links, Wi-Fi, contact details, and more.",
+  title: "QR Code Studio",
+  description:
+    "Pro QR code and vector studio. Generate print-ready vector SVGs, Wi-Fi credentials, vCards, custom module shapes, frames, and high-resolution QR codes. 100% client-side and private.",
   alternates: { canonical: "/tool/qr" },
-  openGraph: { url: "/tool/qr" },
+  robots: { index: true, follow: true },
 }
 
-export default function QrStudioLayout({ children }: { children: ReactNode }) {
+export default function QrStudioLayout({ children }: { children: React.ReactNode }) {
   return children
 }

@@ -60,6 +60,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${item.title} — registry item`,
     description: `${item.description} The registry JSON the shadcn CLI installs ${item.name} from, readable file by file.`,
     alternates: { canonical: `/components/r/${item.name}/source` },
+    robots: { index: false, follow: true },
     openGraph: {
       title: `${item.title} — registry item | Tirup Mehta`,
       description: item.description,
