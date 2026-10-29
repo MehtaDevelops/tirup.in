@@ -552,21 +552,17 @@ export default function NotchPlayer() {
     }
   }, [draggingVolume, volumeFromClientX])
 
-  // Keep the parked card fully on screen (8px breathing room). The card
-  // morphs between the 56px orb and the (usually) 260px card, so clamp
-  // against the largest size the card can take at this viewport — else a
-  // spot valid for the orb overflows once the card expands.
+  // Keep the current orb/card fully on screen (8px breathing room). The
+  // collapsed orb can move freely; when it expands, clamp its saved position
+  // again against the card's actual responsive width.
   const clampPos = useCallback((x: number, y: number) => {
-    const root = rootRef.current
     const pad = 8
-    const currentW = root ? root.offsetWidth : 260
-    const expandedW = window.innerWidth <= 480 ? window.innerWidth - 32 : 260
-    const width = Math.max(currentW, expandedW)
-    const maxHeight = 152 // expanded card height at every breakpoint
+    const width = expanded ? Math.min(260, window.innerWidth - pad * 2) : 56
+    const height = expanded ? 152 : 56
     const maxX = Math.max(pad, window.innerWidth - width - pad)
-    const maxY = Math.max(pad, window.innerHeight - maxHeight - pad)
+    const maxY = Math.max(pad, window.innerHeight - height - pad)
     return { x: Math.min(Math.max(x, pad), maxX), y: Math.min(Math.max(y, pad), maxY) }
-  }, [])
+  }, [expanded])
 
   // Restore the parked spot from a previous visit.
   useEffect(() => {
@@ -587,12 +583,21 @@ export default function NotchPlayer() {
   // narrow phone viewport (or vice versa) without this re-clamp.
   useEffect(() => {
     if (!open || !posRef.current) return
-    const clamped = clampPos(posRef.current.x, posRef.current.y)
-    if (clamped.x !== posRef.current.x || clamped.y !== posRef.current.y) {
-      posRef.current = clamped
-      setPos(clamped)
+
+    const keepOnscreen = () => {
+      const current = posRef.current
+      if (!current) return
+      const clamped = clampPos(current.x, current.y)
+      if (clamped.x !== current.x || clamped.y !== current.y) {
+        posRef.current = clamped
+        setPos(clamped)
+      }
     }
-  }, [open, clampPos])
+
+    keepOnscreen()
+    window.addEventListener("resize", keepOnscreen)
+    return () => window.removeEventListener("resize", keepOnscreen)
+  }, [open, expanded, clampPos])
 
   // Grab from any non-interactive part of the card (titles, art, blank areas);
   // buttons, the input and the sliders keep their own behavior.
@@ -609,6 +614,12 @@ export default function NotchPlayer() {
     const root = rootRef.current
     if (!root) return
     event.preventDefault()
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    } catch {
+      // Pointer capture is unavailable in a few embedded browsers; window
+      // listeners below still handle the drag when it remains in the viewport.
+    }
     const rect = root.getBoundingClientRect()
     const base = posRef.current ?? { x: rect.left, y: rect.top }
     dragStartRef.current = {
@@ -1019,6 +1030,7 @@ export default function NotchPlayer() {
           pointer-events: auto;
           user-select: none;
           -webkit-user-select: none;
+          touch-action: none;
           transition:
             width 500ms cubic-bezier(0.22, 1, 0.36, 1),
             height 500ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -1039,7 +1051,7 @@ export default function NotchPlayer() {
         }
         @media (max-width: 480px) {
           .song-bubble-body.is-expanded {
-            width: calc(100vw - 32px);
+            width: min(260px, calc(100vw - 16px));
             height: 152px;
           }
         }

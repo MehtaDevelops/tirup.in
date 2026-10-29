@@ -38,6 +38,7 @@ const VIEWPORT_MARGIN = 8
  */
 export default function HeroDots() {
   const [open, setOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const close = useCallback(() => setOpen(false), [])
 
   const [tintOpen, setTintOpen] = useState(false)
@@ -59,7 +60,19 @@ export default function HeroDots() {
     setTint(applyTint(getStoredTint()))
   }, [])
 
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)")
+    const sync = () => {
+      setIsMobile(mq.matches)
+      if (mq.matches) setOpen(false)
+    }
+    sync()
+    mq.addEventListener("change", sync)
+    return () => mq.removeEventListener("change", sync)
+  }, [])
+
   const toggle = useCallback(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) return
     setOpen((v) => !v)
     closeSongBubble()
   }, [])
@@ -201,15 +214,23 @@ export default function HeroDots() {
             className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
             style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: YELLOW_DOT_DEFAULT, opacity: musicOpen ? 1 : 0.6, boxShadow: musicOpen ? `0 0 8px ${YELLOW_DOT_DEFAULT}` : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
           />
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label="Toggle liquid ASCII easter egg"
-            aria-pressed={open}
-            title="psst… click me"
-            className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
-            style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: "#1dd1a1", opacity: open ? 1 : 0.6, boxShadow: open ? "0 0 8px #1dd1a1" : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
-          />
+          {isMobile ? (
+            <span
+              title="desktop only"
+              aria-hidden="true"
+              style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: "#1dd1a1", opacity: 0.6, flexShrink: 0, display: "block" }}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label="Toggle liquid ASCII easter egg"
+              aria-pressed={open}
+              title="psst… click me"
+              className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
+              style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: "#1dd1a1", opacity: open ? 1 : 0.6, boxShadow: open ? "0 0 8px #1dd1a1" : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
+            />
+          )}
         </div>
       </TextWithBlur>
       {tintOpen && typeof document !== "undefined" && createPortal(
@@ -235,7 +256,7 @@ export default function HeroDots() {
         </div>,
         document.body
       )}
-      {open && <LiquidAscii onClose={close} />}
+      {open && !isMobile && <LiquidAscii onClose={close} />}
     </>
   )
 }
