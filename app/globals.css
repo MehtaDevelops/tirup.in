@@ -457,6 +457,11 @@ p {
   }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /*
   Fill mode is `backwards`, not `both`: a finished animation still outranks
   normal declarations, so `both` pinned every revealed row at opacity 1 and
