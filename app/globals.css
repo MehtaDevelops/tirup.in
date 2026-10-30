@@ -469,44 +469,81 @@ p {
 }
 
 /*
-  Sibling dimming: learned from benji.org.
-  When any row in a list is hovered, all *other* rows fade to 35% opacity.
-  The active row stays at full opacity. This makes the hovered item feel
-  spotlit and makes the list read like one cohesive, interactive object
-  rather than a pile of independent links.
+  Spotlight list: learned from benji.org's sibling dimming, where hovering a
+  row makes the rest recede so the list reads as one object instead of a pile
+  of independent links.
 
-  Usage: add class "list-hover-group" to the flex container holding the rows,
-  then use <ListSpotlight> (components/list-spotlight.tsx) so the same dim is
-  reachable without a mouse.
+  Three things keep it from looking like a flat grey-out:
+    1. Falloff, not one number. Rows recede in steps by distance from the
+       spotlit row, so it reads as light landing on the list rather than a
+       switch being thrown.
+    2. Asymmetric timing. Rows recede in 240ms, come back over 340ms, and
+       the spotlit row leads at 160ms. Entering feels immediate, leaving
+       feels calm instead of springy.
+    3. One decelerating curve everywhere, including the row's own text
+       colour, so the accent blooms with the fade instead of snapping ahead.
 
-  Two inputs drive it, because only one of them has hover:
-    - fine pointers: :hover, gated so touch screens never get a sticky hover
-    - touch, pen, and keyboard: [data-spotlight] / [data-spotlit], applied by
-      ListSpotlight on press or keyboard focus
-
-  Benji's exact values: opacity 0.3, transition 0.14s
-  We use 0.35 (slightly more readable) and 140ms (same timing).
+  The :hover rules are the no-JS fallback; ListSpotlight
+  (components/list-spotlight.tsx) feeds the same depths for touch, pen and
+  keyboard focus, which have no hover state.
 */
+.list-hover-group {
+  --list-dim-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .list-hover-group > * {
-  transition: opacity 140ms ease-out;
+  transition: opacity 340ms var(--list-dim-ease);
+}
+
+.list-hover-group .group-hover\:text-accent,
+.list-hover-group .group-hover\:text-black\/60,
+.list-hover-group .group-hover\:text-black\/70,
+.list-hover-group .group-hover\:text-black\/80,
+.list-hover-group .group-hover\:text-white\/60,
+.list-hover-group .group-hover\:text-white\/70,
+.list-hover-group .group-hover\:text-white\/80 {
+  transition: color 220ms var(--list-dim-ease);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .list-hover-group:hover > * {
-    opacity: 0.35;
+    opacity: 0.42;
+    transition-duration: 240ms;
   }
 
   .list-hover-group:hover > *:hover {
     opacity: 1;
+    transition-duration: 160ms;
   }
 }
 
 .list-hover-group[data-spotlight] > * {
-  opacity: 0.35;
+  opacity: 0.42;
+  transition-duration: 240ms;
+}
+
+/* Neighbours stay legible; depth 3 is the floor above. */
+.list-hover-group[data-spotlight] > *[data-depth="1"] {
+  opacity: 0.62;
+}
+
+.list-hover-group[data-spotlight] > *[data-depth="2"] {
+  opacity: 0.5;
+}
+
+/* Under a finger the response has to land instantly; the 240ms hover bloom
+   reads as lag when the press only lasts a tap. */
+.list-hover-group[data-spotlight="touch"] > * {
+  transition-duration: 150ms;
 }
 
 .list-hover-group[data-spotlight] > *[data-spotlit] {
   opacity: 1;
+  transition-duration: 160ms;
+}
+
+.list-hover-group[data-spotlight="touch"] > *[data-spotlit] {
+  transition-duration: 110ms;
 }
 
 /* Press and keyboard focus get the same accent as :hover, so the spotlight
@@ -517,6 +554,19 @@ p {
 
 html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\:text-accent {
   color: var(--fg) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .list-hover-group > *,
+  .list-hover-group .group-hover\:text-accent,
+  .list-hover-group .group-hover\:text-black\/60,
+  .list-hover-group .group-hover\:text-black\/70,
+  .list-hover-group .group-hover\:text-black\/80,
+  .list-hover-group .group-hover\:text-white\/60,
+  .list-hover-group .group-hover\:text-white\/70,
+  .list-hover-group .group-hover\:text-white\/80 {
+    transition: none;
+  }
 }
 
 /* Balance headings for better typographic rag */

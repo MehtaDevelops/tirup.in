@@ -20,19 +20,23 @@ interface ListSpotlightProps {
 }
 
 /**
- * Sibling-dim container for list rows.
+ * Spotlight container for list rows.
  *
- * Mouse devices get the spotlight from CSS `:hover` (globals.css). Touch and
- * keyboard have no hover state, so this wrapper reports intent to the same
- * rules: pressing a row sets `data-spotlight` on the container and
- * `data-spotlit` on that row. Releasing keeps the dim for one short beat so
- * the transition is visible even on a fast tap, and scrolling clears it
- * immediately so the list never fights the finger.
+ * Shows which row the reader is on and lets the rest of the list recede.
+ * Fine pointers get it from `:hover` in CSS; touch, pen and keyboard have no
+ * hover state, so this wrapper mirrors the same treatment through data
+ * attributes. It also reports each row's distance from the spotlit one
+ * (`data-depth`), which is what turns a flat dim into a soft falloff:
+ * neighbours stay legible and the fade deepens with distance.
  */
 export default function ListSpotlight({ className = "", children }: ListSpotlightProps) {
   const ref = useRef<HTMLDivElement | null>(null)
   const holdRef = useRef<number | null>(null)
   const originRef = useRef<{ x: number; y: number } | null>(null)
+  const hoveredRef = useRef<Element | null>(null)
+  const inputRef = useRef<"mouse" | "touch" | "key" | null>(null)
+  const pointRef = useRef<{ x: number; y: number } | null>(null)
+  const scrollRafRef = useRef(0)
 
   const clearHold = useCallback(() => {
     if (holdRef.current !== null) {
@@ -41,15 +45,27 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
     }
   }, [])
 
-  const apply = useCallback((row: Element | null) => {
+  // Depths 0..3: 0 is the spotlit row, 3 is everything past the second
+  // neighbour. globals.css maps each depth to its own opacity.
+  const apply = useCallback((row: Element | null, input?: "touch") => {
     const root = ref.current
     if (!root) return
-    for (const child of Array.from(root.children)) {
-      if (child === row) child.setAttribute("data-spotlit", "")
+    const children = Array.from(root.children)
+    const active = row ? children.indexOf(row) : -1
+    children.forEach((child, index) => {
+      if (active < 0) {
+        child.removeAttribute("data-spotlit")
+        child.removeAttribute("data-depth")
+        return
+      }
+      const depth = Math.min(3, Math.abs(index - active))
+      child.setAttribute("data-depth", String(depth))
+      if (depth === 0) child.setAttribute("data-spotlit", "")
       else child.removeAttribute("data-spotlit")
-    }
-    if (row) root.setAttribute("data-spotlight", "")
-    else root.removeAttribute("data-spotlight")
+    })
+    if (active < 0) root.removeAttribute("data-spotlight")
+    else if (input === "touch") root.setAttribute("data-spotlight", "touch")
+    else root.setAttribute("data-spotlight", "")
   }, [])
 
   const rowFor = useCallback((target: EventTarget | null) => {
@@ -62,10 +78,41 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
 
   useEffect(() => clearHold, [clearHold])
 
+  // Wheel-scrolling with a still cursor moves new rows under the pointer but
+  // fires no pointermove, which would leave the spotlight on whatever row was
+  // there before. Re-resolve the row under the last known point on scroll.
+  useEffect(() => {
+    const onScroll = () => {
+      if (inputRef.current !== "mouse" || !hoveredRef.current || !pointRef.current || scrollRafRef.current) return
+      scrollRafRef.current = window.requestAnimationFrame(() => {
+        scrollRafRef.current = 0
+        const point = pointRef.current
+        if (!point) return
+        const row = rowFor(document.elementFromPoint(point.x, point.y))
+        if (row === hoveredRef.current) return
+        hoveredRef.current = row
+        apply(row)
+      })
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      if (scrollRafRef.current) window.cancelAnimationFrame(scrollRafRef.current)
+    }
+  }, [apply, rowFor])
+
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    // Mouse and trackpads are handled entirely by `:hover` in CSS.
-    if (event.pointerType === "mouse") return
+    const root = ref.current
+    if (!root) return
+    if (event.pointerType === "mouse") {
+      // Mouse is owned by :hover plus pointermove below.
+      inputRef.current = "mouse"
+      hoveredRef.current = rowFor(event.target)
+      return
+    }
     clearHold()
+    inputRef.current = "touch"
+    hoveredRef.current = null
     originRef.current = { x: event.clientX, y: event.clientY }
     // Keep pointerup/pointercancel on the container even if the finger drifts
     // off the row, so the spotlight can never get stuck on.
@@ -74,13 +121,25 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
     } catch {
       /* older engines: the release hold below still clears it */
     }
-    apply(rowFor(event.target))
+    apply(rowFor(event.target), "touch")
   }
 
   const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse") {
+      inputRef.current = "mouse"
+      pointRef.current = { x: event.clientX, y: event.clientY }
+      const row = rowFor(event.target)
+      if (row === hoveredRef.current) return
+      hoveredRef.current = row
+      apply(row)
+      return
+    }
     const origin = originRef.current
     if (!origin) return
-    if (Math.abs(event.clientX - origin.x) > TOUCH_SLOP || Math.abs(event.clientY - origin.y) > TOUCH_SLOP) {
+    if (
+      Math.abs(event.clientX - origin.x) > TOUCH_SLOP ||
+      Math.abs(event.clientY - origin.y) > TOUCH_SLOP
+    ) {
       // The finger is scrolling, not pressing a row.
       originRef.current = null
       clearHold()
@@ -100,7 +159,17 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
 
   const onPointerCancel = () => {
     originRef.current = null
+    hoveredRef.current = null
     clearHold()
+    apply(null)
+  }
+
+  const onPointerLeave = (event: ReactPointerEvent<HTMLDivElement>) => {
+    // Only the mouse owns the spotlight this way; a keyboard-focused row
+    // keeps its spotlight even if the cursor drifts off the list.
+    if (event.pointerType !== "mouse" || inputRef.current !== "mouse") return
+    inputRef.current = null
+    hoveredRef.current = null
     apply(null)
   }
 
@@ -110,12 +179,14 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
     // already covers that case.
     if (!(target instanceof Element) || !target.matches(":focus-visible")) return
     clearHold()
+    inputRef.current = "key"
     apply(rowFor(target))
   }
 
   const onBlur = (event: ReactFocusEvent<HTMLDivElement>) => {
     if (event.relatedTarget instanceof Node && ref.current?.contains(event.relatedTarget)) return
     clearHold()
+    inputRef.current = null
     apply(null)
   }
 
@@ -127,6 +198,7 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerCancel}
+      onPointerLeave={onPointerLeave}
       onFocus={onFocus}
       onBlur={onBlur}
     >
