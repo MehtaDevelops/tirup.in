@@ -59,12 +59,13 @@ function NavLinks({ pathname }: { pathname: string }) {
 // ---------------------------------------------------------------------------
 export default function Header() {
   const pathname = usePathname()
-  const [showPopup, setShowPopup] = useState(true)
+  const [showPopup, setShowPopup] = useState(() => {
+    // Read once, synchronously, so a dismissed banner never flashes for a
+    // frame on navigation (which caused a layout-shift glitch on every route).
+    if (typeof window === "undefined") return true
+    return !localStorage.getItem("dismissedBlogPopup")
+  })
   const [isResumeOpen, setIsResumeOpen] = useState(false)
-
-  useEffect(() => {
-    if (localStorage.getItem("dismissedBlogPopup")) setShowPopup(false)
-  }, [])
 
   const handleDismissPopup = () => {
     setShowPopup(false)
