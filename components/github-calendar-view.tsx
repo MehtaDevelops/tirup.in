@@ -515,7 +515,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
 
       {/* Calendar Matrix Section */}
       <TextWithBlur delay={200}>
-        <div className="flex flex-col gap-3.5 py-6 border-t border-black/10 dark:border-white/10">
+        <div className="flex flex-col gap-3.5 pt-6 pb-3 border-t border-black/10 dark:border-white/10">
           {/* Active Hover / Tap Readout */}
           <div className="min-h-[26px] flex items-center justify-between text-xs sm:text-sm text-black/70 dark:text-white/70 font-light" aria-live="polite">
             {activeInspectedDay ? (
@@ -661,7 +661,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                 </div>
 
                 {/* Legend & Minimalist Range Switcher */}
-                <div className="flex items-center justify-between gap-2 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
+                <div className="flex items-center justify-between gap-2 pt-3 text-xs text-black/50 dark:text-white/50 font-light select-none">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs">Range:</span>
                     <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
@@ -727,7 +727,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                 </div>
 
                 {/* Range Switcher */}
-                <div className="flex items-center gap-2 pt-2 text-xs text-black/50 dark:text-white/50 font-light select-none">
+                <div className="flex items-center gap-2 pt-3 text-xs text-black/50 dark:text-white/50 font-light select-none">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs">Range:</span>
                     <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
