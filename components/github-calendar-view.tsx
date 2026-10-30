@@ -319,7 +319,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
   return (
     <div className="w-full pt-0">
       {/* Intro Narrative Section */}
-      <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-12">
+      <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-5">
         <TextWithBlur delay={50}>
           <p>
             Engineering activity across my GitHub accounts. My primary profile is{" "}
