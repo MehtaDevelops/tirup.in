@@ -53,15 +53,15 @@ function DotHint({ hint, visible }: { hint: HintId; visible: boolean }) {
         visible ? "translate-y-0 scale-100 opacity-100" : "translate-y-1.5 scale-[0.97] opacity-0"
       }`}
     >
-      <div className="relative flex items-center gap-2 whitespace-nowrap rounded-lg border border-[#000000]/[0.07] bg-[#ffffff]/95 px-2.5 py-1.5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.45)] backdrop-blur-md dark:border-[#ffffff]/10 dark:bg-[#15161b]/95">
+      <div className="dot-hint-card relative flex items-center gap-2 whitespace-nowrap rounded-lg border px-2.5 py-1.5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.45)] backdrop-blur-md">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-        <span className="text-[11px] font-medium leading-none text-[#111111] dark:text-[#fafafa]">{kicker}</span>
-        <span className="text-[11px] font-light leading-none text-[#111111]/45 dark:text-[#fafafa]/45">{body}</span>
+        <span className="text-[11px] font-medium leading-none">{kicker}</span>
+        <span className="dot-hint-body text-[11px] font-light leading-none">{body}</span>
       </div>
       {/* Caret: rotated square showing only the two outward edges. */}
       <span
         aria-hidden="true"
-        className="absolute -bottom-[3.5px] left-[13px] h-[7px] w-[7px] rotate-45 border-b border-r border-[#000000]/[0.07] bg-[#ffffff] dark:border-[#ffffff]/10 dark:bg-[#15161b]"
+        className="dot-hint-caret absolute -bottom-[3.5px] left-[13px] h-[7px] w-[7px] rotate-45 border-b border-r"
       />
     </div>
   )

@@ -1636,3 +1636,56 @@ html.dark .tldr-box p {
     animation: none;
   }
 }
+
+/*
+  Easter-egg hint cards (hero dots).
+  Tint mode rewrites .text-black / .bg-white / .border-black\/10 with
+  !important, which is fine for page content but made any small dark surface
+  collapse to dark-on-dark. These classes name their own surface so the hint
+  stays readable under default, dark and tinted themes alike.
+*/
+.dot-hint-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.07);
+  color: #111111;
+}
+
+.dot-hint-body {
+  color: rgba(17, 17, 17, 0.45);
+}
+
+.dot-hint-caret {
+  background-color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.07);
+}
+
+.dark .dot-hint-card {
+  background-color: rgba(21, 22, 27, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fafafa;
+}
+
+.dark .dot-hint-body {
+  color: rgba(250, 250, 250, 0.45);
+}
+
+.dark .dot-hint-caret {
+  background-color: #15161b;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Tint mode is its own (light) treatment; keep the card on white there. */
+html[data-tint] .dot-hint-card {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+  color: #111111 !important;
+}
+
+html[data-tint] .dot-hint-body {
+  color: rgba(17, 17, 17, 0.45) !important;
+}
+
+html[data-tint] .dot-hint-caret {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.07) !important;
+}
