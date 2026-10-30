@@ -21,7 +21,6 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
   const [entered, setEntered] = useState(false)
   const [closing, setClosing] = useState(false)
   const closeTimer = useRef<number | null>(null)
-  const iframeRef = useRef<HTMLIFrameElement | null>(null)
 
   // Animated close: play the exit transition first, unmount after.
   const handleClose = useCallback(() => {
@@ -103,7 +102,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
         ].join(" ")}
       >
-        {/* ── Header: matches site banner / nav row styling ── */}
+        {/* ── Header ── */}
         <div className="flex items-center justify-between gap-2 sm:gap-3 px-4 sm:px-5 py-3.5 border-b border-black/5 dark:border-white/5 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/5 text-black/60 dark:text-white/60 shrink-0">
@@ -147,8 +146,8 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           </div>
         </div>
 
-        {/* ── PDF preview: native browser viewer (perfect text selection) ── */}
-        <div className="relative flex-1 min-h-0 bg-[var(--bg)] dark:bg-zinc-900">
+        {/* ── PDF preview: native browser viewer, no chrome ── */}
+        <div className="relative flex-1 min-h-0 bg-[#f1f1f1] dark:bg-[#323639]">
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-black/40 dark:text-white/40 pointer-events-none z-10">
               <Loader2 size={22} className="animate-spin" />
@@ -156,15 +155,14 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
             </div>
           )}
           <iframe
-            ref={iframeRef}
-            src={src}
+            src={`${src}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
             title="Resume preview"
             onLoad={() => setLoading(false)}
             className="absolute inset-0 w-full h-full border-0"
           />
         </div>
 
-        {/* ── Footer: fallback + subtle hint ── */}
+        {/* ── Footer ── */}
         <div className="flex items-center justify-between gap-3 px-5 py-3 border-t border-black/5 dark:border-white/5 shrink-0">
           <p className="text-[11px] font-light text-black/40 dark:text-white/40 truncate">
             <span className="hidden sm:inline">Having trouble viewing? Open in a new tab or download.</span>
