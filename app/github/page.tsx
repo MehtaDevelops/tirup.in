@@ -23,6 +23,9 @@ export const revalidate = 3600 // Revalidate contributions hourly
 
 export default async function GitHubActivityPage() {
   const contributionsData = await getMergedGitHubContributions()
+  // Baked into the cached HTML at revalidation time, so the client can show how
+  // old the payload actually is rather than pretending it just arrived.
+  const dataUpdatedAt = Date.now()
   const currentYear = new Date().getFullYear()
 
   return (
@@ -31,7 +34,7 @@ export default async function GitHubActivityPage() {
 
       {/* GitHub Activity Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20 pt-2">
-        <GitHubCalendarView data={contributionsData} />
+        <GitHubCalendarView data={contributionsData} dataUpdatedAt={dataUpdatedAt} />
       </section>
 
       {/* Footer */}

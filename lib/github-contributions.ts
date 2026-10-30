@@ -51,25 +51,51 @@ function generateFallbackCalendar(): { date: string; count: number; level: numbe
 const FETCH_TIMEOUT_MS = 10000
 const FETCH_MAX_ATTEMPTS = 3
 
+// A visitor pressed Refresh and is waiting on the spinner, so fresh mode is
+// impatient: two tries with a shorter cap. The page load path can afford the
+// longer schedule above because nothing is blocked on it.
+const FRESH_TIMEOUT_MS = 6000
+const FRESH_MAX_ATTEMPTS = 2
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function fetchUserContributions(username: string): Promise<{ total: number; days: { date: string; count: number; level: number }[] }> {
-  let lastError: unknown = null
+interface FetchOptions {
+  /**
+   * Bypass every cache and throw on failure instead of returning an empty
+   * calendar. Used by the Refresh button: an all-zero graph must never be
+   * presented as fresh data.
+   */
+  fresh?: boolean
+}
 
-  for (let attempt = 1; attempt <= FETCH_MAX_ATTEMPTS; attempt++) {
+async function fetchUserContributions(
+  username: string,
+  { fresh = false }: FetchOptions = {}
+): Promise<{ total: number; days: { date: string; count: number; level: number }[] }> {
+  let lastError: unknown = null
+  const timeoutMs = fresh ? FRESH_TIMEOUT_MS : FETCH_TIMEOUT_MS
+  const maxAttempts = fresh ? FRESH_MAX_ATTEMPTS : FETCH_MAX_ATTEMPTS
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
     try {
-      const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`, {
+      const url = `https://github-contributions-api.jogruber.de/v4/${username}?y=last`
+      const init: RequestInit = {
         signal: controller.signal,
-        next: { revalidate: 3600 },
         headers: {
           Accept: "application/json",
+          // Also ask intermediary caches for a revalidation, so the click
+          // cannot be answered from a CDN copy of the upstream response.
+          ...(fresh ? { "Cache-Control": "no-cache" } : {}),
         },
-      })
+      }
+      const res = fresh
+        ? await fetch(url, { ...init, cache: "no-store" })
+        : await fetch(url, { ...init, next: { revalidate: 3600 } })
 
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`)
@@ -87,7 +113,7 @@ async function fetchUserContributions(username: string): Promise<{ total: number
       // Retry transient failures (timeout, 5xx, network blip) with a short backoff.
       // A single slow response previously fell through to an all-zero calendar
       // which then stayed cached by ISR for an hour.
-      if (attempt < FETCH_MAX_ATTEMPTS) {
+      if (attempt < maxAttempts) {
         await sleep(600 * attempt)
       }
     } finally {
@@ -95,15 +121,22 @@ async function fetchUserContributions(username: string): Promise<{ total: number
     }
   }
 
-  console.warn(`[GitHub Contributions] Notice: live fetch for ${username} returned fallback after ${FETCH_MAX_ATTEMPTS} attempts:`, lastError)
+  console.warn(`[GitHub Contributions] Live fetch for ${username} failed after ${maxAttempts} attempts:`, lastError)
+
+  // Fresh mode is a user action, not a page render: surface the failure so the
+  // UI can keep the data it already has instead of blanking the graph.
+  if (fresh) {
+    throw new Error(`Could not fetch contributions for ${username}: ${(lastError as Error)?.message ?? "unknown error"}`)
+  }
+
   const fallbackDays = generateFallbackCalendar()
   return { total: 0, days: fallbackDays }
 }
 
-export async function getMergedGitHubContributions(): Promise<MergedContributionsData> {
+export async function getMergedGitHubContributions(options: FetchOptions = {}): Promise<MergedContributionsData> {
   const [tirupData, mehtaData] = await Promise.all([
-    fetchUserContributions("TirupMehta"),
-    fetchUserContributions("MehtaDevelops"),
+    fetchUserContributions("TirupMehta", options),
+    fetchUserContributions("MehtaDevelops", options),
   ])
 
   const dayMap = new Map<string, { tirup: number; mehta: number }>()

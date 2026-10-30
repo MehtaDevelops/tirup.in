@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react"
 import dynamic from "next/dynamic"
+import { RefreshCw } from "lucide-react"
 import type { MergedContributionsData, ContributionDay } from "@/lib/github-contributions"
 import type { GraphView } from "@/components/github-activity-3d"
 import TextWithBlur from "@/components/text-with-blur"
@@ -19,12 +20,25 @@ const GithubActivity3D = dynamic(() => import("@/components/github-activity-3d")
 
 interface GitHubCalendarViewProps {
   data: MergedContributionsData
+  /** Epoch ms when the server fetched this payload (baked at revalidation). */
+  dataUpdatedAt?: number
 }
 
 type TabType = "combined" | "tirupMehta" | "mehtaDevelops"
 type TimeRangeType = "1y" | "6m" | "3m"
 
-export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
+// Kept out of the render path so the label reads the same every 30s tick.
+function describeAge(ms: number): string {
+  const minutes = Math.floor(ms / 60000)
+  if (minutes < 1) return "just now"
+  if (minutes < 60) return `${minutes} min ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours} hr ago`
+  return `${Math.floor(hours / 24)} d ago`
+}
+
+export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }: GitHubCalendarViewProps) {
+  const [data, setData] = useState<MergedContributionsData>(initialData)
   const [activeTab, setActiveTab] = useState<TabType>("combined")
   const [timeRange, setTimeRange] = useState<TimeRangeType>("1y")
   const [hoveredDay, setHoveredDay] = useState<ContributionDay | null>(null)
@@ -32,6 +46,19 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [view, setView] = useState<GraphView>("top")
   const [dark, setDark] = useState(false)
+
+  // Refresh: the page ships with an hour-old ISR payload, so a deliberate
+  // press asks /api/github/contributions for uncached data and swaps it in.
+  const [refreshing, setRefreshing] = useState(false)
+  const [refreshError, setRefreshError] = useState<string | null>(null)
+  const [syncedAt, setSyncedAt] = useState<number | null>(dataUpdatedAt ?? null)
+  const [now, setNow] = useState(0)
+  // Brief accent tint on "Synced just now" so a successful press is confirmed
+  // without a toast or a layout shift.
+  const [justSynced, setJustSynced] = useState(false)
+  const inFlightRef = useRef(false)
+  const errorTimerRef = useRef<number | null>(null)
+  const flashTimerRef = useRef<number | null>(null)
 
   // Track light/dark so the card and scene follow the theme.
   useEffect(() => {
@@ -41,6 +68,75 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
     return () => obs.disconnect()
   }, [])
+
+  // Clock for the "synced N min ago" label. `now` starts at 0 so the server and
+  // the first client render agree on the plain label; the age appears once the
+  // browser knows its own clock.
+  useEffect(() => {
+    const stamp = Date.now()
+    setNow(stamp)
+    setSyncedAt((prev) => prev ?? stamp)
+    const id = window.setInterval(() => setNow(Date.now()), 30000)
+    return () => {
+      window.clearInterval(id)
+      if (errorTimerRef.current !== null) window.clearTimeout(errorTimerRef.current)
+      if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current)
+    }
+  }, [])
+
+  const handleRefresh = async () => {
+    if (inFlightRef.current) return
+    inFlightRef.current = true
+    setRefreshing(true)
+    setRefreshError(null)
+    if (errorTimerRef.current !== null) {
+      window.clearTimeout(errorTimerRef.current)
+      errorTimerRef.current = null
+    }
+
+    try {
+      const res = await fetch(`/api/github/contributions?t=${Date.now()}`, { cache: "no-store" })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+      const payload = (await res.json()) as { data?: MergedContributionsData }
+      const next = payload.data
+      if (!next || !Array.isArray(next.combined?.days) || next.combined.days.length === 0) {
+        throw new Error("Empty payload")
+      }
+
+      setData(next)
+      setSyncedAt(Date.now())
+      setNow(Date.now())
+      // Day objects are replaced wholesale; drop any inspected cell so the
+      // readout cannot show a stale count from the previous payload.
+      setHoveredDay(null)
+      setSelectedDay(null)
+
+      setJustSynced(true)
+      if (flashTimerRef.current !== null) window.clearTimeout(flashTimerRef.current)
+      flashTimerRef.current = window.setTimeout(() => {
+        flashTimerRef.current = null
+        setJustSynced(false)
+      }, 1600)
+    } catch {
+      setRefreshError("Couldn't reach GitHub. Showing the last synced data.")
+      errorTimerRef.current = window.setTimeout(() => {
+        errorTimerRef.current = null
+        setRefreshError(null)
+      }, 6000)
+    } finally {
+      inFlightRef.current = false
+      setRefreshing(false)
+    }
+  }
+
+  const syncLabel = refreshing
+    ? "Checking GitHub for new activity…"
+    : refreshError
+    ? refreshError
+    : now > 0 && syncedAt
+    ? `Synced ${describeAge(Math.max(0, now - syncedAt))}`
+    : "Live from GitHub"
 
   // Default to 6-month view on mobile screens for optimal sizing and zero-scroll fit
   useEffect(() => {
@@ -247,6 +343,40 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
             .
           </p>
         </TextWithBlur>
+      </div>
+
+      {/* Freshness + manual refresh: the page payload is ISR-cached for an
+          hour, so this row is where a visitor can ask for live data. */}
+      <div className="flex items-center justify-between gap-3 pt-0.5 pb-2.5">
+        <p
+          aria-live="polite"
+          className={`text-[11px] font-light tabular-nums leading-normal transition-colors duration-500 ${
+            refreshError
+              ? "text-amber-600/90 dark:text-amber-400/80"
+              : justSynced
+              ? "text-accent"
+              : "text-black/40 dark:text-white/40"
+          }`}
+        >
+          {syncLabel}
+        </p>
+        <button
+          type="button"
+          onClick={handleRefresh}
+          disabled={refreshing}
+          aria-label="Refresh GitHub activity"
+          className="group/refresh inline-flex items-center gap-1.5 shrink-0 rounded-full border border-black/10 dark:border-white/15 px-3 sm:px-2.5 min-h-[32px] sm:min-h-0 py-1 text-[11px] font-light text-black/55 dark:text-white/55 cursor-pointer transition-colors duration-200 hover:text-black dark:hover:text-white hover:border-black/25 dark:hover:border-white/30 disabled:cursor-default disabled:opacity-70"
+        >
+          <RefreshCw
+            size={11}
+            className={
+              refreshing
+                ? "animate-spin"
+                : "[transition:transform_320ms_cubic-bezier(0.22,1,0.36,1)] group-hover/refresh:rotate-45"
+            }
+          />
+          <span>{refreshing ? "Refreshing" : "Refresh"}</span>
+        </button>
       </div>
 
       {/* Metrics Row */}
