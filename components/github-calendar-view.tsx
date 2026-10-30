@@ -44,6 +44,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
   const [hoveredDay, setHoveredDay] = useState<ContributionDay | null>(null)
   const [selectedDay, setSelectedDay] = useState<ContributionDay | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const hoverTimerRef = useRef<number | null>(null)
   const [view, setView] = useState<GraphView>("top")
   const [dark, setDark] = useState(false)
 
@@ -143,6 +144,12 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
     if (typeof window !== "undefined" && window.innerWidth < 640) {
       setTimeRange("6m")
     }
+  }, [])
+
+  // Clean up any pending hover timer on unmount so a fast navigation can't
+  // fire setHoveredDay after the component is gone.
+  useEffect(() => () => {
+    if (hoverTimerRef.current !== null) window.clearTimeout(hoverTimerRef.current)
   }, [])
 
   // Auto-scroll the flat matrix to the current date (right) in 1y mode on small viewports
@@ -519,12 +526,12 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
           {/* Active Hover / Tap Readout */}
           <div className="min-h-[26px] flex items-center justify-between text-xs sm:text-sm text-black/70 dark:text-white/70 font-light" aria-live="polite">
             {activeInspectedDay ? (
-              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <span className="text-black dark:text-white font-normal">
+              <div key={activeInspectedDay.date} className="animate-[fadeIn_90ms_ease-out] flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="tabular-nums text-black dark:text-white font-normal">
                   {activeInspectedDay.count} {activeInspectedDay.count === 1 ? "contribution" : "contributions"}
                 </span>
                 <span className="text-black/40 dark:text-white/40">on</span>
-                <span className="text-black dark:text-white">{formatTooltipDate(activeInspectedDay.date)}</span>
+                <span className="tabular-nums text-black dark:text-white">{formatTooltipDate(activeInspectedDay.date)}</span>
                 {activeInspectedDay.details && (
                   <span className="text-[11px] sm:text-xs text-black/50 dark:text-white/50">
                     (TirupMehta: {activeInspectedDay.details.tirupMehta}, MehtaDevelops: {activeInspectedDay.details.mehtaDevelops})
