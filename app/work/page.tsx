@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
+import ListSpotlight from "@/components/list-spotlight"
 import TextWithBlur from "@/components/text-with-blur"
 import { projectsList as projects } from "@/lib/projects-data"
 
@@ -21,7 +22,7 @@ export default function WorkPage() {
       {/* Projects Section */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
         <h1 className="sr-only">Selected Work &amp; Projects</h1>
-        <div className="flex flex-col list-hover-group">
+        <ListSpotlight className="flex flex-col list-hover-group">
           {projects.map((project, index) => {
             return (
               <TextWithBlur key={project.slug} delay={Math.min(index * 35, 140)}>
@@ -61,7 +62,7 @@ export default function WorkPage() {
           })}
           {/* End of list bottom border */}
           <div className="border-t border-black/10 dark:border-white/10" />
-        </div>
+        </ListSpotlight>
       </section>
 
       {/* Footer */}

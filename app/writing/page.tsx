@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
+import ListSpotlight from "@/components/list-spotlight"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
 import { CONVEX_API_URL } from "@/lib/utils"
@@ -89,7 +90,7 @@ export default async function BlogsPage() {
             <p className="text-sm font-light text-black/40 dark:text-white/40">No articles published yet.</p>
           </div>
         ) : (
-          <div className="flex flex-col list-hover-group">
+          <ListSpotlight className="flex flex-col list-hover-group">
             {posts.map((post, index) => {
               return (
                 <TextWithBlur key={post.slug} delay={Math.min(index * 35, 140)}>
@@ -135,7 +136,7 @@ export default async function BlogsPage() {
                 </a>
               </div>
             </TextWithBlur>
-          </div>
+          </ListSpotlight>
         )}
       </section>
 

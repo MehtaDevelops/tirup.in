@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import type { MergedContributionsData, ContributionDay } from "@/lib/github-contributions"
 import type { GraphView } from "@/components/github-activity-3d"
 import TextWithBlur from "@/components/text-with-blur"
+import ListSpotlight from "@/components/list-spotlight"
 
 const GithubActivity3D = dynamic(() => import("@/components/github-activity-3d"), {
   ssr: false,
@@ -626,7 +627,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
       </TextWithBlur>
 
       {/* Dual Account Directory List (Exact 100% match with Work page .list-hover-group) */}
-      <div className="flex flex-col list-hover-group border-t border-black/10 dark:border-white/10 pt-2">
+      <ListSpotlight className="flex flex-col list-hover-group border-t border-black/10 dark:border-white/10 pt-2">
         {/* TirupMehta Row (Main Account) */}
         <TextWithBlur delay={250}>
           <a
@@ -678,7 +679,7 @@ export default function GitHubCalendarView({ data }: GitHubCalendarViewProps) {
           </a>
         </TextWithBlur>
         <div className="border-t border-black/10 dark:border-white/10" />
-      </div>
+      </ListSpotlight>
     </div>
   )
 }

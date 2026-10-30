@@ -457,36 +457,66 @@ p {
   }
 }
 
+/*
+  Fill mode is `backwards`, not `both`: a finished animation still outranks
+  normal declarations, so `both` pinned every revealed row at opacity 1 and
+  silently killed the .list-hover-group dimming on desktop. `backwards` keeps
+  rows hidden through the stagger delay, then lets other opacity rules win.
+*/
 .reveal-in {
-  animation: revealIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: revealIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   animation-delay: var(--reveal-delay, 0ms);
 }
 
 /*
   Sibling dimming: learned from benji.org.
-  When any row in a list is hovered, all *other* rows fade to 40% opacity.
+  When any row in a list is hovered, all *other* rows fade to 35% opacity.
   The active row stays at full opacity. This makes the hovered item feel
   spotlit and makes the list read like one cohesive, interactive object
   rather than a pile of independent links.
 
-  Usage: add class "list-hover-group" to the flex container holding the rows.
-  Each direct child must be a wrapper element (div/TextWithBlur output).
-  The actual <a> or link inside each child gets the transition.
+  Usage: add class "list-hover-group" to the flex container holding the rows,
+  then use <ListSpotlight> (components/list-spotlight.tsx) so the same dim is
+  reachable without a mouse.
+
+  Two inputs drive it, because only one of them has hover:
+    - fine pointers: :hover, gated so touch screens never get a sticky hover
+    - touch, pen, and keyboard: [data-spotlight] / [data-spotlit], applied by
+      ListSpotlight on press or keyboard focus
 
   Benji's exact values: opacity 0.3, transition 0.14s
   We use 0.35 (slightly more readable) and 140ms (same timing).
 */
-.list-hover-group:hover > * {
-  opacity: 0.35;
+.list-hover-group > * {
   transition: opacity 140ms ease-out;
 }
 
-.list-hover-group:hover > *:hover {
+@media (hover: hover) and (pointer: fine) {
+  .list-hover-group:hover > * {
+    opacity: 0.35;
+  }
+
+  .list-hover-group:hover > *:hover {
+    opacity: 1;
+  }
+}
+
+.list-hover-group[data-spotlight] > * {
+  opacity: 0.35;
+}
+
+.list-hover-group[data-spotlight] > *[data-spotlit] {
   opacity: 1;
 }
 
-.list-hover-group > * {
-  transition: opacity 140ms ease-out;
+/* Press and keyboard focus get the same accent as :hover, so the spotlight
+   reads identically on a laptop and on a phone. */
+.list-hover-group[data-spotlight] > [data-spotlit] .group-hover\:text-accent {
+  color: var(--accent);
+}
+
+html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\:text-accent {
+  color: var(--fg) !important;
 }
 
 /* Balance headings for better typographic rag */
