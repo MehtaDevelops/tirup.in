@@ -53,8 +53,12 @@ export const revalidate = 60 // Revalidate posts every minute
 
 export async function generateStaticParams() {
   try {
+    // Build-time read of the post list. Must NOT reuse Next's fetch cache:
+    // a stale list leaves freshly published posts out of the prerender
+    // manifest, and the on-demand fallback for /writing/[slug] is what
+    // throws on Vercel (every non-prerendered slug, valid or not, 500s).
     const res = await fetch(`${API_BASE}/api/posts`, {
-      next: { revalidate: 60 },
+      cache: "no-store",
     })
     if (!res.ok) return []
     const posts = await res.json()
