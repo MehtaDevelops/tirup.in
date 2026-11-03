@@ -196,6 +196,16 @@ const nextConfig = {
   // Disable production source maps to prevent source code leakage.
   productionBrowserSourceMaps: false,
 
+  // ─── Server External Packages ─────────────────────────────────────────────
+  // isomorphic-dompurify (used by lib/sanitize.ts) is backed by jsdom, which
+  // cannot be bundled: it does dynamic requires and loads data files relative
+  // to its own path. Bundled, the module throws on import inside the serverless
+  // runtime, which killed every on-demand render of /writing/[slug] (500 for
+  // any slug not prerendered, plus silent ISR regeneration failures). Keeping
+  // both packages external makes the function require them from
+  // node_modules at runtime, where the traced files already exist.
+  serverExternalPackages: ["isomorphic-dompurify", "jsdom"],
+
   // ─── Redirect HTTP → HTTPS ────────────────────────────────────────────────
   // Vercel handles this at the edge, but belt-and-suspenders for self-hosted.
   async redirects() {
