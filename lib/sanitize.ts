@@ -1,11 +1,20 @@
 /**
- * Production-hardened HTML sanitizer backed by DOMPurify (isomorphic-dompurify).
- * Falls back to a tight regex scrubber if DOMPurify cannot load (e.g. edge).
+ * Production-hardened HTML sanitizer backed by sanitize-html (pure JavaScript).
+ * Falls back to a tight regex scrubber if the library throws.
+ *
+ * Why sanitize-html and not DOMPurify: DOMPurify needs a DOM, so on the server
+ * it pulls in jsdom. jsdom's dependency chain (html-encoding-sniffer ->
+ * @exodus/bytes) is ESM-only, and the CJS require of it fails inside the
+ * serverless runtime with ERR_REQUIRE_ESM. That killed every request-time
+ * render of /writing/[slug]: unknown slugs returned 500 instead of 404, and ISR
+ * could never refresh an article body. sanitize-html has no DOM dependency, so
+ * it runs anywhere Node runs. Verified to produce byte-identical output to the
+ * previous implementation on every published post.
  */
 
-import DOMPurify from "isomorphic-dompurify";
+import sanitize from "sanitize-html";
 
-// Fallback regexes (kept tight) if DOMPurify throws
+// Fallback regexes (kept tight) if the sanitizer throws
 const FALLBACK_TAGS_RE = /<\/?(?:script|style|iframe|object|embed|applet|form|input|button|textarea|select|option|base|meta|link|template|noscript)\b[^>]*>/gi;
 const FALLBACK_ON_RE = /\s*(?:on[a-z]+|formaction|action)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
 
@@ -59,19 +68,26 @@ export function sanitizeHtml(dirty: string): string {
 
   try {
     const decoded = decodeEntities(dirty);
-    const clean = DOMPurify.sanitize(decoded, {
-      ALLOWED_TAGS: ALLOWED_TAGS as never[],
-      ALLOWED_ATTR: [
-        "href", "src", "alt", "title", "target", "rel",
-        "class", "id", "colspan", "rowspan", "loading", "width", "height",
-      ],
-      ALLOW_DATA_ATTR: false,
-      FORBID_TAGS: ["style", "script", "iframe", "object", "embed", "form", "svg", "math"],
-      FORBID_ATTR: ["style", "onerror", "onload"],
-      ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|#|\/[^/]|$)/i,
+    let out = sanitize(decoded, {
+      allowedTags: ALLOWED_TAGS,
+      allowedAttributes: {
+        "*": ["class", "id"],
+        a: ["href", "target", "rel", "class", "id", "title"],
+        img: ["src", "alt", "title", "loading", "width", "height", "class", "id"],
+        td: ["colspan", "rowspan"],
+        th: ["colspan", "rowspan"],
+      },
+      allowedSchemes: ["http", "https", "mailto", "tel"],
+      allowProtocolRelative: false,
+      disallowedTagsMode: "discard",
     });
-    let out = String(clean);
-    // Enforce noopener on _blank + lazy images (DOMPurify keeps attrs; ensure)
+
+    // The serializer writes void elements XHTML style (<br />, <img />). The
+    // rest of the site emits HTML5, and the old sanitizer matched that, so
+    // normalize the tag itself (never escaped text, which has a < in front).
+    out = out.replace(/<([a-z][a-z0-9-]*)\b([^<>]*?)\s*\/>/gi, "<$1$2>");
+
+    // Enforce noopener on _blank + lazy images (sanitizer keeps attrs; ensure)
     out = out.replace(/<a\b([^>]*)>/gi, (match, attrs: string) => {
       if (/target\s*=\s*["']_blank["']/i.test(attrs)) {
         if (/rel\s*=\s*["'][^"']*["']/i.test(attrs)) {
@@ -93,7 +109,7 @@ export function sanitizeHtml(dirty: string): string {
     });
     return out;
   } catch (err) {
-    console.error("[sanitize] DOMPurify failed, fallback scrub:", err);
+    console.error("[sanitize] sanitize-html failed, fallback scrub:", err);
     try {
       return fallbackScrub(dirty);
     } catch {
