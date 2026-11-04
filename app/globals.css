@@ -1378,6 +1378,49 @@ html.dark .tldr-box p {
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
+  /* The thread scrolls inside the popup instead of growing it past the
+     viewport. Flex keeps the follow-up field pinned under the messages. */
+  display: flex;
+  flex-direction: column;
+  max-height: min(40vh, 17rem);
+}
+/* Only the messages scroll; the field below never moves out of reach. */
+.ai-transcript {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+.ai-followup {
+  flex: 0 0 auto;
+}
+.ai-turn + .ai-turn {
+  margin-top: 1rem;
+}
+.ai-turn-q {
+  /* The reader's own question is a bubble, not a paragraph: shape and
+     alignment do the distinguishing, so it can never be mistaken for a line
+     of the answer sitting above it. */
+  width: fit-content;
+  max-width: 88%;
+  margin-inline-start: auto;
+  margin-bottom: 0.4375rem;
+  padding: 0.3125rem 0.625rem;
+  border-radius: 0.875rem;
+  background: color-mix(in srgb, var(--fg) 7%, transparent);
+  color: color-mix(in srgb, var(--fg) 85%, transparent);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: start;
+  white-space: normal;
+}
+.ai-turn-a {
+  color: var(--fg);
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: normal;
 }
 .ai-retry-btn {
   background: color-mix(in srgb, var(--fg) 8%, transparent);
@@ -1430,8 +1473,7 @@ html.dark .tldr-box p {
   }
 }
 .ai-touch-bar .ai-answer-panel {
-  max-height: 38vh;
-  overflow-y: auto;
+  max-height: 46vh;
 }
 
 .ai-toolbar-swap {

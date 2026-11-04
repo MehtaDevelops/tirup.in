@@ -372,6 +372,12 @@ const STAGES = {
 
 const ANSWER_WORD_MS = 28
 
+// How many finished exchanges travel with a follow-up. The route caps this
+// again, so the browser can never inflate the prompt on its own.
+const HISTORY_TURNS = 6
+
+type Exchange = { id: string; question: string; answer: string }
+
 /**
  * Applies a format to the current selection inside any container element.
  * Shared by the demo Editor and the read-only article toolbar, so both
@@ -597,22 +603,31 @@ export function SelectionToolbar({
 }) {
   const input = useRef<HTMLInputElement>(null)
   const panel = useRef<HTMLDivElement>(null)
+  const transcript = useRef<HTMLDivElement>(null)
   const timers = useRef<number[]>([])
+  const nextId = useRef(0)
   const [isRtl] = useState(
     () => typeof document !== "undefined" && document.dir === "rtl"
   )
 
-  const [query, setQuery] = useState<string | null>(null)
+  // The passage is captured once by the parent and never changes while the
+  // thread is open, so every follow-up is answered against the same highlight
+  // plus the turns below. That is what keeps the conversation on topic even
+  // when the reader's selection has moved.
+  const [turns, setTurns] = useState<Exchange[]>([])
+  const [pending, setPending] = useState<string | null>(null)
+  const [reveal, setReveal] = useState<{ id: string; shown: number } | null>(null)
+  const [draft, setDraft] = useState("")
   const [stage, setStage] = useState<keyof typeof STAGES>("understanding")
-  const [answer, setAnswer] = useState("")
-  const [answering, setAnswering] = useState(false)
-  const [shown, setShown] = useState(0)
   const [height, setHeight] = useState(0)
   const [error, setError] = useState<string | null>(null)
 
-  const words = answer ? answer.split(" ") : []
   const reduceMotion = prefersReducedMotion()
   const side = isRtl ? -1 : 1
+  const busy = pending !== null && error === null
+  const topInput = askMode && !pending && turns.length === 0
+  const expanded = topInput || turns.length > 0 || pending !== null
+  const topic = turns[0]?.question ?? pending ?? ""
 
   useEffect(() => {
     const element = panel.current
@@ -629,56 +644,108 @@ export function SelectionToolbar({
     }
   }, [])
 
+  // Reveal the newest answer word by word. Only the turn named here animates;
+  // everything above it is already final, so a follow-up never re-types the
+  // whole conversation. "Finished" is derived at render time, not stored, so
+  // this effect only ever schedules the next word.
   useEffect(() => {
-    if (!answering || shown >= words.length) return
-    const timer = window.setTimeout(() => setShown((count) => count + 1), ANSWER_WORD_MS)
+    if (!reveal) return
+    const turn = turns.find((item) => item.id === reveal.id)
+    if (!turn) return
+    if (reveal.shown >= turn.answer.split(" ").length) return
+    const timer = window.setTimeout(
+      () => setReveal((current) => (current ? { ...current, shown: current.shown + 1 } : null)),
+      ANSWER_WORD_MS
+    )
     return () => window.clearTimeout(timer)
-  }, [answering, shown, words.length])
+  }, [reveal, turns])
 
-  const submit = () => {
-    const value = input.current?.value.trim()
-    if (!value || query) return
-    setQuery(value)
+  // Keep the newest line in view while it types out and when a turn lands.
+  // The transcript is the only scroller, so this never moves the page.
+  useEffect(() => {
+    const element = transcript.current
+    if (element) element.scrollTop = element.scrollHeight
+  }, [turns.length, reveal?.shown, pending, error])
+
+  const clearTimers = () => {
+    for (const timer of timers.current) window.clearTimeout(timer)
+    timers.current = []
+  }
+
+  const ask = (question: string) => {
+    const trimmed = question.trim()
+    if (!trimmed || busy) return
+    clearTimers()
     setError(null)
     setStage("understanding")
-    input.current?.blur()
+    setPending(trimmed)
+    // Freeze a half-typed answer: the reader moved on, so the rest of it
+    // appears at once instead of racing the new request.
+    setReveal(null)
 
     const toGathering = window.setTimeout(() => setStage("gathering"), 1400)
     timers.current.push(toGathering)
 
+    const history = turns
+      .slice(-HISTORY_TURNS)
+      .map(({ question: asked, answer }) => ({ question: asked, answer }))
+
     fetch("/api/ai-editor", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ selection: selection.slice(0, 2000), query: value.slice(0, 500), docTitle: (docTitle || "").slice(0, 300) }),
+      body: JSON.stringify({
+        selection: selection.slice(0, 2000),
+        query: trimmed.slice(0, 500),
+        docTitle: (docTitle || "").slice(0, 300),
+        history,
+      }),
     })
       .then(async (res) => {
-        const data = (await res.json().catch(() => null)) as { answer?: string; error?: string } | null
+        const data = (await res.json().catch(() => null)) as {
+          answer?: string
+          error?: string
+        } | null
         if (!res.ok) throw new Error(data?.error || `Request failed (${String(res.status)})`)
         const text = (data?.answer || "").trim()
         if (!text) throw new Error("Empty response from the model.")
-        for (const t of timers.current) window.clearTimeout(t)
-        setAnswer(text)
-        setShown(0)
-        setAnswering(true)
+        clearTimers()
+        nextId.current += 1
+        const id = `turn-${String(nextId.current)}`
+        setTurns((current) => [...current, { id, question: trimmed, answer: text }])
+        setPending(null)
+        setReveal(reduceMotion ? null : { id, shown: 0 })
       })
       .catch((err: unknown) => {
-        for (const t of timers.current) window.clearTimeout(t)
+        clearTimers()
+        // Keep the question pending so Try again reuses it verbatim.
         setError(err instanceof Error ? err.message : "Something went wrong.")
       })
   }
 
+  const askFromTop = () => {
+    const value = input.current?.value.trim()
+    if (!value) return
+    input.current?.blur()
+    ask(value)
+  }
+
+  const askFollowUp = () => {
+    const value = draft.trim()
+    if (!value || busy) return
+    setDraft("")
+    ask(value)
+  }
+
   const reset = () => {
-    for (const t of timers.current) window.clearTimeout(t)
-    setQuery(null)
-    setAnswer("")
-    setAnswering(false)
-    setShown(0)
+    clearTimers()
+    setTurns([])
+    setPending(null)
+    setReveal(null)
+    setDraft("")
     setError(null)
     setStage("understanding")
     window.setTimeout(() => input.current?.focus({ preventScroll: true }), 50)
   }
-
-  const expanded = askMode || query !== null
 
   return (
     <div
@@ -686,7 +753,11 @@ export function SelectionToolbar({
       aria-label="Selection"
       data-editor-toolbar
       onMouseDown={(event) => {
-        if ((event.target as HTMLElement).tagName !== "INPUT") event.preventDefault()
+        const target = event.target as HTMLElement
+        // Keep the article's existing selection alive while the reader works
+        // the chrome, but let them select and copy answer text like any other
+        // text on the page.
+        if (target.tagName !== "INPUT" && !target.closest(".ai-transcript")) event.preventDefault()
       }}
       className="ai-toolbar group flex origin-bottom flex-col overflow-hidden rounded-[22px] border whitespace-nowrap shadow-lg"
     >
@@ -738,7 +809,7 @@ export function SelectionToolbar({
           </button>
         ))}
 
-        {askMode && query === null && (
+        {topInput && (
           <div className="ai-toolbar-swap absolute inset-y-1.5 start-10 end-1.5 flex items-center gap-1">
             <input
               ref={input}
@@ -747,13 +818,13 @@ export function SelectionToolbar({
               aria-label="Ask about the selection"
               placeholder="Ask anything"
               maxLength={500}
-              onKeyDown={(event) => event.key === "Enter" && submit()}
+              onKeyDown={(event) => event.key === "Enter" && askFromTop()}
               className="h-8 min-w-0 flex-1 bg-transparent text-sm outline-none"
             />
             <button
               type="button"
               aria-label="Send"
-              onClick={submit}
+              onClick={askFromTop}
               className="ai-send-btn flex size-8 shrink-0 items-center justify-center rounded-full"
             >
               <ArrowRight className="size-4" />
@@ -761,16 +832,16 @@ export function SelectionToolbar({
           </div>
         )}
 
-        {query !== null && (
+        {!topInput && topic !== "" && (
           <div className="ai-toolbar-swap absolute inset-y-1.5 start-10 end-3 flex items-center overflow-hidden text-sm font-medium">
             <button
               type="button"
               onClick={reset}
-              title="Ask another question"
+              title="Start a new question"
               className="truncate text-left"
             >
               <span dir="auto" className="truncate">
-                {query}
+                {topic}
               </span>
             </button>
           </div>
@@ -786,61 +857,118 @@ export function SelectionToolbar({
         }}
       >
         <div ref={panel} className="relative">
-          {query && !answering && !error && (
-            <div className="ai-answer-panel ai-toolbar-swap flex items-center gap-1 border-t px-3 py-2.5">
-              <Orb
-                key={STAGES[stage].orb}
-                variant={STAGES[stage].orb}
-                label={STAGES[stage].label}
-                className="shrink-0"
-              />
-              <span key={stage} className="ai-toolbar-swap inline-block text-sm">
-                <TextShimmer duration={1.5}>{`${STAGES[stage].label}...`}</TextShimmer>
-              </span>
-              <div className="ms-auto flex items-center ps-2">
-                {stage === "gathering" &&
-                  SOURCES.map((domain, index) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={domain}
-                      src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
-                      alt={domain}
-                      style={{
-                        animationDelay: `${String(index * 80)}ms`,
-                        ["--ai-from-x" as string]: `${String(10 * side)}px`,
-                      }}
-                      className="ai-source-icon -ms-2 size-5 rounded-full first:ms-0"
-                    />
-                  ))}
+          {(turns.length > 0 || pending !== null || error !== null) && (
+            <div className="ai-answer-panel border-t">
+              <div ref={transcript} className="ai-transcript px-3.5 py-3">
+                {turns.map((turn) => {
+                  const words = turn.answer.split(" ")
+                  // While this turn is the one being revealed, show only the
+                  // words typed so far. Once it is done the whole answer is
+                  // rendered plainly, so the caret disappears.
+                  let partial: string | null = null
+                  if (reveal && reveal.id === turn.id && reveal.shown < words.length) {
+                    partial = words.slice(0, reveal.shown).join(" ")
+                  }
+                  return (
+                    <div key={turn.id} className="ai-turn">
+                      <p dir="auto" className="ai-turn-q">
+                        {turn.question}
+                      </p>
+                      <p dir="auto" className="ai-turn-a">
+                        {partial === null ? turn.answer : <StreamingText>{partial}</StreamingText>}
+                      </p>
+                    </div>
+                  )
+                })}
+
+                {pending !== null && error === null && (
+                  <div className="ai-turn">
+                    {/* Show the question the moment it is sent, so the thread
+                        reads as a conversation instead of a lone spinner. */}
+                    <p dir="auto" className="ai-turn-q">
+                      {pending}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <Orb
+                        key={STAGES[stage].orb}
+                        variant={STAGES[stage].orb}
+                        label={STAGES[stage].label}
+                        className="shrink-0"
+                      />
+                      <span key={stage} className="ai-toolbar-swap inline-block text-sm">
+                        <TextShimmer duration={1.5}>{`${STAGES[stage].label}...`}</TextShimmer>
+                      </span>
+                      <div className="ms-auto flex items-center ps-2">
+                        {stage === "gathering" &&
+                          SOURCES.map((domain, index) => (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              key={domain}
+                              src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+                              alt={domain}
+                              style={{
+                                animationDelay: `${String(index * 80)}ms`,
+                                ["--ai-from-x" as string]: `${String(10 * side)}px`,
+                              }}
+                              className="ai-source-icon -ms-2 size-5 rounded-full first:ms-0"
+                            />
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {error !== null && (
+                  <div className="ai-turn">
+                    {pending !== null && (
+                      <p dir="auto" className="ai-turn-q">
+                        {pending}
+                      </p>
+                    )}
+                    <p dir="auto" className="ai-turn-a text-[13px]">
+                      {error === "AI_NOT_CONFIGURED"
+                        ? "AI is not configured yet. Set AI_API_KEY (Groq) on the server to enable answers."
+                        : error}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => (pending !== null ? ask(pending) : reset())}
+                      className="ai-retry-btn mt-2 rounded-full px-3 py-1 text-xs font-medium"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
 
-          {query && error && (
-            <div className="ai-answer-panel ai-toolbar-swap border-t px-3.5 py-3">
-              <p dir="auto" className="max-w-xs text-[13px] leading-relaxed whitespace-normal">
-                {error === "AI_NOT_CONFIGURED"
-                  ? "AI is not configured yet. Set AI_API_KEY (Groq) on the server to enable answers."
-                  : error}
-              </p>
-              <button
-                type="button"
-                onClick={reset}
-                className="ai-retry-btn mt-2 rounded-full px-3 py-1 text-xs font-medium"
-              >
-                Try again
-              </button>
-            </div>
-          )}
-
-          {answering && (
-            <div className="ai-answer-panel ai-toolbar-swap min-h-[41px] border-t px-3.5 py-3">
-              <p
-                dir="auto"
-                className="max-w-xs text-[15px] leading-relaxed whitespace-normal"
-              >
-                <StreamingText>{words.slice(0, shown).join(" ")}</StreamingText>
-              </p>
+              {turns.length > 0 && (
+                <div className="ai-followup flex items-center gap-1 border-t px-2 py-1.5">
+                  <input
+                    type="text"
+                    dir="auto"
+                    aria-label="Ask a follow-up about the selection"
+                    placeholder="Ask a follow-up"
+                    maxLength={500}
+                    value={draft}
+                    onChange={(event) => setDraft(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter") return
+                      event.preventDefault()
+                      askFollowUp()
+                    }}
+                    className="h-8 min-w-0 flex-1 bg-transparent px-1.5 text-sm outline-none"
+                  />
+                  <button
+                    type="button"
+                    aria-label="Send follow-up"
+                    onClick={askFollowUp}
+                    disabled={busy || draft.trim().length === 0}
+                    className="ai-send-btn flex size-8 shrink-0 items-center justify-center rounded-full disabled:opacity-40"
+                  >
+                    <ArrowRight className="size-4" />
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
