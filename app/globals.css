@@ -1337,6 +1337,12 @@ html.dark .tldr-box p {
   letter-spacing: 0;
   width: max-content;
   max-width: min(22rem, calc(100vw - 3rem));
+  /* Pin the resting scale here rather than with the scale-90 utility.
+     Tailwind 3 compiles that utility into `transform`, which the entrance
+     animation overwrites, so tirup.in rendered the toolbar 10% larger than
+     blogs did. Tailwind 4 emits the standalone `scale` property, which the
+     animation cannot override. Owning the property keeps both the same. */
+  scale: 90%;
   animation: ai-toolbar-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .dark .ai-toolbar {

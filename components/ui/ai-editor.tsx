@@ -688,7 +688,7 @@ export function SelectionToolbar({
       onMouseDown={(event) => {
         if ((event.target as HTMLElement).tagName !== "INPUT") event.preventDefault()
       }}
-      className="ai-toolbar group flex origin-bottom scale-90 flex-col overflow-hidden rounded-[22px] border whitespace-nowrap shadow-lg"
+      className="ai-toolbar group flex origin-bottom flex-col overflow-hidden rounded-[22px] border whitespace-nowrap shadow-lg"
     >
       <div className="relative flex items-center gap-1 p-1.5">
         <button
@@ -700,7 +700,7 @@ export function SelectionToolbar({
           }}
           aria-label="Ask AI"
           className={cn(
-            "flex h-8 shrink-0 items-center gap-1.5 rounded-full ps-1.5 pe-2.5 text-sm font-medium transition-colors",
+            "flex h-8 shrink-0 items-center gap-1.5 rounded-full ps-1.5 pe-2 text-sm font-medium transition-colors",
             expanded && "pointer-events-none"
           )}
         >
@@ -717,7 +717,7 @@ export function SelectionToolbar({
 
         <div
           className={cn(
-            "mx-1 h-5 w-px shrink-0 transition-opacity",
+            "h-5 w-px shrink-0 transition-opacity",
             expanded ? "pointer-events-none opacity-0" : "opacity-100"
           )}
         />
