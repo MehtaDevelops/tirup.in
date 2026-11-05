@@ -4,8 +4,10 @@ import { projectsData } from "@/lib/projects-data"
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://tirup.in"
   // Fixed build-time date so CDN can cache the sitemap (new Date() every
-  // request defeats caching). Bump only when routes change.
-  const buildDate = new Date("2026-10-11T00:00:00Z")
+  // request defeats caching). Bumped to 2026-11-05: /github came back into the
+  // sitemap, /privacy flipped to indexable, and the legacy root blog slugs
+  // started 308-redirecting, all of which changed the advertised URL set.
+  const buildDate = new Date("2026-11-05T00:00:00Z")
 
   // 1. Static Pages
   // /github is indexable again (see app/github/page.tsx) and self-canonical, so

@@ -236,6 +236,13 @@ const nextConfig = {
         destination: "/writing/:path*",
         permanent: true,
       },
+      // /projects is not a page (only /projects/:slug is). Guessed URLs and
+      // stale links landed on a 404; send them to the real index instead.
+      {
+        source: "/projects",
+        destination: "/work",
+        permanent: true,
+      },
       // /index is a second 200 copy of the homepage; collapse it.
       {
         source: "/index",
