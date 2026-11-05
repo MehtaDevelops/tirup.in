@@ -8,7 +8,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const buildDate = new Date("2026-10-11T00:00:00Z")
 
   // 1. Static Pages
-  const staticRoutes = ["", "/work", "/skills", "/writing", "/about", "/contact", "/tools", "/tools/utm-builder", "/tool/qr", "/privacy", "/github"]
+  // /github is intentionally `noindex, nofollow` (see app/github/page.tsx) and
+  // must not be advertised here: a sitemap may only list URLs you want indexed,
+  // otherwise Search Console files it under "Excluded by noindex tag".
+  const staticRoutes = ["", "/work", "/skills", "/writing", "/about", "/contact", "/tools", "/tools/utm-builder", "/tool/qr", "/privacy"]
   const staticPages = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: buildDate,

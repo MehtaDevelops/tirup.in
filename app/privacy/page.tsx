@@ -6,7 +6,9 @@ export const metadata: Metadata = {
   description: "Privacy policy for tirup.in: what data is collected, how it is used, and how to contact Tirup Mehta with data questions.",
   alternates: { canonical: "/privacy" },
   openGraph: { url: "/privacy" },
-  robots: { index: false, follow: false },
+  // A privacy policy is a trust/E-E-A-T page and is listed in sitemap.ts, so it
+  // has to be indexable. `nofollow` also blocked the only links on it (contact).
+  robots: { index: true, follow: true },
 }
 
 export default function PrivacyPage() {

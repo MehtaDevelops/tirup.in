@@ -199,6 +199,31 @@ const nextConfig = {
   // ─── Redirect HTTP → HTTPS ────────────────────────────────────────────────
   // Vercel handles this at the edge, but belt-and-suspenders for self-hosted.
   async redirects() {
+    // The blog lived at the ROOT of tirup.in before it moved to /writing and
+    // then to blogs.tirup.in. Post bodies still contain root-relative links to
+    // those old slugs, and Google still has them indexed from 2026. Without
+    // these they 404 on this host (Search Console: "Not found (404)").
+    // Kept in sync with the same map in blogs/next.config.ts; targets are the
+    // canonical blogs.tirup.in URLs so old links resolve in a single hop.
+    const legacyPostRedirects = [
+      ["/the-winners-want-to-stop-the-race", "ai-pause-debate-explained-why-the-winners-want-to-stop-the-race"],
+      ["/the-rubygems-flood-the-attack-everyone-mistook-for-spam", "rubygems-supply-chain-attack-the-cyberattack-everyone-mistook-for-spam"],
+      ["/gpt-6-astra-and-the-operational-delta", "gpt-6-astra-at-70-why-benchmark-scores-dont-make-trustworthy-ai"],
+      ["/secure-url-validation-for-web-applications", "ssrf-attacks-explained-how-your-server-gets-tricked-into-hacking-itself"],
+      ["/building-a-responsive-portfolio-from-scratch", "responsive-portfolio-redesign-i-rebuilt-mine-three-times-heres-what-was-wrong"],
+      ["/frontend-performance-techniques-i-use-in-real-projects", "frontend-performance-fix-my-site-felt-slow-three-real-causes-three-fixes"],
+      ["/the-rogue-agent-incident-what-the-july-2026-hugging-face-breach-teaches-us-about-autonomous-ai-security", "openai-hugging-face-hack-700-rogue-agents-a-cover-up-and-alarms-nobody-switched-on"],
+      ["/open-redirect-vulnerabilities-explained-with-practical-examples", "open-redirect-vulnerability-that-log-in-button-may-drop-you-on-a-fake-page"],
+      ["/claude-opus-5-vs-gpt-5-6-sol-a-frontier-benchmark-for-multi-step-system-engineering", "claude-vs-gpt-for-coding-i-deleted-my-comparison-table-heres-what-replaced-it"],
+      ["/hardening-agentic-workflows-zero-trust-runtime-sandboxing-for-autonomous-code-execution", "ai-agent-sandboxing-guide-how-i-would-lock-up-an-ai-that-runs-code"],
+      ["/the-us-just-killed-anthropic-s-fable-5-and-their-own-tech-dominance-with-it", "anthropic-fable-5-ban-the-18-day-shutdown-and-the-one-filter-that-ended-it"],
+      ["/the-making-of-trace-guard-redefining-anti-bot-security-for-the-vlm-era", "bot-detection-without-captchas-i-built-a-trap-that-catches-ai-agents"],
+    ].map(([source, slug]) => ({
+      source,
+      destination: `https://blogs.tirup.in/${slug}`,
+      permanent: true,
+    }))
+
     return [
       // /blogs renamed to /writing: keep old indexed/shared links working
       {
@@ -211,6 +236,13 @@ const nextConfig = {
         destination: "/writing/:path*",
         permanent: true,
       },
+      // /index is a second 200 copy of the homepage; collapse it.
+      {
+        source: "/index",
+        destination: "/",
+        permanent: true,
+      },
+      ...legacyPostRedirects,
     ]
   },
 
