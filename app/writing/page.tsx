@@ -9,10 +9,27 @@ import { CONVEX_API_URL } from "@/lib/utils"
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: "Writing",
-  description: "Thoughts on development, design, and security by Tirup Mehta.",
+  // This page is the portfolio's writing index, not the blog. It deliberately
+  // targets the "Tirup Mehta writing / articles / essays" queries so it does
+  // not compete with blogs.tirup.in, which owns "Tirup Mehta Blogs". Individual
+  // article pages here are noindex + canonical to the blog, so no post can
+  // appear twice in search results.
+  title: { absolute: "Writing by Tirup Mehta | Articles & Essays" },
+  description:
+    "Writing by Tirup Mehta: articles and essays on software engineering, web security, design systems, and AI safety. Browse recent pieces, then read the full posts on the blog.",
+  keywords: [
+    "Tirup Mehta writing",
+    "Tirup Mehta articles",
+    "Tirup Mehta essays",
+    "Tirup Mehta blog posts",
+  ],
   alternates: { canonical: "/writing" },
-  openGraph: { url: "/writing" },
+  openGraph: {
+    url: "/writing",
+    title: "Writing by Tirup Mehta | Articles & Essays",
+    description:
+      "Articles and essays by Tirup Mehta on software engineering, web security, design systems, and AI safety.",
+  },
 }
 
 interface BlogPost {
@@ -80,7 +97,7 @@ export default async function BlogsPage() {
 
       {/* Blogs list Section: latest 10 titles only. Full essays live on blogs.tirup.in */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
-        <h1 className="sr-only">Writing</h1>
+        <h1 className="sr-only">Writing by Tirup Mehta</h1>
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>
