@@ -26,7 +26,6 @@ export async function GET(request: Request): Promise<Response> {
       uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
       links: {
         self: "https://tirup.in/api/v1/health",
-        docs: "https://tirup.in/docs",
         openapi: "https://tirup.in/openapi.json",
       },
     },

@@ -22,8 +22,8 @@ const CATALOG = {
       ],
       "service-doc": [
         {
-          href: "https://tirup.in/docs",
-          type: "text/html",
+          href: "https://tirup.in/openapi.json",
+          type: "application/vnd.oai.openapi+json",
         },
       ],
       status: [

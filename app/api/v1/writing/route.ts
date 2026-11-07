@@ -103,7 +103,6 @@ export async function GET(request: Request): Promise<Response> {
         self: "https://tirup.in/api/v1/writing",
         blog: "https://blogs.tirup.in",
         rss: "https://tirup.in/rss.xml",
-        docs: "https://tirup.in/docs",
         openapi: "https://tirup.in/openapi.json",
       },
     },

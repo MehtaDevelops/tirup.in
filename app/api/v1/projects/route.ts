@@ -50,7 +50,6 @@ export async function GET(request: Request): Promise<Response> {
       projects,
       links: {
         self: "https://tirup.in/api/v1/projects",
-        docs: "https://tirup.in/docs",
         openapi: "https://tirup.in/openapi.json",
       },
     },

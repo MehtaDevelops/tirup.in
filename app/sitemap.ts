@@ -4,8 +4,7 @@ import { projectsData } from "@/lib/projects-data"
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://tirup.in"
   // Fixed build-time date so CDN can cache the sitemap (new Date() every
-  // request defeats caching). Bumped to 2026-11-07: the developer surface
-  // (/docs, /developers, /cli) was added for agent readiness.
+  // request defeats caching).
   const buildDate = new Date("2026-11-07T00:00:00Z")
 
   // 1. Static Pages
@@ -38,7 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { route: "/all", priority: 0.8, frequency: "weekly" as const },
     { route: "/liquid-ascii", priority: 0.9, frequency: "weekly" as const },
     { route: "/song-bubble", priority: 0.9, frequency: "weekly" as const },
-    { route: "/docs", priority: 0.6, frequency: "monthly" as const },
   ]
   const componentsPages = componentsApp.map(({ route, priority, frequency }) => ({
     url: `${baseUrl}/components${route}`,
