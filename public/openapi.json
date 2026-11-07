@@ -1,0 +1,787 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Tirup Mehta API",
+    "version": "1.0.0",
+    "summary": "Read-only public API for tirup.in: profile, projects, and published writing.",
+    "description": "A small, unauthenticated, read-only HTTP API that exposes the same facts https://tirup.in publishes as HTML and JSON-LD, in a shape an agent or script can consume directly. Every endpoint answers GET (and HEAD), returns application/json, and carries RFC RateLimit headers. Errors are RFC 9457 application/problem+json documents with a stable machine-readable `code` and an actionable `hint`.\n\nNo API key is required. Rate limit: 60 requests per 60 seconds per client for most endpoints, 120 per 60 seconds for the health probe.",
+    "license": {
+      "name": "All rights reserved",
+      "url": "https://tirup.in/privacy"
+    },
+    "contact": {
+      "name": "Tirup Mehta",
+      "url": "https://tirup.in/contact"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://tirup.in",
+      "description": "Production"
+    }
+  ],
+  "x-versioning-policy": {
+    "scheme": "url-path",
+    "current": "v1",
+    "stability": "Additive changes may land in v1 at any time. Breaking changes ship only in a new path segment (v2), with the previous major version kept live for at least 180 days after the replacement is announced.",
+    "documentation": "https://tirup.in/docs#versioning"
+  },
+  "x-deprecation-policy": {
+    "signal": "Sunset",
+    "headers": [
+      "Deprecation",
+      "Sunset"
+    ],
+    "documentation": "https://tirup.in/docs#deprecation",
+    "notice": "A deprecated endpoint or field returns a Deprecation header (RFC 9745) and a Sunset header (RFC 8594) with the retirement date. The body of a deprecated endpoint also carries a `deprecation` object with `sunset` and `replacement`. Nothing is removed before the advertised Sunset date."
+  },
+  "tags": [
+    {
+      "name": "Status",
+      "description": "Liveness and version information."
+    },
+    {
+      "name": "Profile",
+      "description": "Identity facts about Tirup Mehta."
+    },
+    {
+      "name": "Projects",
+      "description": "The public project index."
+    },
+    {
+      "name": "Writing",
+      "description": "Published articles, canonical on blogs.tirup.in."
+    }
+  ],
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "operationId": "getHealth",
+        "tags": [
+          "Status"
+        ],
+        "summary": "Check whether the API is serving requests",
+        "description": "Returns a fixed shape with the current API version and a process-local uptime counter. Does not touch any downstream service, so a 200 here proves the deployment is answering, not that the article store is reachable.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "The deployment is serving requests.",
+            "headers": {
+              "RateLimit-Limit": {
+                "description": "Requests allowed in the current window.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Remaining": {
+                "description": "Requests left in the current window.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Reset": {
+                "description": "Seconds until the window resets.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      },
+      "head": {
+        "operationId": "headHealth",
+        "tags": [
+          "Status"
+        ],
+        "summary": "Check whether the API is serving requests, headers only",
+        "description": "Identical status and headers to GET /api/v1/health with an empty body.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "The deployment is serving requests. No body."
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/api/v1/profile": {
+      "get": {
+        "operationId": "getProfile",
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Fetch Tirup Mehta's public profile",
+        "description": "The identity facts behind https://tirup.in and https://tirup.in/about: name, headline, summary, location, skills, and verified profile links. Static content, cached for an hour.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "The public profile.",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      },
+      "head": {
+        "operationId": "headProfile",
+        "tags": [
+          "Profile"
+        ],
+        "summary": "Fetch profile headers without a body",
+        "description": "Identical status and headers to GET /api/v1/profile with an empty body.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Headers for the public profile. No body."
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/api/v1/projects": {
+      "get": {
+        "operationId": "listProjects",
+        "tags": [
+          "Projects"
+        ],
+        "summary": "List every public project",
+        "description": "The same project index shown at https://tirup.in/work, including each project's canonical page URL, live URL, repository, tech stack, and headline stats. Static content, cached for an hour.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "All public projects.",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectList"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      },
+      "head": {
+        "operationId": "headProjects",
+        "tags": [
+          "Projects"
+        ],
+        "summary": "List project headers without a body",
+        "description": "Identical status and headers to GET /api/v1/projects with an empty body.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Headers for the project list. No body."
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/api/v1/writing": {
+      "get": {
+        "operationId": "listWriting",
+        "tags": [
+          "Writing"
+        ],
+        "summary": "List published articles",
+        "description": "Newest-first list of published articles. Each item carries the canonical URL on blogs.tirup.in, which is the only host that owns article content. Fails with 502 when the article store is unreachable; the RSS feed at https://tirup.in/rss.xml serves the same list.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of articles to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            },
+            "example": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The requested slice of published articles.",
+            "headers": {
+              "RateLimit-Limit": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Remaining": {
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "RateLimit-Reset": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WritingList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The limit parameter was not an integer between 1 and 50.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                },
+                "example": {
+                  "type": "https://tirup.in/docs#error-invalid_parameter",
+                  "title": "Invalid query parameter",
+                  "status": 400,
+                  "detail": "limit must be an integer between 1 and 50.",
+                  "instance": "/api/v1/writing",
+                  "code": "invalid_parameter",
+                  "hint": "Omit limit to get 10 posts, or pass a value from 1 to 50."
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "502": {
+            "description": "The article store did not answer, so no posts could be listed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "head": {
+        "operationId": "headWriting",
+        "tags": [
+          "Writing"
+        ],
+        "summary": "List article headers without a body",
+        "description": "Identical status and headers to GET /api/v1/writing with an empty body.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of articles to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Headers for the article list. No body."
+          },
+          "400": {
+            "description": "The limit parameter was invalid.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "502": {
+            "description": "The article store did not answer.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "description": "Liveness snapshot.",
+        "required": [
+          "status",
+          "service",
+          "version",
+          "timestamp",
+          "uptimeSeconds",
+          "links"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "description": "Always `ok` when the process is serving."
+          },
+          "service": {
+            "type": "string",
+            "const": "tirup.in"
+          },
+          "version": {
+            "type": "string",
+            "description": "API major version.",
+            "examples": [
+              "v1"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Server time when the response was built."
+          },
+          "uptimeSeconds": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Process-local uptime. Resets on every cold start; advisory only."
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Links": {
+        "type": "object",
+        "description": "Related resources. Keys are stable; every value is an absolute URL.",
+        "additionalProperties": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "Profile": {
+        "type": "object",
+        "description": "Public identity record.",
+        "required": [
+          "name",
+          "headline",
+          "summary",
+          "location",
+          "url",
+          "blog",
+          "knowsAbout",
+          "sameAs",
+          "contact",
+          "version"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "alternateName": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "required": [
+              "locality",
+              "country",
+              "countryCode"
+            ],
+            "properties": {
+              "locality": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "countryCode": {
+                "type": "string",
+                "description": "ISO 3166-1 alpha-2."
+              }
+            },
+            "additionalProperties": false
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "blog": {
+            "type": "string",
+            "format": "uri"
+          },
+          "email": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email",
+            "description": "Null when no public address is published. Use `contact` instead."
+          },
+          "knowsAbout": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sameAs": {
+            "type": "array",
+            "description": "Verified profiles for identity corroboration.",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "contact": {
+            "type": "string",
+            "format": "uri"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "ProjectList": {
+        "type": "object",
+        "required": [
+          "version",
+          "count",
+          "projects",
+          "links"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Project"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Project": {
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "description",
+          "url",
+          "techStack",
+          "stats"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical project page on tirup.in."
+          },
+          "liveUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "description": "Where the project runs, when it is deployed."
+          },
+          "repository": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "description": "Source repository, when public."
+          },
+          "techStack": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stats": {
+            "type": "object",
+            "description": "Free-form headline numbers shown on the project page. Keys vary per project.",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "WritingList": {
+        "type": "object",
+        "required": [
+          "version",
+          "count",
+          "total",
+          "limit",
+          "posts",
+          "links"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Items in this response."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Published articles available before `limit` was applied."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Writing"
+            }
+          },
+          "links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Writing": {
+        "type": "object",
+        "required": [
+          "slug",
+          "title",
+          "tldr",
+          "publishedAt",
+          "url"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "tldr": {
+            "type": "string",
+            "description": "One-paragraph summary. Empty string when the author did not write one."
+          },
+          "publishedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Canonical article URL on blogs.tirup.in."
+          }
+        },
+        "additionalProperties": false
+      },
+      "Problem": {
+        "type": "object",
+        "description": "RFC 9457 problem document. `code` is stable and safe to branch on; `detail` and `hint` are for humans and models.",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "code"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI identifying the problem type. Resolves to the matching section of the docs."
+          },
+          "title": {
+            "type": "string",
+            "description": "Short, human-readable summary of the problem type."
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599,
+            "description": "HTTP status code, repeated here for completeness."
+          },
+          "detail": {
+            "type": "string",
+            "description": "What went wrong for this specific request."
+          },
+          "instance": {
+            "type": "string",
+            "description": "Request path the problem occurred on."
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "invalid_parameter",
+              "not_found",
+              "method_not_allowed",
+              "rate_limited",
+              "upstream_unavailable"
+            ],
+            "description": "Stable machine-readable error identifier."
+          },
+          "hint": {
+            "type": "string",
+            "description": "Actionable next step. Safe to show to a user or feed back to a model."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "responses": {
+      "TooManyRequests": {
+        "description": "The client exceeded its rate limit. Wait for the number of seconds in Retry-After, then retry.",
+        "headers": {
+          "Retry-After": {
+            "description": "Seconds to wait before retrying.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Limit": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Remaining": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Reset": {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            },
+            "example": {
+              "type": "https://tirup.in/docs#error-rate_limited",
+              "title": "Rate limit exceeded",
+              "status": 429,
+              "detail": "This endpoint allows 60 requests per 60 seconds per client.",
+              "instance": "/api/v1/projects",
+              "code": "rate_limited",
+              "hint": "Wait 42 seconds (see Retry-After) before retrying."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -8,7 +8,8 @@
     "dev": "next dev",
     "lint": "tsc --noEmit",
     "postinstall": "node -e \"fs.copyFileSync('node_modules/pdfjs-dist/build/pdf.worker.min.mjs','public/pdf.worker.min.mjs')\"",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --test tests/agent-paths.test.ts tests/problem.test.ts tests/openapi.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

@@ -239,6 +239,60 @@ const gleanBoxSchema = {
   }
 }
 
+// Organization record for legitimacy checks. Agents look for a business entity
+// with a contact channel and a postal address before recommending a site, so
+// both live here. No public email or phone is published anywhere on tirup.in,
+// which is why contactPoint points at the contact page rather than inventing an
+// address; adding a real mailbox is a product decision, not a schema change.
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://tirup.in/#organization",
+  "name": "Tirup Mehta",
+  "alternateName": "tirup.in",
+  "url": "https://tirup.in",
+  "logo": "https://tirup.in/icon.png",
+  "image": "https://tirup.in/profile.png",
+  "description": "Personal engineering practice of Tirup Mehta: secure frontend engineering, web security, and developer tooling.",
+  "founder": {
+    "@id": "https://tirup.in/about"
+  },
+  "employee": {
+    "@id": "https://tirup.in/about"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Junagadh",
+    "addressRegion": "Gujarat",
+    "addressCountry": "IN"
+  },
+  "areaServed": {
+    "@type": "Country",
+    "name": "India"
+  },
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "professional inquiries",
+      "url": "https://tirup.in/contact",
+      "availableLanguage": ["en", "gu", "hi"],
+      "areaServed": "Worldwide"
+    },
+    {
+      "@type": "ContactPoint",
+      "contactType": "security",
+      "url": "https://tirup.in/.well-known/security.txt",
+      "availableLanguage": ["en"]
+    }
+  ],
+  "sameAs": [
+    "https://github.com/TirupMehta",
+    "https://www.linkedin.com/in/TirupMehta",
+    "https://x.com/TirupMehta",
+    "https://blogs.tirup.in"
+  ]
+}
+
 // Third-party coverage. Kept as structured data (no visible page) so search
 // engines and AI agents can corroborate identity without amplifying the source
 // article's own ranking. Referenced from personSchema.subjectOf.
@@ -282,6 +336,7 @@ const jsonLdGraph = {
   "@graph": [
     profilePageSchema,
     personSchema,
+    organizationSchema,
     websiteSchema,
     writingSchema,
     traceGuardSchema,

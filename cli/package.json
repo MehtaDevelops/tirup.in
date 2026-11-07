@@ -1,0 +1,34 @@
+{
+  "name": "@tirupmehta/tirup-cli",
+  "version": "1.0.0",
+  "description": "Command-line client for the tirup.in API: health, profile, projects, and writing.",
+  "type": "module",
+  "bin": {
+    "tirup": "./tirup.mjs"
+  },
+  "files": [
+    "tirup.mjs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "tirup",
+    "tirup.in",
+    "cli",
+    "api",
+    "agent"
+  ],
+  "author": "Tirup Mehta",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MehtaDevelops/tirup.in.git",
+    "directory": "cli"
+  },
+  "homepage": "https://tirup.in/cli",
+  "publishConfig": {
+    "access": "public"
+  }
+}

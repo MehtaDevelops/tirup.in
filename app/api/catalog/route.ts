@@ -13,6 +13,27 @@
 const CATALOG = {
   linkset: [
     {
+      anchor: "https://tirup.in/api/v1/health",
+      "service-desc": [
+        {
+          href: "https://tirup.in/openapi.json",
+          type: "application/json",
+        },
+      ],
+      "service-doc": [
+        {
+          href: "https://tirup.in/docs",
+          type: "text/html",
+        },
+      ],
+      status: [
+        {
+          href: "https://tirup.in/api/v1/health",
+          type: "application/json",
+        },
+      ],
+    },
+    {
       anchor: "https://modelregistry.tirup.in/api/v1/models",
       "service-desc": [
         {

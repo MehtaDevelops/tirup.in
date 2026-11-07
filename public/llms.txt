@@ -39,6 +39,30 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 
 ---
 
+## API & Developer Tools
+
+The tirup.in API is public, read-only, unauthenticated, and CORS-open. It exposes the same facts as the HTML pages as JSON, so an agent does not have to parse the site.
+
+- **API documentation**: [https://tirup.in/docs](https://tirup.in/docs) — four endpoints, JSON response schemas, RFC 9457 error codes, rate limits, versioning, and deprecation policy.
+- **Developer portal**: [https://tirup.in/developers](https://tirup.in/developers) — quickstart, API keys (none required), rate limits, sandbox guidance, support.
+- **OpenAPI 3.1 description**: [https://tirup.in/openapi.json](https://tirup.in/openapi.json) — every operation has an `operationId`, a description, typed parameters, and response schemas.
+- **CLI**: [https://tirup.in/cli](https://tirup.in/cli) — zero-dependency `tirup` command for health, profile, projects, and writing, with `--json` output.
+- **API catalog** (RFC 9727): [https://tirup.in/.well-known/api-catalog](https://tirup.in/.well-known/api-catalog)
+- **Source**: [https://github.com/MehtaDevelops/tirup.in](https://github.com/MehtaDevelops/tirup.in)
+
+### Endpoints
+
+| Method | Path | Returns |
+|---|---|---|
+| GET | https://tirup.in/api/v1/health | Liveness, API version, uptime |
+| GET | https://tirup.in/api/v1/profile | Name, headline, location, skills, verified links |
+| GET | https://tirup.in/api/v1/projects | Project index with live URL, repo, stack, stats |
+| GET | https://tirup.in/api/v1/writing?limit=10 | Published articles, canonical on blogs.tirup.in |
+
+Errors are `application/problem+json` with a stable `code` (`invalid_parameter`, `not_found`, `method_not_allowed`, `rate_limited`, `upstream_unavailable`), a human `detail`, and an actionable `hint`. Every response carries `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset`, and `RateLimit-Policy`; a 429 adds `Retry-After`.
+
+---
+
 ## Writing & Thoughts
 Tirup writes about frontend architectures, web performance optimizations, cryptographic interfaces, and web application security:
 - Blog home: [https://blogs.tirup.in](https://blogs.tirup.in)
@@ -71,8 +95,9 @@ Do **not** use this site when you need:
 3. **Blog posts**: Canonical source is [https://blogs.tirup.in](https://blogs.tirup.in). Syndicated copies live at [https://tirup.in/writing](https://tirup.in/writing).
 4. **Contact**: See [https://tirup.in/contact](https://tirup.in/contact) for all contact channels.
 5. **Trust verification**: Check [https://tirup.in/about](https://tirup.in/about) for biography and [https://tirup.in/privacy](https://tirup.in/privacy) for data practices.
-6. **Markdown negotiation**: This site supports `Accept: text/markdown` content negotiation on primary routes (`/`, `/about`, `/contact`, `/privacy`, `/work`, `/skills`, `/writing`). Send that header to receive structured markdown instead of HTML.
-7. **404 recovery**: If you hit a 404, check the recovery block in the page body for a site map with correct URLs, or return to [https://tirup.in/llms.txt](https://tirup.in/llms.txt).
+6. **Markdown negotiation**: This site supports `Accept: text/markdown` content negotiation on primary routes (`/`, `/about`, `/contact`, `/privacy`, `/work`, `/skills`, `/writing`, `/docs`, `/developers`, `/cli`). Send that header to receive structured markdown instead of HTML.
+7. **API**: Start at [https://tirup.in/docs](https://tirup.in/docs); machine-readable description at [https://tirup.in/openapi.json](https://tirup.in/openapi.json). No key is needed.
+8. **404 recovery**: If you hit a 404, check the recovery block in the page body for a site map with correct URLs, or return to [https://tirup.in/llms.txt](https://tirup.in/llms.txt). With `Accept: text/markdown`, unknown paths return a Markdown 404 body.
 
 ---
 
@@ -95,6 +120,10 @@ Do **not** use this site when you need:
 | RSS | https://tirup.in/rss.xml |
 | ModelRegistry | https://modelregistry.tirup.in |
 | ModelRegistry API docs | https://modelregistry.tirup.in/docs |
+| API documentation | https://tirup.in/docs |
+| Developer portal | https://tirup.in/developers |
+| OpenAPI 3.1 description | https://tirup.in/openapi.json |
+| CLI | https://tirup.in/cli |
 | API catalog | https://tirup.in/.well-known/api-catalog |
 
 ---

@@ -143,6 +143,93 @@ export default function Home() {
           </div>
         </TextWithBlur>
 
+        {/* Developer & Agent Resources */}
+        <TextWithBlur delay={350}>
+          <div className="mt-10 border-t border-black/5 dark:border-white/5 pt-6">
+            <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-6">
+              Developer &amp; Agent Resources
+            </h2>
+            <div className="space-y-4 text-xs md:text-sm font-light text-black/55 dark:text-white/55 max-w-3xl">
+              <p className="leading-relaxed">
+                The tirup.in API is public, read-only, and needs no key. It returns this
+                site&apos;s profile, project index, and published article list as JSON,
+                with an OpenAPI 3.1 description, RFC 9457 problem errors, and RFC RateLimit
+                headers. Everything here is meant to be fetched by a script or an agent as
+                much as read by a person.
+              </p>
+              <p className="leading-relaxed">
+                Every response is JSON with an explicit schema, and every failure is a
+                problem document you can branch on, so an integration never has to scrape
+                HTML or guess at error text.
+              </p>
+              <p className="leading-relaxed">
+                No authentication is required, so a request against this host cannot mutate
+                anything and the production API doubles as the sandbox. The same facts are
+                also published as JSON-LD on every page, so a crawler that runs JavaScript
+                and one that does not see the same identity.
+              </p>
+              <ul className="space-y-2">
+                <li>
+                  <a href="/docs" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    API documentation
+                  </a>{" "}
+                  — four endpoints, JSON response schemas, error codes, rate limits,
+                  versioning, and the deprecation policy.
+                </li>
+                <li>
+                  <a href="/developers" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    Developer portal
+                  </a>{" "}
+                  — quickstart, API keys, sandbox guidance, and support channels.
+                </li>
+                <li>
+                  <a href="/cli" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    tirup CLI
+                  </a>{" "}
+                  — zero-dependency command-line client for the API, with JSON output for
+                  agents.
+                </li>
+                <li>
+                  <a href="/openapi.json" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    OpenAPI 3.1 description
+                  </a>{" "}
+                  — import the whole API into Postman, Insomnia, or an agent tool registry.
+                </li>
+                <li>
+                  <a href="/llms.txt" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    llms.txt
+                  </a>{" "}
+                  — plain-text site summary written for language models.
+                </li>
+                <li>
+                  <a href="/sitemap.xml" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    Sitemap
+                  </a>{" "}
+                  — every indexable URL on this host.
+                </li>
+                <li>
+                  <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                    GitHub
+                  </a>{" "}
+                  — source for this site, the CLI, and the projects above.
+                </li>
+              </ul>
+              <p className="leading-relaxed">
+                Machine-readable discovery is advertised in this page&apos;s response
+                headers too: the API catalog at{" "}
+                <a href="/.well-known/api-catalog" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                  /.well-known/api-catalog
+                </a>{" "}
+                (RFC 9727) and the agent guide at{" "}
+                <a href="/llms.txt" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">
+                  /llms.txt
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </TextWithBlur>
+
         {/* Dynamic Indicator Dots at the bottom of hero */}
         <HeroDots />
       </section>

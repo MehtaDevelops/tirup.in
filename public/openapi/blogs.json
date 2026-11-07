@@ -1,12 +1,17 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Blogs Feed API",
-    "version": "v1",
-    "description": "Free unauthenticated read-only feeds for published articles on https://blogs.tirup.in by Tirup Mehta. The /api/* routes on that host require admin session and are intentionally not part of this public description.",
+    "title": "Tirup Mehta Blogs Feed API",
+    "version": "1.0.0",
+    "summary": "Unauthenticated read-only syndication feeds for articles published on blogs.tirup.in.",
+    "description": "Free, no-key, read-only feeds for articles published on https://blogs.tirup.in by Tirup Mehta. The /api/* routes on that host require an admin session and are intentionally not part of this public description. Errors are RFC 9457 application/problem+json documents with a machine-readable `code`.",
     "license": {
       "name": "All rights reserved (feed content)",
-      "url": "https://blogs.tirup.in/about"
+      "url": "https://blogs.tirup.in/privacy"
+    },
+    "contact": {
+      "name": "Tirup Mehta",
+      "url": "https://tirup.in/contact"
     }
   },
   "servers": [
@@ -15,17 +20,56 @@
       "description": "Production"
     }
   ],
+  "x-versioning-policy": {
+    "scheme": "url-path",
+    "current": "v1",
+    "documentation": "https://tirup.in/docs#versioning"
+  },
+  "x-deprecation-policy": {
+    "signal": "Sunset",
+    "headers": [
+      "Deprecation",
+      "Sunset"
+    ],
+    "documentation": "https://tirup.in/docs#deprecation"
+  },
+  "tags": [
+    {
+      "name": "Feeds",
+      "description": "Syndication documents."
+    }
+  ],
   "paths": {
     "/rss.xml": {
       "get": {
+        "operationId": "getRssFeed",
+        "tags": [
+          "Feeds"
+        ],
         "summary": "RSS 2.0 feed of published articles",
         "description": "Up to 50 most recent published posts, newest first. No authentication. Alias: /feed.xml.",
+        "security": [],
         "responses": {
           "200": {
             "description": "RSS 2.0 XML document.",
             "content": {
               "application/rss+xml": {
-                "schema": { "type": "string" }
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "502": {
+            "description": "The article store did not answer.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
               }
             }
           }
@@ -34,14 +78,34 @@
     },
     "/feed.xml": {
       "get": {
+        "operationId": "getFeedAlias",
+        "tags": [
+          "Feeds"
+        ],
         "summary": "RSS 2.0 feed alias",
         "description": "Same document as /rss.xml.",
+        "security": [],
         "responses": {
           "200": {
             "description": "RSS 2.0 XML document.",
             "content": {
               "application/rss+xml": {
-                "schema": { "type": "string" }
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "502": {
+            "description": "The article store did not answer.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
               }
             }
           }
@@ -50,15 +114,108 @@
     },
     "/sitemap.xml": {
       "get": {
+        "operationId": "getBlogSitemap",
+        "tags": [
+          "Feeds"
+        ],
         "summary": "Sitemap of published articles",
         "description": "Machine-readable list of canonical article URLs for crawlers.",
+        "security": [],
         "responses": {
           "200": {
             "description": "Sitemap XML document.",
             "content": {
               "application/xml": {
-                "schema": { "type": "string" }
+                "schema": {
+                  "type": "string"
+                }
               }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "description": "RFC 9457 problem document.",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "code"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "invalid_parameter",
+              "not_found",
+              "method_not_allowed",
+              "rate_limited",
+              "upstream_unavailable"
+            ]
+          },
+          "hint": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "responses": {
+      "TooManyRequests": {
+        "description": "The client exceeded its rate limit. Wait for Retry-After seconds, then retry.",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Limit": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Remaining": {
+            "schema": {
+              "type": "integer"
+            }
+          },
+          "RateLimit-Reset": {
+            "schema": {
+              "type": "integer"
+            }
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
             }
           }
         }
