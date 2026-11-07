@@ -4,7 +4,7 @@
  * src/proxy.ts runs before routing, so it cannot ask Next.js whether a URL
  * resolved. That matters for one case: an agent that sends
  * `Accept: text/markdown` to a URL that does not exist should receive a
- * Markdown 404 body (with the docs, agent guide, and sitemap), not an HTML page.
+ * Markdown 404 body (with the agent guide and sitemap), not an HTML page.
  *
  * Rather than guess, this module knows the exact set of paths that exist on
  * this host. Anything else is a 404. The HTML path is never affected: unknown
@@ -33,9 +33,6 @@ export const KNOWN_STATIC_ROUTES = new Set<string>([
   "/components/docs",
   "/components/liquid-ascii",
   "/components/song-bubble",
-  "/docs",
-  "/developers",
-  "/cli",
 ])
 
 /** Machine-readable files served from public/ or a route handler. */
@@ -102,8 +99,6 @@ export function buildNotFoundMarkdown(pathname: string): string {
     "## Where to look next",
     "",
     "- Homepage: https://tirup.in/",
-    "- API documentation: https://tirup.in/docs",
-    "- Developer portal: https://tirup.in/developers",
     "- OpenAPI 3.1 description: https://tirup.in/openapi.json",
     "- Agent guide: https://tirup.in/llms.txt",
     "- Sitemap: https://tirup.in/sitemap.xml",

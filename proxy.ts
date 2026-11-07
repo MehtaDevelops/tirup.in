@@ -56,7 +56,7 @@ const MAX_URL_LENGTH = 2048
 
 // ─── Markdown content negotiation ─────────────────────────────────────────────
 // Routes that support Accept: text/markdown responses.
-const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/writing", "/tools", "/tools/utm-builder", "/tool/qr", "/github", "/docs", "/developers", "/cli"])
+const MARKDOWN_ROUTES = new Set(["/", "/about", "/contact", "/privacy", "/work", "/skills", "/writing", "/tools", "/tools/utm-builder", "/tool/qr", "/github"])
 
 // Inline content for each markdown route.
 // This is kept inline because proxy.ts runs at the edge where filesystem access
@@ -99,10 +99,7 @@ Tirup Mehta is a software engineer working at the intersection of interactive we
 
 ## API & Developer Tools
 Public, read-only, unauthenticated REST API. No key. CORS-open.
-- API documentation: https://tirup.in/docs
-- Developer portal: https://tirup.in/developers
 - OpenAPI 3.1: https://tirup.in/openapi.json
-- CLI: https://tirup.in/cli
 - API catalog (RFC 9727): https://tirup.in/.well-known/api-catalog
 - Endpoints: /api/v1/health, /api/v1/profile, /api/v1/projects, /api/v1/writing?limit=10
 - Errors: RFC 9457 application/problem+json with a stable code and an actionable hint.
@@ -265,101 +262,7 @@ Privacy-first, client-side developer utilities and marketing attribution tools b
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 - Sitemap: https://tirup.in/sitemap.xml
-`,
-  "/docs": `# Tirup Mehta API Documentation
-
-Full page: https://tirup.in/docs
-OpenAPI 3.1: https://tirup.in/openapi.json
-
-Read-only, unauthenticated REST API on tirup.in. Version v1. CORS-open. No API key.
-
-## Endpoints
-- GET https://tirup.in/api/v1/health — liveness, version, uptime (120 req/min)
-- GET https://tirup.in/api/v1/profile — name, headline, location, skills, verified links (60 req/min)
-- GET https://tirup.in/api/v1/projects — project index with live URL, repository, stack, stats (60 req/min)
-- GET https://tirup.in/api/v1/writing?limit=10 — published articles, canonical on blogs.tirup.in (60 req/min)
-
-Every endpoint also answers HEAD. Unknown /api/* paths return a JSON problem document, not HTML.
-
-## Errors
-RFC 9457 application/problem+json. Branch on code: invalid_parameter, not_found, method_not_allowed, rate_limited, upstream_unavailable. Each body has detail and an actionable hint.
-
-## Rate limits
-Fixed-window per client IP. Headers: RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset, RateLimit-Policy. A 429 adds Retry-After.
-
-## Versioning and deprecation
-Major version in the path (/api/v1). Additive changes only within a major version. Breaking changes ship as /api/v2, with v1 kept live for at least 180 days. Deprecation is signalled with Deprecation (RFC 9745) and Sunset (RFC 8594) headers plus a deprecation object in the body.
-
-## Agent Resources
-- Developer portal: https://tirup.in/developers
-- CLI: https://tirup.in/cli
-- API catalog: https://tirup.in/.well-known/api-catalog
-- Site guide: https://tirup.in/llms.txt
-- Sitemap: https://tirup.in/sitemap.xml
-`,
-  "/developers": `# Tirup Mehta Developer Portal
-
-Full page: https://tirup.in/developers
-API docs: https://tirup.in/docs
-
-Quickstart for the tirup.in API.
-
-## First request
-curl -sS https://tirup.in/api/v1/profile
-
-## API keys
-None required or issued. Every endpoint is public, read-only, and unauthenticated; abuse is handled with per-client rate limits.
-
-## Rate limits
-60 requests per 60 seconds per client on profile, projects, and writing; 120 per 60 seconds on health. RateLimit-* headers on every response, Retry-After on a 429.
-
-## Sandbox
-Production is the sandbox: there is no write path, no billing, and no private data.
-
-## Resources
-- API documentation: https://tirup.in/docs
-- OpenAPI 3.1: https://tirup.in/openapi.json
-- API catalog (RFC 9727): https://tirup.in/.well-known/api-catalog
-- CLI: https://tirup.in/cli
-- RSS: https://tirup.in/rss.xml
-- GitHub: https://github.com/TirupMehta
-
-## Agent Resources
-- Site guide: https://tirup.in/llms.txt
-- Sitemap: https://tirup.in/sitemap.xml
-`,
-  "/cli": `# tirup CLI
-
-Full page: https://tirup.in/cli
-Source: https://github.com/MehtaDevelops/tirup.in/tree/main/cli
-
-Zero-dependency command-line client for the tirup.in API. Node 18+.
-
-## Install
-git clone https://github.com/MehtaDevelops/tirup.in.git
-cd tirup.in/cli
-npm link
-
-Or run without installing: node cli/tirup.mjs health
-
-## Commands
-- tirup health — is the API serving requests?
-- tirup profile — identity facts
-- tirup projects — the project index
-- tirup writing --limit 5 — newest 5 articles
-
-## Options
---json prints the raw response. --base <url> overrides the API host.
-
-## Exit codes
-0 success; 1 the API returned a problem document; 2 bad usage or a network failure.
-
-## Agent Resources
-- API documentation: https://tirup.in/docs
-- Developer portal: https://tirup.in/developers
-- OpenAPI 3.1: https://tirup.in/openapi.json
-- Site guide: https://tirup.in/llms.txt
-`,
+`,
 }
 
 export function proxy(request: NextRequest) {

@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 1. Static Pages
   // /github is indexable again (see app/github/page.tsx) and self-canonical, so
   // it belongs here. It is deliberately no longer `noindex`.
-  const staticRoutes = ["", "/work", "/skills", "/writing", "/about", "/contact", "/tools", "/tools/utm-builder", "/tool/qr", "/privacy", "/github", "/docs", "/developers", "/cli"]
+  const staticRoutes = ["", "/work", "/skills", "/writing", "/about", "/contact", "/tools", "/tools/utm-builder", "/tool/qr", "/privacy", "/github"]
   const staticPages = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: buildDate,

@@ -8,7 +8,7 @@ import {
 } from "../lib/agent-paths.ts"
 
 test("known static routes are recognised", () => {
-  for (const path of ["/", "/about", "/contact", "/privacy", "/docs", "/developers", "/cli"]) {
+  for (const path of ["/", "/about", "/contact", "/privacy"]) {
     assert.equal(isKnownPath(path), true, `${path} should be known`)
   }
 })
@@ -20,7 +20,6 @@ test("machine-readable files are recognised", () => {
 })
 
 test("trailing slashes are normalised", () => {
-  assert.equal(isKnownPath("/docs/"), true)
   assert.equal(isKnownPath("/about//"), true)
   assert.equal(isKnownPath("/"), true)
 })
@@ -54,7 +53,6 @@ test("markdown 404 body explains the error and links recovery resources", () => 
   assert.match(body, /^# 404: Page not found/)
   assert.match(body, /__ora-404-probe/)
   assert.ok(body.length > 20, "body must be longer than 20 characters")
-  assert.match(body, /https:\/\/tirup\.in\/docs/)
   assert.match(body, /https:\/\/tirup\.in\/llms\.txt/)
   assert.match(body, /https:\/\/tirup\.in\/sitemap\.xml/)
 })
