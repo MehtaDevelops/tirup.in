@@ -60,7 +60,7 @@ export default function ContactPage() {
 
         {/* Intro */}
         <TextWithBlur delay={50}>
-          <div className="space-y-3 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-12">
+          <div className="space-y-3 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-8">
             <p>
               Open to well-scoped freelance work, technical collaboration, and conversations
               about frontend architecture, web security, and cryptographic system design.
@@ -74,7 +74,7 @@ export default function ContactPage() {
             {channels.map((ch, index) => (
               <div
                 key={ch.name}
-                className={`group py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
+                className={`group ${index === 0 ? "pt-1 pb-5" : "py-5 border-t"} border-black/10 dark:border-white/10`}
               >
                 <a
                   href={ch.href}
@@ -109,14 +109,12 @@ export default function ContactPage() {
                 </a>
               </div>
             ))}
-            {/* End border */}
-            <div className="border-t border-black/10 dark:border-white/10" />
           </div>
         </TextWithBlur>
 
         {/* Available for */}
         <TextWithBlur delay={200}>
-          <div className="mt-12 border-t border-black/5 dark:border-white/5 pt-6">
+          <div className="mt-8 border-t border-black/5 dark:border-white/5 pt-6">
             <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-6">
               Available for
             </h2>

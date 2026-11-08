@@ -39,7 +39,7 @@ export default function ToolsPage() {
               <TextWithBlur key={tool.slug} delay={index * 50}>
                 <Link
                   href={tool.slug}
-                  className={`group block py-5 ${index > 0 ? "border-t" : ""} border-black/10 dark:border-white/10`}
+                  className={`group block ${index === 0 ? "pt-1 pb-5" : "py-5 border-t"} border-black/10 dark:border-white/10`}
                   suppressHydrationWarning
                 >
                   <div className="flex items-baseline gap-4 md:gap-6">

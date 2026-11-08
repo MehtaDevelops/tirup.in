@@ -86,9 +86,9 @@ export default function SkillsSection() {
   ]
 
   return (
-    <div className="w-full pt-0">
+    <div className="w-full pt-0 space-y-8">
 
-      <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl mb-14">
+      <div className="text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
         <TextWithBlur delay={50}>
           <p>
             Over the years, I've developed a versatile skillset combining robust frontend architecture with secure systems development and intuitive design thinking.
@@ -98,7 +98,7 @@ export default function SkillsSection() {
 
       {/* Current Stack */}
       <TextWithBlur delay={100}>
-        <div className="mb-14">
+        <div>
           <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-5">
             Current Stack
           </h2>
@@ -111,7 +111,7 @@ export default function SkillsSection() {
       </TextWithBlur>
 
       {/* Category Columns */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-8 md:gap-x-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-8 md:gap-x-12">
         {categories.map((category, index) => (
           <TextWithBlur key={category.title} delay={150 + index * 100}>
             <div className="flex flex-col">

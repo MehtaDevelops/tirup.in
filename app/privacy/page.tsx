@@ -22,11 +22,11 @@ export default function PrivacyPage() {
         <h1 className="text-xl sm:text-2xl md:text-3xl font-serif italic font-medium tracking-tight leading-tight text-black dark:text-white mb-2">
           Privacy Policy
         </h1>
-        <p className="text-xs text-black/40 dark:text-white/40 mb-10">
+        <p className="text-xs text-black/40 dark:text-white/40 mb-8">
           Last updated: October 2026
         </p>
 
-        <div className="space-y-10 text-base font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
+        <div className="space-y-8 text-base font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <div>
             <h2 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">Overview</h2>
             <p>
