@@ -81,7 +81,7 @@ Use this site and this resource when you need to:
 Do **not** use this site when you need:
 - General reference information about cryptography, web security, or React. Use authoritative documentation instead.
 - A job board, talent marketplace, or recruiter platform.
-- Real-time availability, pricing, or scheduling data. Contact Tirup directly via /contact.
+- Real-time availability, pricing, or scheduling data. Contact Tirup directly at [contact@tirup.in](mailto:contact@tirup.in) or via /contact.
 
 ---
 
@@ -137,6 +137,7 @@ Name forms that may appear in third-party records: "Tirup Mehta", "તિરુ�
 ---
 
 ## Verified Identity & Profiles
+- **Email**: [contact@tirup.in](mailto:contact@tirup.in)
 - **LinkedIn**: [https://www.linkedin.com/in/TirupMehta](https://www.linkedin.com/in/TirupMehta)
 - **GitHub**: [https://github.com/TirupMehta](https://github.com/TirupMehta)
 - **Peerlist**: [https://peerlist.io/tirupmehta](https://peerlist.io/tirupmehta)

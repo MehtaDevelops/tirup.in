@@ -98,6 +98,11 @@ distributed through the component registry are licensed under MIT; see
 
 - GitHub: [@TirupMehta](https://github.com/TirupMehta)
 - Website: [tirup.in](https://tirup.in)
+- Email: [contact@tirup.in](mailto:contact@tirup.in)
+
+> **Maintained by [@TirupMehta](https://github.com/TirupMehta).** This repository is
+> published under the [MehtaDevelops](https://github.com/MehtaDevelops) account; all
+> commits, reviews, and ongoing maintenance are handled by Tirup Mehta.
 
 ---
 

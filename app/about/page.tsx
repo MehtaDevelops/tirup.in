@@ -124,14 +124,21 @@ export default function AboutPage() {
             <h2 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">Connect</h2>
             <p className="mb-4">
               I am open to collaboration, freelance engineering work, and conversations about
-              systems security and frontend architecture. The best ways to reach me are listed
-              on the{" "}
+              systems security and frontend architecture. The best ways to reach me are by
+              email at{" "}
+              <a href="mailto:contact@tirup.in" className="hover:text-black dark:hover:text-white transition-colors underline underline-offset-2">
+                contact@tirup.in
+              </a>{" "}
+              or via the{" "}
               <a href="/contact" className="hover:text-black dark:hover:text-white transition-colors underline underline-offset-2">
                 contact page
               </a>
               .
             </p>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              <a href="mailto:contact@tirup.in" className="inline-flex items-center gap-1 hover:text-black dark:hover:text-white transition-colors">
+                Email <ArrowUpRight size={12} className="opacity-40" />
+              </a>
               <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-black dark:hover:text-white transition-colors">
                 GitHub <ArrowUpRight size={12} className="opacity-40" />
               </a>

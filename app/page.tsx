@@ -63,6 +63,7 @@ export default function Home() {
 
           <h2>Connect</h2>
           <ul>
+            <li><a href="mailto:contact@tirup.in" rel="noopener noreferrer">Email</a></li>
             <li><a href="https://github.com/TirupMehta" rel="noopener noreferrer">GitHub</a></li>
             <li><a href="https://www.linkedin.com/in/TirupMehta" rel="noopener noreferrer">LinkedIn</a></li>
             <li><a href="https://blogs.tirup.in" rel="noopener noreferrer">Engineering Blog</a></li>
@@ -102,6 +103,9 @@ export default function Home() {
               Connect
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-8 gap-y-4 text-xs md:text-sm font-light text-black/55 dark:text-white/55">
+              <a href="mailto:contact@tirup.in" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
+                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Email
+              </a>
               <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
                 <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> GitHub
               </a>

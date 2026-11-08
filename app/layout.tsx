@@ -107,6 +107,7 @@ const personSchema = {
   "image": "https://tirup.in/profile.png",
   "description": "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "jobTitle": "Student Software Engineer",
+  "email": "contact@tirup.in",
   "knowsAbout": [
     "Software Engineering",
     "Computer Science",
@@ -241,9 +242,8 @@ const gleanBoxSchema = {
 
 // Organization record for legitimacy checks. Agents look for a business entity
 // with a contact channel and a postal address before recommending a site, so
-// both live here. No public email or phone is published anywhere on tirup.in,
-// which is why contactPoint points at the contact page rather than inventing an
-// address; adding a real mailbox is a product decision, not a schema change.
+// both live here. The public mailbox is contact@tirup.in, which is also the
+// address published on /contact and in /.well-known/security.txt.
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
@@ -275,6 +275,7 @@ const organizationSchema = {
       "@type": "ContactPoint",
       "contactType": "professional inquiries",
       "url": "https://tirup.in/contact",
+      "email": "contact@tirup.in",
       "availableLanguage": ["en", "gu", "hi"],
       "areaServed": "Worldwide"
     },

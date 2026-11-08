@@ -11,7 +11,8 @@
     },
     "contact": {
       "name": "Tirup Mehta",
-      "url": "https://tirup.in/contact"
+      "url": "https://tirup.in/contact",
+      "email": "contact@tirup.in"
     }
   },
   "servers": [
@@ -495,12 +496,9 @@
             "format": "uri"
           },
           "email": {
-            "type": [
-              "string",
-              "null"
-            ],
+            "type": "string",
             "format": "email",
-            "description": "Null when no public address is published. Use `contact` instead."
+            "description": "Public contact address (contact@tirup.in)."
           },
           "knowsAbout": {
             "type": "array",

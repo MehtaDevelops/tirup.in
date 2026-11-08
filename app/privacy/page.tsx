@@ -160,7 +160,14 @@ export default function PrivacyPage() {
             <h2 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">Contact</h2>
             <p>
               Questions or requests relating to this privacy policy should be directed
-              to Tirup Mehta via the channels listed on the{" "}
+              to Tirup Mehta at{" "}
+              <a
+                href="mailto:contact@tirup.in"
+                className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors"
+              >
+                contact@tirup.in
+              </a>{" "}
+              or via the{" "}
               <a href="/contact" className="underline underline-offset-2 hover:text-black dark:hover:text-white transition-colors">
                 contact page
               </a>

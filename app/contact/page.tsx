@@ -12,6 +12,12 @@ export const metadata: Metadata = {
 
 const channels = [
   {
+    name: "Email",
+    handle: "contact@tirup.in",
+    href: "mailto:contact@tirup.in",
+    note: "Best for direct inquiries, project briefs, and collaboration.",
+  },
+  {
     name: "LinkedIn",
     handle: "linkedin.com/in/TirupMehta",
     href: "https://www.linkedin.com/in/TirupMehta",

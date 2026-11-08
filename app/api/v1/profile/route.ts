@@ -25,7 +25,7 @@ const PROFILE = {
   avatar: "https://tirup.in/profile.png",
   url: "https://tirup.in",
   blog: "https://blogs.tirup.in",
-  email: null,
+  email: "contact@tirup.in",
   knowsAbout: [
     "Software Engineering",
     "Computer Science",
