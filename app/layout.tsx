@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Manrope, Playfair_Display, JetBrains_Mono } from "next/font/google"
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
@@ -12,27 +12,30 @@ import ThemedTooltip from "@/components/themed-tooltip"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
 
-const manrope = Manrope({
-  subsets: ["latin"],
+// Fonts ship with the site (app/fonts); nothing is requested from Google at build or run time.
+const manrope = localFont({
+  src: "./fonts/Manrope-Variable.woff2",
   variable: "--font-manrope",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
-})
+  weight: "300 700",
+});
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
+const playfair = localFont({
+  src: [
+    { path: "./fonts/PlayfairDisplay-Variable.woff2", style: "normal", weight: "400 900" },
+    { path: "./fonts/PlayfairDisplay-Italic-Variable.woff2", style: "italic", weight: "400 900" },
+  ],
   variable: "--font-playfair",
   display: "swap",
   preload: false,
-  style: ["normal", "italic"],
-})
+});
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
+const jetbrainsMono = localFont({
+  src: "./fonts/JetBrainsMono-Variable.woff2",
   variable: "--font-jetbrains-mono",
   display: "swap",
-})
-
+  weight: "100 800",
+});
 export const metadata: Metadata = {
   metadataBase: new URL("https://tirup.in"),
   title: {

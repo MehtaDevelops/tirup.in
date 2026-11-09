@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
 import HeroDots from "@/components/hero-dots"
-import { ArrowUpRight } from "lucide-react"
+import { InlineIconLink, LinkIcon } from "@/components/inline-link-icons"
 
 export const metadata: Metadata = {
   title: {
@@ -85,13 +85,13 @@ export default function Home() {
 
           <TextWithBlur delay={200}>
             <p>
-              I built <a href="/projects/modelregistry" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">ModelRegistry</a>, an open AI model registry with a public API and RSS feed, and <a href="/projects/draft" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">Draft</a>, an offline Windows dictation app that transcribes on-device without sending audio to the cloud.
+              I built <InlineIconLink href="/projects/modelregistry" icon="cube">ModelRegistry</InlineIconLink>, an open AI model registry with a public API and RSS feed, and <InlineIconLink href="/projects/draft" icon="wave">Draft</InlineIconLink>, an offline Windows dictation app that transcribes on-device without sending audio to the cloud.
             </p>
           </TextWithBlur>
 
           <TextWithBlur delay={250}>
             <p>
-              I write about building and securing software on my <a href="https://blogs.tirup.in" target="_blank" rel="noopener noreferrer" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">engineering blog</a> and share code on <a href="/github" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">GitHub</a>. Hiring for frontend or product engineering? <a href="/contact" className="underline decoration-black/25 dark:decoration-white/25 underline-offset-4 hover:decoration-accent hover:text-accent transition-colors">Get in touch</a>.
+              I write about building and securing software on my <InlineIconLink href="https://blogs.tirup.in" icon="code" external>engineering blog</InlineIconLink> and share code on <InlineIconLink href="/github" icon="branch">GitHub</InlineIconLink>. Hiring for frontend or product engineering? <InlineIconLink href="/contact" icon="mail">Get in touch</InlineIconLink>.
             </p>
           </TextWithBlur>
         </div>
@@ -104,37 +104,37 @@ export default function Home() {
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-8 gap-y-4 text-xs md:text-sm font-light text-black/55 dark:text-white/55">
               <a href="https://github.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> GitHub
+                <LinkIcon name="arrow" /> GitHub
               </a>
               <a href="https://www.linkedin.com/in/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> LinkedIn
+                <LinkIcon name="arrow" /> LinkedIn
               </a>
               <a href="https://peerlist.io/tirupmehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Peerlist
+                <LinkIcon name="arrow" /> Peerlist
               </a>
               <a href="https://happenstance.ai/u/tirupmehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Happenstance
+                <LinkIcon name="arrow" /> Happenstance
               </a>
               <a href="https://x.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> X (Twitter)
+                <LinkIcon name="arrow" /> X (Twitter)
               </a>
               <a href="https://www.kaggle.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Kaggle
+                <LinkIcon name="arrow" /> Kaggle
               </a>
               <a href="https://g.dev/Tirup" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Google Dev
+                <LinkIcon name="arrow" /> Google Dev
               </a>
               <a href="https://www.cloudskillsboost.google/public_profiles/5de29c1c-84d0-46a5-a4eb-5fa999499184" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Google Cloud
+                <LinkIcon name="arrow" /> Google Cloud
               </a>
               <a href="https://medium.com/@TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Medium
+                <LinkIcon name="arrow" /> Medium
               </a>
               <a href="https://instagram.com/TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> Instagram
+                <LinkIcon name="arrow" /> Instagram
               </a>
               <a href="https://youtube.com/@TirupMehta" target="_blank" rel="noopener noreferrer" className="group hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-1 w-fit">
-                <ArrowUpRight size={13} aria-hidden="true" className="opacity-60 group-hover:opacity-100 icon-arrow-hover" /> YouTube
+                <LinkIcon name="arrow" /> YouTube
               </a>
             </div>
           </div>

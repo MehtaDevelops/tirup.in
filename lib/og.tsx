@@ -17,36 +17,20 @@ type OgFont = {
 
 let cachedFonts: OgFont[] | null = null;
 
-/* Satori cannot parse woff2 (brotli). Plain css2 fetch from Node sends a
-   non-browser UA, so Google answers with truetype URLs: exactly what we need. */
-async function googleFontTTF(family: string, weight: number, italic: boolean): Promise<ArrayBuffer> {
-  const axis = italic ? `ital,wght@1,${weight}` : `wght@${weight}`;
-  const res = await fetch(
-    `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:${axis}&display=swap`
-  );
-  if (!res.ok) throw new Error(`OG font CSS failed: ${res.status}`);
-  const css = await res.text();
-  const blocks = css.split("@font-face").slice(1);
-  const latin =
-    [...blocks].reverse().find((b) => {
-      const comment = b.match(/\/\*\s*([\w-]+)\s*\*\//)?.[1];
-      return comment === "latin";
-    }) ?? blocks[blocks.length - 1];
-  const url =
-    latin?.match(/url\((https:[^)]+?\.ttf)\)/)?.[1] ?? latin?.match(/url\((https:[^)]+)\)/)?.[1];
-  if (!url) throw new Error(`OG font not found: ${family} ${weight}`);
-  const font = await fetch(url);
-  if (!font.ok) throw new Error(`OG font download failed: ${font.status}`);
-  return await font.arrayBuffer();
+/* Satori cannot parse woff2, so OG cards use static TTFs that ship with the site
+   (public/fonts/og). Nothing is fetched from a third party at render time. */
+function localFontTTF(file: string): ArrayBuffer {
+  const buf = fs.readFileSync(path.join(process.cwd(), "public", "fonts", "og", file));
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
 }
 
 export async function loadOgFonts(): Promise<OgFont[]> {
   if (cachedFonts) return cachedFonts;
-  const [inter400, inter600, playfairItalic] = await Promise.all([
-    googleFontTTF("Inter", 400, false),
-    googleFontTTF("Inter", 600, false),
-    googleFontTTF("Playfair Display", 500, true),
-  ]);
+  const [inter400, inter600, playfairItalic] = [
+    localFontTTF("Inter-400.ttf"),
+    localFontTTF("Inter-600.ttf"),
+    localFontTTF("PlayfairDisplay-500-Italic.ttf"),
+  ];
   cachedFonts = [
     { name: "Inter", data: inter400, weight: 400, style: "normal" },
     { name: "Inter", data: inter600, weight: 600, style: "normal" },

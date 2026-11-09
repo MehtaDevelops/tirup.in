@@ -31,9 +31,9 @@ const cspScriptSrc = [
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src ${cspScriptSrc}`,
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
-  "font-src 'self' data: https://fonts.gstatic.com",
+  "font-src 'self' data:",
   "connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://github-contributions-api.jogruber.de https://www.youtube.com https://www.youtube-nocookie.com https://*.clarity.ms https://www.clarity.ms https://www.google.com https://analytics.google.com",
   "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com https://www.youtube-nocookie.com",
   "worker-src 'self' blob:",

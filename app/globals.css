@@ -1921,3 +1921,95 @@ html[data-tint] .themed-tip[data-placement="bottom"] .themed-tip-caret {
     transform: none;
   }
 }
+
+/* Animated inline link icons: the artwork animates on hover (strokes redraw,
+   bars move like an equalizer, brackets breathe, the envelope flap opens).
+   The icon itself never moves or scales as a whole. */
+.ai-part {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.group:hover .ai-draw,
+.group:focus-visible .ai-draw {
+  stroke-dasharray: 1 2;
+  animation: ai-draw 0.7s ease-out both;
+}
+
+.group:hover .ai-draw-late,
+.group:focus-visible .ai-draw-late {
+  animation-delay: 0.14s;
+}
+
+@keyframes ai-draw {
+  from { stroke-dashoffset: 1.02; }
+  to { stroke-dashoffset: 0; }
+}
+
+.group:hover .ai-bar,
+.group:focus-visible .ai-bar {
+  animation: ai-eq 0.9s ease-in-out infinite;
+}
+.group:hover .ai-bar-1 { animation-duration: 0.8s; }
+.group:hover .ai-bar-2 { animation-duration: 0.95s; animation-delay: 0.15s; }
+.group:hover .ai-bar-3 { animation-duration: 0.7s; animation-delay: 0.3s; }
+.group:hover .ai-bar-4 { animation-duration: 1s; animation-delay: 0.1s; }
+.group:hover .ai-bar-5 { animation-duration: 0.85s; animation-delay: 0.25s; }
+
+@keyframes ai-eq {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.4); }
+}
+
+.group:hover .ai-code-l,
+.group:focus-visible .ai-code-l {
+  animation: ai-code-l 0.8s ease-in-out;
+}
+.group:hover .ai-code-r,
+.group:focus-visible .ai-code-r {
+  animation: ai-code-r 0.8s ease-in-out;
+}
+
+@keyframes ai-code-l {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(-2.4px); }
+}
+@keyframes ai-code-r {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(2.4px); }
+}
+
+.group:hover .ai-branch-dot,
+.group:focus-visible .ai-branch-dot {
+  animation: ai-dot 0.8s ease-in-out;
+}
+
+@keyframes ai-dot {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.35); }
+}
+
+.ai-flap {
+  transform-origin: 50% 0;
+}
+
+.group:hover .ai-flap,
+.group:focus-visible .ai-flap {
+  animation: ai-flap 0.9s ease-in-out;
+}
+
+@keyframes ai-flap {
+  0%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(-0.7); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-draw,
+  .ai-bar,
+  .ai-code-l,
+  .ai-code-r,
+  .ai-branch-dot,
+  .ai-flap {
+    animation: none !important;
+  }
+}

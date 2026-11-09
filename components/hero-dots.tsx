@@ -269,7 +269,7 @@ export default function HeroDots() {
   return (
     <>
       <TextWithBlur delay={350}>
-        <div className="flex gap-2 mt-8 select-none items-center" role="group" aria-label="Decorative dots">
+        <div className="flex gap-2 mt-8 pl-1 select-none items-center" role="group" aria-label="Decorative dots">
           <div
             ref={tintAnchorRef}
             className="relative flex items-center"
