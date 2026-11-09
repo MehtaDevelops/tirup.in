@@ -13,7 +13,7 @@ const NotchPlayer = dynamic(() => import("@/components/notch-player"), { ssr: fa
 // How close (px) the pointer has to get to the yellow dot to start warming up.
 // Far enough ahead that a click is usually instant, close enough that someone
 // just reading the page never pays for it.
-const PROXIMITY_PX = 160
+const PROXIMITY_PX = 220
 // Throttle for the proximity check on pointermove.
 const MOVE_GATE_MS = 80
 // Armed but never opened: release after this long.
@@ -62,6 +62,40 @@ export default function NotchPlayerLazy() {
       window.removeEventListener("pointermove", onMove)
       window.removeEventListener("pointerdown", onPress, true)
       window.removeEventListener("focusin", onFocus)
+    }
+  }, [armed])
+
+  // Touch screens have no hover, so there is no "pointer approaching" signal.
+  // Instead, warm up when the dot scrolls into view: someone who scrolled down
+  // to it has a couple of seconds before a tap, and everyone who never reaches
+  // it pays nothing.
+  useEffect(() => {
+    if (armed) return
+    let coarse = false
+    try {
+      coarse = window.matchMedia("(pointer: coarse)").matches
+    } catch { /* ignore */ }
+    if (!coarse || typeof IntersectionObserver === "undefined") return
+
+    let io: IntersectionObserver | null = null
+    let retry: number | undefined
+    const attach = () => {
+      const el = document.querySelector("[data-notch-trigger]")
+      if (!el) return false
+      io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) setArmed(true)
+        },
+        { threshold: 0.6 }
+      )
+      io.observe(el)
+      return true
+    }
+    // The dot is rendered by the page; give it a moment to exist.
+    if (!attach()) retry = window.setTimeout(attach, 600)
+    return () => {
+      if (retry) window.clearTimeout(retry)
+      io?.disconnect()
     }
   }, [armed])
 
