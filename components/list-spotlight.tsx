@@ -15,6 +15,7 @@ const TOUCH_SLOP = 8
 const RELEASE_HOLD = 260
 
 interface ListSpotlightProps {
+  id?: string
   className?: string
   children: ReactNode
 }
@@ -29,7 +30,7 @@ interface ListSpotlightProps {
  * (`data-depth`), which is what turns a flat dim into a soft falloff:
  * neighbours stay legible and the fade deepens with distance.
  */
-export default function ListSpotlight({ className = "", children }: ListSpotlightProps) {
+export default function ListSpotlight({ id, className = "", children }: ListSpotlightProps) {
   const ref = useRef<HTMLDivElement | null>(null)
   const holdRef = useRef<number | null>(null)
   const originRef = useRef<{ x: number; y: number } | null>(null)
@@ -193,6 +194,7 @@ export default function ListSpotlight({ className = "", children }: ListSpotligh
   return (
     <div
       ref={ref}
+      id={id}
       className={className}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

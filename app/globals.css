@@ -511,6 +511,25 @@ html.js .reveal-in {
 }
 
 /*
+  Pager swap: after a page change the new rows settle in from 6px below.
+  Same curve as the row reveal so the list never feels like it jumped.
+*/
+@keyframes pageTransition {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-transition {
+  animation: pageTransition 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/*
   Spotlight list: learned from benji.org's sibling dimming, where hovering a
   row makes the rest recede so the list reads as one object instead of a pile
   of independent links.
