@@ -6,7 +6,7 @@ import ExpressionAvatar from "@/components/expression-avatar"
 import TldrPopup from "@/components/tldr-popup"
 import { BlogContentRenderer } from "@/components/blog-content-renderer"
 import { ArticleAiToolbar } from "@/components/ui/article-ai-toolbar"
-import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
+import { sanitizeHtml } from "@/lib/sanitize"
 import { formatCategory } from "@/lib/category"
 import { CONVEX_API_URL } from "@/lib/utils"
 import { notFound } from "next/navigation"
@@ -99,14 +99,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const data = await res.json()
     if (isPublishedPost(data)) {
-      const rawTldr = String(data.tldr ?? "")
-        // Strip lightweight markdown so <meta> never leaks **, [](), or backticks
-        .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
-        .replace(/[*_`>#]/g, "")
-        .replace(/\s+/g, " ")
-        .trim()
+      // TL;DR is plain text on both sites (matches blogs.tirup.in metadata)
+      const description = String(data.tldr ?? "").slice(0, 2000)
       const title = String(data.title).slice(0, 200)
-      const description = rawTldr.slice(0, 300)
       const originalUrl = `https://blogs.tirup.in/${encodeURIComponent(slug)}`
       return {
         title,
@@ -191,15 +186,14 @@ export default async function BlogPostPage({ params }: PageProps) {
   // ── Sanitize ALL content from the external API before rendering ─────────────
   // Fail CLOSED: never render raw HTML if the sanitizer throws.
   let safeContentHtml = ""
-  let safeTldrHtml = ""
   try {
     safeContentHtml = sanitizeHtml(post.contentHtml ?? "")
-    safeTldrHtml = renderMarkdownSafe(post.tldr ?? "")
   } catch (e) {
     console.error("[blog/page] Error sanitizing post content:", e)
     safeContentHtml = ""
-    safeTldrHtml = ""
   }
+  // TL;DR is plain text (React escapes it), same as blogs.tirup.in
+  const tldrText = String(post.tldr ?? "").slice(0, 2000)
 
   const safeTitle = String(post.title ?? "").slice(0, 300)
   const safeReadingTime = Number.isFinite(post.readingTime) ? Math.max(1, Math.min(999, post.readingTime)) : 0
@@ -288,7 +282,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </TextWithBlur>
 
         {/* TL;DR inline on mobile only: hidden on desktop */}
-        {safeTldrHtml && !safeContentHtml.includes("tldr-box") && (
+        {tldrText && !safeContentHtml.includes("tldr-box") && (
           <TextWithBlur delay={90}>
             <div className="tldr-box max-w-3xl mb-8 block md:hidden">
               <div className="tldr-header flex items-center gap-2.5 mb-2">
@@ -297,10 +291,9 @@ export default async function BlogPostPage({ params }: PageProps) {
                   TL;DR Summary
                 </span>
               </div>
-              <div
-                className="text-base md:text-lg font-light leading-relaxed text-black/75 dark:text-white/75"
-                dangerouslySetInnerHTML={{ __html: safeTldrHtml }}
-              />
+              <p>
+                {tldrText}
+              </p>
             </div>
           </TextWithBlur>
         )}
@@ -316,7 +309,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <SiteFooter />
 
       {/* TL;DR Animated Summary Popup: rendered as direct child of main to align on viewport edge on desktop */}
-      <TldrPopup safeTldrHtml={safeTldrHtml} />
+      <TldrPopup safeTldrHtml={tldrText} />
     </main>
   )
 }

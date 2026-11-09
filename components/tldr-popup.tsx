@@ -77,10 +77,10 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
             <span aria-hidden="true">✕</span>
           </button>
         </div>
-        <div
-          className="text-sm font-light leading-relaxed text-black/70 dark:text-white/70"
-          dangerouslySetInnerHTML={{ __html: safeTldrHtml }}
-        />
+        {/* Render as plain text — tldr is never HTML (identical to blogs.tirup.in) */}
+        <p className="text-sm font-light leading-relaxed text-black/70 dark:text-white/70 whitespace-pre-line">
+          {safeTldrHtml}
+        </p>
       </div>
     </div>
   )
