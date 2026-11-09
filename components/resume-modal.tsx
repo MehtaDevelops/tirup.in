@@ -147,7 +147,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         </div>
 
         {/* ── PDF preview: native browser viewer, no chrome ── */}
-        <div className="relative flex-1 min-h-0 bg-[#f1f1f1] dark:bg-[#323639]">
+        <div className="relative flex-1 min-h-0 overflow-hidden bg-[#f1f1f1] dark:bg-[#323639]">
           {loading && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-black/40 dark:text-white/40 pointer-events-none z-10">
               <Loader2 size={22} className="animate-spin" />
@@ -158,7 +158,12 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
             src={`${src}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
             title="Resume preview"
             onLoad={() => setLoading(false)}
-            className="absolute inset-0 w-full h-full border-0"
+            // On desktop the browser's PDF viewer draws its own scrollbar and a
+            // dark gutter around the page, and ignores scrollbar=0. The frame is
+            // made slightly larger than the box and clipped by it, so only the
+            // page shows; wheel, keyboard and touch scrolling still work.
+            // Phones keep the plain frame (their scrollbars are overlays).
+            className="absolute inset-0 w-full h-full border-0 md:inset-auto md:-left-2 md:-top-[6px] md:w-[calc(100%+32px)] md:h-[calc(100%+12px)]"
           />
         </div>
 
