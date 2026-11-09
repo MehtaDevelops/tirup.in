@@ -30,7 +30,8 @@ import {
 const DEFAULT_VIDEO_ID = "dQw4w9WgXcQ"
 const DEFAULT_TITLE = "Never Gonna Give You Up"
 const DEFAULT_ARTIST = "Rick Astley"
-const DEFAULT_THUMBNAIL = `https://img.youtube.com/vi/${DEFAULT_VIDEO_ID}/mqdefault.jpg`
+// Hosted with the site: no request to img.youtube.com just to open the card
+const DEFAULT_THUMBNAIL = "/notch-default.jpg"
 const DEFAULT_VOLUME = 100
 const URL_HELP = "Supports youtube.com/watch · youtu.be · youtube.com/shorts"
 const ACCENT = "#1ed760"
@@ -151,6 +152,23 @@ export default function NotchPlayer() {
   const [volume, setVolume] = useState(DEFAULT_VOLUME)
   const [draggingVolume, setDraggingVolume] = useState(false)
   const [origin, setOrigin] = useState("")
+  // Mirrors widgetReadyRef so the card can show a "starting" shimmer while
+  // the YouTube widget boots (instead of looking dead for a second).
+  const [widgetReady, setWidgetReady] = useState(false)
+  // Pre-buffering: when the visitor shows intent at the yellow dot (hover,
+  // focus, touch) the hidden player plays the track MUTED for a moment so
+  // YouTube has the first seconds ready, then pauses at 0:00. The click then
+  // only has to unmute and play. Muted playback is always allowed by browsers,
+  // and nothing here runs until that intent, so page load is untouched.
+  const prebufferRef = useRef<"idle" | "buffering" | "ready">("idle")
+  const wantPrebufferRef = useRef(false)
+  const openRef = useRef(open)
+  // Closing: keep the card mounted for a beat so it can animate out instead of
+  // vanishing. Same idea for the deck (contents) when the card collapses.
+  const [closing, setClosing] = useState(false)
+  const [deckLeaving, setDeckLeaving] = useState(false)
+  const wasOpenRef = useRef(false)
+  const deckShownRef = useRef(false)
   // The player is docked bottom-left by default, but it can be grabbed and
   // parked anywhere on screen; the parking spot survives reloads.
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
@@ -190,10 +208,37 @@ export default function NotchPlayer() {
     )
   }, [])
 
+  const startPrebuffer = useCallback(() => {
+    if (openRef.current || prebufferRef.current !== "idle") return
+    if (!widgetReadyRef.current) {
+      // Widget still booting: remember the intent, start as soon as it greets us.
+      wantPrebufferRef.current = true
+      return
+    }
+    prebufferRef.current = "buffering"
+    postCommand("mute")
+    postCommand("playVideo")
+    // If the browser never starts playback (rare), stop waiting and reset.
+    window.setTimeout(() => {
+      if (prebufferRef.current === "buffering") {
+        prebufferRef.current = "idle"
+        postCommand("pauseVideo")
+        postCommand("unMute")
+      }
+    }, 5000)
+  }, [postCommand])
+
+  const finishPrebuffer = useCallback(() => {
+    prebufferRef.current = "ready"
+    postCommand("pauseVideo")
+    postCommand("seekTo", [0, true])
+  }, [postCommand])
+
   // Flush queued commands the moment the widget says hello on any event.
   const flushWhenReady = useCallback((volume: number) => {
     if (widgetReadyRef.current) return
     widgetReadyRef.current = true
+    setWidgetReady(true)
     const pending = pendingRef.current
     pendingRef.current = []
     const frame = iframeRef.current
@@ -225,12 +270,65 @@ export default function NotchPlayer() {
     return () => window.clearTimeout(timer)
   }, [open])
 
+  useEffect(() => {
+    openRef.current = open
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      wasOpenRef.current = true
+      setClosing(false)
+      return
+    }
+    if (!wasOpenRef.current) return
+    wasOpenRef.current = false
+    setClosing(true)
+    const timer = window.setTimeout(() => setClosing(false), 280)
+    return () => window.clearTimeout(timer)
+  }, [open])
+
+  useEffect(() => {
+    if (playerMode) {
+      deckShownRef.current = true
+      setDeckLeaving(false)
+      return
+    }
+    if (!deckShownRef.current) return
+    deckShownRef.current = false
+    setDeckLeaving(true)
+    const timer = window.setTimeout(() => setDeckLeaving(false), 190)
+    return () => window.clearTimeout(timer)
+  }, [playerMode])
+
+  // Intent at the yellow dot: start the silent pre-buffer.
+  useEffect(() => {
+    const onIntent = (event: Event) => {
+      const target = event.target
+      if (target instanceof Element && target.closest("[data-notch-trigger]")) {
+        startPrebuffer()
+      }
+    }
+    const types = ["pointerover", "focusin", "touchstart"] as const
+    for (const type of types) document.addEventListener(type, onIntent, { passive: true, capture: true })
+    return () => {
+      for (const type of types) document.removeEventListener(type, onIntent, true)
+    }
+  }, [startPrebuffer])
+
   // Opening the yellow-dot bubble is the user's playback gesture. Send play
   // to the warmed iframe; autoplay stays disabled until this click.
   useEffect(() => {
     if (!open || videoId !== DEFAULT_VIDEO_ID) return
+    // "ready": already paused and rewound to 0:00, so just unmute and play (a
+    // second seek would make YouTube re-buffer). "buffering": still playing
+    // muted, so restart it from the top.
+    const phase = prebufferRef.current
+    prebufferRef.current = "idle"
+    wantPrebufferRef.current = false
     playingRef.current = true
     setPlaying(true)
+    if (phase === "buffering") postCommand("seekTo", [0, true])
+    postCommand("unMute")
     postCommand("playVideo")
   }, [open, postCommand, videoId])
 
@@ -240,6 +338,7 @@ export default function NotchPlayer() {
     if (open) return
     playingRef.current = false
     postCommand("pauseVideo")
+    postCommand("seekTo", [0, true])
     setExpanded(false)
     setEditing(false)
     setUrl("")
@@ -253,6 +352,7 @@ export default function NotchPlayer() {
     setDuration(0)
     if (videoId !== DEFAULT_VIDEO_ID) {
       widgetReadyRef.current = false
+      setWidgetReady(false)
       pendingRef.current = []
     }
     loadSeqRef.current += 1
@@ -296,6 +396,10 @@ export default function NotchPlayer() {
       }
 
       flushWhenReady(volume)
+      if (wantPrebufferRef.current && widgetReadyRef.current) {
+        wantPrebufferRef.current = false
+        startPrebuffer()
+      }
 
       if (payload.event === "infoDelivery" && payload.info && typeof payload.info === "object") {
         const info = payload.info as PlayerInfo
@@ -315,11 +419,20 @@ export default function NotchPlayer() {
           setDuration(info.duration)
         }
         if (typeof info.playerState === "number") {
-          setPlaying(info.playerState === 1)
+          if (prebufferRef.current === "buffering") {
+            // Silent warm-up: never reflect it in the UI; stop at 0:00 once it plays.
+            if (info.playerState === 1) finishPrebuffer()
+          } else {
+            setPlaying(info.playerState === 1)
+          }
         }
       } else if (payload.event === "onStateChange" && typeof payload.info === "number") {
-        setPlaying(payload.info === 1)
-        if (payload.info === 0) setCurrent(0)
+        if (prebufferRef.current === "buffering") {
+          if (payload.info === 1) finishPrebuffer()
+        } else {
+          setPlaying(payload.info === 1)
+          if (payload.info === 0) setCurrent(0)
+        }
       } else if (payload.event === "onReady") {
         postCommand("setVolume", [volume])
       }
@@ -327,7 +440,7 @@ export default function NotchPlayer() {
 
     window.addEventListener("message", onMessage)
     return () => window.removeEventListener("message", onMessage)
-  }, [postCommand, flushWhenReady, volume])
+  }, [postCommand, flushWhenReady, volume, startPrebuffer, finishPrebuffer])
 
   // Keep the widget handshake alive before the first click, then ask for a
   // fresh currentTime/duration during playback and long re-buffers.
@@ -357,6 +470,8 @@ export default function NotchPlayer() {
   useEffect(() => {
     if (!videoId) return
     widgetReadyRef.current = false
+    setWidgetReady(false)
+    prebufferRef.current = "idle"
     pendingRef.current = []
   }, [videoId])
 
@@ -724,7 +839,7 @@ export default function NotchPlayer() {
           }}
         />
       )}
-      {open && createPortal(
+      {(open || closing) && createPortal(
     <div
       ref={rootRef}
       role="region"
@@ -744,7 +859,7 @@ export default function NotchPlayer() {
       }
     >
       <div
-        className={`song-bubble-pop${!expanded && playing && hasVideo ? " is-orb-playing" : ""}`}
+        className={`song-bubble-pop${!expanded && playing && hasVideo ? " is-orb-playing" : ""}${open ? "" : " is-closing"}`}
       >
         <div
           className={`song-bubble-body${expanded ? " is-expanded" : ""}`}
@@ -822,8 +937,12 @@ export default function NotchPlayer() {
             </div>
           )}
 
-          {playerMode && (
-            <div className="song-bubble-deck">
+          {(playerMode || deckLeaving) && (
+            <div
+              className={`song-bubble-deck${playerMode ? "" : " is-leaving"}`}
+              inert={!playerMode}
+              aria-hidden={!playerMode}
+            >
               <div className="song-bubble-head">
                 <div className="song-bubble-titles">
                   <span className="song-bubble-title">{title}</span>
@@ -858,11 +977,11 @@ export default function NotchPlayer() {
                   aria-label={playing ? "Pause" : "Play"}
                 >
                   {playing ? (
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <svg key="pause" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                     </svg>
                   ) : (
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                    <svg key="play" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   )}
@@ -895,15 +1014,15 @@ export default function NotchPlayer() {
                   aria-label={muted ? "Unmute" : "Mute"}
                 >
                   {muted ? (
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                    <svg key="muted" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
                     </svg>
                   ) : volume < 50 ? (
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                    <svg key="vol-low" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M5 9v6h4l5 5V4L9 9H5zm11.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
                     </svg>
                   ) : (
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                    <svg key="vol-high" width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
                     </svg>
                   )}
@@ -943,7 +1062,8 @@ export default function NotchPlayer() {
               <div className="song-bubble-progressblock">
                 <div
                   ref={progressRef}
-                  className="song-bubble-progress"
+                  className={`song-bubble-progress${widgetReady ? "" : " song-bubble-progress--booting"}`}
+                  aria-busy={!widgetReady}
                   onPointerDown={onProgressPointerDown}
                   role="slider"
                   tabIndex={0}
@@ -983,9 +1103,23 @@ export default function NotchPlayer() {
           touch-action: none;
         }
         .song-bubble-pop {
+          /* One shared motion language. --song-spring is a real damped spring
+             (about 4% overshoot) where linear() is supported, else a close
+             cubic-bezier; --song-out is a soft ease-out for settling. */
+          --song-spring: cubic-bezier(0.34, 1.35, 0.5, 1);
+          --song-out: cubic-bezier(0.22, 1, 0.36, 1);
           position: relative;
           transform-origin: 0% 100%;
-          animation: song-bubble-in 520ms cubic-bezier(0.34, 1.35, 0.5, 1) both;
+          animation: song-bubble-in 700ms var(--song-spring) both;
+        }
+        @supports (animation-timing-function: linear(0, 1)) {
+          .song-bubble-pop {
+            --song-spring: linear(0, 0.0331 2.5%, 0.1153 5%, 0.2256 7.5%, 0.3479 10%, 0.4706 12.5%, 0.5861 15%, 0.6895 17.5%, 0.7783 20%, 0.8519 22.5%, 0.9106 25%, 0.9556 27.5%, 0.9887 30%, 1.0117 32.5%, 1.0264 35%, 1.0347 37.5%, 1.0381 40%, 1.038 42.5%, 1.0356 45%, 1.0318 47.5%, 1.0272 50%, 1.0225 52.5%, 1.0179 55%, 1.0137 57.5%, 1.01 60%, 1.0069 62.5%, 1.0044 65%, 1.0024 67.5%, 1.001 70%, 0.9999 72.5%, 0.9992 75%, 0.9988 77.5%, 0.9986 80%, 0.9985 82.5%, 0.9986 85%, 0.9987 87.5%, 0.9989 90%, 0.9991 92.5%, 0.9992 95%, 0.9994 97.5%, 1);
+          }
+        }
+        .song-bubble-pop.is-closing {
+          pointer-events: none;
+          animation: song-bubble-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
         }
         .song-bubble-pop.is-orb-playing::after {
           content: "";
@@ -997,8 +1131,12 @@ export default function NotchPlayer() {
           animation: song-bubble-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes song-bubble-in {
-          from { opacity: 0; transform: translateY(28px) scale(0.7); }
+          from { opacity: 0; transform: translateY(26px) scale(0.6); }
           to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes song-bubble-out {
+          from { opacity: 1; transform: translateY(0) scale(1); }
+          to { opacity: 0; transform: translateY(14px) scale(0.86); }
         }
         @keyframes song-bubble-pulse {
           0% { transform: scale(0.94); opacity: 0.8; }
@@ -1012,18 +1150,20 @@ export default function NotchPlayer() {
           position: relative;
           width: 56px;
           height: 56px;
-          border-radius: 999px;
+          border-radius: 28px;
           background: var(--bg);
           cursor: pointer;
           pointer-events: auto;
           user-select: none;
           -webkit-user-select: none;
           touch-action: none;
+          /* Collapsing: a quick, calm ease-out (no bounce on the way in). */
           transition:
-            width 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            height 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+            width 420ms var(--song-out),
+            height 420ms var(--song-out),
+            border-radius 420ms var(--song-out),
+            box-shadow 300ms ease,
+            transform 240ms var(--song-out);
           will-change: width, height;
         }
         .song-bubble-body.is-expanded {
@@ -1031,6 +1171,13 @@ export default function NotchPlayer() {
           height: 152px;
           border-radius: 18px;
           cursor: default;
+          /* Expanding: the spring, so it grows with a little life. */
+          transition:
+            width 720ms var(--song-spring),
+            height 720ms var(--song-spring),
+            border-radius 560ms var(--song-out),
+            box-shadow 400ms ease,
+            transform 240ms var(--song-out);
         }
         @media (hover: hover) and (pointer: fine) {
           .song-bubble-body:not(.is-expanded):hover {
@@ -1122,11 +1269,43 @@ export default function NotchPlayer() {
           display: flex;
           flex-direction: column;
           gap: 10px;
-          animation: song-bubble-fade-in 220ms ease-out 160ms both;
+        }
+        /* Contents arrive in sequence just after the card starts growing. */
+        .song-bubble-deck > .song-bubble-head,
+        .song-bubble-deck > .song-bubble-controls,
+        .song-bubble-deck > .song-bubble-progressblock {
+          animation: song-bubble-rise 480ms var(--song-out) both;
+        }
+        .song-bubble-deck > .song-bubble-head { animation-delay: 140ms; }
+        .song-bubble-deck > .song-bubble-controls { animation-delay: 200ms; }
+        .song-bubble-deck > .song-bubble-progressblock { animation-delay: 260ms; }
+        @keyframes song-bubble-rise {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .song-bubble-deck.is-leaving {
+          pointer-events: none;
+          animation: song-bubble-fade-out 170ms ease-in both;
+        }
+        @keyframes song-bubble-fade-out {
+          from { opacity: 1; }
+          to { opacity: 0; }
         }
         @keyframes song-bubble-fade-in {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        /* Icon swaps (play/pause, volume) pop in instead of snapping. */
+        .song-bubble-play-btn svg,
+        .song-bubble-icon-btn svg {
+          animation: song-bubble-icon-pop 320ms var(--song-spring) both;
+        }
+        @keyframes song-bubble-icon-pop {
+          from { opacity: 0; transform: scale(0.5) rotate(-24deg); }
+          to { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        .song-bubble-icon-btn:active:not(:disabled) {
+          transform: scale(0.88);
         }
 
         .song-bubble-head {
@@ -1297,6 +1476,19 @@ export default function NotchPlayer() {
           background: color-mix(in srgb, var(--fg) 92%, transparent);
           transition: width 250ms linear;
         }
+        .song-bubble-progress--booting .song-bubble-progress-fill {
+          width: 28% !important;
+          transition: none;
+          animation: song-bubble-boot 1.15s ease-in-out infinite;
+        }
+        @keyframes song-bubble-boot {
+          0% { transform: translateX(0); opacity: 0.45; }
+          50% { opacity: 1; }
+          100% { transform: translateX(257%); opacity: 0.45; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .song-bubble-progress--booting .song-bubble-progress-fill { animation: none; }
+        }
         .song-bubble-progress:focus-visible {
           outline: 2px solid rgba(30, 215, 96, 0.85);
           outline-offset: 2px;
@@ -1395,7 +1587,10 @@ export default function NotchPlayer() {
           .song-bubble-body,
           .song-bubble-art,
           .song-bubble-deck,
+          .song-bubble-deck > *,
           .song-bubble-inputdeck,
+          .song-bubble-play-btn svg,
+          .song-bubble-icon-btn svg,
           .song-bubble-progress-fill {
             transition-duration: 1ms !important;
             animation: none !important;

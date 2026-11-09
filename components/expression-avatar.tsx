@@ -97,13 +97,6 @@ function baseForPath(pathname: string | null, hour: number | null): Expr {
   return "adjusting" // home default
 }
 
-function preload(list: Expr[]) {
-  for (const e of list) {
-    const img = new window.Image()
-    img.decoding = "async"
-    img.src = SRC[e]
-  }
-}
 
 const IDLE_MS = 60_000
 const NIGHT_IDLE_MS = 25_000
@@ -181,8 +174,8 @@ export default function ExpressionAvatar({
   // Nothing extra is fetched during initial load: the base face renders
   // through Next's optimizer first. The wave waits 900ms so LCP settles
   // and only one image is ever in flight at startup: and it is skipped
-  // entirely if the visitor already interacted. Likely faces warm up only
-  // when the browser reports idle (or 5s fallback).
+  // entirely if the visitor already interacted. Other faces are warmed by the
+  // hidden optimizer images rendered below; no raw preloads.
   // Minis skip all of this; the interactive instance owns it.
   useEffect(() => {
     if (!interactive) return
@@ -201,22 +194,8 @@ export default function ExpressionAvatar({
         show(isMorningHour(h) ? "drinking" : "waving", 2200)
       }
     }, 900)
-    const warm = () => preload(WARM)
-    const w = window as unknown as {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
-      cancelIdleCallback?: (id: number) => void
-    }
-    let idleId: number | null = null
-    let fallback: ReturnType<typeof setTimeout> | null = null
-    if (typeof w.requestIdleCallback === "function") {
-      idleId = w.requestIdleCallback(warm, { timeout: 5000 })
-    } else {
-      fallback = setTimeout(warm, 4000)
-    }
     return () => {
       clearTimeout(greetTimer)
-      if (idleId !== null) w.cancelIdleCallback?.(idleId)
-      if (fallback) clearTimeout(fallback)
       clearRevert()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -491,7 +470,7 @@ export default function ExpressionAvatar({
       {/* Background warm-up (interactive instance only): hidden Next Images
           with byte-identical props, so the exact optimizer URLs face swaps
           use are already browser-cached before first paint settles.
-          Raw `new Image()` preloads can't do this (different URLs). */}
+          Raw `new Image()` preloads would fetch full-size files nothing displays, so they are not used. */}
       {interactive && (
         <div aria-hidden="true" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
           {WARM.map((f) => (
