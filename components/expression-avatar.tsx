@@ -440,8 +440,10 @@ export default function ExpressionAvatar({
   // zoom. Nudged faces (06+ cut bottom edge) only shift the crop window via
   // object-position: never transform scale: so swaps can't pop small→big.
   // Geometry is static per face from first paint. 01–05 render exactly
-  // as-is. Only 06+ faces render a touch larger (1.05) and sit 2px lower
-  // to tuck the cut bottom. It lives on this wrapper (never the img: the
+  // as-is. Only 06+ faces render a touch larger (1.09) and sit 2px lower
+  // to tuck the cut bottom. The scale must stay above 1 + 2*(shift/size) or the
+  // top edge shows a sliver of background; 1.09 leaves ~0.4px spare at 56px.
+  // It lives on this wrapper (never the img: the
   // blink effect animates the img's own transform), so nothing shifts
   // after the image is visible.
   const nudged = NUDGE_DOWN.has(expr)
@@ -464,22 +466,25 @@ export default function ExpressionAvatar({
         style={{ width: size, height: size }}
         className="rounded-full overflow-hidden border border-black/10 dark:border-white/10 bg-[var(--bg)] dark:bg-zinc-900 aspect-square"
       >
-        <div className={nudged ? "h-full w-full scale-[1.05] translate-y-[2px]" : "h-full w-full"}>
+        <div className={nudged ? "h-full w-full scale-[1.09] translate-y-[2px]" : "h-full w-full"}>
         {/* No key on purpose: the same <img> element swaps src, so the old
             face stays painted until the new one decodes: never a blank gap.
             (key={expr} unmounted first = the disappear-reappear glitch.) */}
+        {/* sizes is 2x the box on purpose: the browser then picks a source at
+            least twice as large as it is drawn and downscales it smoothly, which
+            looks far sharper than a 1:1 tiny AVIF. Costs a few KB, no layout cost. */}
         <Image
           ref={imgRef}
           src={SRC[expr]}
           alt={size >= 40 ? "Tirup Mehta avatar" : ""}
           width={size * 2}
           height={size * 2}
-          sizes={`${size}px`}
+          sizes={`${size * 2}px`}
           quality={90}
           priority={interactive && size >= 40}
           draggable={false}
           style={nudged ? { objectPosition: "50% 62%" } : undefined}
-          className={`h-full w-full object-cover [image-rendering:pixelated] motion-reduce:animate-none${slow ? " animate-expression-slow" : " animate-expression-in"}`}
+          className={`h-full w-full object-cover motion-reduce:animate-none${slow ? " animate-expression-slow" : " animate-expression-in"}`}
         />
         </div>
       </div>
@@ -496,7 +501,7 @@ export default function ExpressionAvatar({
               alt=""
               width={size * 2}
               height={size * 2}
-              sizes={`${size}px`}
+              sizes={`${size * 2}px`}
               quality={90}
               priority
               draggable={false}
