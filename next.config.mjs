@@ -34,7 +34,7 @@ const contentSecurityPolicy = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://github-contributions-api.jogruber.de https://www.youtube.com https://www.youtube-nocookie.com https://*.clarity.ms https://www.clarity.ms https://www.google.com https://analytics.google.com",
+  "connect-src 'self' https://accomplished-condor-793.convex.site https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://github-contributions-api.jogruber.de https://www.youtube.com https://www.youtube-nocookie.com https://*.clarity.ms https://www.clarity.ms https://www.google.com https://analytics.google.com https://*.g.doubleclick.net",
   "frame-src 'self' https://www.googletagmanager.com https://www.youtube.com https://www.youtube-nocookie.com",
   "worker-src 'self' blob:",
   "object-src 'none'",

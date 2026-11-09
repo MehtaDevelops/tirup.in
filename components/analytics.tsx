@@ -1,4 +1,5 @@
 import Script from "next/script"
+import DeferredAnalytics from "@/components/deferred-analytics"
 
 export default function GoogleAnalytics() {
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID || "GTM-N37XXZ2B"
@@ -6,31 +7,14 @@ export default function GoogleAnalytics() {
 
   return (
     <>
+      {/* Tiny queue so events fired early are kept until the tags start. */}
       <Script id="analytics-queue" strategy="beforeInteractive">
         {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
         try{if(navigator&&navigator.doNotTrack==='1'){window.__DNT='1';}}catch(e){}`}
       </Script>
-      {/* Tracking starts only after the page has loaded; queued dataLayer events are retained. */}
-      <Script id="google-tag-manager" strategy="lazyOnload">
-        {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','${gtmId}');`}
-      </Script>
-
-      {/* Google Analytics (gtag.js): skipped when DNT=1 or consent denied */}
-      <Script
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-        strategy="lazyOnload"
-      />
-      <Script id="google-analytics" strategy="lazyOnload">
-        {`try{if(navigator.doNotTrack==='1'||localStorage.getItem('analytics-consent')==='denied'){/* respect privacy */}else{window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '${gaId}', { anonymize_ip: true });}}catch(e){}`}
-      </Script>
+      {/* Tag Manager + Google Analytics start on the visitor's first interaction
+          (or after 15s), not during page load. Queued dataLayer events are retained. */}
+      <DeferredAnalytics gtmId={gtmId} gaId={gaId} />
     </>
   )
 }

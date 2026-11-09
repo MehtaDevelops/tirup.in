@@ -123,6 +123,9 @@ export default function ExpressionAvatar({
   const base = face ?? baseForPath(pathname, hour)
 
   const [expr, setExpr] = useState<Expr>(base)
+  // Hidden warm-up images render only once the page is idle, so they never
+  // compete with the first paint for bandwidth.
+  const [warm, setWarm] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
   const revertTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -169,6 +172,23 @@ export default function ExpressionAvatar({
     sticky.current = false
     show(baseRef.current)
   }, [show])
+
+  useEffect(() => {
+    if (!interactive) return
+    const w = window as unknown as {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+      cancelIdleCallback?: (id: number) => void
+    }
+    let idleId: number | null = null
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const go = () => setWarm(true)
+    if (typeof w.requestIdleCallback === "function") idleId = w.requestIdleCallback(go, { timeout: 3500 })
+    else timer = setTimeout(go, 2500)
+    return () => {
+      if (idleId !== null) w.cancelIdleCallback?.(idleId)
+      if (timer) clearTimeout(timer)
+    }
+  }, [interactive])
 
   // ── Greeting + clock + idle warm ─────────────────────────────────────
   // Nothing extra is fetched during initial load: the base face renders
@@ -471,7 +491,7 @@ export default function ExpressionAvatar({
           with byte-identical props, so the exact optimizer URLs face swaps
           use are already browser-cached before first paint settles.
           Raw `new Image()` preloads would fetch full-size files nothing displays, so they are not used. */}
-      {interactive && (
+      {interactive && warm && (
         <div aria-hidden="true" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)", whiteSpace: "nowrap" }}>
           {WARM.map((f) => (
             <Image
@@ -482,7 +502,7 @@ export default function ExpressionAvatar({
               height={size * 2}
               sizes={`${size * 2}px`}
               quality={90}
-              priority
+              fetchPriority="low"
               draggable={false}
             />
           ))}

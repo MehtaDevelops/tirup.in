@@ -33,6 +33,7 @@ const playfair = localFont({
 const jetbrainsMono = localFont({
   src: "./fonts/JetBrainsMono-Variable.woff2",
   variable: "--font-jetbrains-mono",
+  preload: false,
   display: "swap",
   weight: "100 800",
 });

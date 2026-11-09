@@ -474,9 +474,11 @@ p {
   smear that blur+translate together cause on low-dpi displays.
   translateY(6px) is subtle enough to feel like natural settling.
 */
+/* 0.01, not 0: Chrome does not count fully transparent content as painted, so a
+   0 start delays Largest Contentful Paint by the whole fade. 1% is invisible. */
 @keyframes revealIn {
   from {
-    opacity: 0;
+    opacity: 0.01;
     transform: translateY(6px);
   }
   to {

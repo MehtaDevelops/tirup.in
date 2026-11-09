@@ -269,7 +269,7 @@ export default function HeroDots() {
   return (
     <>
       <TextWithBlur delay={350}>
-        <div className="flex gap-2 mt-8 pl-1 select-none items-center" role="group" aria-label="Decorative dots">
+        <div className="flex gap-3.5 mt-8 pl-1 select-none items-center" role="group" aria-label="Decorative dots">
           <div
             ref={tintAnchorRef}
             className="relative flex items-center"
@@ -294,9 +294,10 @@ export default function HeroDots() {
               aria-expanded={tintOpen}
               onFocus={() => showHint("tint")}
               onBlur={hideHint}
-              className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
-              style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: RED_DOT_DEFAULT, opacity: redActive ? 1 : 0.6, boxShadow: redActive ? `0 0 8px ${RED_DOT_DEFAULT}` : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
-            />
+              className="group relative rounded-full focus-visible:outline-none"
+              style={{ width: 24, height: 24, margin: -7, borderRadius: 9999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", cursor: "pointer", background: "transparent" }}>
+                <span aria-hidden="true" className="block rounded-full group-focus-visible:ring-2 group-focus-visible:ring-black/40 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-white dark:group-focus-visible:ring-white/60 dark:group-focus-visible:ring-offset-black" style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: RED_DOT_DEFAULT, opacity: redActive ? 1 : 0.6, boxShadow: redActive ? `0 0 8px ${RED_DOT_DEFAULT}` : "none" }} />
+            </button>
             <DotHint hint="tint" visible={hint === "tint" && !tintOpen} />
           </div>
           <div
@@ -313,9 +314,10 @@ export default function HeroDots() {
               aria-expanded={musicOpen}
               onFocus={() => showHint("music")}
               onBlur={hideHint}
-              className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
-              style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: YELLOW_DOT_DEFAULT, opacity: musicOpen ? 1 : 0.6, boxShadow: musicOpen ? `0 0 8px ${YELLOW_DOT_DEFAULT}` : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
-            />
+              className="group relative rounded-full focus-visible:outline-none"
+              style={{ width: 24, height: 24, margin: -7, borderRadius: 9999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", cursor: "pointer", background: "transparent" }}>
+                <span aria-hidden="true" className="block rounded-full group-focus-visible:ring-2 group-focus-visible:ring-black/40 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-white dark:group-focus-visible:ring-white/60 dark:group-focus-visible:ring-offset-black" style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: YELLOW_DOT_DEFAULT, opacity: musicOpen ? 1 : 0.6, boxShadow: musicOpen ? `0 0 8px ${YELLOW_DOT_DEFAULT}` : "none" }} />
+            </button>
             <DotHint hint="music" visible={hint === "music" && !musicOpen} />
           </div>
           {isMobile ? (
@@ -336,9 +338,10 @@ export default function HeroDots() {
                 aria-pressed={open}
                 onFocus={() => showHint("ascii")}
                 onBlur={hideHint}
-                className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white/60 dark:focus-visible:ring-offset-black after:absolute after:-inset-x-0.5 after:-inset-y-2 after:content-['']"
-                style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: GREEN_DOT_DEFAULT, opacity: open ? 1 : 0.6, boxShadow: open ? `0 0 8px ${GREEN_DOT_DEFAULT}` : "none", flexShrink: 0, display: "block", padding: 0, border: "none", cursor: "pointer" }}
-              />
+                className="group relative rounded-full focus-visible:outline-none"
+                style={{ width: 24, height: 24, margin: -7, borderRadius: 9999, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: 0, border: "none", cursor: "pointer", background: "transparent" }}>
+                <span aria-hidden="true" className="block rounded-full group-focus-visible:ring-2 group-focus-visible:ring-black/40 group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-white dark:group-focus-visible:ring-white/60 dark:group-focus-visible:ring-offset-black" style={{ width: 10, height: 10, borderRadius: 9999, backgroundColor: GREEN_DOT_DEFAULT, opacity: open ? 1 : 0.6, boxShadow: open ? `0 0 8px ${GREEN_DOT_DEFAULT}` : "none" }} />
+            </button>
               <DotHint hint="ascii" visible={hint === "ascii" && !open} />
             </div>
           )}
