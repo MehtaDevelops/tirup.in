@@ -11,8 +11,23 @@ import { useEffect, useRef } from "react"
  * - In Light Mode: Whisper-soft gray shading over warm paper for depth.
  * - With the red-dot theme tint active: the glow takes on the user's
  *   color (reacts to `--user` / `data-tint` on <html>).
- * - Zero performance overhead: throttled render loop, pauses when tab is inactive.
+ *
+ * Cheap on purpose. The glow drifts over minutes and is made of soft
+ * gradients, so it does not need full resolution or 60 frames a second:
+ * - it draws into a small backing store (a quarter of the size in each
+ *   direction) that CSS stretches to the viewport, which is visually the
+ *   same for gradients this soft but uses a fraction of the memory;
+ * - it steps at ~20 fps (the motion is far slower than that);
+ * - gradient color strings are built once per theme, not every frame, so
+ *   the loop allocates almost nothing and the garbage collector stays idle;
+ * - it pauses completely while the tab is hidden.
  */
+
+// Backing store scale (1 = full size). Soft gradients upscale cleanly.
+const SCALE = 0.25
+// Milliseconds between steps (~20 fps). The drift is slower than this needs.
+const FRAME_MS = 50
+
 export default function AmbientShader() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
@@ -27,11 +42,14 @@ export default function AmbientShader() {
     const ctx = canvas.getContext("2d", { alpha: true })
     if (!ctx) return
 
-    let animationFrameId: number
+    let timeoutId: number | undefined
+    let animationFrameId: number | undefined
     let width = 0
     let height = 0
     let isDark = false
     let tint: [number, number, number] | null = null
+    // alpha -> css color, rebuilt only when the theme or tint changes
+    const glowCache = new Map<number, string>()
 
     const updateTheme = () => {
       isDark = document.documentElement.classList.contains("dark")
@@ -47,30 +65,38 @@ export default function AmbientShader() {
             parseInt(m[1].slice(4, 6), 16),
           ] as [number, number, number]
         : null
+      glowCache.clear()
     }
 
     // Ambient glow color: the red-dot tint when active (alpha boosted so
     // the hue reads at these whisper levels), else monochrome as before.
     const glow = (alpha: number) => {
-      if (alpha <= 0) return "rgba(0, 0, 0, 0)"
-      if (!tint)
-        return isDark
+      const cached = glowCache.get(alpha)
+      if (cached !== undefined) return cached
+      let color: string
+      if (alpha <= 0) color = "rgba(0, 0, 0, 0)"
+      else if (!tint)
+        color = isDark
           ? `rgba(255, 255, 255, ${alpha})`
           : `rgba(0, 0, 0, ${alpha})`
-      const boost = isDark
-        ? Math.min(alpha * 1.8, 0.14)
-        : Math.min(alpha * 1.6, 0.09)
-      return `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, ${+boost.toFixed(3)})`
+      else {
+        const boost = isDark
+          ? Math.min(alpha * 1.8, 0.14)
+          : Math.min(alpha * 1.6, 0.09)
+        color = `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, ${+boost.toFixed(3)})`
+      }
+      glowCache.set(alpha, color)
+      return color
     }
 
     const resize = () => {
       if (!canvas) return
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       width = window.innerWidth
       height = window.innerHeight
-      canvas.width = width * dpr
-      canvas.height = height * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      canvas.width = Math.max(1, Math.round(width * SCALE))
+      canvas.height = Math.max(1, Math.round(height * SCALE))
+      // Draw in CSS pixels; the transform maps them onto the small store.
+      ctx.setTransform(SCALE, 0, 0, SCALE, 0, 0)
     }
 
     updateTheme()
@@ -90,10 +116,18 @@ export default function AmbientShader() {
     let lastTime = performance.now()
     let isVisible = true
 
+    const schedule = () => {
+      timeoutId = window.setTimeout(() => {
+        animationFrameId = requestAnimationFrame(render)
+      }, FRAME_MS)
+    }
+
     const handleVisibilityChange = () => {
       isVisible = !document.hidden
       if (isVisible) {
         lastTime = performance.now()
+        if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+        if (animationFrameId !== undefined) cancelAnimationFrame(animationFrameId)
         render(lastTime)
       }
     }
@@ -184,13 +218,14 @@ export default function AmbientShader() {
         ctx.fillRect(0, 0, width, height)
       }
 
-      animationFrameId = requestAnimationFrame(render)
+      schedule()
     }
 
     animationFrameId = requestAnimationFrame(render)
 
     return () => {
-      cancelAnimationFrame(animationFrameId)
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+      if (animationFrameId !== undefined) cancelAnimationFrame(animationFrameId)
       window.removeEventListener("resize", resize)
       document.removeEventListener("visibilitychange", handleVisibilityChange)
       observer.disconnect()
