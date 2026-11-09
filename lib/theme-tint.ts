@@ -1,5 +1,7 @@
 "use client"
 
+import { persistTheme } from "@/lib/theme-preference"
+
 /**
  * theme-tint: red-dot easter egg.
  *
@@ -267,6 +269,16 @@ export function applyTint(hex: string | null) {
   } catch {
     /* storage unavailable: theming still works for this session */
   }
+  // The tint forces the light treatment, so that is the mode the sibling
+  // surface should inherit while it is active. Guarded so a drag does not
+  // write the same cookie on every pointer tick.
+  let alreadyLight = false
+  try {
+    alreadyLight = localStorage.getItem("theme") === "light"
+  } catch {
+    /* storage unavailable: fall through and publish once per call */
+  }
+  if (!alreadyLight) persistTheme("light")
   return next
 }
 
@@ -285,7 +297,9 @@ export function clearTint() {
     localStorage.removeItem(PREV_MODE_KEY)
     if (prev === "dark") root.classList.add("dark")
     else if (prev === "light") root.classList.remove("dark")
-    if (prev === "dark" || prev === "light") localStorage.setItem("theme", prev)
+    // Reset restores the mode the reader had before picking a tint; publish
+    // the restored mode so both surfaces agree again.
+    persistTheme(root.classList.contains("dark") ? "dark" : "light")
   } catch {
     /* storage unavailable: mode simply stays as-is */
   }

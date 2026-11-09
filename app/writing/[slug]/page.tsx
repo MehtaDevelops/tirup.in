@@ -10,6 +10,7 @@ import { sanitizeHtml, renderMarkdownSafe } from "@/lib/sanitize"
 import { formatCategory } from "@/lib/category"
 import { CONVEX_API_URL } from "@/lib/utils"
 import { notFound } from "next/navigation"
+import SiteFooter from "@/components/site-footer"
 
 interface BlogPost {
   title: string
@@ -242,20 +243,20 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Title */}
         <TextWithBlur delay={50}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-serif italic text-black dark:text-white mb-5 leading-[1.18] lg:leading-none max-w-3xl font-medium break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-5 leading-[1.15] max-w-3xl font-medium break-words">
             {safeTitle}
           </h1>
         </TextWithBlur>
 
         {/* Article Header info */}
         <TextWithBlur delay={50}>
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm text-black/40 dark:text-white/40 mb-3">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs md:text-sm text-black/50 dark:text-white/50 mb-3">
             <span>{dynamicCategory}</span>
-            <span className="select-none text-black/20 dark:text-white/20">/</span>
+            <span className="select-none text-black/25 dark:text-white/25">/</span>
             <span className="tabular-nums">{formatDate(post.createdAt)}</span>
             {safeReadingTime > 0 && (
               <>
-                <span className="select-none text-black/20 dark:text-white/20">/</span>
+                <span className="select-none text-black/25 dark:text-white/25">/</span>
                 <span className="tabular-nums">{safeReadingTime} min read</span>
               </>
             )}
@@ -268,7 +269,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {safeTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {safeTags.map((tag) => (
-                  <span key={tag} className="text-xs font-light text-black/40 dark:text-white/40">
+                  <span key={tag} className="text-xs font-light text-black/55 dark:text-white/55">
                     #{tag}
                   </span>
                 ))}
@@ -291,10 +292,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           <TextWithBlur delay={90}>
             <div className="tldr-box max-w-3xl mb-8 block md:hidden">
               <div className="tldr-header flex items-center gap-2.5 mb-2">
-                <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-black/40 dark:bg-white/40 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-black dark:bg-white" />
-                </span>
+                <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--tldr-accent)]" />
                 <span className="tldr-label text-xs sm:text-[13px] font-normal text-black dark:text-white">
                   TL;DR Summary
                 </span>
@@ -315,9 +313,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         </TextWithBlur>
       </div>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
 
       {/* TL;DR Animated Summary Popup: rendered as direct child of main to align on viewport edge on desktop */}
       <TldrPopup safeTldrHtml={safeTldrHtml} />

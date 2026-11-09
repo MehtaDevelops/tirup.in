@@ -31,6 +31,7 @@ import {
   PhoneCall,
   Code,
 } from "lucide-react"
+import SiteFooter from "@/components/site-footer"
 
 // Types
 type PayloadType = "url" | "text" | "wifi" | "vcard" | "email" | "sms" | "whatsapp" | "calendar"
@@ -811,9 +812,6 @@ export default function QrStudioPage() {
       default: return "Data"
     }
   }, [payloadType])
-
-  const currentYear = new Date().getFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
@@ -1702,10 +1700,7 @@ export default function QrStudioPage() {
         )}
       </section>
 
-      {/* Footer */}
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

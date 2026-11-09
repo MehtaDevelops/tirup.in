@@ -4,6 +4,7 @@ import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
 import { JsonLd } from "@/components/library/json-ld"
 import { SITE } from "@/lib/components-site"
+import SiteFooter from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "React Components with Live Playgrounds",
@@ -45,8 +46,6 @@ const components = [
 ]
 
 export default function ComponentsPage() {
-  const currentYear = new Date().getFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <JsonLd
@@ -149,9 +148,7 @@ export default function ComponentsPage() {
         </TextWithBlur>
       </section>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

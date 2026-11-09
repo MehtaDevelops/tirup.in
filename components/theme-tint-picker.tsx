@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import type { KeyboardEvent as ReactKeyboardEvent } from "react"
 import { Check, Moon, RotateCcw, Sun } from "lucide-react"
 import { TINT_PRESETS } from "@/lib/theme-tint"
+import { persistTheme } from "@/lib/theme-preference"
 
 interface ThemeTintPickerProps {
   /** Current tint, `#rrggbb`. */
@@ -44,11 +45,9 @@ export default function ThemeTintPicker({
     setIsDark(darkMode)
     if (darkMode) document.documentElement.classList.add("dark")
     else document.documentElement.classList.remove("dark")
-    try {
-      localStorage.setItem("theme", darkMode ? "dark" : "light")
-    } catch {
-      /* storage unavailable: theme still applies for this session */
-    }
+    // Publishes to localStorage and to the shared tirup.in cookie, so the
+    // blog surface opens in the same mode.
+    persistTheme(darkMode ? "dark" : "light")
   }
 
   // Keep Tab cycling inside the panel while it is open.

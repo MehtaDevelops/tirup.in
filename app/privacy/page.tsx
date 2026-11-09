@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
+import SiteFooter from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -12,8 +13,6 @@ export const metadata: Metadata = {
 }
 
 export default function PrivacyPage() {
-  const currentYear = new Date().getFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
@@ -86,10 +85,13 @@ export default function PrivacyPage() {
             <h2 className="text-xs uppercase tracking-[0.2em] text-black/40 dark:text-white/40 mb-3">Cookies</h2>
             <p>
               This site uses cookies set by Google Analytics to distinguish returning visitors
-              and measure session duration. A theme preference (light/dark mode) is stored in
-              your browser&apos;s localStorage. This data never leaves your device.
-              No first-party session cookies, login cookies, or tracking pixels beyond the
-              analytics services listed above are set.
+              and measure session duration. A light or dark theme preference is stored in your
+              browser&apos;s localStorage and in a first-party cookie named
+              <code className="mx-1 rounded bg-black/5 px-1 py-0.5 text-[0.9em] dark:bg-white/10">tirup-theme</code>
+              so that this site and blogs.tirup.in open in the same mode. That cookie holds one
+              word, <em>light</em> or <em>dark</em>, carries no identifier, and is never sent to a
+              third party. No first-party session cookies, login cookies, or tracking pixels
+              beyond the analytics services listed above are set.
             </p>
           </div>
 
@@ -177,11 +179,7 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>
-          © {currentYear} Tirup Mehta. All rights reserved.
-        </p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

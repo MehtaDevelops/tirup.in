@@ -5,6 +5,7 @@ import ListSpotlight from "@/components/list-spotlight"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
 import { CONVEX_API_URL } from "@/lib/utils"
+import SiteFooter from "@/components/site-footer"
 
 export const revalidate = 60
 
@@ -89,14 +90,12 @@ export default async function BlogsPage() {
     }
   }
 
-  const currentYear = new Date().getUTCFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
 
       {/* Blogs list Section: latest 10 titles only. Full essays live on blogs.tirup.in */}
-      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-16">
         <h1 className="sr-only">Writing by Tirup Mehta</h1>
         {error ? (
           <div className="py-8">
@@ -115,22 +114,28 @@ export default async function BlogsPage() {
                     href={`/writing/${post.slug}`}
                     className={[
                       "group block",
-                      index === 0 ? "pb-5 pt-1" : "py-5",
+                      index === 0 ? "pb-5" : "py-5",
                       index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
                       // Hover is color-only here: no background wash (ADR-0002).
                       "[transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
                       "active:scale-[0.99]",
                     ].join(" ")}
                   >
-                    <div className="flex justify-between items-baseline gap-2 sm:gap-4">
-                      {/* Left: Title */}
-                      <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-sm md:text-base break-words leading-relaxed min-w-0 flex-1">
-                        {post.title}
-                      </span>
-                      {/* Right: Date */}
-                      <span className="tabular-nums text-[10px] md:text-xs text-black/30 dark:text-white/30 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
-                        {formatDate(post.createdAt)}
-                      </span>
+                    <div className="flex flex-col gap-1.5">
+                      {/* Top line: title and date, mirroring the blog list exactly */}
+                      <div className="flex justify-between items-baseline gap-2 sm:gap-4">
+                        <h2 className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-base md:text-lg break-words leading-relaxed min-w-0 flex-1">
+                          {post.title}
+                        </h2>
+                        <span className="tabular-nums text-xs text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
+                          {formatDate(post.createdAt)}
+                        </span>
+                      </div>
+                      {post.tldr && (
+                        <p className="text-sm text-black/60 dark:text-white/55 group-hover:text-black/80 dark:group-hover:text-white/75 font-light leading-relaxed line-clamp-2 [transition:color_80ms_ease-out] pr-2 sm:pr-4 break-words">
+                          {post.tldr}
+                        </p>
+                      )}
                     </div>
                   </Link>
                 </TextWithBlur>
@@ -157,10 +162,7 @@ export default async function BlogsPage() {
         )}
       </section>
 
-      {/* Footer */}
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

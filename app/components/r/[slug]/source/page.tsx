@@ -8,6 +8,7 @@ import { CodeDemo } from "@/components/library/code-demo"
 import { CopyTextButton } from "@/components/library/copy-text-button"
 import TextWithBlur from "@/components/text-with-blur"
 import { AUTHOR, SITE, installCommand, namespaceAddCommand, registryItemUrl } from "@/lib/components-site"
+import SiteFooter from "@/components/site-footer"
 
 /**
  * Source viewer for a registry item. The install URL
@@ -251,9 +252,7 @@ export default async function RegistrySourcePage({ params }: { params: Promise<{
         </TextWithBlur>
       </div>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

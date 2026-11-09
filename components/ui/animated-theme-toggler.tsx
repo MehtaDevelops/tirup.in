@@ -5,6 +5,7 @@ import { Moon, Sun } from "lucide-react"
 import { flushSync } from "react-dom"
 
 import { cn } from "@/lib/utils"
+import { persistTheme } from "@/lib/theme-preference"
 
 export type TransitionVariant =
   | "circle"
@@ -183,7 +184,7 @@ export const AnimatedThemeToggler = ({
       } else {
         document.documentElement.classList.remove("dark")
       }
-      localStorage.setItem("theme", newTheme ? "dark" : "light")
+      persistTheme(newTheme ? "dark" : "light")
     }
 
     if (typeof document.startViewTransition !== "function") {

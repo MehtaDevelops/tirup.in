@@ -11,6 +11,7 @@ import { Playground, DEFAULTS, type PlaygroundConfig, type PlaygroundFont } from
 import { CodeDemo } from "@/components/library/code-demo"
 import { copyText } from "@/lib/utils"
 import { SITE, installCommand } from "@/lib/components-site"
+import SiteFooter from "@/components/site-footer"
 
 const PROPS = [
   { name: "speed", type: "number", defaultValue: "1", description: "Simulation timestep multiplier (0.1–3)." },
@@ -480,9 +481,7 @@ export function LiquidAsciiDoc({
 
       </div>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

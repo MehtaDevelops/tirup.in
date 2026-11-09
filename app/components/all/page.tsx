@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
+import SiteFooter from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "All components",
@@ -24,8 +25,6 @@ const components = [
 ]
 
 export default function AllComponentsPage() {
-  const currentYear = new Date().getFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
@@ -72,9 +71,7 @@ export default function AllComponentsPage() {
         </div>
       </section>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

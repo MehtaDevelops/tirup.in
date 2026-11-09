@@ -48,5 +48,9 @@ export default function PageTransition({ children }: { children: React.ReactNode
     return () => document.removeEventListener("click", handleNavigation, true)
   }, [router])
 
-  return <>{children}</>
+  return (
+    <div id="main-content" tabIndex={-1} className="outline-none">
+      {children}
+    </div>
+  )
 }

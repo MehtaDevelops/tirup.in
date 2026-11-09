@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
 import SkillsSection from "@/components/skills-section"
+import SiteFooter from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "Skills",
@@ -10,8 +11,6 @@ export const metadata: Metadata = {
 }
 
 export default function SkillsPage() {
-  const currentYear = new Date().getFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
@@ -22,10 +21,7 @@ export default function SkillsPage() {
         <SkillsSection />
       </section>
 
-      {/* Footer */}
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

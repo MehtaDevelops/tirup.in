@@ -12,6 +12,7 @@ import SongBubble, {
 } from "@/components/library/song-bubble"
 import { copyText } from "@/lib/utils"
 import { SITE, installCommand } from "@/lib/components-site"
+import SiteFooter from "@/components/site-footer"
 
 const PROPS = [
   { name: "defaultVideoUrl", type: "string", defaultValue: "undefined", description: "A song to load automatically the first time the card opens in a session — perfect for demo pages; leave it off for a quiet open." },
@@ -373,9 +374,7 @@ export default function SongBubbleDoc({
 
       </div>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {new Date().getFullYear()} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

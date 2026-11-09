@@ -4,6 +4,7 @@ import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
 import { CodeDemo } from "@/components/library/code-demo"
 import { SITE, installCommand, namespaceAddCommand } from "@/lib/components-site"
+import SiteFooter from "@/components/site-footer"
 
 export const metadata: Metadata = {
   title: "Component Docs",
@@ -85,7 +86,6 @@ const STEPS: Array<{ title: string; body: React.ReactNode }> = [
 ]
 
 export default function DocsPage() {
-  const currentYear = new Date().getFullYear()
   let blockIndex = 0
 
   return (
@@ -112,7 +112,7 @@ export default function DocsPage() {
 
         {/* Title: same serif treatment as writing detail pages */}
         <TextWithBlur delay={50}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-serif italic text-black dark:text-white mb-5 leading-[1.18] lg:leading-none max-w-3xl font-medium break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-5 leading-[1.15] max-w-3xl font-medium break-words">
             Installing my components
           </h1>
         </TextWithBlur>
@@ -212,9 +212,7 @@ export default function DocsPage() {
 
       </div>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40">© {currentYear} Tirup Mehta. All rights reserved.</p>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

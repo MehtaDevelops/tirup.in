@@ -1,19 +1,21 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google"
+import { Manrope, Playfair_Display, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
 import NotchPlayer from "@/components/notch-player"
 import AmbientShader from "@/components/ambient-shader"
+import ThemeSync from "@/components/theme-sync"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-manrope",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
 })
 
 const playfair = Playfair_Display({
@@ -354,7 +356,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className={`${inter.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#0a0a0b] text-[#111111] dark:text-[#fafafa] transition-colors duration-300 relative`} suppressHydrationWarning>
+      <body className={`${manrope.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#0a0a0a] text-[#111111] dark:text-[#fafafa] transition-colors duration-300 relative`} suppressHydrationWarning>
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <ThemeSync />
         <AmbientShader />
         <GoogleAnalytics />
         <UtmTracker />
@@ -365,10 +369,50 @@ export default function RootLayout({
         />
 
 
-        {/* Theme init: prevents flash of wrong theme */}
+        {/* Theme init: prevents flash of wrong theme.
+            Order of truth: cookie (written by this site or blogs.tirup.in) →
+            localStorage (this origin) → system preference. Whichever wins is
+            mirrored back into both places, so the two surfaces converge.
+
+            Also re-applies the portfolio tint. A tinted page is a light page,
+            so the tint forces light mode and remembers the mode it replaced.
+
+            Inlined on purpose: the parser hits it before any content exists,
+            so no frame is ever painted in the wrong theme. `next/script`
+            queues its scripts behind the framework bundle (verified on the
+            blog: the class landed 26ms after first-paint). Keep this block
+            byte-identical with blogs.tirup.in except for the tint part. */}
         <script
+          id="theme-init"
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}try{var u=localStorage.getItem('tirup-tint');if(u&&/^#([0-9a-f]{6})$/i.test(u)){u=u.toLowerCase();document.documentElement.style.setProperty('--user',u);document.documentElement.setAttribute('data-tint',u);try{if(!localStorage.getItem('tirup-tint-prev-mode'))localStorage.setItem('tirup-tint-prev-mode',document.documentElement.classList.contains('dark')?'dark':'light')}catch(e){}document.documentElement.classList.remove('dark')}}catch(e){}document.documentElement.classList.add('js');window.setTimeout(function(){document.documentElement.classList.remove('no-transitions')},100)})()`,
+            __html: `(function () {
+  var d = document.documentElement
+  var attrs = (location.hostname === 'tirup.in' || /(^|\\.)tirup\\.in$/.test(location.hostname) ? '; Domain=.tirup.in' : '') + (location.protocol === 'https:' ? '; Secure' : '')
+  var save = function (m) {
+    try { localStorage.setItem('theme', m) } catch (e) {}
+    try { document.cookie = 'tirup-theme=' + m + '; Path=/; Max-Age=31536000; SameSite=Lax' + attrs } catch (e) {}
+  }
+  try {
+    var m = (document.cookie.match(/(?:^|;\\s*)tirup-theme=(dark|light)(?:;|$)/) || [])[1]
+    if (m !== 'dark' && m !== 'light') { try { m = localStorage.getItem('theme') } catch (e) {} }
+    if (m !== 'dark' && m !== 'light') m = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'
+    if (m === 'dark') d.classList.add('dark'); else d.classList.remove('dark')
+    save(m)
+  } catch (e) {}
+  try {
+    var u = localStorage.getItem('tirup-tint')
+    if (u && /^#([0-9a-f]{6})$/i.test(u)) {
+      u = u.toLowerCase()
+      d.style.setProperty('--user', u)
+      d.setAttribute('data-tint', u)
+      try { if (!localStorage.getItem('tirup-tint-prev-mode')) localStorage.setItem('tirup-tint-prev-mode', d.classList.contains('dark') ? 'dark' : 'light') } catch (e) {}
+      d.classList.remove('dark')
+      save('light')
+    }
+  } catch (e) {}
+  d.classList.add('js')
+  window.setTimeout(function () { d.classList.remove('no-transitions') }, 100)
+})()`,
           }}
         />
         <GoogleTagManagerNoscript />

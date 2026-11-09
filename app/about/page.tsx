@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
+import SiteFooter from "@/components/site-footer"
 import { ArrowUpRight } from "lucide-react"
 
 export const metadata: Metadata = {
@@ -10,8 +11,6 @@ export const metadata: Metadata = {
 }
 
 export default function AboutPage() {
-  const currentYear = new Date().getFullYear()
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
@@ -156,14 +155,13 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <footer className="py-4 px-6 text-center border-t border-black/10 dark:border-white/10 mt-auto">
-        <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>
-          © {currentYear} Tirup Mehta. All rights reserved.
-        </p>
-        <p data-nosnippet className="mt-1 text-[11px] font-light text-black/30 dark:text-white/30">
-          Son of Jayrambhai Mehta and Purviben Mehta, with love and gratitude.
-        </p>
-      </footer>
+      <SiteFooter
+        note={
+          <span data-nosnippet>
+            Son of Jayrambhai Mehta and Purviben Mehta, with love and gratitude.
+          </span>
+        }
+      />
     </main>
   )
 }

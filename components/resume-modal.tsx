@@ -97,7 +97,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
         style={{ transitionDuration: `${closing ? EXIT_MS : ENTER_MS}ms` }}
         className={[
           "relative flex flex-col w-full max-w-4xl h-[85dvh] max-h-[860px] overflow-hidden",
-          "rounded-xl bg-[#fdfdfc] dark:bg-[#0a0a0b] border border-black/10 dark:border-white/10 shadow-lg",
+          "rounded-xl bg-[#fdfdfc] dark:bg-[#0a0a0a] border border-black/10 dark:border-white/10 shadow-lg",
           "transform-gpu will-change-transform transition-[opacity,transform] ease-[cubic-bezier(0.16,1,0.3,1)]",
           shown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2",
         ].join(" ")}

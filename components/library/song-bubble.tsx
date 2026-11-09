@@ -1074,7 +1074,7 @@ export default function SongBubble({
           width: 56px;
           height: 56px;
           border-radius: 999px;
-          background: var(--bg, #0a0a0b);
+          background: var(--bg, #0a0a0a);
           cursor: pointer;
           pointer-events: auto;
           user-select: none;
@@ -1139,7 +1139,7 @@ export default function SongBubble({
           width: 42px;
           height: 42px;
           border-radius: 999px;
-          background-color: color-mix(in srgb, var(--fg, #fafafa) 7%, var(--bg, #0a0a0b));
+          background-color: color-mix(in srgb, var(--fg, #fafafa) 7%, var(--bg, #0a0a0a));
           background-position: center;
           background-size: cover;
           pointer-events: none;
@@ -1175,7 +1175,7 @@ export default function SongBubble({
           border-radius: 999px;
           background: var(--song-bubble-accent, #1ed760);
           box-shadow:
-            0 0 0 2px var(--bg, #0a0a0b),
+            0 0 0 2px var(--bg, #0a0a0a),
             0 0 10px 2px color-mix(in srgb, var(--song-bubble-accent, #1ed760) 50%, transparent);
           pointer-events: none;
         }

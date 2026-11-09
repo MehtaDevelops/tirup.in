@@ -75,11 +75,11 @@ function makeLabel(text: string, color: string): THREE.Sprite {
   const pad = 20
   const canvas = document.createElement("canvas")
   let ctx = canvas.getContext("2d")!
-  ctx.font = `500 ${fs}px Inter, system-ui, sans-serif`
+  ctx.font = `500 ${fs}px Manrope, system-ui, sans-serif`
   canvas.width = Math.ceil(ctx.measureText(text).width) + pad * 2
   canvas.height = fs + pad * 2
   ctx = canvas.getContext("2d")!
-  ctx.font = `500 ${fs}px Inter, system-ui, sans-serif`
+  ctx.font = `500 ${fs}px Manrope, system-ui, sans-serif`
   ctx.fillStyle = color
   ctx.textBaseline = "middle"
   ctx.fillText(text, pad, canvas.height / 2)
