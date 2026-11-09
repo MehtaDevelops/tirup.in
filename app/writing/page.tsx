@@ -1,7 +1,9 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import Header from "@/components/header"
+import ListSpotlight from "@/components/list-spotlight"
 import TextWithBlur from "@/components/text-with-blur"
-import { PaginatedPosts, type BlogPost } from "@/components/paginated-posts"
+import { ArrowUpRight } from "lucide-react"
 import { CONVEX_API_URL } from "@/lib/utils"
 import SiteFooter from "@/components/site-footer"
 
@@ -31,6 +33,14 @@ export const metadata: Metadata = {
   },
 }
 
+interface BlogPost {
+  slug: string
+  title: string
+  tldr: string
+  createdAt: string
+  status?: "draft" | "published"
+}
+
 export default async function BlogsPage() {
   let posts: BlogPost[] = []
   let error = false
@@ -54,6 +64,7 @@ export default async function BlogsPage() {
             if (bBad) return -1
             return tb - ta
           })
+          .slice(0, 10)
       } else {
         error = true
       }
@@ -65,41 +76,89 @@ export default async function BlogsPage() {
     error = true
   }
 
+  const formatDate = (dateStr: string) => {
+    try {
+      const date = new Date(dateStr)
+      if (isNaN(date.getTime())) return ""
+      const day = String(date.getUTCDate()).padStart(2, "0")
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+      const month = months[date.getUTCMonth()]
+      const year = date.getUTCFullYear()
+      return `${day}.${month}.${year}`
+    } catch {
+      return ""
+    }
+  }
+
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
 
-      {/* Intro line above the list. Same structure as the blog home so the two
-          surfaces read as one list even though the labels differ. */}
-      <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-0">
-        <TextWithBlur delay={80}>
-          <div className="flex items-baseline justify-between gap-x-3 border-b border-black/5 dark:border-white/5 pb-2 mb-4">
-            <h1 className="text-xs font-normal text-black/40 dark:text-white/40">Tirup Mehta Writing</h1>
-            <a
-              href="https://blogs.tirup.in"
-              aria-label="Read Tirup Mehta's articles on the blog"
-              className="ml-auto mr-3 text-xs md:text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors whitespace-nowrap"
-            >
-              {/* Three labels would overflow a 320px line together with the count. */}
-              <span className="sm:hidden">Blog ↗</span>
-              <span className="hidden sm:inline">Read on blogs.tirup.in ↗</span>
-            </a>
-            <span className="text-xs text-black/30 dark:text-white/30 tabular-nums whitespace-nowrap">
-              {posts.length} {posts.length === 1 ? "article" : "articles"}
-            </span>
-          </div>
-        </TextWithBlur>
-      </div>
-
-      {/* Writing list Section: every published post, paginated like the blog */}
-      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-16 flex-1">
-        <p className="sr-only">Articles by Tirup Mehta</p>
+      {/* Blogs list Section: latest 10 titles only. Full essays live on blogs.tirup.in */}
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-16">
+        <h1 className="sr-only">Writing by Tirup Mehta</h1>
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>
           </div>
+        ) : posts.length === 0 ? (
+          <div className="py-8">
+            <p className="text-sm font-light text-black/40 dark:text-white/40">No articles published yet.</p>
+          </div>
         ) : (
-          <PaginatedPosts posts={posts} pageSize={10} />
+          <ListSpotlight className="flex flex-col list-hover-group">
+            {posts.map((post, index) => {
+              return (
+                <TextWithBlur key={post.slug} delay={Math.min(index * 35, 140)}>
+                  <Link
+                    href={`/writing/${post.slug}`}
+                    className={[
+                      "group block",
+                      index === 0 ? "pb-5" : "py-5",
+                      index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
+                      // Hover is color-only here: no background wash (ADR-0002).
+                      "[transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
+                      "active:scale-[0.99]",
+                    ].join(" ")}
+                  >
+                    <div className="flex flex-col gap-1.5">
+                      {/* Top line: title and date, mirroring the blog list exactly */}
+                      <div className="flex justify-between items-baseline gap-2 sm:gap-4">
+                        <h2 className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-base md:text-lg break-words leading-relaxed min-w-0 flex-1">
+                          {post.title}
+                        </h2>
+                        <span className="tabular-nums text-xs text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
+                          {formatDate(post.createdAt)}
+                        </span>
+                      </div>
+                      {post.tldr && (
+                        <p className="text-sm text-black/60 dark:text-white/55 group-hover:text-black/80 dark:group-hover:text-white/75 font-light leading-relaxed line-clamp-2 [transition:color_80ms_ease-out] pr-2 sm:pr-4 break-words">
+                          {post.tldr}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                </TextWithBlur>
+              )
+            })}
+            {/* End border */}
+            <div className="border-t border-black/10 dark:border-white/10" />
+
+            {/* Read all blogs: sends readers to the main blogs site */}
+            <TextWithBlur delay={120}>
+              <div className="pt-8 pb-2 flex justify-start">
+                <a
+                  href="https://blogs.tirup.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-1.5 pl-4 pr-3 h-9 text-xs font-medium tracking-wide rounded-full border bg-transparent transition-all duration-150 select-none cursor-pointer active:scale-[0.97] border-[rgba(18,19,20,0.15)] hover:border-[rgba(18,19,20,0.3)] hover:bg-[rgba(18,19,20,0.05)] text-[rgba(18,19,20,0.7)] hover:text-black dark:border-[rgba(255,255,255,0.07)] dark:hover:border-[rgba(255,255,255,0.16)] dark:hover:bg-[rgba(255,255,255,0.05)] dark:text-[rgba(244,244,245,0.7)] dark:hover:text-white"
+                >
+                  <span className="leading-none select-none">Read all blogs</span>
+                  <ArrowUpRight size={13} className="icon-arrow-hover opacity-70" />
+                </a>
+              </div>
+            </TextWithBlur>
+          </ListSpotlight>
         )}
       </section>
 
