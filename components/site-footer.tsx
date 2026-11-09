@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
+import CopyEmail from "@/components/copy-email"
 
 interface SiteFooterProps {
   /** Optional page-specific line (for example the about page dedication). */
@@ -30,20 +31,19 @@ export default function SiteFooter({ note }: SiteFooterProps) {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mt-auto border-t border-black/10 dark:border-white/10">
-      <div className="mx-auto w-full max-w-4xl px-6 py-10 md:px-20">
+    <footer className="mt-auto">
+      <div className="mx-auto w-full max-w-4xl px-6 md:px-20">
+        <div className="border-t border-black/10 py-10 dark:border-white/10">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <p className="text-sm font-medium text-black dark:text-white">Tirup Mehta</p>
             <p className="max-w-xs text-sm font-light leading-relaxed text-black/50 dark:text-white/50">
               Software engineer building secure, fast interfaces.
             </p>
-            <a
-              href="mailto:contact@tirup.in"
-              className="inline-block text-sm font-light text-black/50 underline decoration-black/20 underline-offset-4 transition-colors hover:text-black hover:decoration-black/40 dark:text-white/50 dark:decoration-white/20 dark:hover:text-white dark:hover:decoration-white/40"
-            >
-              contact@tirup.in
-            </a>
+            <CopyEmail
+              email="contact@tirup.in"
+              className="inline-block cursor-pointer text-sm font-light text-black/50 underline decoration-black/20 underline-offset-4 transition-colors hover:text-black hover:decoration-black/40 dark:text-white/50 dark:decoration-white/20 dark:hover:text-white dark:hover:decoration-white/40"
+            />
             {note ? (
               <div className="pt-2 text-xs font-light leading-relaxed text-black/35 dark:text-white/35">
                 {note}
@@ -79,6 +79,7 @@ export default function SiteFooter({ note }: SiteFooterProps) {
             <a href="/llms.txt" className={metaLinkClass}>llms.txt</a>
             <a href="#main-content" className={metaLinkClass}>Back to top ↑</a>
           </div>
+        </div>
         </div>
       </div>
     </footer>

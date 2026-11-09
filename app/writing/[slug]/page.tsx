@@ -206,6 +206,59 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const dynamicCategory = formatCategory(safeTags)
 
+  // ── Related Reading: same selection logic as blogs.tirup.in/[slug] ─────────
+  // Chronological neighbours always included, then same-tag overlap with most
+  // recent as tiebreaker, capped at 3. Fails soft: any error hides the section.
+  type RelatedPost = { slug: string; title: string; createdAt: string; readingTime: number; tags: string[] }
+  let relatedPosts: RelatedPost[] = []
+  try {
+    const listRes = await fetch(`${API_BASE}/api/posts`, { next: { revalidate: 60 } })
+    if (listRes.ok) {
+      const raw = await listRes.json()
+      if (Array.isArray(raw)) {
+        const allPosts: RelatedPost[] = raw
+          .filter(
+            (p) =>
+              p &&
+              typeof p.slug === "string" &&
+              isValidSlug(p.slug) &&
+              typeof p.title === "string" &&
+              p.title &&
+              (p.status === "published" || !p.status)
+          )
+          .map((p) => ({
+            slug: p.slug as string,
+            title: String(p.title).slice(0, 300),
+            createdAt: String(p.createdAt ?? ""),
+            readingTime: Number.isFinite(p.readingTime) ? p.readingTime : 0,
+            tags: Array.isArray(p.tags)
+              ? p.tags
+                  .filter((t: unknown): t is string => typeof t === "string")
+                  .map((t: string) => t.replace(/[^a-zA-Z0-9 _-]/g, "").slice(0, 60))
+                  .slice(0, 20)
+              : [],
+          }))
+        const time = (p: RelatedPost) => new Date(p.createdAt).getTime()
+        const ordered = [...allPosts].sort((a, b) => time(b) - time(a))
+        const myIndex = ordered.findIndex((p) => p.slug === slug)
+        const neighbours: RelatedPost[] = []
+        if (myIndex >= 0) {
+          if (ordered[myIndex - 1]) neighbours.push(ordered[myIndex - 1])
+          if (ordered[myIndex + 1]) neighbours.push(ordered[myIndex + 1])
+        }
+        const tagRanked = allPosts
+          .filter((p) => p.slug !== slug)
+          .map((p) => ({ post: p, shared: p.tags.filter((t) => safeTags.includes(t)).length }))
+          .sort((a, b) => (b.shared !== a.shared ? b.shared - a.shared : time(b.post) - time(a.post)))
+          .map(({ post: related }) => related)
+        const neighbourSlugs = new Set(neighbours.map((p) => p.slug))
+        relatedPosts = [...neighbours, ...tagRanked.filter((p) => !neighbourSlugs.has(p.slug))].slice(0, 3)
+      }
+    }
+  } catch {
+    relatedPosts = []
+  }
+
   // Wrap tables in responsive scroll wrapper if not already wrapped
   const processBlogHtml = (html: string) => {
     if (!html) return ""
@@ -304,6 +357,42 @@ export default async function BlogPostPage({ params }: PageProps) {
             <BlogContentRenderer html={processBlogHtml(safeContentHtml)} />
           </ArticleAiToolbar>
         </TextWithBlur>
+
+        {/* Related Reading: identical markup to blogs.tirup.in (links stay inside /writing) */}
+        {relatedPosts.length > 0 && (
+          <TextWithBlur delay={140}>
+            <nav aria-label="Related articles" className="max-w-3xl mt-8 mb-0 border-t border-black/5 dark:border-white/5 pt-8">
+              <h2 className="text-lg sm:text-xl font-serif italic text-black dark:text-white mb-5">
+                Related Reading
+              </h2>
+              <ul className="flex flex-col gap-4">
+                {relatedPosts.map((related) => (
+                  <li key={related.slug}>
+                    <Link
+                      href={`/writing/${related.slug}`}
+                      className="group block active:scale-[0.99] transition-transform"
+                    >
+                      <span className="link-hover text-lg text-black/80 dark:text-white/85 group-hover:text-black dark:group-hover:text-white transition-colors">
+                        {related.title}
+                      </span>
+                      <span className="block mt-1 text-xs md:text-sm text-black/50 dark:text-white/50">
+                        {formatCategory(related.tags)}
+                        <span className="select-none text-black/25 dark:text-white/25"> / </span>
+                        <span className="tabular-nums">{formatDate(related.createdAt)}</span>
+                        {related.readingTime > 0 && (
+                          <>
+                            <span className="select-none text-black/25 dark:text-white/25"> / </span>
+                            <span className="tabular-nums">{related.readingTime} min read</span>
+                          </>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </TextWithBlur>
+        )}
       </div>
 
       <SiteFooter />

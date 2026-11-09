@@ -8,6 +8,7 @@ import PageTransition from "@/components/page-transition"
 import NotchPlayer from "@/components/notch-player"
 import AmbientShader from "@/components/ambient-shader"
 import ThemeSync from "@/components/theme-sync"
+import ThemedTooltip from "@/components/themed-tooltip"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
 
@@ -359,6 +360,7 @@ export default function RootLayout({
       <body className={`${manrope.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#0a0a0a] text-[#111111] dark:text-[#fafafa] transition-colors duration-300 relative`} suppressHydrationWarning>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <ThemeSync />
+        <ThemedTooltip />
         <AmbientShader />
         <GoogleAnalytics />
         <UtmTracker />

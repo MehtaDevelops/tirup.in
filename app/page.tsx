@@ -15,6 +15,8 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
@@ -72,7 +74,7 @@ export default function Home() {
       </noscript>
 
       {/* Intro/Hero Section */}
-      <section className="section px-6 md:px-20 pb-16 max-w-4xl mx-auto w-full">
+      <section className="section px-6 md:px-20 pb-8 max-w-4xl mx-auto w-full">
         {/* Story Description Paragraphs */}
         <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <TextWithBlur delay={150}>
@@ -141,6 +143,15 @@ export default function Home() {
         {/* Dynamic Indicator Dots at the bottom of hero */}
         <HeroDots />
       </section>
+
+      {/* Footer (original landing footer, restored) */}
+      <footer className="mt-auto">
+        <div className="max-w-4xl mx-auto w-full px-6 md:px-20">
+          <div className="py-4 text-center border-t border-black/10 dark:border-white/10">
+            <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </main>
   )
 }
