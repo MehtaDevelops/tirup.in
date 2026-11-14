@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
+import SiteSchemaExtras from "@/components/site-schema-extras"
 import TextWithBlur from "@/components/text-with-blur"
 import HeroDots from "@/components/hero-dots"
 import { InlineIconLink, LinkIcon } from "@/components/inline-link-icons"
@@ -20,6 +21,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
+      <SiteSchemaExtras />
 
       {/*
         SSR content block for AI crawlers and agents that do not execute JavaScript.

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
+import SiteSchemaExtras from "@/components/site-schema-extras"
 import SiteFooter from "@/components/site-footer"
 import { ArrowUpRight } from "lucide-react"
 
@@ -14,6 +15,7 @@ export default function AboutPage() {
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
+      <SiteSchemaExtras />
 
       <section className="section px-6 md:px-20 pb-20 max-w-4xl mx-auto w-full">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-serif italic font-medium tracking-tight leading-tight text-black dark:text-white mb-8">
