@@ -150,7 +150,7 @@ export default function Home() {
       <footer className="mt-auto">
         <div className="max-w-4xl mx-auto w-full px-6 md:px-20">
           <div className="py-4 text-center border-t border-black/10 dark:border-white/10">
-            <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta. All rights reserved.</p>
+            <p className="text-xs md:text-sm text-black/40 dark:text-white/40" suppressHydrationWarning>© {currentYear} Tirup Mehta</p>
           </div>
         </div>
       </footer>
