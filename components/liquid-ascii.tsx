@@ -99,10 +99,10 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
     let cnt = new Uint16Array(0)
     let fluid = new Uint8Array(0)
     // particles
-    let px = new Float32Array(P.pmax)
-    let py = new Float32Array(P.pmax)
-    let pu = new Float32Array(P.pmax)
-    let pv = new Float32Array(P.pmax)
+    const px = new Float32Array(P.pmax)
+    const py = new Float32Array(P.pmax)
+    const pu = new Float32Array(P.pmax)
+    const pv = new Float32Array(P.pmax)
     let active = 0
     let seeded = 0
     // dense ASCII render bins
@@ -138,8 +138,8 @@ export default function LiquidAscii({ onClose }: { onClose: () => void }) {
 
     // ---- bilinear helpers (collocated centers at (i+.5)*h) ----
     const cellCoords = (x: number, y: number) => {
-      let gx = clamp(x / h - 0.5, 0, nx - 1.001)
-      let gy = clamp(y / h - 0.5, 0, ny - 1.001)
+      const gx = clamp(x / h - 0.5, 0, nx - 1.001)
+      const gy = clamp(y / h - 0.5, 0, ny - 1.001)
       const i0 = Math.floor(gx)
       const j0 = Math.floor(gy)
       return { i0, j0, fx: gx - i0, fy: gy - j0 }

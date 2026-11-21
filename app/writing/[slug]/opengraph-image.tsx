@@ -53,7 +53,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   let title = "Article";
   let excerpt = "";
-  let meta: string[] = [];
+  const meta: string[] = [];
   let kicker = "Writing";
 
   if (slug && SAFE_SLUG_RE.test(slug) && !/^\.+$/.test(slug)) {
