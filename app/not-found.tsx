@@ -17,7 +17,7 @@ export default function NotFound() {
 
         {/* Minimal Description */}
         <p className="text-sm md:text-base font-light leading-relaxed text-black/60 dark:text-white/60 max-w-md mx-auto">
-          The link you followed went dark, or this destination is restricted. Let's establish a secure handshake back home.
+          The link you followed went dark, or this destination is restricted. Let&apos;s establish a secure handshake back home.
         </p>
 
         {/* Return Button */}

@@ -1663,7 +1663,7 @@ export default function UtmBuilderPage() {
                 <BookmarkPlus size={24} className="mx-auto text-black/30 dark:text-white/30" />
                 <p className="text-sm font-light text-black/60 dark:text-white/60">No custom templates saved yet.</p>
                 <p className="text-xs font-mono text-black/40 dark:text-white/40">
-                  Configure parameters in the Single Studio and click "Save as Template".
+                  Configure parameters in the Single Studio and click &quot;Save as Template&quot;.
                 </p>
               </div>
             )}

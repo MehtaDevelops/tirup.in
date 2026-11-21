@@ -6,13 +6,6 @@ import TextWithBlur from "@/components/text-with-blur"
 import QRCode from "qrcode"
 import {
   Sparkles,
-  Link as LinkIcon,
-  Globe,
-  Wifi,
-  User,
-  Mail,
-  MessageSquare,
-  FileText,
   Copy,
   Check,
   Download,
@@ -27,9 +20,6 @@ import {
   Search,
   Upload,
   X,
-  Calendar,
-  PhoneCall,
-  Code,
 } from "lucide-react"
 import SiteFooter from "@/components/site-footer"
 

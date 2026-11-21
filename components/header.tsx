@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import ExpressionAvatar from "@/components/expression-avatar"
 import ResumeModal from "@/components/resume-modal"
 import { LinkIcon } from "@/components/inline-link-icons"

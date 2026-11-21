@@ -91,7 +91,7 @@ export default function SkillsSection() {
       <div className="text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
         <TextWithBlur delay={50}>
           <p>
-            Over the years, I've developed a versatile skillset combining robust frontend architecture with secure systems development and intuitive design thinking.
+            Over the years, I&apos;ve developed a versatile skillset combining robust frontend architecture with secure systems development and intuitive design thinking.
           </p>
         </TextWithBlur>
       </div>

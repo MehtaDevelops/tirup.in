@@ -18,8 +18,8 @@ const STORAGE_KEY = "tirup_utm_attribution"
 
 declare global {
   interface Window {
-    dataLayer?: any[]
-    gtag?: (...args: any[]) => void
+    dataLayer?: unknown[]
+    gtag?: (...args: unknown[]) => void
   }
 }
 
@@ -130,7 +130,7 @@ export function getStoredUtmParams(): UtmParams | null {
 /**
  * Generic GA4 Event Tracker
  */
-export function trackEvent(eventName: string, params: Record<string, any> = {}) {
+export function trackEvent(eventName: string, params: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return
 
   try {

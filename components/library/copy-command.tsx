@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowUpRight, Check, Copy } from "lucide-react"
+import { Check, Copy } from "lucide-react"
 import { copyText } from "@/lib/utils"
 
 /**
