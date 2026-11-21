@@ -140,31 +140,6 @@ function normalTokens(u: Rgba, isDark: boolean, y: number): TintPalette {
   }
 }
 
-/** Near-complete light theme for very light picks (white reads white). */
-/* NOTE on weights: mixRgba(user, target, w) keeps w parts USER: so readable
-   dark-on-white tokens need SMALL w (almost all target). */
-function extremeLightTokens(u: Rgba): TintPalette {
-  const tx = (a: number) => {
-    const m = mixRgba(u, rgba(24, 24, 24, 1), 0.16)
-    return { ...m, a }
-  }
-  const dark = rgba(26, 26, 26)
-  return {
-    accent: mixRgba(u, dark, 0.16),
-    "tldr-accent": mixRgba(u, dark, 0.18),
-    bg: mixRgba(u, WHITE, 0.55),
-    fg: rgba(24, 24, 24),
-    card: mixRgba(u, WHITE, 0.8),
-    surface: mixRgba(u, rgba(241, 241, 242), 0.5),
-    "surface-deep": mixRgba(u, rgba(228, 228, 229), 0.45),
-    "surface-hover": mixRgba(u, rgba(233, 233, 234), 0.5),
-    "border-color": mixRgba(u, rgba(0, 0, 0, 0.14), 0.1),
-    "text-muted": tx(0.7),
-    "text-secondary": tx(0.84),
-    "text-primary": tx(0.93),
-  }
-}
-
 /** Near-complete dark theme for very dark picks (black reads black). */
 /* Same weight rule: w is the USER fraction: light readable tokens need
    SMALL w so the light target dominates. */

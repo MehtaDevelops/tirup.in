@@ -901,7 +901,6 @@ export function SelectionToolbar({
                       <div className="ms-auto flex items-center ps-2">
                         {stage === "gathering" &&
                           SOURCES.map((domain, index) => (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               key={domain}
                               src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}

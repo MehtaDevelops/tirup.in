@@ -1049,7 +1049,7 @@ export default function UtmBuilderPage() {
                       <span>Space Separator:</span>
                       <select
                         value={spaceSeparator}
-                        onChange={(e) => setSpaceSeparator(e.target.value as any)}
+                        onChange={(e) => setSpaceSeparator(e.target.value as "_" | "-" | "+" | "%20")}
                         aria-label="Space Separator"
                         className="px-2 py-1 rounded-none border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-900 text-black dark:text-white focus:outline-none"
                       >

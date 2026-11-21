@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element -- next/og ImageResponse cannot use next/image */
 import fs from "fs";
 import path from "path";
 
@@ -71,7 +70,6 @@ export interface OgShellProps {
 const INK = "#111111";
 
 export function OgShell({
-  kicker,
   title,
   excerpt,
   meta = [],

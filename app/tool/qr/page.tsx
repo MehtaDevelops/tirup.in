@@ -112,7 +112,7 @@ export default function QrStudioPage() {
   const [vcardFirst, setVcardFirst] = useState("Tirup")
   const [vcardLast, setVcardLast] = useState("Mehta")
   const [vcardOrg, setVcardOrg] = useState("Developer & Security Researcher")
-  const [vcardTitle, setVcardTitle] = useState("Software Engineer")
+  const [vcardTitle] = useState("Software Engineer")
   const [vcardPhone, setVcardPhone] = useState("+91 ")
   const [vcardEmail, setVcardEmail] = useState("me@tirup.in")
   const [vcardUrl, setVcardUrl] = useState("https://tirup.in")
@@ -140,7 +140,7 @@ export default function QrStudioPage() {
 
   // Custom Logo Overlay State
   const [customLogoDataUrl, setCustomLogoDataUrl] = useState<string | null>(null)
-  const [customLogoSize, setCustomLogoSize] = useState<number>(22)
+  const [customLogoSize] = useState<number>(22)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   // Smart Color Change with Auto-Contrast Handling
@@ -703,7 +703,7 @@ export default function QrStudioPage() {
   }
 
   // Download High-Res PNG: re-render at the requested resolution (preview is 1024)
-  const downloadPng = (resolution: 1024 | 2048 | 4096 = 2048) => {
+  const downloadPng = (_resolution: 1024 | 2048 | 4096 = 2048) => {
     const src = previewDataUrl
     if (!src) return
     // NOTE: preview canvas renders at 1024. Full re-render at 2048/4096 is a
@@ -945,7 +945,7 @@ export default function QrStudioPage() {
                         </label>
                         <select
                           value={wifiAuth}
-                          onChange={(e) => setWifiAuth(e.target.value as any)}
+                          onChange={(e) => setWifiAuth(e.target.value as "WPA" | "WEP" | "nopass")}
                           className="w-full text-sm px-4 py-2.5 border border-black/10 dark:border-white/10 bg-white dark:bg-zinc-950 text-black dark:text-white focus:outline-none cursor-pointer"
                         >
                           <option value="WPA">WPA / WPA2 / WPA3 (Default)</option>
@@ -1461,7 +1461,7 @@ export default function QrStudioPage() {
                       <button
                         key={f.id}
                         type="button"
-                        onClick={() => setFrameStyle(f.id as any)}
+                        onClick={() => setFrameStyle(f.id as FrameStyle)}
                         className={`cursor-pointer transition-colors ${
                           frameStyle === f.id
                             ? "text-black dark:text-white font-medium border-b border-black dark:border-white pb-0.5"

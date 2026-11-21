@@ -600,6 +600,7 @@ export default function GithubActivity3D({
       const id = requestAnimationFrame(() => flyPreset(view))
       return () => cancelAnimationFrame(id)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- flyPreset is recreated each render; the flight must only restart when `view` changes.
   }, [view])
 
   // Repaints bar emphasis for the selected day, the pointer-hovered bar,

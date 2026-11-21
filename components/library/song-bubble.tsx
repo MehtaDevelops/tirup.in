@@ -449,7 +449,6 @@ export default function SongBubble({
     const onPointerDown = (event: PointerEvent) => {
       const root = rootRef.current
       if (!root) return
-      const target = event.target as HTMLElement | null
       if (root.contains(event.target as Node)) return
       setExpanded(false)
       setEditing(false)

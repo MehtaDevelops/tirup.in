@@ -7,17 +7,17 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      // Newer React Compiler rules flag long-standing, working patterns
-      // (reset-on-open effects, ref reads). Surface them without blocking.
-      "@next/next/no-html-link-for-pages": "warn",
-      "@typescript-eslint/no-explicit-any": "warn",
-      "react/no-unescaped-entities": "warn",
-      "prefer-const": "warn",
-      "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/refs": "warn",
-      "react-hooks/purity": "warn",
-      "react-hooks/immutability": "warn",
-      "react-hooks/preserve-manual-memoization": "warn",
+      // This project does not use the React Compiler (no `reactCompiler` in
+      // next.config). These rules are its optimisation diagnostics; the flagged
+      // patterns (reset-on-open effects, ref reads in render) are valid React.
+      "react-hooks/set-state-in-effect": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/purity": "off",
+      "react-hooks/immutability": "off",
+      "react-hooks/preserve-manual-memoization": "off",
+      // Remaining <img> uses render user-generated data:/blob: URLs (QR
+      // previews, uploaded logos), which next/image cannot optimise.
+      "@next/next/no-img-element": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrors: "none" }],
     },
   },

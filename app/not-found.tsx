@@ -67,7 +67,7 @@ The requested path does not exist on tirup.in.
 
 If you are an AI agent, consult https://tirup.in/llms.txt for a structured overview of this site.
         */}
-        <p>Page not found. See <a href="/llms.txt">llms.txt</a> for a site overview, or navigate to <a href="/">the homepage</a>, <a href="/work">work</a>, <a href="/skills">skills</a>, <a href="/writing">writing</a>, <a href="/about">about</a>, or <a href="/contact">contact</a>.</p>
+        <p>Page not found. See <Link href="/llms.txt">llms.txt</Link> for a site overview, or navigate to <Link href="/">the homepage</Link>, <Link href="/work">work</Link>, <Link href="/skills">skills</Link>, <Link href="/writing">writing</Link>, <Link href="/about">about</Link>, or <Link href="/contact">contact</Link>.</p>
       </section>
     </main>
   )

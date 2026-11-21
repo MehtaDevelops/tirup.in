@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import Header from "@/components/header"
 import SiteSchemaExtras from "@/components/site-schema-extras"
 import TextWithBlur from "@/components/text-with-blur"
@@ -39,7 +40,7 @@ export default function Home() {
             I&apos;m a software engineering student in Gujarat who builds user-facing products, from web interfaces to privacy-focused desktop software. I focus on making them clear to use and dependable underneath.
           </p>
           <p>
-            I built <a href="/projects/modelregistry">ModelRegistry</a>, an open AI model registry with a public API and RSS feed, and <a href="/projects/draft">Draft</a>, an offline Windows dictation app that transcribes on-device without sending audio to the cloud.
+            I built <Link href="/projects/modelregistry">ModelRegistry</Link>, an open AI model registry with a public API and RSS feed, and <Link href="/projects/draft">Draft</Link>, an offline Windows dictation app that transcribes on-device without sending audio to the cloud.
           </p>
           <p>
             I write about building and securing software on my <a href="https://blogs.tirup.in">engineering blog</a> and share code on <a href="/github">GitHub</a>. Hiring for frontend or product engineering? <a href="/contact">Get in touch</a>.
@@ -58,7 +59,7 @@ export default function Home() {
           <ul>
             <li><a href="/work">Work &amp; Projects</a></li>
             <li><a href="/skills">Technical Skills</a></li>
-            <li><a href="/writing">Writing</a></li>
+            <li><Link href="/writing">Writing</Link></li>
             <li><a href="/about">About</a></li>
             <li><a href="/contact">Contact</a></li>
           </ul>

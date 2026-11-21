@@ -783,7 +783,7 @@ export default async function ProjectPage({ params }: PageProps) {
             </TextWithBlur>
           )}
 
-          {project.details && project.details.map((detail: any, index: number) => {
+          {project.details && project.details.map((detail: { title: string; content: string }, index: number) => {
             const baseIndex = (project.techStack ? 1 : 0) + (project.engine ? 1 : 0)
             const displayIndex = String(baseIndex + index + 1).padStart(2, "0")
 
@@ -812,7 +812,7 @@ export default async function ProjectPage({ params }: PageProps) {
                   <h2 className="text-xs md:text-sm uppercase tracking-[0.2em] text-black/45 dark:text-white/45">Metrics</h2>
                 </div>
                 <div className="col-span-1 md:col-span-2 grid grid-cols-2 gap-6 md:gap-8">
-                  {Object.entries(project.stats).map(([key, value]: [string, any]) => {
+                  {Object.entries(project.stats).map(([key, value]: [string, unknown]) => {
                     const isNum = isNumericMetric(String(value))
                     return (
                       <div key={key}>
@@ -826,7 +826,7 @@ export default async function ProjectPage({ params }: PageProps) {
                               : "text-base md:text-lg font-sans tracking-wide"
                           }`}
                         >
-                          {value}
+                          {String(value)}
                         </p>
                       </div>
                     )

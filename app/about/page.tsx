@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import Header from "@/components/header"
 import SiteSchemaExtras from "@/components/site-schema-extras"
 import SiteFooter from "@/components/site-footer"
@@ -104,9 +105,9 @@ export default function AboutPage() {
                 blogs.tirup.in
               </a>
               . Selected essays are syndicated to the{" "}
-              <a href="/writing" className="hover:text-black dark:hover:text-white transition-colors underline underline-offset-2">
+              <Link href="/writing" className="hover:text-black dark:hover:text-white transition-colors underline underline-offset-2">
                 /writing
-              </a>{" "}
+              </Link>{" "}
               section of this portfolio.
             </p>
           </div>

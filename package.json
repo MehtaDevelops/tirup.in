@@ -6,7 +6,7 @@
     "build": "next build",
     "prebuild": "node scripts/build-registry.mjs",
     "dev": "next dev",
-    "lint": "tsc --noEmit && eslint .",
+    "lint": "tsc --noEmit && eslint . --max-warnings=0",
     "start": "next start",
     "test": "node --test tests/agent-paths.test.ts tests/problem.test.ts tests/openapi.test.ts"
   },

@@ -24,11 +24,10 @@ type AnalyticsWindow = Window & {
 export default function DeferredAnalytics({ gtmId, gaId }: { gtmId: string; gaId: string }) {
   useEffect(() => {
     let started = false
-    let timer: number | undefined
 
     const stopListening = () => {
       for (const type of EVENTS) window.removeEventListener(type, start, true)
-      if (timer !== undefined) window.clearTimeout(timer)
+      window.clearTimeout(timer)
     }
 
     function start() {
@@ -64,7 +63,7 @@ export default function DeferredAnalytics({ gtmId, gaId }: { gtmId: string; gaId
     }
 
     for (const type of EVENTS) window.addEventListener(type, start, { passive: true, capture: true, once: true })
-    timer = window.setTimeout(start, FALLBACK_MS)
+    const timer = window.setTimeout(start, FALLBACK_MS)
 
     return stopListening
   }, [gtmId, gaId])

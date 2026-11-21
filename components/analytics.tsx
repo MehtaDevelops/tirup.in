@@ -8,6 +8,7 @@ export default function GoogleAnalytics() {
   return (
     <>
       {/* Tiny queue so events fired early are kept until the tags start. */}
+      {/* eslint-disable-next-line @next/next/no-before-interactive-script-outside-document -- the queue must exist before any early trackEvent() call; App Router supports beforeInteractive in the root layout tree. */}
       <Script id="analytics-queue" strategy="beforeInteractive">
         {`window.dataLayer=window.dataLayer||[];window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
         try{if(navigator&&navigator.doNotTrack==='1'){window.__DNT='1';}}catch(e){}`}
