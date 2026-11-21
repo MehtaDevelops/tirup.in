@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/lib/json-ld"
+
 type JsonValue =
   | string
   | number
@@ -10,7 +12,7 @@ export function JsonLd({ data }: { data: JsonValue }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }}
     />
   )
 }

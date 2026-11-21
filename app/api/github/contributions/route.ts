@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache"
 import { getMergedGitHubContributions } from "@/lib/github-contributions"
+import { rateLimitGuard, rateLimitHeaders } from "@/lib/problem"
 
 /**
  * Fresh contribution data for the Refresh button on /github.
@@ -17,7 +18,13 @@ import { getMergedGitHubContributions } from "@/lib/github-contributions"
 export const dynamic = "force-dynamic"
 export const revalidate = 0
 
-export async function GET() {
+export async function GET(request: Request): Promise<Response> {
+  // This route re-fetches upstream and flushes the /github ISR cache. Without a
+  // limit, any visitor can burn the GitHub quota and invalidate the cache on a
+  // loop. 10 refreshes per minute per IP is plenty for a manual button.
+  const { result, blocked } = rateLimitGuard(request, 10, 60_000)
+  if (blocked) return blocked
+
   try {
     const data = await getMergedGitHubContributions({ fresh: true })
 
@@ -40,6 +47,7 @@ export async function GET() {
       {
         status: 200,
         headers: {
+          ...rateLimitHeaders(result),
           "Cache-Control": "no-store, no-cache, must-revalidate",
         },
       }
@@ -54,6 +62,7 @@ export async function GET() {
       {
         status: 502,
         headers: {
+          ...rateLimitHeaders(result),
           "Cache-Control": "no-store, no-cache, must-revalidate",
         },
       }

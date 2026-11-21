@@ -132,8 +132,19 @@ export function rateLimitHeaders(result: RateLimitResult): Record<string, string
   return headers
 }
 
-/** Best-effort client identity for rate limiting. */
+/** Best-effort client identity for rate limiting.
+ *
+ * Single implementation shared with the ai-editor route: prefer Vercel's
+ * trusted `x-vercel-forwarded-for`, then fall back to the standard
+ * `x-forwarded-for` and `x-real-ip`. Two different extractors previously
+ * gave attackers a fresh bucket by choosing the header the other limiter did
+ * not read. */
 export function clientId(request: Request): string {
+  const vercelIp = request.headers.get("x-vercel-forwarded-for")
+  if (vercelIp) {
+    const first = vercelIp.split(",")[0]?.trim()
+    if (first) return first
+  }
   const forwarded = request.headers.get("x-forwarded-for")
   if (forwarded) {
     const first = forwarded.split(",")[0]?.trim()

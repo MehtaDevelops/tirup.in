@@ -54,7 +54,9 @@ export async function GET(request: Request): Promise<Response> {
   let posts: BlogPost[] = []
 
   try {
-    const res = await fetch(`${CONVEX_API_URL}/api/posts`, {
+    // Summary view: this endpoint returns metadata only, so there is no reason
+    // to transfer every article body from Convex.
+    const res = await fetch(`${CONVEX_API_URL}/api/posts?view=summary`, {
       next: { revalidate: 60 },
     })
     if (!res.ok) throw new Error(`upstream responded ${res.status}`)
@@ -62,7 +64,8 @@ export async function GET(request: Request): Promise<Response> {
     if (!Array.isArray(data)) throw new Error("upstream returned a non-array payload")
 
     posts = data
-      .filter((post: BlogPost) => post && post.slug && (post.status === "published" || !post.status))
+      // The summary endpoint only ever returns published posts (and omits `status`).
+      .filter((post: BlogPost) => post && post.slug)
       .sort((a: BlogPost, b: BlogPost) => {
         const ta = new Date(a.createdAt ?? "").getTime()
         const tb = new Date(b.createdAt ?? "").getTime()

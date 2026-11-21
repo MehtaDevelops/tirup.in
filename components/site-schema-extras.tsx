@@ -2,6 +2,8 @@
 // record, the two software projects, and third-party coverage of the author.
 // The layout keeps the site-wide identity graph (Person, Organization, WebSite,
 // ProfilePage); these entities are referenced from it by @id.
+import { serializeJsonLd } from "@/lib/json-ld"
+
 const writingSchema = {
   "@context": "https://schema.org",
   "@type": "Blog",
@@ -121,7 +123,7 @@ export default function SiteSchemaExtras() {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(extrasGraph) }}
+      dangerouslySetInnerHTML={{ __html: serializeJsonLd(extrasGraph) }}
     />
   )
 }

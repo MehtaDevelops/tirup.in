@@ -9,7 +9,8 @@ interface BlogPost {
   status?: string
 }
 
-// In-Memory DDoS Protection Cache
+// Process-local cache. On a serverless host each instance keeps its own copy,
+// so this is a load reducer, not a security control.
 let cachedRssXml: string | null = null
 let cacheTimestamp = 0
 const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour cache buffer
@@ -19,7 +20,6 @@ export async function GET() {
   const canonicalBase = "https://blogs.tirup.in"
   const now = Date.now()
 
-  // Return in-memory cached RSS XML instantly to prevent downstream database overload during DDoS
   if (cachedRssXml && now - cacheTimestamp < CACHE_TTL_MS) {
     return new NextResponse(cachedRssXml, {
       headers: {
@@ -30,17 +30,19 @@ export async function GET() {
     })
   }
 
-  let posts: BlogPost[] = []
+  // `null` means "we do not know", which is different from "there are no posts".
+  let posts: BlogPost[] | null = null
 
   try {
-    const res = await fetch(`${CONVEX_API_URL}/api/posts`, {
+    const res = await fetch(`${CONVEX_API_URL}/api/posts?view=summary`, {
       next: { revalidate: 3600 },
     })
     if (!res.ok) throw new Error(`Convex responded ${res.status}`)
     const data = await res.json()
     if (Array.isArray(data)) {
       posts = data
-        .filter((p) => p && p.slug && p.title && (p.status === "published" || !p.status))
+        // The summary endpoint only ever returns published posts (and omits `status`).
+        .filter((p) => p && p.slug && p.title)
         .sort((a, b) => {
           const ta = new Date(a.createdAt).getTime()
           const tb = new Date(b.createdAt).getTime()
@@ -55,7 +57,26 @@ export async function GET() {
     console.error("[RSS] Failed to fetch posts:", err)
   }
 
-  const escapeCdata = (s: string) => String(s ?? "").replace(/]]>/g, "]]&gt;")
+  // Never cache a failed read. Caching the empty document used to pin an empty
+  // feed for an hour after a single upstream blip, and the response told the
+  // CDN to keep it for another hour on top of that.
+  if (posts === null) {
+    return new NextResponse("Feed temporarily unavailable", {
+      status: 503,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Retry-After": "60",
+      },
+    })
+  }
+
+  // XML 1.0 forbids most C0 control characters; a stray one in a title makes
+  // the whole feed unparseable.
+  const escapeCdata = (s: string) =>
+    String(s ?? "")
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
+      .replace(/]]>/g, "]]&gt;")
   const pubDateOf = (d: string) => {
     const t = new Date(d)
     return isNaN(t.getTime()) ? new Date(0).toUTCString() : t.toUTCString()

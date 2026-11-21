@@ -14,6 +14,10 @@ import SiteFooter from "@/components/site-footer"
 
 interface BlogPost {
   title: string
+  // Crawler-facing title. blogs.tirup.in/[slug] uses `seoTitle || title` for
+  // <title>, OG and Twitter, so the mirror must read the same field or the two
+  // surfaces advertise different titles (Rule #1 parity field).
+  seoTitle?: string
   tldr: string
   contentHtml: string
   createdAt: string
@@ -58,7 +62,9 @@ export async function generateStaticParams() {
     // a stale list leaves freshly published posts out of the prerender
     // manifest, and the on-demand fallback for /writing/[slug] is what
     // throws on Vercel (every non-prerendered slug, valid or not, 500s).
-    const res = await fetch(`${API_BASE}/api/posts`, {
+    // Summary view: only slug/status/dates are needed, and it keeps every
+    // article body out of the build-time response.
+    const res = await fetch(`${API_BASE}/api/posts?view=summary`, {
       cache: "no-store",
     })
     if (!res.ok) return []
@@ -101,7 +107,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     if (isPublishedPost(data)) {
       // TL;DR is plain text on both sites (matches blogs.tirup.in metadata)
       const description = String(data.tldr ?? "").slice(0, 2000)
-      const title = String(data.title).slice(0, 200)
+      // Two-title system, identical to blogs.tirup.in/[slug]: crawlers get
+      // seoTitle, humans keep the short `title` in the H1.
+      const title = String(data.seoTitle || data.title).slice(0, 200)
       const originalUrl = `https://blogs.tirup.in/${encodeURIComponent(slug)}`
       return {
         title,
@@ -147,24 +155,34 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   let post: BlogPost | null = null
 
+  // Distinguish "no such post" from "the store is unreachable". Collapsing both
+  // into notFound() used to turn a Convex 5xx or timeout into a real 404 on
+  // every published article, cached for the revalidate window. A thrown error
+  // instead keeps the last good ISR copy serving and surfaces a 500 only when
+  // there is nothing cached yet.
+  let res: Response
   try {
-    const res = await fetch(`${API_BASE}/api/post?slug=${encodeURIComponent(slug)}`, {
+    res = await fetch(`${API_BASE}/api/post?slug=${encodeURIComponent(slug)}`, {
       next: { revalidate: 60 },
     })
-
-    if (res.ok) {
-      const data = await res.json()
-      if (isPublishedPost(data)) {
-        post = data
-      }
-    }
   } catch (err) {
-    console.error("[blog/page] Failed to fetch post:", err)
+    console.error("[blog/page] Failed to reach the post API:", err)
+    throw err
   }
 
-  if (!post) {
+  if (res.status === 404) {
     notFound()
   }
+  if (!res.ok) {
+    console.error(`[blog/page] Post API returned ${res.status} for ${slug}`)
+    throw new Error(`Post API unavailable (${res.status})`)
+  }
+
+  const data = await res.json().catch(() => null)
+  if (!isPublishedPost(data)) {
+    notFound()
+  }
+  post = data
 
   const formatDate = (dateStr: string) => {
     try {
@@ -180,8 +198,6 @@ export default async function BlogPostPage({ params }: PageProps) {
       return ""
     }
   }
-
-  const currentYear = new Date().getUTCFullYear()
 
   // ── Sanitize ALL content from the external API before rendering ─────────────
   // Fail CLOSED: never render raw HTML if the sanitizer throws.
@@ -212,7 +228,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   type RelatedPost = { slug: string; title: string; createdAt: string; readingTime: number; tags: string[] }
   let relatedPosts: RelatedPost[] = []
   try {
-    const listRes = await fetch(`${API_BASE}/api/posts`, { next: { revalidate: 60 } })
+    const listRes = await fetch(`${API_BASE}/api/posts?view=summary`, { next: { revalidate: 60 } })
     if (listRes.ok) {
       const raw = await listRes.json()
       if (Array.isArray(raw)) {
@@ -397,8 +413,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 
       <SiteFooter />
 
-      {/* TL;DR Animated Summary Popup: rendered as direct child of main to align on viewport edge on desktop */}
-      <TldrPopup safeTldrHtml={tldrText} />
+      {/* TL;DR Animated Summary Popup: rendered as direct child of main to align on viewport edge on desktop.
+          Suppressed when the body already carries a tldr-box, otherwise desktop
+          readers see the same summary twice (AGENTS.md §1.3). */}
+      {tldrText && !safeContentHtml.includes("tldr-box") && <TldrPopup safeTldrHtml={tldrText} />}
     </main>
   )
 }

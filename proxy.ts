@@ -262,7 +262,27 @@ Privacy-first, client-side developer utilities and marketing attribution tools b
 ## Agent Resources
 - Site guide: https://tirup.in/llms.txt
 - Sitemap: https://tirup.in/sitemap.xml
-`,
+`,
+  "/tools/utm-builder": `# UTM Builder: Tirup Mehta
+
+Full page: https://tirup.in/tools/utm-builder
+
+Privacy-first GA4 campaign URL generator and attribution studio with live channel grouping diagnostics and 12-channel bulk exports.
+
+## Agent Resources
+- Site guide: https://tirup.in/llms.txt
+- Sitemap: https://tirup.in/sitemap.xml
+`,
+  "/tool/qr": `# QR Studio: Tirup Mehta
+
+Full page: https://tirup.in/tool/qr
+
+Offline, client-side QR code generator: vector QR, Wi-Fi credentials, vCard, calendar events, print-ready SVG.
+
+## Agent Resources
+- Site guide: https://tirup.in/llms.txt
+- Sitemap: https://tirup.in/sitemap.xml
+`,
 }
 
 export function proxy(request: NextRequest) {
@@ -359,7 +379,9 @@ export function proxy(request: NextRequest) {
   // Even when not serving markdown, tell CDNs that this route varies by Accept
   // so a cached HTML response is never served to a markdown-requesting agent.
   if (MARKDOWN_ROUTES.has(pathname)) {
-    response.headers.set("Vary", "Accept, Accept-Encoding")
+    // Append rather than set: Next emits its own Vary (RSC, Next-Router-*) on
+    // HTML responses, and clobbering it can serve an RSC payload to a browser.
+    response.headers.append("Vary", "Accept, Accept-Encoding")
   }
 
   return response

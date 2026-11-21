@@ -88,12 +88,6 @@ const nextConfig = {
         // Apply to ALL routes
         source: "/(.*)",
         headers: [
-          // ── Prevent information leakage ──────────────────────────────────
-          {
-            key: "X-Powered-By",
-            // Overriding (Next.js already strips this, belt-and-suspenders)
-            value: "",
-          },
           // ── Transport security ───────────────────────────────────────────
           {
             key: "Strict-Transport-Security",

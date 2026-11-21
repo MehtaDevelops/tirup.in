@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server"
+import { clientId } from "@/lib/problem"
 
 // ─── Groq wiring (server-side only) ──────────────────────────────────────────
 // The key NEVER leaves the server: browsers call this same-origin route, which
@@ -160,12 +161,8 @@ function checkBudget(
 }
 
 function clientIp(request: NextRequest): string {
-  // Vercel sets this header itself, so a client cannot choose its own bucket
-  const vercelIp = request.headers.get("x-vercel-forwarded-for")
-  if (vercelIp) return vercelIp.split(",")[0].trim().slice(0, 64)
-  const fwd = request.headers.get("x-forwarded-for")
-  if (fwd) return fwd.split(",")[0].trim().slice(0, 64)
-  return request.headers.get("x-real-ip")?.slice(0, 64) || "unknown"
+  // Shared with lib/problem.clientId so both limiters read the same header.
+  return clientId(request).slice(0, 64) || "unknown"
 }
 
 // Defense-in-depth: only accept browser requests originating from this same
@@ -227,6 +224,14 @@ export async function POST(request: NextRequest) {
       { error: "Hourly question budget used. Try again later." },
       { status: 429, headers: { "Retry-After": String(hour.retryAfter) } }
     )
+  }
+
+  // The MAX_SELECTION / MAX_QUERY checks below run after JSON.parse. App Router
+  // route handlers have no automatic body limit, so a huge POST would be
+  // buffered and parsed first. Reject by Content-Length before reading.
+  const contentLength = Number(request.headers.get("content-length") ?? "0")
+  if (Number.isFinite(contentLength) && contentLength > 64 * 1024) {
+    return Response.json({ error: "Request body too large." }, { status: 413 })
   }
 
   let body: unknown

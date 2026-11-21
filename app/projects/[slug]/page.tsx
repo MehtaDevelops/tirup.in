@@ -4,6 +4,7 @@ import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
 import { ArrowUpRight } from "lucide-react"
 import { projectsData } from "@/lib/projects-data"
+import { serializeJsonLd } from "@/lib/json-ld"
 import { notFound } from "next/navigation"
 import SiteFooter from "@/components/site-footer"
 
@@ -726,7 +727,7 @@ export default async function ProjectPage({ params }: PageProps) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: serializeJsonLd({
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
               "name": project.title,

@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import Header from "@/components/header"
-import ListSpotlight from "@/components/list-spotlight"
 import TextWithBlur from "@/components/text-with-blur"
 import { ArrowUpRight } from "lucide-react"
 import { CONVEX_API_URL } from "@/lib/utils"
 import SiteFooter from "@/components/site-footer"
+import { PaginatedPosts, type PostSummary } from "@/components/paginated-posts"
 
 export const revalidate = 60
 
@@ -42,18 +41,21 @@ interface BlogPost {
 }
 
 export default async function BlogsPage() {
-  let posts: BlogPost[] = []
+  let posts: PostSummary[] = []
   let error = false
 
   try {
-    const res = await fetch(`${CONVEX_API_URL}/api/posts`, {
+    // Summary view: the list renders a title, a TL;DR and a date, so there is
+    // no reason to pull every article body across the wire.
+    const res = await fetch(`${CONVEX_API_URL}/api/posts?view=summary`, {
       next: { revalidate: 60 },
     })
     if (res.ok) {
       const data = await res.json()
       if (Array.isArray(data)) {
-        posts = data
-          .filter((post) => post && post.slug && (post.status === "published" || !post.status))
+        posts = (data as (BlogPost & { status?: string })[])
+          // The summary endpoint only returns published posts and omits `status`.
+          .filter((post) => post && post.slug)
           .sort((a, b) => {
             const ta = new Date(a.createdAt).getTime()
             const tb = new Date(b.createdAt).getTime()
@@ -64,7 +66,7 @@ export default async function BlogsPage() {
             if (bBad) return -1
             return tb - ta
           })
-          .slice(0, 10)
+          .map(({ slug, title, tldr, createdAt }) => ({ slug, title, tldr, createdAt }))
       } else {
         error = true
       }
@@ -76,73 +78,21 @@ export default async function BlogsPage() {
     error = true
   }
 
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr)
-      if (isNaN(date.getTime())) return ""
-      const day = String(date.getUTCDate()).padStart(2, "0")
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-      const month = months[date.getUTCMonth()]
-      const year = date.getUTCFullYear()
-      return `${day}.${month}.${year}`
-    } catch {
-      return ""
-    }
-  }
-
   return (
     <main className="relative min-h-screen flex flex-col">
       <Header />
 
-      {/* Blogs list Section: latest 10 titles only. Full essays live on blogs.tirup.in */}
+      {/* Writing index. Paginated exactly like blogs.tirup.in (10 per page) so
+          no post is reachable on one surface and missing from the other. */}
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-16">
         <h1 className="sr-only">Writing by Tirup Mehta</h1>
         {error ? (
           <div className="py-8">
             <p className="text-sm font-light text-black/40 dark:text-white/40">Failed to load articles. Please check back later.</p>
           </div>
-        ) : posts.length === 0 ? (
-          <div className="py-8">
-            <p className="text-sm font-light text-black/40 dark:text-white/40">No articles published yet.</p>
-          </div>
         ) : (
-          <ListSpotlight className="flex flex-col list-hover-group">
-            {posts.map((post, index) => {
-              return (
-                <TextWithBlur key={post.slug} delay={Math.min(index * 35, 140)}>
-                  <Link
-                    href={`/writing/${post.slug}`}
-                    className={[
-                      "group block",
-                      index === 0 ? "pb-5" : "py-5",
-                      index > 0 ? "border-t border-black/10 dark:border-white/10" : "",
-                      // Hover is color-only here: no background wash (ADR-0002).
-                      "[transition:transform_100ms_cubic-bezier(0.16,1,0.3,1)]",
-                      "active:scale-[0.99]",
-                    ].join(" ")}
-                  >
-                    <div className="flex flex-col gap-1.5">
-                      {/* Top line: title and date, mirroring the blog list exactly */}
-                      <div className="flex justify-between items-baseline gap-2 sm:gap-4">
-                        <h2 className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] text-base md:text-lg break-words leading-relaxed min-w-0 flex-1">
-                          {post.title}
-                        </h2>
-                        <span className="tabular-nums text-xs text-black/40 dark:text-white/40 select-none shrink-0 group-hover:text-black/60 dark:group-hover:text-white/60 [transition:color_80ms_ease-out] whitespace-nowrap">
-                          {formatDate(post.createdAt)}
-                        </span>
-                      </div>
-                      {post.tldr && (
-                        <p className="text-sm text-black/60 dark:text-white/55 group-hover:text-black/80 dark:group-hover:text-white/75 font-light leading-relaxed line-clamp-2 [transition:color_80ms_ease-out] pr-2 sm:pr-4 break-words">
-                          {post.tldr}
-                        </p>
-                      )}
-                    </div>
-                  </Link>
-                </TextWithBlur>
-              )
-            })}
-            {/* End border */}
-            <div className="border-t border-black/10 dark:border-white/10" />
+          <>
+            <PaginatedPosts posts={posts} pageSize={10} />
 
             {/* Read all blogs: sends readers to the main blogs site */}
             <TextWithBlur delay={120}>
@@ -158,7 +108,7 @@ export default async function BlogsPage() {
                 </a>
               </div>
             </TextWithBlur>
-          </ListSpotlight>
+          </>
         )}
       </section>
 

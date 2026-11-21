@@ -3,9 +3,8 @@ import { projectsData } from "@/lib/projects-data"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://tirup.in"
-  // Fixed build-time date so CDN can cache the sitemap (new Date() every
-  // request defeats caching).
-  const buildDate = new Date("2026-11-07T00:00:00Z")
+  // No <lastmod> for pages whose change date we do not track: an omitted
+  // value is honest, a build-time or hardcoded one is a false claim.
 
   // 1. Static Pages
   // /github is indexable again (see app/github/page.tsx) and self-canonical, so
@@ -13,7 +12,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = ["", "/work", "/skills", "/writing", "/about", "/contact", "/tools", "/tools/utm-builder", "/tool/qr", "/privacy", "/github"]
   const staticPages = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: buildDate,
     changeFrequency: "weekly" as const,
     priority: route === "" ? 1.0 : 0.8,
   }))
@@ -22,7 +20,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projectSlugs = Object.keys(projectsData)
   const projectPages = projectSlugs.map((slug) => ({
     url: `${baseUrl}/projects/${slug}`,
-    lastModified: buildDate,
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }))

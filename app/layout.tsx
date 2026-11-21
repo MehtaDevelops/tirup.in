@@ -11,6 +11,7 @@ import ThemeSync from "@/components/theme-sync"
 import ThemedTooltip from "@/components/themed-tooltip"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
 import UtmTracker from "@/components/utm-tracker"
+import { serializeJsonLd } from "@/lib/json-ld"
 
 // Fonts ship with the site (app/fonts); nothing is requested from Google at build or run time.
 const manrope = localFont({
@@ -262,7 +263,7 @@ export default function RootLayout({
         {/* JSON-LD Schemas for Search Engines */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGraph) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLdGraph) }}
         />
 
 
