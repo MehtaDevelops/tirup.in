@@ -306,7 +306,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Title */}
         <TextWithBlur delay={50}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-5 leading-[1.15] max-w-3xl font-medium break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-5 leading-[1.15] sm:leading-[1.15] md:leading-[1.15] max-w-3xl font-medium break-words">
             {safeTitle}
           </h1>
         </TextWithBlur>
