@@ -718,7 +718,15 @@ export function SelectionToolbar({
       .catch((err: unknown) => {
         clearTimers()
         // Keep the question pending so Try again reuses it verbatim.
-        setError(err instanceof Error ? err.message : "Something went wrong.")
+        // A rejected fetch (offline, DNS, dropped connection) surfaces as a bare
+        // TypeError whose message is the browser's "Failed to fetch"; say it plainly.
+        setError(
+          err instanceof TypeError
+            ? "Could not reach the server. Check your connection and try again."
+            : err instanceof Error
+              ? err.message
+              : "Something went wrong."
+        )
       })
   }
 
