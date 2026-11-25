@@ -18,8 +18,10 @@ const PROXIMITY_PX = 220
 const MOVE_GATE_MS = 80
 // Armed but never opened: release after this long.
 const UNUSED_RELEASE_MS = 45_000
-// Closed after use: release after this long (reopening within it is instant).
-const CLOSED_RELEASE_MS = 30_000
+// Closed after use: release quickly so the YouTube iframe (tens of MB) is
+// gone as soon as the card is not in use. Reopening re-boots it, which is the
+// trade the memory target asks for.
+const CLOSED_RELEASE_MS = 1_000
 
 function nearTrigger(x: number, y: number) {
   const el = document.querySelector("[data-notch-trigger]")
