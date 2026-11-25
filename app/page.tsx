@@ -37,7 +37,7 @@ export default function Home() {
 
           <h2>About</h2>
           <p>
-            I&apos;m a software engineering student in Gujarat who builds small user-facing products, from web interfaces to privacy-focused desktop software. I really focus on making them clear to use and dependable underneath.
+            I&apos;m a software engineering student in Gujarat who builds small user-facing products, from web interfaces to privacy-focused desktop software. I focus on making them clear to use and dependable underneath.
           </p>
           <p>
             I built <Link href="/projects/modelregistry">ModelRegistry</Link>, an open AI model registry with a public API and RSS feed, and <Link href="/projects/draft">Draft</Link>, an offline Windows dictation app that transcribes on-device without sending audio to the cloud.
@@ -82,7 +82,7 @@ export default function Home() {
         <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <TextWithBlur delay={150}>
             <p>
-              I&apos;m a software engineering student in Gujarat who builds small user-facing products, from web interfaces to privacy-focused desktop software. I really focus on making them clear to use and dependable underneath.
+              I&apos;m a software engineering student in Gujarat who builds small user-facing products, from web interfaces to privacy-focused desktop software. I focus on making them clear to use and dependable underneath.
             </p>
           </TextWithBlur>
 
