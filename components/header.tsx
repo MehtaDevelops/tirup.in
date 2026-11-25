@@ -60,17 +60,11 @@ function NavLinks({ pathname }: { pathname: string }) {
 // ---------------------------------------------------------------------------
 export default function Header() {
   const pathname = usePathname()
-  const [showPopup, setShowPopup] = useState(() => {
-    // Read once, synchronously, so a dismissed banner never flashes for a
-    // frame on navigation (which caused a layout-shift glitch on every route).
-    if (typeof window === "undefined") return true
-    return !localStorage.getItem("dismissedBlogPopup")
-  })
   const [isResumeOpen, setIsResumeOpen] = useState(false)
 
   const handleDismissPopup = () => {
-    setShowPopup(false)
-    localStorage.setItem("dismissedBlogPopup", "true")
+    try { localStorage.setItem("dismissedBlogPopup", "true") } catch { /* storage blocked */ }
+    document.documentElement.setAttribute("data-banner", "off")
   }
 
   const isHome = pathname === "/"
@@ -78,11 +72,10 @@ export default function Header() {
   return (
     <>
       {/* ── Top notice banner ────────────────────────────────────────────── */}
-      {showPopup && (
-        <div className="w-full bg-black/[0.015] dark:bg-white/[0.01] border-b border-black/5 dark:border-white/5 py-2.5 text-xs font-light text-black/50 dark:text-white/50">
+      <div className="blog-banner w-full bg-black/[0.015] dark:bg-white/[0.01] border-b border-black/5 dark:border-white/5 py-2.5 text-xs font-light text-black/50 dark:text-white/50">
           <div className="max-w-4xl mx-auto w-full px-6 md:px-20 flex items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-[#646DBB] dark:text-accent font-medium uppercase tracking-[0.15em] text-[10px]">blogs</span>
+              <span className="text-[#5b64b0] dark:text-accent font-medium uppercase tracking-[0.15em] text-[10px]">blogs</span>
               <span className="text-black/20 dark:text-white/20 select-none">/</span>
               <span>
                 <span className="hidden sm:inline">Thoughts on development, design, and security. Read at </span>
@@ -107,7 +100,6 @@ export default function Header() {
             </button>
           </div>
         </div>
-      )}
 
       {/* ── Avatar + name ────────────────────────────────────────────────── */}
       <div className="max-w-4xl mx-auto w-full px-6 md:px-20 pt-6 md:pt-28 pb-0">

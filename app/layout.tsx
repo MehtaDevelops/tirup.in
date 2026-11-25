@@ -337,6 +337,7 @@ export default function RootLayout({
     }
   } catch (e) {}
   d.classList.add('js')
+  try { if (localStorage.getItem('dismissedBlogPopup')) d.setAttribute('data-banner', 'off') } catch (e) {}
   window.setTimeout(function () { d.classList.remove('no-transitions') }, 100)
 })()`,
           }}

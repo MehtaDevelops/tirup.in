@@ -286,6 +286,12 @@ html.tint-drag *::after {
   background: rgba(124, 136, 232, 0.35);
 }
 
+/* Dismissed blog banner: hidden before paint from the inline theme script, so
+   the server and client trees always match (no hydration error, no shift). */
+html[data-banner="off"] .blog-banner {
+  display: none;
+}
+
 html {
   color-scheme: light;
   scroll-behavior: smooth;

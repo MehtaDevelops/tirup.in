@@ -7,6 +7,7 @@ import type {
   PointerEvent as ReactPointerEvent,
 } from "react"
 import { createPortal } from "react-dom"
+import { BorderBeam } from "@/components/beam-vendor"
 import {
   closeSongBubble,
   useSongBubbleOpen,
@@ -175,6 +176,9 @@ export default function NotchPlayer() {
   // Closing: keep the card mounted for a beat so it can animate out instead of
   // vanishing. Same idea for the deck (contents) when the card collapses.
   const [closing, setClosing] = useState(false)
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  )
   const [deckLeaving, setDeckLeaving] = useState(false)
   const wasOpenRef = useRef(false)
   const deckShownRef = useRef(false)
@@ -277,6 +281,15 @@ export default function NotchPlayer() {
         "*"
       )
     }
+  }, [])
+
+  useEffect(() => {
+    const el = document.documentElement
+    const sync = () => setIsDark(el.classList.contains("dark"))
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(el, { attributes: true, attributeFilter: ["class"] })
+    return () => observer.disconnect()
   }, [])
 
   // Open with the orb -> card expansion rather than a static fully-open
@@ -990,6 +1003,15 @@ export default function NotchPlayer() {
       <div
         className={`song-bubble-pop${!expanded && playing && hasVideo ? " is-orb-playing" : ""}${open ? "" : " is-closing"}`}
       >
+        <BorderBeam
+          size="md"
+          colorVariant="colorful"
+          theme={isDark ? "dark" : "light"}
+          active={playing}
+          strength={0.9}
+          borderRadius={expanded ? 18 : 28}
+          className={`song-bubble-beamwrap${expanded ? " is-expanded" : ""}`}
+        >
         <div
           className={`song-bubble-body${expanded ? " is-expanded" : ""}`}
           onPointerDown={onDragPointerDown}
@@ -1089,25 +1111,25 @@ export default function NotchPlayer() {
                         <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                       </svg>
                     </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        closeSongBubble()
+                      }}
+                      className="song-bubble-icon-btn song-bubble-close"
+                      aria-label="Close player"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                      </svg>
+                    </button>
                   </span>
                   <span className="song-bubble-artistrow">
                     <span className="song-bubble-artist">{artist}</span>
                     <Wave playing={playing} />
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    closeSongBubble()
-                  }}
-                  className="song-bubble-icon-btn song-bubble-close"
-                  aria-label="Close player"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <path d="M6 6l12 12M18 6L6 18" />
-                  </svg>
-                </button>
               </div>
 
               <div className="song-bubble-controls">
@@ -1242,6 +1264,7 @@ export default function NotchPlayer() {
             <span className="song-bubble-live" aria-hidden="true" />
           )}
         </div>
+        </BorderBeam>
       </div>
 
       <style>{`
@@ -1321,7 +1344,7 @@ export default function NotchPlayer() {
         }
         .song-bubble-body.is-expanded {
           width: 260px;
-          height: 152px;
+          height: 168px;
           border-radius: 18px;
           cursor: default;
           /* Expanding: the spring, so it grows with a little life. */
@@ -1340,7 +1363,7 @@ export default function NotchPlayer() {
         @media (max-width: 480px) {
           .song-bubble-body.is-expanded {
             width: min(260px, calc(100vw - 16px));
-            height: 152px;
+            height: 168px;
           }
         }
         .song-bubble-body:focus-visible {
@@ -1348,6 +1371,9 @@ export default function NotchPlayer() {
           outline-offset: 3px;
         }
 
+        .song-bubble-beamwrap {
+          display: block;
+        }
         .song-bubble-sheen {
           position: absolute;
           inset: 0;
@@ -1361,17 +1387,6 @@ export default function NotchPlayer() {
           );
           box-shadow: inset 0 0 0 1px var(--border-color);
         }
-        .song-bubble-body.is-expanded {
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.5),
-            0 8px 22px rgba(0, 0, 0, 0.35);
-        }
-        html:not(.dark) .song-bubble-body.is-expanded {
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.18),
-            0 8px 22px rgba(0, 0, 0, 0.1);
-        }
-
         .song-bubble-art {
           position: absolute;
           left: 7px;
@@ -1418,7 +1433,7 @@ export default function NotchPlayer() {
           right: 0;
           top: 0;
           bottom: 0;
-          padding: 18px 16px 14px;
+          padding: 18px 16px 10px;
           display: flex;
           flex-direction: column;
           gap: 10px;
@@ -1498,7 +1513,7 @@ export default function NotchPlayer() {
         }
         .song-bubble-close {
           flex: none;
-          margin-left: 2px;
+          margin-left: auto;
         }
         .song-bubble-title {
           min-width: 0;
@@ -1627,9 +1642,9 @@ export default function NotchPlayer() {
         .song-bubble-progressblock {
           display: flex;
           flex-direction: column;
-          gap: 5px;
-          margin: auto -16px -2px;
-          padding: 10px 16px 0;
+          gap: 10px;
+          margin: auto -16px 0;
+          padding: 6px 16px 0;
         }
         .song-bubble-progress {
           position: relative;
