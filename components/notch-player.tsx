@@ -1074,21 +1074,38 @@ export default function NotchPlayer() {
             >
               <div className="song-bubble-head">
                 <div className="song-bubble-titles">
-                  <span className="song-bubble-title">{title}</span>
-                  <span className="song-bubble-artist">{artist}</span>
+                  <span className="song-bubble-titlerow">
+                    <span className="song-bubble-title">{title}</span>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setEditing(true)
+                      }}
+                      className="song-bubble-icon-btn"
+                      aria-label="Play a different song"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                      </svg>
+                    </button>
+                  </span>
+                  <span className="song-bubble-artistrow">
+                    <span className="song-bubble-artist">{artist}</span>
+                    <Wave playing={playing} />
+                  </span>
                 </div>
-                <Wave playing={playing} />
                 <button
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation()
-                    setEditing(true)
+                    closeSongBubble()
                   }}
-                  className="song-bubble-icon-btn"
-                  aria-label="Play a different song"
+                  className="song-bubble-icon-btn song-bubble-close"
+                  aria-label="Close player"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <path d="M6 6l12 12M18 6L6 18" />
                   </svg>
                 </button>
               </div>
@@ -1230,6 +1247,13 @@ export default function NotchPlayer() {
       <style>{`
         .song-bubble-root {
           touch-action: none;
+        }
+        /* The card is focused programmatically so the keyboard lands here; the
+           global focus ring was drawing a loud indigo border around it. The
+           controls inside keep their own rings. */
+        .song-bubble-root:focus,
+        .song-bubble-root:focus-visible {
+          outline: none;
         }
         .song-bubble-pop {
           /* One shared motion language. --song-spring is a real damped spring
@@ -1451,15 +1475,41 @@ export default function NotchPlayer() {
           gap: 2px;
           cursor: grab;
         }
+        .song-bubble-titlerow {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          min-width: 0;
+        }
+        .song-bubble-titlerow .song-bubble-title {
+          flex: 0 1 auto;
+        }
+        .song-bubble-titlerow .song-bubble-icon-btn {
+          flex: none;
+        }
+        .song-bubble-artistrow {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-width: 0;
+        }
+        .song-bubble-artistrow .song-bubble-artist {
+          flex: 0 1 auto;
+        }
+        .song-bubble-close {
+          flex: none;
+          margin-left: 2px;
+        }
         .song-bubble-title {
           min-width: 0;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-size: 14.5px;
+          font-size: 15px;
           font-weight: 700;
+          letter-spacing: -0.01em;
           color: var(--fg);
-          line-height: 18px;
+          line-height: 19px;
           cursor: inherit;
         }
         .song-bubble-artist {
@@ -1467,9 +1517,10 @@ export default function NotchPlayer() {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-size: 11.5px;
+          font-size: 12px;
+          letter-spacing: -0.005em;
           color: var(--text-secondary);
-          line-height: 14px;
+          line-height: 15px;
           cursor: inherit;
         }
 
@@ -1582,7 +1633,7 @@ export default function NotchPlayer() {
         }
         .song-bubble-progress {
           position: relative;
-          height: 10px;
+          height: 12px;
           margin: 0 -16px;
           cursor: pointer;
           display: flex;
@@ -1593,17 +1644,17 @@ export default function NotchPlayer() {
           position: absolute;
           left: 0;
           right: 0;
-          height: 2px;
+          height: 3px;
           border-radius: 999px;
-          background: color-mix(in srgb, var(--fg) 16%, transparent);
+          background: color-mix(in srgb, var(--fg) 14%, transparent);
         }
         .song-bubble-progress-fill {
           position: relative;
           display: block;
-          height: 2px;
+          height: 3px;
           border-radius: 999px;
-          background: color-mix(in srgb, var(--fg) 92%, transparent);
-          transition: width 250ms linear;
+          background: color-mix(in srgb, var(--fg) 94%, transparent);
+          transition: width 180ms linear;
         }
         .song-bubble-progress--booting .song-bubble-progress-fill {
           width: 28% !important;
@@ -1626,9 +1677,11 @@ export default function NotchPlayer() {
         .song-bubble-times {
           display: flex;
           justify-content: space-between;
-          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-          font-size: 10px;
+          font-family: inherit;
+          font-variant-numeric: tabular-nums;
+          font-size: 11px;
           font-weight: 500;
+          letter-spacing: 0.01em;
           color: var(--text-muted);
         }
         @media (max-width: 480px) {
