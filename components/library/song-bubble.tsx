@@ -762,7 +762,19 @@ export default function SongBubble({
         )}`
       : null
 
-  if (!open || typeof document === "undefined") return null
+  // The store flips `open` on the first frame of the close; unmounting on that
+  // same frame would cut the exit animation. Hold the tree for its duration.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    if (open) {
+      setMounted(true)
+      return
+    }
+    const timer = window.setTimeout(() => setMounted(false), 300)
+    return () => window.clearTimeout(timer)
+  }, [open])
+
+  if (!mounted || typeof document === "undefined") return null
 
   const rootStyle: CSSProperties = { zIndex }
   if (pos && typeof pos.x === "number" && typeof pos.y === "number") {
@@ -784,7 +796,7 @@ export default function SongBubble({
       style={rootStyle}
     >
       <div
-        className={`song-bubble-pop${!expanded && playing && hasVideo ? " is-orb-playing" : ""}`}
+        className={`song-bubble-pop${!expanded && playing && hasVideo ? " is-orb-playing" : ""}${open ? "" : " is-closing"}`}
       >
         <div
           className={`song-bubble-body${expanded ? " is-expanded" : ""}`}
@@ -863,7 +875,7 @@ export default function SongBubble({
           )}
 
           {playerMode && (
-            <div className="song-bubble-deck">
+            <div className={`song-bubble-deck${open ? "" : " is-leaving"}`}>
               <div className="song-bubble-head">
                 <div className="song-bubble-titles">
                   <span className="song-bubble-titlerow">
@@ -1061,9 +1073,19 @@ export default function SongBubble({
           touch-action: none;
         }
         .song-bubble-pop {
+          /* One motion language: --song-ease settles, --song-spring keeps a
+             barely-there overshoot for the orb, --song-shut is the calm
+             accelerate-in used on the way back. */
+          --song-ease: cubic-bezier(0.22, 1, 0.36, 1);
+          --song-spring: cubic-bezier(0.32, 1.06, 0.36, 1);
+          --song-shut: cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           transform-origin: 0% 100%;
-          animation: song-bubble-in 520ms cubic-bezier(0.34, 1.35, 0.5, 1) both;
+          animation: song-bubble-in 440ms var(--song-spring) both;
+        }
+        .song-bubble-pop.is-closing {
+          pointer-events: none;
+          animation: song-bubble-out 280ms var(--song-shut) both;
         }
         .song-bubble-pop.is-orb-playing::after {
           content: "";
@@ -1075,8 +1097,12 @@ export default function SongBubble({
           animation: song-bubble-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes song-bubble-in {
-          from { opacity: 0; transform: translateY(28px) scale(0.7); }
+          from { opacity: 0; transform: translateY(14px) scale(0.92); }
           to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes song-bubble-out {
+          from { opacity: 1; transform: translateY(0) scale(1); }
+          to { opacity: 0; transform: translateY(8px) scale(0.94); }
         }
         @keyframes song-bubble-pulse {
           0% { transform: scale(0.94); opacity: 0.8; }
@@ -1096,10 +1122,10 @@ export default function SongBubble({
           user-select: none;
           -webkit-user-select: none;
           transition:
-            width 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            height 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            border-radius 500ms cubic-bezier(0.22, 1, 0.36, 1),
-            transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+            width 340ms var(--song-shut),
+            height 340ms var(--song-shut),
+            border-radius 340ms var(--song-shut),
+            transform 240ms var(--song-ease);
           will-change: width, height;
         }
         .song-bubble-body.is-expanded {
@@ -1107,6 +1133,11 @@ export default function SongBubble({
           height: 168px;
           border-radius: 18px;
           cursor: default;
+          transition:
+            width 520ms var(--song-spring),
+            height 520ms var(--song-spring),
+            border-radius 420ms var(--song-ease),
+            transform 240ms var(--song-ease);
         }
         @media (hover: hover) and (pointer: fine) {
           .song-bubble-body:not(.is-expanded):hover {
@@ -1195,11 +1226,19 @@ export default function SongBubble({
           display: flex;
           flex-direction: column;
           gap: 10px;
-          animation: song-bubble-fade-in 220ms ease-out 160ms both;
+          animation: song-bubble-fade-in 320ms var(--song-ease) 60ms both;
         }
         @keyframes song-bubble-fade-in {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        .song-bubble-deck.is-leaving {
+          pointer-events: none;
+          animation: song-bubble-fade-out 110ms ease-in both;
+        }
+        @keyframes song-bubble-fade-out {
+          from { opacity: 1; }
+          to { opacity: 0; }
         }
 
         .song-bubble-head {

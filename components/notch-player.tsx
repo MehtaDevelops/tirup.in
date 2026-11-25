@@ -1279,23 +1279,20 @@ export default function NotchPlayer() {
           outline: none;
         }
         .song-bubble-pop {
-          /* One shared motion language. --song-spring is a real damped spring
-             (about 4% overshoot) where linear() is supported, else a close
-             cubic-bezier; --song-out is a soft ease-out for settling. */
-          --song-spring: cubic-bezier(0.34, 1.35, 0.5, 1);
-          --song-out: cubic-bezier(0.22, 1, 0.36, 1);
+          /* One motion language: --song-ease is the settle curve, --song-spring
+             keeps a barely-there overshoot for the orb, --song-shut is the
+             calm accelerate-in used on the way back. */
+          --song-ease: cubic-bezier(0.22, 1, 0.36, 1);
+          --song-spring: cubic-bezier(0.32, 1.06, 0.36, 1);
+          --song-shut: cubic-bezier(0.4, 0, 0.2, 1);
+          --song-out: var(--song-ease);
           position: relative;
           transform-origin: 0% 100%;
-          animation: song-bubble-in 700ms var(--song-spring) both;
-        }
-        @supports (animation-timing-function: linear(0, 1)) {
-          .song-bubble-pop {
-            --song-spring: linear(0, 0.0331 2.5%, 0.1153 5%, 0.2256 7.5%, 0.3479 10%, 0.4706 12.5%, 0.5861 15%, 0.6895 17.5%, 0.7783 20%, 0.8519 22.5%, 0.9106 25%, 0.9556 27.5%, 0.9887 30%, 1.0117 32.5%, 1.0264 35%, 1.0347 37.5%, 1.0381 40%, 1.038 42.5%, 1.0356 45%, 1.0318 47.5%, 1.0272 50%, 1.0225 52.5%, 1.0179 55%, 1.0137 57.5%, 1.01 60%, 1.0069 62.5%, 1.0044 65%, 1.0024 67.5%, 1.001 70%, 0.9999 72.5%, 0.9992 75%, 0.9988 77.5%, 0.9986 80%, 0.9985 82.5%, 0.9986 85%, 0.9987 87.5%, 0.9989 90%, 0.9991 92.5%, 0.9992 95%, 0.9994 97.5%, 1);
-          }
+          animation: song-bubble-in 440ms var(--song-spring) both;
         }
         .song-bubble-pop.is-closing {
           pointer-events: none;
-          animation: song-bubble-out 260ms cubic-bezier(0.4, 0, 1, 1) both;
+          animation: song-bubble-out 280ms var(--song-shut) both;
         }
         .song-bubble-pop.is-orb-playing::after {
           content: "";
@@ -1307,12 +1304,12 @@ export default function NotchPlayer() {
           animation: song-bubble-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes song-bubble-in {
-          from { opacity: 0; transform: translateY(26px) scale(0.6); }
+          from { opacity: 0; transform: translateY(14px) scale(0.92); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes song-bubble-out {
           from { opacity: 1; transform: translateY(0) scale(1); }
-          to { opacity: 0; transform: translateY(14px) scale(0.86); }
+          to { opacity: 0; transform: translateY(8px) scale(0.94); }
         }
         @keyframes song-bubble-pulse {
           0% { transform: scale(0.94); opacity: 0.8; }
@@ -1333,13 +1330,14 @@ export default function NotchPlayer() {
           user-select: none;
           -webkit-user-select: none;
           touch-action: none;
-          /* Collapsing: a quick, calm ease-out (no bounce on the way in). */
+          /* Collapsing: calmer and shorter than the way in, so closing reads
+             as a light settle rather than a reverse of the open. */
           transition:
-            width 420ms var(--song-out),
-            height 420ms var(--song-out),
-            border-radius 420ms var(--song-out),
+            width 340ms var(--song-shut),
+            height 340ms var(--song-shut),
+            border-radius 340ms var(--song-shut),
             box-shadow 300ms ease,
-            transform 240ms var(--song-out);
+            transform 240ms var(--song-ease);
           will-change: width, height;
         }
         .song-bubble-body.is-expanded {
@@ -1347,13 +1345,14 @@ export default function NotchPlayer() {
           height: 168px;
           border-radius: 18px;
           cursor: default;
-          /* Expanding: the spring, so it grows with a little life. */
+          /* Expanding: one long ease-out, so the size change settles without
+             a wobble; the radius trails slightly to keep the corners calm. */
           transition:
-            width 720ms var(--song-spring),
-            height 720ms var(--song-spring),
-            border-radius 560ms var(--song-out),
+            width 520ms var(--song-spring),
+            height 520ms var(--song-spring),
+            border-radius 420ms var(--song-ease),
             box-shadow 400ms ease,
-            transform 240ms var(--song-out);
+            transform 240ms var(--song-ease);
         }
         @media (hover: hover) and (pointer: fine) {
           .song-bubble-body:not(.is-expanded):hover {
@@ -1438,22 +1437,23 @@ export default function NotchPlayer() {
           flex-direction: column;
           gap: 10px;
         }
-        /* Contents arrive in sequence just after the card starts growing. */
+        /* Contents arrive in sequence just after the card starts growing, then
+           leave together and fast, so the collapse never fights the text. */
         .song-bubble-deck > .song-bubble-head,
         .song-bubble-deck > .song-bubble-controls,
         .song-bubble-deck > .song-bubble-progressblock {
-          animation: song-bubble-rise 480ms var(--song-out) both;
+          animation: song-bubble-rise 320ms var(--song-ease) both;
         }
-        .song-bubble-deck > .song-bubble-head { animation-delay: 140ms; }
-        .song-bubble-deck > .song-bubble-controls { animation-delay: 200ms; }
-        .song-bubble-deck > .song-bubble-progressblock { animation-delay: 260ms; }
+        .song-bubble-deck > .song-bubble-head { animation-delay: 60ms; }
+        .song-bubble-deck > .song-bubble-controls { animation-delay: 100ms; }
+        .song-bubble-deck > .song-bubble-progressblock { animation-delay: 140ms; }
         @keyframes song-bubble-rise {
-          from { opacity: 0; transform: translateY(10px); }
+          from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
         }
         .song-bubble-deck.is-leaving {
           pointer-events: none;
-          animation: song-bubble-fade-out 170ms ease-in both;
+          animation: song-bubble-fade-out 110ms ease-in both;
         }
         @keyframes song-bubble-fade-out {
           from { opacity: 1; }
