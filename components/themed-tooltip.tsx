@@ -179,7 +179,6 @@ export default function ThemedTooltip() {
       className="themed-tip"
     >
       <div className="themed-tip-card">
-        <span className="themed-tip-dot" />
         <span className="themed-tip-text">{text}</span>
       </div>
       <span className="themed-tip-caret" />

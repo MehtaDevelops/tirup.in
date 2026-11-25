@@ -102,7 +102,7 @@ function Wave({ playing }: { playing: boolean }) {
       {[0, 1, 2].map((index) => (
         <span
           key={index}
-          className="w-[2.5px] rounded-[2px]"
+          className="w-[2.5px] rounded-full"
           style={{
             backgroundColor: ACCENT,
             height: 10,

@@ -66,7 +66,6 @@ export default function TldrPopup({ safeTldrHtml }: TldrPopupProps) {
       >
         <div className="flex items-center justify-between gap-2 mb-2">
           <span className="inline-flex items-center gap-2 text-xs sm:text-[13px] font-medium text-black/80 dark:text-white/80 tracking-tight">
-            <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--tldr-accent)]" />
             TL;DR Summary
           </span>
           <button

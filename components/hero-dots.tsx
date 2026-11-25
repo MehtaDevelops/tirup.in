@@ -28,12 +28,11 @@ const HINT_DELAY = 130
 
 type HintId = "tint" | "music" | "ascii"
 
-const HINTS: Record<HintId, { kicker: string; body: string; color: string }> = {
-  tint: { kicker: "Theme colour", body: "Repaint the whole site.", color: RED_DOT_DEFAULT },
-  music: { kicker: "Hidden track", body: "There is a song in the notch.", color: YELLOW_DOT_DEFAULT },
-  ascii: { kicker: "Liquid ASCII", body: "Drag to stir the ink.", color: GREEN_DOT_DEFAULT },
+const HINTS: Record<HintId, { kicker: string; body: string }> = {
+  tint: { kicker: "Theme colour", body: "Repaint the whole site." },
+  music: { kicker: "Hidden track", body: "There is a song in the notch." },
+  ascii: { kicker: "Liquid ASCII", body: "Drag to stir the ink." },
 }
-
 /**
  * The card that replaces the browser's native `title` tooltip.
  *
@@ -44,7 +43,7 @@ const HINTS: Record<HintId, { kicker: string; body: string; color: string }> = {
  * opened it.
  */
 function DotHint({ hint, visible }: { hint: HintId; visible: boolean }) {
-  const { kicker, body, color } = HINTS[hint]
+  const { kicker, body } = HINTS[hint]
 
   return (
     <div
@@ -54,7 +53,6 @@ function DotHint({ hint, visible }: { hint: HintId; visible: boolean }) {
       }`}
     >
       <div className="dot-hint-card relative flex items-center gap-2 whitespace-nowrap rounded-lg border px-2.5 py-1.5 shadow-[0_10px_30px_-14px_rgba(0,0,0,0.45)] backdrop-blur-md">
-        <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
         <span className="text-[11px] font-medium leading-none">{kicker}</span>
         <span className="dot-hint-body text-[11px] font-light leading-none">{body}</span>
       </div>

@@ -147,7 +147,7 @@ export function renderMarkdownSafe(text: string): string {
     // Inline code before italics so * inside code isn't parsed
     html = html.replace(
       /`(.+?)`/g,
-      '<code class="font-mono bg-black/5 dark:bg-white/5 px-1 py-0.5 rounded text-xs md:text-sm">$1</code>',
+      '<code class="font-mono bg-black/5 dark:bg-white/5 px-1 py-0.5 rounded-md text-xs md:text-sm">$1</code>',
     );
     // Italics: *text* only (avoid snake_case corruption); require non-space boundaries
     html = html.replace(/(^|\W)\*([^*\n]+?)\*(?=\W|$)/g, "$1<em>$2</em>");

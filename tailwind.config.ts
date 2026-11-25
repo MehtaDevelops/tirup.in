@@ -67,9 +67,18 @@ const config: Config = {
         white: "rgb(var(--white) / <alpha-value>)",
       },
       borderRadius: {
+        /* One radius across the site: every surface corner resolves to the
+           same token, so cards, popovers, inputs and buttons agree. Circles
+           and pills keep `rounded-full`. */
+        none: "0px",
+        sm: "var(--radius)",
+        DEFAULT: "var(--radius)",
+        md: "var(--radius)",
         lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        xl: "var(--radius)",
+        "2xl": "var(--radius)",
+        "3xl": "var(--radius)",
+        full: "9999px",
       },
       fontFamily: {
         sans: ["var(--font-manrope)", '"Manrope"', "system-ui", "-apple-system", "BlinkMacSystemFont", '"Segoe UI"', "Roboto", '"Helvetica Neue"', "Arial", "sans-serif"],

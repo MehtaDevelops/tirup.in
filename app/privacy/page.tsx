@@ -87,7 +87,7 @@ export default function PrivacyPage() {
               This site uses cookies set by Google Analytics to distinguish returning visitors
               and measure session duration. A light or dark theme preference is stored in your
               browser&apos;s localStorage and in a first-party cookie named
-              <code className="mx-1 rounded bg-black/5 px-1 py-0.5 text-[0.9em] dark:bg-white/10">tirup-theme</code>
+              <code className="mx-1 rounded-md bg-black/5 px-1 py-0.5 text-[0.9em] dark:bg-white/10">tirup-theme</code>
               so that this site and blogs.tirup.in open in the same mode. That cookie holds one
               word, <em>light</em> or <em>dark</em>, carries no identifier, and is never sent to a
               third party. No first-party session cookies, login cookies, or tracking pixels

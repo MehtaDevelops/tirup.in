@@ -150,7 +150,7 @@ export default function ThemeTintPicker({
               type="button"
               onClick={() => setMode(id)}
               aria-pressed={isDark === id}
-              className={`inline-flex items-center gap-1 rounded px-2.5 py-1.5 text-[11px] font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-black/40 dark:focus-visible:ring-white/60 ${
+              className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-[11px] font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-black/40 dark:focus-visible:ring-white/60 ${
                 isDark === id
                   ? "bg-black/[0.08] text-black dark:bg-white/[0.15] dark:text-white"
                   : "text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"

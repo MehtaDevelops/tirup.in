@@ -164,7 +164,7 @@ function Wave({ playing }: { playing: boolean }) {
       {[0, 1, 2].map((index) => (
         <span
           key={index}
-          className="song-bubble-wave-bar w-[2.5px] rounded-[2px]"
+          className="song-bubble-wave-bar w-[2.5px] rounded-full"
           style={{
             height: 10,
             animation: `song-bubble-wave-${index} 1s ease-in-out infinite`,

@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
 import TldrPopup from "@/components/tldr-popup"
+import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler"
 import { BlogContentRenderer } from "@/components/blog-content-renderer"
 import { ArticleAiToolbar } from "@/components/ui/article-ai-toolbar"
 import { sanitizeHtml } from "@/lib/sanitize"
@@ -286,27 +287,37 @@ export default async function BlogPostPage({ params }: PageProps) {
     <main className="relative min-h-dvh flex flex-col">
       <div className="section px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-16 max-w-4xl mx-auto w-full">
         
-        {/* Breadcrumb Header */}
+        {/* Breadcrumb Header + Theme Switcher on the right */}
         <TextWithBlur>
-          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/55 mb-5 sm:mb-7 select-none flex-wrap">
-            <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
-              <div className="shrink-0">
-                <ExpressionAvatar size={20} interactive={false} face="laugh" />
-              </div>
-              <span className="font-light">Tirup Mehta</span>
-            </Link>
-            <span aria-hidden="true" className="text-black/20 dark:text-white/20 select-none">›</span>
-            <Link href="/writing" className="hover:text-black dark:hover:text-white transition-colors font-light">
-              Writing
-            </Link>
-            {/* The article title is the H1 directly below, so repeating it here
-                only produced a mid-word truncation. */}
+          <div className="flex items-center justify-between gap-3 sm:gap-4 mb-5 select-none">
+            <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/55 min-w-0 flex-1 flex-wrap">
+              <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors shrink-0">
+                <div className="shrink-0">
+                  <ExpressionAvatar size={20} interactive={false} face="laugh" />
+                </div>
+                <span className="font-light whitespace-nowrap">Tirup Mehta</span>
+              </Link>
+              <span aria-hidden="true" className="text-black/20 dark:text-white/20 select-none">›</span>
+              <Link href="/writing" className="hover:text-black dark:hover:text-white transition-colors font-light shrink-0">
+                Writing
+              </Link>
+              {/* The article title is the H1 directly below, so repeating it here
+                  only produced a mid-word truncation. */}
+            </div>
+
+            {/* Right: Theme Switcher */}
+            <div className="flex items-center h-5 shrink-0">
+              <AnimatedThemeToggler
+                variant="circle"
+                className="hit-area flex items-center justify-center w-8 h-8 -my-1.5 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 border border-black/5 dark:border-white/5 transition-all duration-150 cursor-pointer shrink-0 active:scale-[0.97]"
+              />
+            </div>
           </div>
         </TextWithBlur>
 
         {/* Title */}
         <TextWithBlur delay={50}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-editorial italic text-black dark:text-white mb-5 leading-[1.15] sm:leading-[1.15] md:leading-[1.15] max-w-3xl font-medium break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-5 leading-[1.15] sm:leading-[1.15] md:leading-[1.15] max-w-3xl font-medium break-words">
             {safeTitle}
           </h1>
         </TextWithBlur>
@@ -345,7 +356,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               rel="noopener noreferrer"
               className="hit-area group text-xs text-black/40 dark:text-white/55 hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-0.5"
             >
-              <span className="link-hover pb-0.5">View on original site</span> <ArrowUpRight size={11} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
+              <span className="link-hover pb-0.5">View on original site</span> <ArrowUpRight size={13} className="opacity-40 -translate-y-[2.5px]" />
             </a>
           </div>
         </TextWithBlur>
@@ -355,7 +366,6 @@ export default async function BlogPostPage({ params }: PageProps) {
           <TextWithBlur delay={90}>
             <div className="tldr-box max-w-3xl mb-8 block md:hidden">
               <div className="tldr-header flex items-center gap-2.5 mb-2">
-                <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--tldr-accent)]" />
                 <span className="tldr-label text-xs sm:text-[13px] font-normal text-black dark:text-white">
                   TL;DR Summary
                 </span>

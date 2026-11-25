@@ -167,7 +167,7 @@ export function Playground({
                     aria-pressed={on}
                     onClick={() => set("fontFamily", f.family)}
                     style={f.family ? { fontFamily: f.family } : undefined}
-                    className={`h-7 min-w-0 flex items-center justify-center rounded-[6px] text-[12px] cursor-pointer transition-colors px-1 truncate ${
+                    className={`h-7 min-w-0 flex items-center justify-center rounded-md text-[12px] cursor-pointer transition-colors px-1 truncate ${
                       on
                         ? "bg-black dark:bg-white text-white dark:text-black"
                         : "text-black/45 dark:text-white/45 hover:text-black dark:hover:text-white"

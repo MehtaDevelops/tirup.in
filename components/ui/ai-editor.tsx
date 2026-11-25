@@ -767,7 +767,7 @@ export function SelectionToolbar({
         // text on the page.
         if (target.tagName !== "INPUT" && !target.closest(".ai-transcript")) event.preventDefault()
       }}
-      className="ai-toolbar group flex origin-bottom flex-col overflow-hidden rounded-[22px] border whitespace-nowrap shadow-lg"
+      className="ai-toolbar group flex origin-bottom flex-col overflow-hidden rounded-xl border whitespace-nowrap shadow-lg"
     >
       <div className="relative flex items-center gap-1 p-1.5">
         <button

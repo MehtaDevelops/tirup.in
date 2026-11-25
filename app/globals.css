@@ -25,6 +25,12 @@
   --text-secondary: rgba(17, 17, 17, 0.82);
   --text-primary: rgba(17, 17, 17, 0.93);
   --tldr-accent: var(--accent);
+  /* One corner radius for the whole surface: shadcn's lg/md/sm all derive
+     from this, and the popups (theme tint picker, player) match it. */
+  --radius: 12px;
+  /* Serif accent face. Same stack as blogs.tirup.in so the drop cap and the
+     page titles resolve identically on both surfaces (Rule #1). */
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   /* Manrope carries the running voice: one geometric grotesque instead of
      the browser-default Inter look. Sizes stay on the existing scale. */
   --font-body: var(--font-manrope), "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -242,7 +248,7 @@ html.tint-drag *::after {
   position: relative;
   margin: 0 auto 12px;
   background: #fff;
-  border-radius: 2px;
+  border-radius: 12px;
   overflow: hidden;
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.08),
@@ -349,7 +355,7 @@ body {
   font-weight: 600;
   color: var(--bg);
   background: var(--fg);
-  border-radius: 8px;
+  border-radius: 12px;
   transition: top 160ms var(--ease-spring);
 }
 .skip-link:focus-visible {
@@ -397,19 +403,13 @@ body {
   left: 0;
   right: 0;
   height: 1px;
-  border-radius: 2px;
+  border-radius: 12px;
   background: #d9d9d9;
   opacity: 1;
   transition: inherit;
 }
 .basic-link:hover::before {
   background: #666;
-}
-
-/* Editorial title face: Playfair, for the article H1 only. Everything else
-   keeps the neutral serif stack so the site does not read as two brands. */
-.font-editorial {
-  font-family: var(--font-playfair), "Playfair Display", ui-serif, Georgia, serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -722,7 +722,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
 }
 
 .group:hover .icon-arrow-hover {
-  transform: translate(1px, -1px) scale(1.1);
+  transform: translate(1px, -1px);
   opacity: 1 !important;
 }
 
@@ -927,7 +927,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
 .blog-content iframe {
   max-width: 100%;
   height: auto;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-top: 1.75rem;
   margin-bottom: 1.75rem;
 }
@@ -937,7 +937,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   background-color: #f7f8fa;
   border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 2.75rem 1.35rem 1.35rem 1.35rem;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   max-width: 100%;
@@ -971,7 +971,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   color: rgba(0, 0, 0, 0.45);
   background-color: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
   backdrop-filter: blur(8px);
@@ -1058,7 +1058,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   background-color: rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.06);
   padding: 0.15rem 0.42rem;
-  border-radius: 5px;
+  border-radius: 12px;
   color: var(--fg);
   overflow-wrap: break-word;
   font-weight: 400;
@@ -1084,7 +1084,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   margin-top: 1.75rem;
   margin-bottom: 1.75rem;
   background: rgba(138, 157, 255, 0.04);
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 12px 12px 0;
   font-style: normal;
   color: rgba(0, 0, 0, 0.85);
   max-width: 100%;
@@ -1118,7 +1118,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   -webkit-overflow-scrolling: touch;
   margin-top: 1.75rem;
   margin-bottom: 2rem;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.08);
   background-color: rgba(0, 0, 0, 0.01);
   box-sizing: border-box;
@@ -1145,7 +1145,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   -webkit-overflow-scrolling: touch;
   margin-top: 1.75rem;
   margin-bottom: 2rem;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -1273,7 +1273,7 @@ html.dark .tldr-box p {
     padding: 0.9rem 1rem;
     margin-top: 1.25rem;
     margin-bottom: 1.75rem;
-    border-radius: 10px;
+    border-radius: 12px;
   }
   .tldr-box .tldr-header {
     gap: 0.4rem;
@@ -1295,18 +1295,28 @@ html.dark .tldr-box p {
   }
 }
 
-/* Editorial drop cap style strictly only on the top-level first paragraph of blog articles */
+/* Editorial drop cap on the first paragraph of an article. The float box is
+   sized to exactly two text lines so the glyph fills that block. Sizing from
+   cap height alone (initial-letter: 2) reads as ~1.5 lines, because article
+   prose runs on a loose 1.84 line-height. */
 .blog-content > p:first-of-type::first-letter,
 .blog-content > .tldr-box + p::first-letter {
   float: left;
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  font-family: var(--font-serif);
   font-style: italic;
   font-weight: 500;
-  font-size: 58px;
-  line-height: 54px;
-  margin-top: 4px;
-  margin-right: 10px;
+  font-size: 80px;
+  line-height: 60px;
+  margin: 0 12px 0 0;
   color: var(--fg);
+}
+
+@media (min-width: 768px) {
+  .blog-content > p:first-of-type::first-letter,
+  .blog-content > .tldr-box + p::first-letter {
+    font-size: 84px;
+    line-height: 64px;
+  }
 }
 
 /* Reset drop-cap for any paragraph inside TL;DR boxes, callouts, or nested containers */
@@ -1318,6 +1328,8 @@ html.dark .tldr-box p {
 .tldr-box p::first-letter,
 .blog-content .tldr-box p::first-letter {
   float: none !important;
+  -webkit-initial-letter: normal !important;
+  initial-letter: normal !important;
   font-family: inherit !important;
   font-size: inherit !important;
   line-height: inherit !important;
@@ -1470,7 +1482,7 @@ html.dark .tldr-box p {
   margin-inline-start: auto;
   margin-bottom: 0.4375rem;
   padding: 0.3125rem 0.625rem;
-  border-radius: 0.875rem;
+  border-radius: 12px;
   background: color-mix(in srgb, var(--fg) 7%, transparent);
   color: color-mix(in srgb, var(--fg) 85%, transparent);
   font-size: 14px;
@@ -1721,7 +1733,7 @@ html.dark .tldr-box p {
   transform: skewX(-12deg);
 }
 .editor-mark[data-format="code"] {
-  border-radius: 0.3em;
+  border-radius: 12px;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -1857,7 +1869,7 @@ html[data-tint] .dot-hint-caret {
   align-items: center;
   gap: 8px;
   padding: 7px 11px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.07);
   background-color: rgba(255, 255, 255, 0.95);
   color: #111111;
@@ -1873,21 +1885,6 @@ html[data-tint] .dot-hint-caret {
 .themed-tip-text {
   display: block;
   overflow-wrap: anywhere;
-}
-
-/* Accent dot: pops in just after the card, same dot the TL;DR/hint cards use. */
-.themed-tip-dot {
-  flex: none;
-  width: 6px;
-  height: 6px;
-  border-radius: 9999px;
-  background-color: var(--tldr-accent, currentColor);
-  transform: scale(0);
-  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1) 70ms;
-}
-
-.themed-tip[data-open="true"] .themed-tip-dot {
-  transform: scale(1);
 }
 
 .themed-tip-caret {
@@ -1958,8 +1955,7 @@ html[data-tint] .themed-tip[data-placement="bottom"] .themed-tip-caret {
 
 @media (prefers-reduced-motion: reduce) {
   .themed-tip,
-  .themed-tip[data-open="true"],
-  .themed-tip-dot {
+  .themed-tip[data-open="true"] {
     transition: opacity 80ms linear, visibility 0s;
     transform: none;
   }

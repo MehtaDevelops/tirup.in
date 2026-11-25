@@ -94,7 +94,7 @@ export default function Home() {
 
           <TextWithBlur delay={250}>
             <p>
-              I write about building and securing software on my <InlineIconLink href="https://blogs.tirup.in" icon="code" external>engineering blog</InlineIconLink> and share code on <InlineIconLink href="/github" icon="branch">GitHub</InlineIconLink>. Hiring for frontend or product engineering? <InlineIconLink href="/contact" icon="mail">Get in touch</InlineIconLink>.
+              I write about building and securing software on my <InlineIconLink href="https://blogs.tirup.in" icon="code" external>engineering blog</InlineIconLink> and share code on <InlineIconLink href="/github" icon="github">GitHub</InlineIconLink>. Hiring for frontend or product engineering? <InlineIconLink href="/contact" icon="mail">Get in touch</InlineIconLink>.
             </p>
           </TextWithBlur>
         </div>

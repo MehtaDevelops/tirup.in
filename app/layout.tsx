@@ -20,16 +20,6 @@ const manrope = localFont({
   weight: "300 700",
 });
 
-const playfair = localFont({
-  src: [
-    { path: "./fonts/PlayfairDisplay-Variable.woff2", style: "normal", weight: "400 900" },
-    { path: "./fonts/PlayfairDisplay-Italic-Variable.woff2", style: "italic", weight: "400 900" },
-  ],
-  variable: "--font-playfair",
-  display: "swap",
-  preload: false,
-});
-
 const jetbrainsMono = localFont({
   src: "./fonts/JetBrainsMono-Variable.woff2",
   variable: "--font-jetbrains-mono",
@@ -267,7 +257,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth no-transitions" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${playfair.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#0a0a0a] text-[#111111] dark:text-[#fafafa] transition-colors duration-300 relative`} suppressHydrationWarning>
+      <body className={`${manrope.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#fdfdfc] dark:bg-[#0a0a0a] text-[#111111] dark:text-[#fafafa] transition-colors duration-300 relative`} suppressHydrationWarning>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <ThemeSync />
         <ThemedTooltip />

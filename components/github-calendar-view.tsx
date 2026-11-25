@@ -496,7 +496,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                 }`}
               >
                 <span>@TirupMehta</span>
-                <span className="text-[11px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal">Main</span>
+                <span className="text-[11px] px-1.5 py-0.2 rounded-md bg-black/5 dark:bg-white/10 font-normal">Main</span>
               </button>
               <button
                 onClick={() => {
@@ -559,7 +559,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                 </p>
               </div>
               <div
-                className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded shrink-0"
+                className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded-md shrink-0"
                 role="group"
                 aria-label="Graph camera view"
               >
@@ -573,7 +573,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                     key={id}
                     onClick={() => setView(id)}
                     aria-pressed={view === id}
-                    className={`px-2.5 py-1 text-[11px] rounded transition-colors cursor-pointer ${
+                    className={`px-2.5 py-1 text-[11px] rounded-md transition-colors cursor-pointer ${
                       view === id
                         ? "bg-black/[0.08] dark:bg-white/[0.15] text-black dark:text-white font-medium"
                         : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
@@ -671,7 +671,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                 <div className="flex items-center justify-between gap-2 pt-3 text-xs text-black/50 dark:text-white/50 font-light select-none">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs">Range:</span>
-                    <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
+                    <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded-md">
                       {(["3m", "6m", "1y"] as const).map((r) => (
                         <button
                           key={r}
@@ -679,7 +679,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                             setTimeRange(r)
                             setSelectedDay(null)
                           }}
-                          className={`px-1.5 py-0.5 text-[11px] rounded transition-colors uppercase cursor-pointer ${
+                          className={`px-1.5 py-0.5 text-[11px] rounded-md transition-colors uppercase cursor-pointer ${
                             timeRange === r
                               ? "bg-black/[0.08] dark:bg-white/[0.15] text-black dark:text-white font-medium"
                               : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
@@ -737,7 +737,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                 <div className="flex items-center gap-2 pt-3 text-xs text-black/50 dark:text-white/50 font-light select-none">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs">Range:</span>
-                    <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded">
+                    <div className="flex items-center gap-0.5 bg-black/[0.04] dark:bg-white/[0.06] p-0.5 rounded-md">
                       {(["3m", "6m", "1y"] as const).map((r) => (
                         <button
                           key={r}
@@ -745,7 +745,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
                             setTimeRange(r)
                             setSelectedDay(null)
                           }}
-                          className={`px-1.5 py-0.5 text-[11px] rounded transition-colors uppercase cursor-pointer ${
+                          className={`px-1.5 py-0.5 text-[11px] rounded-md transition-colors uppercase cursor-pointer ${
                             timeRange === r
                               ? "bg-black/[0.08] dark:bg-white/[0.15] text-black dark:text-white font-medium"
                               : "text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white"
@@ -777,7 +777,7 @@ export default function GitHubCalendarView({ data: initialData, dataUpdatedAt }:
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm md:text-base leading-relaxed">
                 <span className="font-medium text-black dark:text-white group-hover:text-accent [transition:color_80ms_ease-out] inline-flex items-center gap-1.5">
                   @TirupMehta
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 font-normal text-black/70 dark:text-white/70">Main Profile</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-black/5 dark:bg-white/10 font-normal text-black/70 dark:text-white/70">Main Profile</span>
                 </span>
                 <span className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
                 <span className="text-black/50 dark:text-white/50 font-light group-hover:text-black/70 dark:group-hover:text-white/70 [transition:color_80ms_ease-out] text-sm">
