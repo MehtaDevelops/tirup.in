@@ -198,6 +198,9 @@ export default function NotchPlayer() {
   const progress = duration > 0 ? Math.min(100, Math.max(0, (current / duration) * 100)) : 0
   const remaining = Math.max(0, duration - current)
   const muted = volume === 0
+  // The progress bar's "booting" shimmer belongs to the YouTube handshake.
+  // A local clip is ready as soon as it is the source, so never show it there.
+  const barReady = isLocal || widgetReady
   // The URL bar owns the card until a song is loaded; afterwards it only
   // comes back when the change-song button is pressed.
   const inputMode = expanded && (!hasVideo || editing)
@@ -1075,6 +1078,19 @@ export default function NotchPlayer() {
                   <span className="song-bubble-artist">{artist}</span>
                 </div>
                 <Wave playing={playing} />
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setEditing(true)
+                  }}
+                  className="song-bubble-icon-btn"
+                  aria-label="Play a different song"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                  </svg>
+                </button>
               </div>
 
               <div className="song-bubble-controls">
@@ -1170,26 +1186,13 @@ export default function NotchPlayer() {
                     <div className="song-bubble-rail-fill" style={{ width: `${volume}%` }} />
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    setEditing(true)
-                  }}
-                  className="song-bubble-icon-btn"
-                  aria-label="Play a different song"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-                  </svg>
-                </button>
               </div>
 
               <div className="song-bubble-progressblock">
                 <div
                   ref={progressRef}
-                  className={`song-bubble-progress${widgetReady ? "" : " song-bubble-progress--booting"}`}
-                  aria-busy={!widgetReady}
+                  className={`song-bubble-progress${barReady ? "" : " song-bubble-progress--booting"}`}
+                  aria-busy={!barReady}
                   onPointerDown={onProgressPointerDown}
                   role="slider"
                   tabIndex={0}
