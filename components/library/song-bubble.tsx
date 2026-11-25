@@ -866,10 +866,40 @@ export default function SongBubble({
             <div className="song-bubble-deck">
               <div className="song-bubble-head">
                 <div className="song-bubble-titles">
-                  <span className="song-bubble-title">{title}</span>
-                  <span className="song-bubble-artist">{artist}</span>
+                  <span className="song-bubble-titlerow">
+                    <span className="song-bubble-title">{title}</span>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setEditing(true)
+                      }}
+                      className="song-bubble-icon-btn"
+                      aria-label="Play a different song"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        closeSongBubble()
+                      }}
+                      className="song-bubble-icon-btn song-bubble-close"
+                      aria-label="Close player"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                      </svg>
+                    </button>
+                  </span>
+                  <span className="song-bubble-artistrow">
+                    <span className="song-bubble-artist">{artist}</span>
+                    <Wave playing={playing} />
+                  </span>
                 </div>
-                <Wave playing={playing} />
               </div>
 
               <div className="song-bubble-controls">
@@ -965,19 +995,6 @@ export default function SongBubble({
                     <div className="song-bubble-rail-fill" style={{ width: `${volume}%` }} />
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation()
-                    setEditing(true)
-                  }}
-                  className="song-bubble-icon-btn"
-                  aria-label="Play a different song"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-                  </svg>
-                </button>
               </div>
 
               <div className="song-bubble-progressblock">
@@ -1087,7 +1104,7 @@ export default function SongBubble({
         }
         .song-bubble-body.is-expanded {
           width: 260px;
-          height: 152px;
+          height: 168px;
           border-radius: 18px;
           cursor: default;
         }
@@ -1099,7 +1116,7 @@ export default function SongBubble({
         @media (max-width: 480px) {
           .song-bubble-body.is-expanded {
             width: calc(100vw - 32px);
-            height: 152px;
+            height: 168px;
           }
         }
         .song-bubble-body:focus-visible {
@@ -1120,17 +1137,6 @@ export default function SongBubble({
           );
           box-shadow: inset 0 0 0 1px var(--border-color, rgba(255, 255, 255, 0.12));
         }
-        .song-bubble-body.is-expanded {
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.5),
-            0 8px 22px rgba(0, 0, 0, 0.35);
-        }
-        html:not(.dark) .song-bubble-body.is-expanded {
-          box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.18),
-            0 8px 22px rgba(0, 0, 0, 0.1);
-        }
-
         .song-bubble-art {
           position: absolute;
           left: 7px;
@@ -1185,7 +1191,7 @@ export default function SongBubble({
           right: 0;
           top: 0;
           bottom: 0;
-          padding: 18px 16px 14px;
+          padding: 18px 16px 10px;
           display: flex;
           flex-direction: column;
           gap: 10px;
@@ -1210,15 +1216,41 @@ export default function SongBubble({
           gap: 2px;
           cursor: grab;
         }
+        .song-bubble-titlerow {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          min-width: 0;
+        }
+        .song-bubble-titlerow .song-bubble-title {
+          flex: 0 1 auto;
+        }
+        .song-bubble-titlerow .song-bubble-icon-btn {
+          flex: none;
+        }
+        .song-bubble-artistrow {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-width: 0;
+        }
+        .song-bubble-artistrow .song-bubble-artist {
+          flex: 0 1 auto;
+        }
+        .song-bubble-close {
+          flex: none;
+          margin-left: auto;
+        }
         .song-bubble-title {
           min-width: 0;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-size: 14.5px;
+          font-size: 15px;
           font-weight: 700;
+          letter-spacing: -0.01em;
           color: var(--fg, #fafafa);
-          line-height: 18px;
+          line-height: 19px;
           cursor: inherit;
         }
         .song-bubble-artist {
@@ -1226,9 +1258,10 @@ export default function SongBubble({
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          font-size: 11.5px;
+          font-size: 12px;
+          letter-spacing: -0.005em;
           color: var(--text-secondary, rgba(250, 250, 250, 0.66));
-          line-height: 14px;
+          line-height: 15px;
           cursor: inherit;
         }
 
@@ -1338,13 +1371,13 @@ export default function SongBubble({
         .song-bubble-progressblock {
           display: flex;
           flex-direction: column;
-          gap: 5px;
-          margin: auto -16px -2px;
-          padding: 10px 16px 0;
+          gap: 10px;
+          margin: auto -16px 0;
+          padding: 6px 16px 0;
         }
         .song-bubble-progress {
           position: relative;
-          height: 10px;
+          height: 12px;
           margin: 0 -16px;
           cursor: pointer;
           display: flex;
@@ -1355,17 +1388,17 @@ export default function SongBubble({
           position: absolute;
           left: 0;
           right: 0;
-          height: 2px;
+          height: 3px;
           border-radius: 999px;
-          background: color-mix(in srgb, var(--fg, #fafafa) 16%, transparent);
+          background: color-mix(in srgb, var(--fg, #fafafa) 14%, transparent);
         }
         .song-bubble-progress-fill {
           position: relative;
           display: block;
-          height: 2px;
+          height: 3px;
           border-radius: 999px;
-          background: color-mix(in srgb, var(--fg, #fafafa) 92%, transparent);
-          transition: width 250ms linear;
+          background: color-mix(in srgb, var(--fg, #fafafa) 94%, transparent);
+          transition: width 180ms linear;
         }
         .song-bubble-progress:focus-visible {
           outline: 2px solid color-mix(in srgb, var(--song-bubble-accent, #1ed760) 85%, transparent);
@@ -1375,9 +1408,11 @@ export default function SongBubble({
         .song-bubble-times {
           display: flex;
           justify-content: space-between;
-          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-          font-size: 10px;
+          font-family: inherit;
+          font-variant-numeric: tabular-nums;
+          font-size: 11px;
           font-weight: 500;
+          letter-spacing: 0.01em;
           color: var(--text-muted, rgba(250, 250, 250, 0.44));
         }
         @media (max-width: 480px) {

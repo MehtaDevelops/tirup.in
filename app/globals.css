@@ -1315,17 +1315,17 @@ html.dark .tldr-box p {
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 500;
-  font-size: 80px;
-  line-height: 60px;
-  margin: 0 12px 0 0;
+  font-size: 64px;
+  line-height: 56px;
+  margin: 3px 12px 0 0;
   color: var(--fg);
 }
 
 @media (min-width: 768px) {
   .blog-content > p:first-of-type::first-letter,
   .blog-content > .tldr-box + p::first-letter {
-    font-size: 84px;
-    line-height: 64px;
+    font-size: 68px;
+    line-height: 60px;
   }
 }
 
