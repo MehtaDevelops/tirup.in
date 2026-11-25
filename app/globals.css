@@ -944,7 +944,7 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   margin-top: 1.75rem;
   margin-bottom: 2rem;
   font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.935rem;
+  font-size: 1rem;
   line-height: 1.7;
   letter-spacing: -0.01em;
   color: #111827;
@@ -1062,6 +1062,16 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
   color: var(--fg);
   overflow-wrap: break-word;
   font-weight: 400;
+}
+
+/* Table cells hold short code tokens (prop names, types, defaults). Breaking
+   them mid-token turned one pill into two ragged pills; keep tokens whole and
+   let the table's own horizontal scroll absorb the width. */
+.blog-content td code,
+.blog-content th code {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 .dark .blog-content code {
   background-color: rgba(250, 250, 250, 0.07);
@@ -2028,27 +2038,46 @@ html[data-tint] .themed-tip[data-placement="bottom"] .themed-tip-caret {
   45% { transform: scale(1.35); }
 }
 
-.ai-flap {
-  transform-origin: 50% 0;
-}
-
-.group:hover .ai-flap,
-.group:focus-visible .ai-flap {
-  animation: ai-flap 0.9s ease-in-out;
-}
-
-@keyframes ai-flap {
-  0%, 100% { transform: scaleY(1); }
-  45% { transform: scaleY(-0.7); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .ai-draw,
   .ai-bar,
   .ai-code-l,
   .ai-code-r,
-  .ai-branch-dot,
-  .ai-flap {
+  .ai-branch-dot {
     animation: none !important;
   }
+}
+
+/* Components page live demo only: the same border beam the site's own player
+   uses, scoped here so the copy-paste component source stays free of it. */
+html[data-song-demo] .song-bubble-body.is-expanded::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--beam-angle, 0deg),
+    transparent 0deg 240deg,
+    rgba(124, 138, 248, 0) 262deg,
+    rgba(124, 138, 248, 0.85) 312deg,
+    rgba(255, 255, 255, 0.95) 330deg,
+    rgba(124, 138, 248, 0) 352deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: demo-beam-spin 5.5s linear infinite;
+}
+@property --beam-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes demo-beam-spin {
+  to { --beam-angle: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-song-demo] .song-bubble-body.is-expanded::after { animation: none; }
 }

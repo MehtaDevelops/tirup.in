@@ -81,19 +81,19 @@ export default function Home() {
         {/* Story Description Paragraphs */}
         <div className="space-y-6 text-base md:text-lg font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
           <TextWithBlur delay={150}>
-            <p>
+            <p className="[text-wrap:balance]">
               I&apos;m a software engineering student in Gujarat who builds user-facing products, from web interfaces to privacy-focused desktop software. I focus on making them clear to use and dependable underneath.
             </p>
           </TextWithBlur>
 
           <TextWithBlur delay={200}>
-            <p>
+            <p className="[text-wrap:balance]">
               I built <InlineIconLink href="/projects/modelregistry" icon="cube">ModelRegistry</InlineIconLink>, an open AI model registry with a public API and RSS feed, and <InlineIconLink href="/projects/draft" icon="wave">Draft</InlineIconLink>, an offline Windows dictation app that transcribes on-device without sending audio to the cloud.
             </p>
           </TextWithBlur>
 
           <TextWithBlur delay={250}>
-            <p>
+            <p className="[text-wrap:balance]">
               I write about building and securing software on my <InlineIconLink href="https://blogs.tirup.in" icon="code" external>engineering blog</InlineIconLink> and share code on <InlineIconLink href="/github" icon="github">GitHub</InlineIconLink>. Hiring for frontend or product engineering? <InlineIconLink href="/contact" icon="mail">Get in touch</InlineIconLink>.
             </p>
           </TextWithBlur>

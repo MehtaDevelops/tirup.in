@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowUpRight, Check, Copy, Play } from "lucide-react"
 import TextWithBlur from "@/components/text-with-blur"
 import ExpressionAvatar from "@/components/expression-avatar"
@@ -134,6 +134,13 @@ export default function SongBubbleDoc({
 }) {
   const [aiCopied, setAiCopied] = useState(false)
   const open = useSongBubbleOpen()
+
+  // The player portals to <body>, so the demo can't wrap it in a div. Flag the
+  // document instead: the beam styling below only applies on this page.
+  useEffect(() => {
+    document.documentElement.setAttribute("data-song-demo", "")
+    return () => document.documentElement.removeAttribute("data-song-demo")
+  }, [])
   let blockIndex = 0
   const next = () => String(++blockIndex).padStart(2, "0")
 

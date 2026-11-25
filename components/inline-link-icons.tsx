@@ -64,11 +64,13 @@ export const InlineIcons = {
       <path d="M9 18c-4.51 2-5-2-7-2" pathLength={1} className="ai-draw ai-draw-late" />
     </svg>
   ),
-  /** Envelope: get in touch. */
+  /** Envelope: get in touch. The flap redraws on hover, same as the other
+      line icons; the old scaleY flip folded the V through itself and read as
+      a glitch at 15px. */
   mail: (
     <svg {...base}>
       <rect x="3" y="5.5" width="18" height="13" rx="2.5" />
-      <path d="m3.5 7.5 8.5 6 8.5-6" className="ai-part ai-flap" />
+      <path d="m3.5 7.5 8.5 6 8.5-6" pathLength={1} className="ai-draw ai-draw-late" />
     </svg>
   ),
   /** Thin stem with a solid head: the arrow used on the Connect links. */
