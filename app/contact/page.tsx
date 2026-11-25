@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import Header from "@/components/header"
 import TextWithBlur from "@/components/text-with-blur"
-import { ArrowUpRight } from "lucide-react"
 import SiteFooter from "@/components/site-footer"
 
 export const metadata: Metadata = {
@@ -22,13 +21,13 @@ const channels = [
     name: "LinkedIn",
     handle: "linkedin.com/in/TirupMehta",
     href: "https://www.linkedin.com/in/TirupMehta",
-    note: "Preferred for professional outreach, partnership proposals, and contract inquiries.",
+    note: "Preferred for professional outreach and partnership inquiries.",
   },
   {
     name: "Peerlist",
     handle: "peerlist.io/tirupmehta",
     href: "https://peerlist.io/tirupmehta",
-    note: "Developer community profile. Good for peer-to-peer technical conversations.",
+    note: "Developer community profile. Good for peer-to-peer conversations.",
   },
   {
     name: "GitHub",
@@ -52,10 +51,11 @@ const channels = [
 
 export default function ContactPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       <section className="section px-6 md:px-20 pb-20 max-w-4xl mx-auto w-full">
+        <h1 className="sr-only">Contact Tirup Mehta</h1>
 
         {/* Intro */}
         <TextWithBlur delay={50}>
@@ -96,14 +96,22 @@ export default function ContactPage() {
                       {ch.handle}
                     </span>
                     {ch.note && (
-                      <>
-                        <span className="text-black/20 dark:text-white/20 select-none font-extralight hidden sm:inline">/</span>
-                        <span className="text-black/45 dark:text-white/45 font-light text-sm hidden sm:inline">
+                      <span className="hidden sm:inline-flex items-baseline gap-x-2">
+                        <span aria-hidden="true" className="text-black/20 dark:text-white/20 select-none font-extralight">/</span>
+                        <span className="text-black/45 dark:text-white/45 font-light text-sm">
                           {ch.note}
                         </span>
-                      </>
+                      </span>
                     )}
-                    <ArrowUpRight size={13} className="opacity-0 group-hover:opacity-40 icon-arrow-hover transition-opacity duration-300" />
+                    <span
+                      aria-hidden="true"
+                      className="hidden lg:inline-block h-[13px] w-[13px] shrink-0 opacity-0 transition-[opacity,transform] duration-300 ease-out group-hover:translate-x-px group-hover:opacity-40 [&>svg]:block [&>svg]:h-full [&>svg]:w-full"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6.5 17.5 15 9" />
+                        <path d="M9 6.5h8.5V15z" fill="currentColor" />
+                      </svg>
+                    </span>
                   </div>
                 </a>
               </div>
@@ -118,7 +126,7 @@ export default function ContactPage() {
               Available for
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-2 text-xs md:text-sm font-light text-black/55 dark:text-white/55">
-              <span>Freelance frontend &amp; fullstack engineering</span>
+              <span>Freelance frontend &amp; full-stack engineering</span>
               <span>Security review &amp; hardening</span>
               <span>Secure architecture consulting</span>
               <span>Open-source collaboration</span>

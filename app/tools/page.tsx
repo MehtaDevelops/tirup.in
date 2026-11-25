@@ -26,7 +26,7 @@ const tools = [
 
 export default function ToolsPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       {/* Tools Section */}

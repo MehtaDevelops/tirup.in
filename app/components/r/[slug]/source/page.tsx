@@ -124,7 +124,7 @@ export default async function RegistrySourcePage({ params }: { params: Promise<{
   const next = () => String(++blockIndex).padStart(2, "0")
 
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <div className="section px-6 md:px-20 pt-10 md:pt-28 pb-20 max-w-4xl mx-auto w-full">
 
         {/* Breadcrumb: same system as the component doc pages */}

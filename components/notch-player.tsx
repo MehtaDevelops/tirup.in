@@ -124,6 +124,7 @@ export default function NotchPlayer() {
   const pathname = usePathname()
   const rootRef = useRef<HTMLDivElement | null>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const currentRef = useRef(0)
   const playingRef = useRef(false)
   const widgetReadyRef = useRef(false)
@@ -143,6 +144,14 @@ export default function NotchPlayer() {
   const [url, setUrl] = useState("")
   const [error, setError] = useState("")
   const [videoId, setVideoId] = useState<string | null>(DEFAULT_VIDEO_ID)
+  // "default" plays /notch-default.mp3 through an <audio> element: zero idle
+  // cost, no third-party iframe. Pasted links switch to "youtube" and mount
+  // the embed, which is the only case that pays YouTube's boot cost and RAM.
+  // Decided at build from the file's presence, so no probe is needed at runtime.
+  const [source, setSource] = useState<"default" | "youtube">(
+    process.env.NEXT_PUBLIC_HAS_LOCAL_CLIP === "1" ? "default" : "youtube"
+  )
+  const isLocal = source === "default"
   const [title, setTitle] = useState(DEFAULT_TITLE)
   const [artist, setArtist] = useState(DEFAULT_ARTIST)
   const [thumbnail, setThumbnail] = useState(DEFAULT_THUMBNAIL)
@@ -209,6 +218,12 @@ export default function NotchPlayer() {
   }, [])
 
   const startPrebuffer = useCallback(() => {
+    if (isLocal) {
+      // Local default: no iframe to boot. Nudge the audio element for its
+      // metadata so the first click starts immediately.
+      if (!openRef.current) audioRef.current?.load()
+      return
+    }
     if (openRef.current || prebufferRef.current !== "idle") return
     if (!widgetReadyRef.current) {
       // Widget still booting: remember the intent, start as soon as it greets us.
@@ -226,7 +241,7 @@ export default function NotchPlayer() {
         postCommand("unMute")
       }
     }, 5000)
-  }, [postCommand])
+  }, [isLocal, postCommand])
 
   const finishPrebuffer = useCallback(() => {
     prebufferRef.current = "ready"
@@ -318,7 +333,17 @@ export default function NotchPlayer() {
   // Opening the yellow-dot bubble is the user's playback gesture. Send play
   // to the warmed iframe; autoplay stays disabled until this click.
   useEffect(() => {
-    if (!open || videoId !== DEFAULT_VIDEO_ID) return
+    if (!open) return
+    if (isLocal) {
+      const audio = audioRef.current
+      if (!audio) return
+      audio.load()
+      const attempt = audio.play()
+      if (attempt && typeof attempt.catch === "function") attempt.catch(() => {})
+      setPlaying(true)
+      return
+    }
+    if (videoId !== DEFAULT_VIDEO_ID) return
     // "ready": already paused and rewound to 0:00, so just unmute and play (a
     // second seek would make YouTube re-buffer). "buffering": still playing
     // muted, so restart it from the top.
@@ -330,12 +355,52 @@ export default function NotchPlayer() {
     if (phase === "buffering") postCommand("seekTo", [0, true])
     postCommand("unMute")
     postCommand("playVideo")
-  }, [open, postCommand, videoId])
+  }, [isLocal, open, postCommand, source, videoId])
+
+  // Mobile browsers only allow audio to start from inside the gesture. The
+  // card opens through a state update, so an effect can land after the tap has
+  // expired; starting playback on the dot's pointerdown keeps that gesture.
+  useEffect(() => {
+    const onTriggerDown = (event: PointerEvent) => {
+      const target = event.target
+      if (!(target instanceof Element) || !target.closest("[data-notch-trigger]")) return
+      if (openRef.current) return
+      if (isLocal) {
+        const audio = audioRef.current
+        if (!audio) return
+        audio.load()
+        const attempt = audio.play()
+        if (attempt && typeof attempt.catch === "function") attempt.catch(() => {})
+        return
+      }
+      // YouTube path: the widget is warmed while the dot is on screen, so
+      // these commands land inside the touch gesture instead of after it.
+      postCommand("unMute")
+      postCommand("playVideo")
+    }
+    document.addEventListener("pointerdown", onTriggerDown, true)
+    return () => document.removeEventListener("pointerdown", onTriggerDown, true)
+  }, [isLocal, postCommand, source])
 
   // Closing resets the chosen song, while the hidden default player remains
   // warm so the next click can start without booting a new YouTube iframe.
   useEffect(() => {
     if (open) return
+    if (isLocal) {
+      const audio = audioRef.current
+      if (audio) {
+        audio.pause()
+        audio.currentTime = 0
+      }
+      setExpanded(false)
+      setEditing(false)
+      setUrl("")
+      setError("")
+      setPlaying(false)
+      setCurrent(0)
+      setDuration(0)
+      return
+    }
     playingRef.current = false
     postCommand("pauseVideo")
     postCommand("seekTo", [0, true])
@@ -356,7 +421,7 @@ export default function NotchPlayer() {
       pendingRef.current = []
     }
     loadSeqRef.current += 1
-  }, [open, videoId, postCommand])
+  }, [isLocal, open, videoId, postCommand])
 
   useEffect(() => {
     setOrigin(window.location.origin)
@@ -445,7 +510,7 @@ export default function NotchPlayer() {
   // Keep the widget handshake alive before the first click, then ask for a
   // fresh currentTime/duration during playback and long re-buffers.
   useEffect(() => {
-    if (!videoId) return
+    if (isLocal || !videoId) return
     const tick = () => {
       const frame = iframeRef.current
       if (frame && !widgetReadyRef.current) {
@@ -463,22 +528,26 @@ export default function NotchPlayer() {
     tick()
     const interval = window.setInterval(tick, 500)
     return () => window.clearInterval(interval)
-  }, [open, videoId])
+  }, [isLocal, open, videoId])
 
   // A new video navigates the frame: the old widget dies and a fresh one
   // boots, so our "widget said hello" state has to reset with it.
   useEffect(() => {
-    if (!videoId) return
+    if (isLocal || !videoId) return
     widgetReadyRef.current = false
     setWidgetReady(false)
     prebufferRef.current = "idle"
     pendingRef.current = []
-  }, [videoId])
+  }, [isLocal, videoId])
 
   useEffect(() => {
+    if (isLocal) {
+      if (audioRef.current) audioRef.current.volume = Math.max(0, Math.min(1, volume / 100))
+      return
+    }
     if (!videoId) return
     postCommand("setVolume", [volume])
-  }, [videoId, volume, postCommand])
+  }, [isLocal, videoId, volume, postCommand])
 
   // Outside click collapses to the orb. It does not unmount: the yellow dot
   // is what turns the whole easter egg off. Theme changes are exempt — the
@@ -534,6 +603,12 @@ export default function NotchPlayer() {
     }
 
     if (seq !== loadSeqRef.current) return
+    const audio = audioRef.current
+    if (audio) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+    setSource("youtube")
     setThumbnail(`https://img.youtube.com/vi/${id}/mqdefault.jpg`)
     setVideoId(id)
     setCurrent(0)
@@ -545,6 +620,19 @@ export default function NotchPlayer() {
 
   const togglePlay = useCallback(() => {
     if (!videoId) return
+    if (isLocal) {
+      const audio = audioRef.current
+      if (!audio) return
+      if (playing) {
+        audio.pause()
+        setPlaying(false)
+      } else {
+        const attempt = audio.play()
+        if (attempt && typeof attempt.catch === "function") attempt.catch(() => {})
+        setPlaying(true)
+      }
+      return
+    }
     if (playing) {
       postCommand("pauseVideo")
       setPlaying(false)
@@ -552,13 +640,19 @@ export default function NotchPlayer() {
       postCommand("playVideo")
       setPlaying(true)
     }
-  }, [playing, postCommand, videoId])
+  }, [isLocal, playing, postCommand, videoId])
 
   const seekTo = useCallback(
     (seconds: number) => {
       if (!videoId) return
       const upper = duration > 0 ? duration : 0
       const next = Math.max(0, Math.min(seconds, upper))
+      if (isLocal) {
+        const audio = audioRef.current
+        if (audio) audio.currentTime = next
+        setCurrent(next)
+        return
+      }
       // Freeze embed-driven readouts briefly: far seeks in long videos
       // re-buffer, and without this the next infoDelivery snaps the bar
       // back to the pre-seek position while the seek is still landing.
@@ -566,7 +660,7 @@ export default function NotchPlayer() {
       postCommand("seekTo", [next, true])
       setCurrent(next)
     },
-    [duration, postCommand, videoId]
+    [duration, isLocal, postCommand, videoId]
   )
 
   const seekBy = useCallback(
@@ -584,6 +678,13 @@ export default function NotchPlayer() {
       const rect = bar.getBoundingClientRect()
       if (rect.width <= 0) return
       const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width))
+      if (isLocal) {
+        const next = ratio * duration
+        const audio = audioRef.current
+        if (audio) audio.currentTime = next
+        setCurrent(next)
+        return
+      }
       const now = Date.now()
       if (force || now - scrubRef.current.lastCommit > 120) {
         scrubRef.current.lastCommit = now
@@ -592,7 +693,7 @@ export default function NotchPlayer() {
       }
       setCurrent(ratio * duration)
     },
-    [duration, postCommand]
+    [duration, isLocal, postCommand]
   )
 
   useEffect(() => {
@@ -809,7 +910,7 @@ export default function NotchPlayer() {
   }
 
   const videoSrc =
-    videoId && origin && (open || pathname === "/")
+    source === "youtube" && videoId && origin && (open || pathname === "/")
       ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=0&origin=${encodeURIComponent(
           origin
         )}`
@@ -819,6 +920,31 @@ export default function NotchPlayer() {
 
   return (
     <>
+      {/* Local default clip. preload="none" means no bytes, no decoder and no
+          memory until the card is opened; a missing file falls back to the
+          YouTube default below, so the easter egg still works without it. */}
+      {isLocal && (
+        <audio
+          ref={audioRef}
+          src="/notch-default.mp3"
+          preload="none"
+          onLoadedMetadata={(event) => {
+            const value = event.currentTarget.duration
+            setDuration(Number.isFinite(value) ? value : 0)
+          }}
+          onTimeUpdate={(event) => setCurrent(event.currentTarget.currentTime)}
+          onPlay={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
+          onEnded={() => {
+            setPlaying(false)
+            setCurrent(0)
+          }}
+          onError={() => {
+            setSource("youtube")
+            setVideoId(DEFAULT_VIDEO_ID)
+          }}
+        />
+      )}
       {videoSrc && (
         <iframe
           ref={iframeRef}

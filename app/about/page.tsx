@@ -14,13 +14,13 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
       <SiteSchemaExtras />
 
       <section className="section px-6 md:px-20 pb-20 max-w-4xl mx-auto w-full">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-serif italic font-medium tracking-tight leading-tight text-black dark:text-white mb-8">
-          About Tirup Mehta
+        <h1 className="-mt-1 md:-mt-2 text-2xl sm:text-3xl md:text-4xl font-serif italic font-medium tracking-tight leading-tight text-black dark:text-white mb-6">
+          About Me
         </h1>
 
         <div className="space-y-8 text-base font-light text-black/70 dark:text-white/70 leading-relaxed max-w-3xl">
@@ -161,7 +161,7 @@ export default function AboutPage() {
       <SiteFooter
         note={
           <span data-nosnippet>
-            Son of Jayrambhai Mehta and Purviben Mehta, with love and gratitude.
+            Son of Jayrambhai Mehta and Purviben Mehta, with love and&nbsp;gratitude.
           </span>
         }
       />

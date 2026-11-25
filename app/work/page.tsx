@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       {/* Projects Section */}
@@ -59,8 +59,6 @@ export default function WorkPage() {
               </TextWithBlur>
             )
           })}
-          {/* End of list bottom border */}
-          <div className="border-t border-black/10 dark:border-white/10" />
         </ListSpotlight>
       </section>
 

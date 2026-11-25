@@ -45,7 +45,7 @@ export default function SiteFooter({ note }: SiteFooterProps) {
               className="inline-block cursor-pointer text-sm font-light text-black/50 underline decoration-black/20 underline-offset-4 transition-colors hover:text-black hover:decoration-black/40 dark:text-white/50 dark:decoration-white/20 dark:hover:text-white dark:hover:decoration-white/40"
             />
             {note ? (
-              <div className="pt-2 text-xs font-light leading-relaxed text-black/35 dark:text-white/35">
+              <div className="pt-2 text-xs font-light leading-relaxed text-black/35 dark:text-white/35 text-pretty">
                 {note}
               </div>
             ) : null}
@@ -72,12 +72,31 @@ export default function SiteFooter({ note }: SiteFooterProps) {
           </nav>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 border-t border-black/5 pt-4 text-xs text-black/40 dark:border-white/5 dark:text-white/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-3 border-t border-black/5 pt-4 text-xs text-black/40 dark:border-white/5 dark:text-white/55 sm:flex-row sm:items-center sm:justify-between">
           <p suppressHydrationWarning>© {currentYear} Tirup Mehta</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link href="/privacy" className={metaLinkClass}>Privacy</Link>
             <a href="/llms.txt" className={metaLinkClass}>llms.txt</a>
-            <a href="#main-content" className={metaLinkClass}>Back to top ↑</a>
+            <a href="#main-content" className={`${metaLinkClass} group inline-flex items-center gap-1`}>
+              Back to top
+              <span
+                aria-hidden="true"
+                className="inline-block h-3 w-3 opacity-60 transition-[opacity,transform] duration-200 ease-out group-hover:-translate-y-px group-hover:translate-x-px group-hover:opacity-100 motion-reduce:transition-none [&>svg]:block [&>svg]:h-full [&>svg]:w-full"
+              >
+                <svg
+                  className="-rotate-45"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M6.5 17.5 15 9" />
+                  <path d="M9 6.5h8.5V15z" fill="currentColor" />
+                </svg>
+              </span>
+            </a>
           </div>
         </div>
         </div>

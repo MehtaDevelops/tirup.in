@@ -79,12 +79,12 @@ export default async function BlogsPage() {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       {/* Writing index. Paginated exactly like blogs.tirup.in (10 per page) so
           no post is reachable on one surface and missing from the other. */}
-      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-16">
+      <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-8">
         <h1 className="sr-only">Writing by Tirup Mehta</h1>
         {error ? (
           <div className="py-8">
@@ -92,11 +92,15 @@ export default async function BlogsPage() {
           </div>
         ) : (
           <>
-            <PaginatedPosts posts={posts} pageSize={10} />
+            {/* The mirror only teases: eight latest posts, no pagination.
+                The full paginated archive lives on blogs.tirup.in and the
+                "Read all blogs" button below is the way there. The closing
+                rule is off so the button sits directly under the last row. */}
+            <PaginatedPosts posts={posts.slice(0, 8)} pageSize={8} showEndBorder={false} />
 
             {/* Read all blogs: sends readers to the main blogs site */}
             <TextWithBlur delay={120}>
-              <div className="pt-8 pb-2 flex justify-start">
+              <div className="pt-3 flex justify-start">
                 <a
                   href="https://blogs.tirup.in"
                   target="_blank"

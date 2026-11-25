@@ -25,7 +25,7 @@ export default async function GitHubActivityPage() {
   // old the payload actually is rather than pretending it just arrived.
   const dataUpdatedAt = Date.now()
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       {/* GitHub Activity Section */}

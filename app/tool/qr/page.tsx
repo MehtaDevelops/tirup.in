@@ -803,7 +803,7 @@ export default function QrStudioPage() {
     }
   }, [payloadType])
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       <section className="section max-w-4xl mx-auto w-full px-6 md:px-20 pb-20">

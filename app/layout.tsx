@@ -1,12 +1,11 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import PageTransition from "@/components/page-transition"
 import NotchPlayer from "@/components/notch-player-lazy"
-import AmbientShader from "@/components/ambient-shader"
 import ThemeSync from "@/components/theme-sync"
 import ThemedTooltip from "@/components/themed-tooltip"
 import GoogleAnalytics, { GoogleTagManagerNoscript } from "@/components/analytics"
@@ -38,6 +37,11 @@ const jetbrainsMono = localFont({
   display: "swap",
   weight: "100 800",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#fdfdfc",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://tirup.in"),
   title: {
@@ -267,7 +271,6 @@ export default function RootLayout({
         <a href="#main-content" className="skip-link">Skip to content</a>
         <ThemeSync />
         <ThemedTooltip />
-        <AmbientShader />
         <GoogleAnalytics />
         <UtmTracker />
         {/* JSON-LD Schemas for Search Engines */}
@@ -301,11 +304,26 @@ export default function RootLayout({
     try { document.cookie = 'tirup-theme=' + m + '; Path=/; Max-Age=31536000; SameSite=Lax' + attrs } catch (e) {}
   }
   try {
-    var m = (document.cookie.match(/(?:^|;\\s*)tirup-theme=(dark|light)(?:;|$)/) || [])[1]
+    var m
+    var pairs = document.cookie.split('; ')
+    for (var i = pairs.length - 1; i >= 0; i--) {
+      var kv = pairs[i].split('=')
+      if (kv[0] === 'tirup-theme' && (kv[1] === 'dark' || kv[1] === 'light')) { m = kv[1]; break }
+    }
+    var fromSystem = false
     if (m !== 'dark' && m !== 'light') { try { m = localStorage.getItem('theme') } catch (e) {} }
-    if (m !== 'dark' && m !== 'light') m = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'
+    if (m !== 'dark' && m !== 'light') {
+      fromSystem = true
+      m = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'
+    }
     if (m === 'dark') d.classList.add('dark'); else d.classList.remove('dark')
-    save(m)
+    // Persist only an explicit or remembered choice. Writing the OS fallback
+    // used to freeze the system preference at the first visit forever.
+    if (!fromSystem) save(m)
+    try {
+      var mc = document.querySelector('meta[name="theme-color"]')
+      if (mc) mc.setAttribute('content', m === 'dark' ? '#0a0a0a' : '#fdfdfc')
+    } catch (e) {}
   } catch (e) {}
   try {
     var u = localStorage.getItem('tirup-tint')

@@ -77,7 +77,7 @@ export default function CopyEmail({ email, className }: CopyEmailProps) {
       </span>
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute bottom-full left-0 mb-2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-black px-2.5 py-1 text-[11px] font-medium leading-none text-white shadow-[0_6px_18px_-8px_rgba(0,0,0,0.5)] transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none dark:bg-white dark:text-black ${
+        className={`pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-black px-2.5 py-1 text-[11px] font-medium leading-none text-white shadow-[0_6px_18px_-8px_rgba(0,0,0,0.5)] transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none dark:bg-white dark:text-black ${
           copied ? "translate-y-0 scale-100 opacity-100" : "translate-y-1 scale-95 opacity-0"
         }`}
       >

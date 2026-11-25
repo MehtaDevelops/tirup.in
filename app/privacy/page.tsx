@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       <section className="section px-6 md:px-20 pb-20 max-w-4xl mx-auto w-full">

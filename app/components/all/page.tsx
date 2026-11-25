@@ -26,7 +26,7 @@ const components = [
 
 export default function AllComponentsPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       {/* Components index: same row system as the tools page */}

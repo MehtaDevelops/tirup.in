@@ -89,7 +89,7 @@ export default function DocsPage() {
   let blockIndex = 0
 
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <div className="section px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-16 max-w-4xl mx-auto w-full">
 
         {/* Breadcrumb: same as writing detail pages */}

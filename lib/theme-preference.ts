@@ -42,10 +42,18 @@ export function persistTheme(mode: ThemeMode) {
     /* storage blocked: the cookie below still carries the preference */
   }
   try {
+    // Clear any legacy host-only cookie first. Browsers send it alongside the
+    // shared .tirup.in one, and it used to shadow the newer value on read.
+    document.cookie = `${THEME_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax`
+  } catch {
+    /* ignore: the write below still applies */
+  }
+  try {
     document.cookie = `${THEME_COOKIE}=${mode}; Path=/; Max-Age=${MAX_AGE}; SameSite=Lax${cookieAttributes()}`
   } catch {
     /* cookies blocked: this origin keeps working from localStorage */
   }
+  applyThemeColor(mode)
 }
 
 /**
@@ -55,8 +63,15 @@ export function persistTheme(mode: ThemeMode) {
  */
 export function resolveTheme(): ThemeMode {
   try {
-    const match = document.cookie.match(/(?:^|;\s*)tirup-theme=(dark|light)(?:;|$)/)
-    if (match) return match[1] as ThemeMode
+    // Last match wins. A legacy host-only cookie sorts ahead of the shared
+    // .tirup.in one, so reading the first match could return a stale value.
+    const pairs = document.cookie.split("; ")
+    for (let i = pairs.length - 1; i >= 0; i--) {
+      const value = pairs[i].startsWith(`${THEME_COOKIE}=`)
+        ? pairs[i].slice(THEME_COOKIE.length + 1)
+        : ""
+      if (value === "dark" || value === "light") return value
+    }
   } catch {
     /* cookies blocked: fall through to localStorage */
   }
@@ -69,7 +84,15 @@ export function resolveTheme(): ThemeMode {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 }
 
+/** Keep the browser chrome (mobile address bar, PWA title bar) on the page. */
+export function applyThemeColor(mode: ThemeMode) {
+  const meta = document.querySelector('meta[name="theme-color"]')
+  if (!meta) return
+  meta.setAttribute("content", mode === "dark" ? "#0a0a0a" : "#fdfdfc")
+}
+
 /** Apply a mode to <html> without persisting anything. */
 export function applyTheme(mode: ThemeMode) {
   document.documentElement.classList.toggle("dark", mode === "dark")
+  applyThemeColor(mode)
 }

@@ -42,7 +42,7 @@ function NavLinks({ pathname }: { pathname: string }) {
           href={href}
           style={{ transition: "color 160ms ease-out" }}
           className={[
-            "py-1 text-sm sm:text-base md:text-lg font-light select-none cursor-pointer",
+            "hit-area py-1 text-sm sm:text-base md:text-lg font-light select-none cursor-pointer",
             isLinkActive(href)
               ? "text-black dark:text-white"
               : "text-zinc-500 dark:text-zinc-400 hover:text-black dark:hover:text-white",
@@ -131,7 +131,7 @@ export default function Header() {
           <button
             type="button"
             onClick={() => setIsResumeOpen(true)}
-            className="group inline-flex items-center gap-1 pl-4 pr-3 h-8 text-xs font-medium tracking-wide rounded-full border bg-transparent transition-all duration-150 select-none cursor-pointer shrink-0 active:scale-[0.97] border-[rgba(18,19,20,0.15)] hover:border-[rgba(18,19,20,0.3)] hover:bg-[rgba(18,19,20,0.05)] text-[rgba(18,19,20,0.7)] hover:text-black dark:border-[rgba(255,255,255,0.07)] dark:hover:border-[rgba(255,255,255,0.16)] dark:hover:bg-[rgba(255,255,255,0.05)] dark:text-[rgba(244,244,245,0.7)] dark:hover:text-white"
+            className="hit-area group inline-flex items-center gap-1 pl-4 pr-3 h-8 text-xs font-medium tracking-wide rounded-full border bg-transparent transition-all duration-150 select-none cursor-pointer shrink-0 active:scale-[0.97] border-[rgba(18,19,20,0.15)] hover:border-[rgba(18,19,20,0.3)] hover:bg-[rgba(18,19,20,0.05)] text-[rgba(18,19,20,0.7)] hover:text-black dark:border-[rgba(255,255,255,0.07)] dark:hover:border-[rgba(255,255,255,0.16)] dark:hover:bg-[rgba(255,255,255,0.05)] dark:text-[rgba(244,244,245,0.7)] dark:hover:text-white"
           >
             <span className="leading-none select-none">Resume</span>
             <LinkIcon name="arrow" />
@@ -147,7 +147,7 @@ export default function Header() {
           {/* Theme switcher */}
           <AnimatedThemeToggler
             variant="circle"
-            className="flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-150 cursor-pointer shrink-0 active:scale-[0.97]"
+            className="hit-area flex items-center justify-center w-8 h-8 rounded-full text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-150 cursor-pointer shrink-0 active:scale-[0.97]"
           />
         </div>
       </div>

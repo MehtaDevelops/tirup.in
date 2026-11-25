@@ -1,9 +1,28 @@
 /** @type {import('next').NextConfig} */
 
+import os from "node:os"
+import fs from "node:fs"
+import path from "node:path"
+
 // React/Next dev mode (Turbopack) uses eval() for debugging callstacks, so
 // `unsafe-eval` is required locally. Production never uses eval(), so it is
 // only added when NODE_ENV=development to keep the deployed policy tight.
 const isDev = process.env.NODE_ENV === "development"
+
+// Next blocks dev-only resources (CSS, chunks, HMR) requested from an origin
+// other than localhost. Reading this machine's own IPv4 addresses keeps phone
+// testing on the LAN working even when the router hands out a new address.
+const lanOrigins = Object.values(os.networkInterfaces())
+  .flatMap((entries) => entries ?? [])
+  .filter((iface) => iface.family === "IPv4" && !iface.internal)
+  .map((iface) => iface.address)
+
+// The notch player plays a local clip when one is deployed and falls back to
+// the licensed YouTube embed otherwise. Resolved at build so the client never
+// has to probe for the file (no 404 in the console, no extra request).
+const hasLocalClip = fs.existsSync(
+  path.join(process.cwd(), "public", "notch-default.mp3")
+)
 
 // ─── Components subpath ──────────────────────────────────────────────────────
 // tirup.in/components is served NATIVELY by this app now (routes under
@@ -41,10 +60,18 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
-  "upgrade-insecure-requests",
+  // Production only. In dev the site is served over plain http on a LAN IP
+  // when testing from a phone; this directive would rewrite every asset to
+  // https and fail. Production is https, so it has nothing to upgrade there.
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ")
 
 const nextConfig = {
+  // Dev-only: allow the machine's LAN origins so a phone can load CSS/chunks.
+  ...(isDev ? { allowedDevOrigins: lanOrigins } : {}),
+  env: {
+    NEXT_PUBLIC_HAS_LOCAL_CLIP: hasLocalClip ? "1" : "0",
+  },
   // ─── Build Quality ────────────────────────────────────────────────────────
   // In Next.js 16, ESLint is run via `next lint` CLI: the `eslint` config key
   // is no longer supported. TypeScript checking is still enforced (ignoreBuildErrors

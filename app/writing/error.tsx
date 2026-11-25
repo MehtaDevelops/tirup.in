@@ -19,7 +19,7 @@ export default function BlogError({
     "inline-flex items-center gap-2 px-4 py-2 text-xs font-medium tracking-wider uppercase border border-black/10 dark:border-white/10 hover:border-black/25 dark:hover:border-white/25 bg-black/[0.02] dark:bg-white/[0.02] hover:bg-black/[0.05] dark:hover:bg-white/[0.05] rounded-full text-black/65 dark:text-white/65 hover:text-black dark:hover:text-white transition-colors cursor-pointer active:scale-[0.97]"
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 text-[#121314] dark:text-[#fafafa]">
+    <main className="min-h-dvh flex flex-col items-center justify-center px-6 text-[#121314] dark:text-[#fafafa]">
       <div className="max-w-xl w-full text-center reveal-in">
         <span className="text-[10px] font-medium tracking-[0.25em] uppercase text-black/35 dark:text-white/35">
           Temporary Sync Error

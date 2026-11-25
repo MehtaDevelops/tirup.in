@@ -33,6 +33,9 @@
 }
 
 html.dark {
+  /* Native controls, scrollbars and form widgets follow the class, not the OS,
+     so a forced light/dark choice stays consistent end to end. */
+  color-scheme: dark;
   /* TRY-4 neutral black system */
   --bg: #0a0a0a;
   --fg: #fafafa;
@@ -284,6 +287,7 @@ html.tint-drag *::after {
 }
 
 html {
+  color-scheme: light;
   scroll-behavior: smooth;
   scrollbar-gutter: stable;
   height: 100%;
@@ -312,6 +316,20 @@ body {
 }
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* Small controls keep their exact visual box but get a ~44px pointer target:
+   the extra area is the element's own ::after layer, so taps still land on the
+   control itself and layout, hover and focus visuals are untouched. Do not use
+   it inside tightly packed groups (e.g. page numbers) where neighbouring
+   targets would overlap. */
+.hit-area {
+  position: relative;
+}
+.hit-area::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
 }
 
 /* Skip link: the first tab stop, hidden until focused. */
@@ -380,6 +398,12 @@ body {
 }
 .basic-link:hover::before {
   background: #666;
+}
+
+/* Editorial title face: Playfair, for the article H1 only. Everything else
+   keeps the neutral serif stack so the site does not read as two brands. */
+.font-editorial {
+  font-family: var(--font-playfair), "Playfair Display", ui-serif, Georgia, serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -955,6 +979,13 @@ html[data-tint] .list-hover-group[data-spotlight] > [data-spotlit] .group-hover\
 .code-copy-btn:focus,
 .code-copy-btn.copied {
   opacity: 1;
+}
+/* Touch has no hover: without this the control can never be revealed, so the
+   block is uncopyable on phones. Keep it visible wherever hover is absent. */
+@media (hover: none) {
+  .code-copy-btn {
+    opacity: 1;
+  }
 }
 
 .dark .code-copy-btn {

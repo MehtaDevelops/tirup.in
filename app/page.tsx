@@ -20,7 +20,7 @@ export default function Home() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
       <SiteSchemaExtras />
 

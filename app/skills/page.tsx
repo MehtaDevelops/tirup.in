@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function SkillsPage() {
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <Header />
 
       {/* Skills Section */}

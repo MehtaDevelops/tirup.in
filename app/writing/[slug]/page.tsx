@@ -283,30 +283,30 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   return (
-    <main className="relative min-h-screen flex flex-col">
+    <main className="relative min-h-dvh flex flex-col">
       <div className="section px-6 md:px-20 pt-8 sm:pt-10 md:pt-14 pb-16 max-w-4xl mx-auto w-full">
         
         {/* Breadcrumb Header */}
         <TextWithBlur>
-          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/40 mb-5 sm:mb-7 select-none flex-wrap">
+          <div className="flex items-center gap-2 text-xs md:text-sm text-black/40 dark:text-white/55 mb-5 sm:mb-7 select-none flex-wrap">
             <Link href="/" className="flex items-center gap-1.5 hover:text-black dark:hover:text-white transition-colors">
               <div className="shrink-0">
                 <ExpressionAvatar size={20} interactive={false} face="laugh" />
               </div>
               <span className="font-light">Tirup Mehta</span>
             </Link>
-            <span className="text-black/20 dark:text-white/20 select-none">›</span>
+            <span aria-hidden="true" className="text-black/20 dark:text-white/20 select-none">›</span>
             <Link href="/writing" className="hover:text-black dark:hover:text-white transition-colors font-light">
               Writing
             </Link>
-            <span className="text-black/20 dark:text-white/20 select-none">›</span>
-            <span className="truncate max-w-[200px] sm:max-w-xs font-light text-black/30 dark:text-white/30">{safeTitle}</span>
+            {/* The article title is the H1 directly below, so repeating it here
+                only produced a mid-word truncation. */}
           </div>
         </TextWithBlur>
 
         {/* Title */}
         <TextWithBlur delay={50}>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-black dark:text-white mb-5 leading-[1.15] sm:leading-[1.15] md:leading-[1.15] max-w-3xl font-medium break-words">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-editorial italic text-black dark:text-white mb-5 leading-[1.15] sm:leading-[1.15] md:leading-[1.15] max-w-3xl font-medium break-words">
             {safeTitle}
           </h1>
         </TextWithBlur>
@@ -343,7 +343,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               href={`https://blogs.tirup.in/${encodeURIComponent(slug)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group text-xs text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-0.5"
+              className="hit-area group text-xs text-black/40 dark:text-white/55 hover:text-black dark:hover:text-white transition-colors inline-flex items-center gap-0.5"
             >
               <span className="link-hover pb-0.5">View on original site</span> <ArrowUpRight size={11} className="opacity-40 group-hover:opacity-100 icon-arrow-hover" />
             </a>

@@ -73,7 +73,7 @@ export default function SkillsSection() {
   const categories = [
     {
       title: "Frontend",
-      skills: ["React", "Tailwind CSS", "JavaScript", "shadcn/ui", "Base UI"],
+      skills: ["React", "JavaScript", "shadcn/ui", "Base UI"],
     },
     {
       title: "Backend & Database",
