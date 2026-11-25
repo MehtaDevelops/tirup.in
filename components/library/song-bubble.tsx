@@ -1097,12 +1097,12 @@ export default function SongBubble({
           animation: song-bubble-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes song-bubble-in {
-          from { opacity: 0; transform: translateY(14px) scale(0.92); }
+          from { opacity: 0; transform: translateY(6px) scale(0.98); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes song-bubble-out {
           from { opacity: 1; transform: translateY(0) scale(1); }
-          to { opacity: 0; transform: translateY(8px) scale(0.94); }
+          to { opacity: 0; transform: translateY(4px) scale(0.97); }
         }
         @keyframes song-bubble-pulse {
           0% { transform: scale(0.94); opacity: 0.8; }
@@ -1133,10 +1133,13 @@ export default function SongBubble({
           height: 168px;
           border-radius: 18px;
           cursor: default;
+          /* Gooey: the box stretches first while the shape is still a capsule,
+             then the corners round out, which reads as one blob settling
+             rather than a rectangle popping open. */
           transition:
             width 520ms var(--song-spring),
             height 520ms var(--song-spring),
-            border-radius 420ms var(--song-ease),
+            border-radius 380ms var(--song-ease) 130ms,
             transform 240ms var(--song-ease);
         }
         @media (hover: hover) and (pointer: fine) {
@@ -1185,17 +1188,26 @@ export default function SongBubble({
             transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
         }
         .song-bubble-art.is-vinyl {
+          /* Theme-aware record: a soft disc in light mode, near-black in dark.
+             The old hardcoded #050506 read as a black hole on a white page. */
           background:
             radial-gradient(circle at 50% 50%, var(--song-bubble-accent, #1ed760) 0 13%, transparent 13.5%),
-            repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.045) 0 3px, transparent 3px 7px),
-            radial-gradient(circle at 50% 50%, #141416, #050506 72%);
+            repeating-radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--fg, #fafafa) 7%, transparent) 0 3px, transparent 3px 7px),
+            radial-gradient(
+              circle at 50% 50%,
+              color-mix(in srgb, var(--fg, #fafafa) 14%, var(--bg, #0a0a0a)),
+              color-mix(in srgb, var(--fg, #fafafa) 5%, var(--bg, #0a0a0a)) 72%
+            );
         }
         .song-bubble-art.is-spinning {
           animation: song-bubble-spin 7s linear infinite;
         }
         .song-bubble-body.is-expanded .song-bubble-art {
+          /* Gone the moment the card starts growing: a fading cover disc
+             flashes as a dark coin under the opening card. */
           opacity: 0;
           transform: scale(0.5);
+          transition: none;
         }
         @keyframes song-bubble-spin {
           to { transform: rotate(360deg); }

@@ -1304,12 +1304,12 @@ export default function NotchPlayer() {
           animation: song-bubble-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         @keyframes song-bubble-in {
-          from { opacity: 0; transform: translateY(14px) scale(0.92); }
+          from { opacity: 0; transform: translateY(6px) scale(0.98); }
           to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes song-bubble-out {
           from { opacity: 1; transform: translateY(0) scale(1); }
-          to { opacity: 0; transform: translateY(8px) scale(0.94); }
+          to { opacity: 0; transform: translateY(4px) scale(0.97); }
         }
         @keyframes song-bubble-pulse {
           0% { transform: scale(0.94); opacity: 0.8; }
@@ -1345,12 +1345,13 @@ export default function NotchPlayer() {
           height: 168px;
           border-radius: 18px;
           cursor: default;
-          /* Expanding: one long ease-out, so the size change settles without
-             a wobble; the radius trails slightly to keep the corners calm. */
+          /* Gooey: the box stretches first while the shape is still a capsule,
+             then the corners round out, so it reads as one blob settling
+             rather than a rectangle popping open. */
           transition:
             width 520ms var(--song-spring),
             height 520ms var(--song-spring),
-            border-radius 420ms var(--song-ease),
+            border-radius 380ms var(--song-ease) 130ms,
             box-shadow 400ms ease,
             transform 240ms var(--song-ease);
         }
@@ -1406,8 +1407,11 @@ export default function NotchPlayer() {
           animation: song-bubble-spin 7s linear infinite;
         }
         .song-bubble-body.is-expanded .song-bubble-art {
+          /* Gone the moment the card starts growing: a fading cover disc
+             flashes as a dark coin under the opening card. */
           opacity: 0;
           transform: scale(0.5);
+          transition: none;
         }
         @keyframes song-bubble-spin {
           to { transform: rotate(360deg); }
