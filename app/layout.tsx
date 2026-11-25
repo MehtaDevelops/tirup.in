@@ -65,6 +65,10 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    // Without this Google stays on the default "standard" preview and renders
+    // the 1200x630 card as a small square crop in results. "large" opts into
+    // the full-width 1.91:1 preview. It does not touch the image itself.
+    "max-image-preview": "large",
   },
   openGraph: {
     type: "website",

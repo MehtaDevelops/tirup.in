@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: { url: "/privacy" },
   // A privacy policy is a trust/E-E-A-T page and is listed in sitemap.ts, so it
   // has to be indexable. `nofollow` also blocked the only links on it (contact).
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 }
 
 export default function PrivacyPage() {

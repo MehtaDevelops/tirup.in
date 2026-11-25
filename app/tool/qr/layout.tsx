@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description:
     "Pro QR code and vector studio. Generate print-ready vector SVGs, Wi-Fi credentials, vCards, custom module shapes, frames, and high-resolution QR codes. 100% client-side and private.",
   alternates: { canonical: "/tool/qr" },
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 }
 
 export default function QrStudioLayout({ children }: { children: React.ReactNode }) {

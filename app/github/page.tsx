@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     "Unified GitHub engineering activity across @MehtaDevelops and @TirupMehta: contribution calendar, commit cadence, and streak history.",
   alternates: { canonical: "/github" },
   openGraph: { url: "/github" },
-  robots: { index: true, follow: true },
+  robots: { index: true, follow: true, "max-image-preview": "large" },
 }
 
 export const revalidate = 3600 // Revalidate contributions hourly
