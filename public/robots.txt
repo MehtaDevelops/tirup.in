@@ -3,6 +3,11 @@ Allow: /
 Content-Signal: ai-train=no, search=yes, ai-input=yes
 Disallow: /api/
 Disallow: /_next/
+# Googlebot renders the page and needs the CSS/JS chunks and optimised images to
+# do it. Longest-match wins, so these two override the /_next/ block above while
+# the rest of /_next/ (RSC payloads, server internals) stays closed.
+Allow: /_next/static/
+Allow: /_next/image/
 Disallow: /node_modules/
 Disallow: /cdn-cgi/
 

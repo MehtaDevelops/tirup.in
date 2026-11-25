@@ -116,7 +116,13 @@ const personSchema = {
   "@id": "https://tirup.in/about",
   "name": "Tirup Mehta",
   "url": "https://tirup.in",
-  "image": "https://tirup.in/profile.png",
+  // Multi-ratio set, per Google's ProfilePage guidance. The entity card crops to
+  // a square on its own, so give it a real 1:1 alongside the 16:9 OG card rather
+  // than letting it centre-crop the text. Both exceed the 50k-pixel minimum.
+  "image": [
+    "https://tirup.in/profile.png",
+    "https://tirup.in/opengraph-image"
+  ],
   "description": "Tirup Mehta is a software engineering student building secure, high-performance web interfaces. Frontend, cryptography, and systems security. Based in Gujarat, India.",
   "jobTitle": "Student Software Engineer",
   "email": "contact@tirup.in",
