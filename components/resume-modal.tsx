@@ -11,6 +11,12 @@ interface ResumeModalProps {
 
 const RESUME_SRC = "/Resume_Tirup_Mehta.pdf"
 
+// Phones and tablets get page images instead of an embedded PDF: iOS Safari
+// renders a blank iframe for PDFs (or only the first page) and Android Chrome
+// has no inline PDF viewer at all. These WebP pages are rasterised from
+// public/Resume_Tirup_Mehta.pdf, so regenerate them whenever that file changes.
+const RESUME_PAGES = ["/resume/resume-1.webp", "/resume/resume-2.webp"]
+
 // Timings mirror the site's route transitions (240ms in / 180ms out)
 // with the shared spring curve cubic-bezier(0.16,1,0.3,1).
 const ENTER_MS = 260
@@ -20,6 +26,9 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
   const [loading, setLoading] = useState(false)
   const [entered, setEntered] = useState(false)
   const [closing, setClosing] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [pagesLoaded, setPagesLoaded] = useState(0)
+  const [pagesFailed, setPagesFailed] = useState(false)
   const closeTimer = useRef<number | null>(null)
 
   // Animated close: play the exit transition first, unmount after.
@@ -47,8 +56,30 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
 
   // Reset loading whenever the modal (re)opens.
   useEffect(() => {
-    if (isOpen) setLoading(true)
+    if (!isOpen) return
+    setLoading(true)
+    setPagesLoaded(0)
+    setPagesFailed(false)
   }, [isOpen])
+
+  // Detect touch devices once. The query also matches landscape phones and
+  // iPads, whose viewports are wider than the mobile breakpoint but still
+  // cannot render a PDF inside an iframe.
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px), (hover: none) and (pointer: coarse)")
+    const sync = () => setIsMobile(mq.matches)
+    sync()
+    mq.addEventListener("change", sync)
+    return () => mq.removeEventListener("change", sync)
+  }, [])
+
+  // Page images are progressively loaded: hide the spinner once all of them
+  // have decoded (or as soon as one fails and the fallback shows).
+  useEffect(() => {
+    if (isMobile && !pagesFailed && pagesLoaded >= RESUME_PAGES.length) {
+      setLoading(false)
+    }
+  }, [isMobile, pagesFailed, pagesLoaded])
 
   // Lock body scroll + close on Escape while open.
   useEffect(() => {
@@ -86,7 +117,7 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
       onClick={handleClose}
       style={{ transitionDuration: `${closing ? EXIT_MS : ENTER_MS}ms` }}
       className={[
-        "fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6",
+        "fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6",
         "bg-black/50 backdrop-blur-sm",
         "transition-opacity ease-[cubic-bezier(0.16,1,0.3,1)]",
         shown ? "opacity-100" : "opacity-0",
@@ -146,25 +177,65 @@ export default function ResumeModal({ isOpen, onClose, src = RESUME_SRC }: Resum
           </div>
         </div>
 
-        {/* ── PDF preview: native browser viewer, no chrome ── */}
+        {/* ── PDF preview: page images on touch devices, native viewer on desktop ── */}
         <div className="relative flex-1 min-h-0 overflow-hidden bg-[#f1f1f1] dark:bg-[#323639]">
           {loading && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-black/40 dark:text-white/40 pointer-events-none z-10">
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 text-black/40 dark:text-white/40 pointer-events-none">
               <Loader2 size={22} className="animate-spin" />
               <p className="text-xs font-light tracking-wide">Loading resume…</p>
             </div>
           )}
-          <iframe
-            src={`${src}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
-            title="Resume preview"
-            onLoad={() => setLoading(false)}
-            // On desktop the browser's PDF viewer draws its own scrollbar and a
-            // dark gutter around the page, and ignores scrollbar=0. The frame is
-            // made slightly larger than the box and clipped by it, so only the
-            // page shows; wheel, keyboard and touch scrolling still work.
-            // Phones keep the plain frame (their scrollbars are overlays).
-            className="absolute inset-0 w-full h-full border-0 md:inset-auto md:-left-2 md:-top-[6px] md:w-[calc(100%+32px)] md:h-[calc(100%+12px)]"
-          />
+
+          {isMobile ? (
+            <div className="absolute inset-0 overflow-y-auto overflow-x-hidden overscroll-contain">
+              {pagesFailed ? (
+                <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+                  <p className="text-sm font-light text-black/70 dark:text-white/70">
+                    Preview is unavailable on this device.
+                  </p>
+                  <a
+                    href={src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 h-[30px] px-4 text-xs font-medium tracking-wide bg-black text-white dark:bg-white dark:text-black rounded-full transition-all duration-150 active:scale-[0.97]"
+                  >
+                    <ExternalLink size={13} />
+                    <span className="leading-none select-none">Open PDF</span>
+                  </a>
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  {RESUME_PAGES.map((page, i) => (
+                    <img
+                      key={page}
+                      src={page}
+                      width={1700}
+                      height={2406}
+                      alt={`Resume page ${i + 1} of ${RESUME_PAGES.length}`}
+                      decoding="async"
+                      onLoad={() => setPagesLoaded((n) => n + 1)}
+                      onError={() => {
+                        setPagesFailed(true)
+                        setLoading(false)
+                      }}
+                      className="block w-full h-auto bg-white"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <iframe
+              src={`${src}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+              title="Resume preview"
+              onLoad={() => setLoading(false)}
+              // On desktop the browser's PDF viewer draws its own scrollbar and a
+              // dark gutter around the page, and ignores scrollbar=0. The frame is
+              // made slightly larger than the box and clipped by it, so only the
+              // page shows; wheel, keyboard and touch scrolling still work.
+              className="absolute inset-0 w-full h-full border-0 md:inset-auto md:-left-2 md:-top-[6px] md:w-[calc(100%+32px)] md:h-[calc(100%+12px)]"
+            />
+          )}
         </div>
 
         {/* ── Footer ── */}
